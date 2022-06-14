@@ -1,0 +1,83 @@
+{
+    "Objective": "2.1.Tumbling_VrilleSimple",
+    "Duration": 1.0,
+    "Condition": 2,
+    "VerticalSpeed": 2.4,
+    "AnteroposteriorSpeed": -2.0,
+    "SomersaultSpeed": -1.5,
+    "TwistSpeed": 0.0,
+    "Tilt": 0.0,
+    "Rotation": 0.0,
+    "nodes": [
+        {
+            "Name": "Hip_Flexion",
+            "T": [
+                0.100533,
+                0.245408,
+				0.399783,
+				0.499532
+            ],
+            "Q": [
+                -0.112329,
+                0.000486,
+				-0.003923,
+				-0.003923
+            ]
+        },
+        {
+            "Name": "Knee_Flexion",
+            "T": [
+                0.007909,
+                0.020971
+            ],
+            "Q": [
+                -0.002340,
+                -0.002340
+			]
+        },
+        {
+            "Name": "Right_Arm_Flexion",
+            "T": [
+                0.007909,
+                0.083909
+            ],
+            "Q": [
+                -0.002340,
+                -0.002340
+            ]
+        },
+        {
+            "Name": "Right_Arm_Abduction",
+            "T": [
+                0.012659,
+                0.183658
+            ],
+            "Q": [
+                3.232351,
+                0.008548
+            ]
+        },
+        {
+            "Name": "Left_Arm_Flexion",
+            "T": [
+                0.080346,
+                0.262033
+            ],
+            "Q": [
+                3.154120,
+                0.018013
+            ]
+        },
+        {
+            "Name": "Left_Arm_Abduction",
+            "T": [
+                0.010284,
+                0.132596
+            ],
+            "Q": [
+                0.003101,
+                -0.000631
+            ]
+        }
+    ]
+}

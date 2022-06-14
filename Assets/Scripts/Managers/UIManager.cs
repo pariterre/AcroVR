@@ -36,7 +36,7 @@ public class UIManager : MonoBehaviour
     Text textToolTip;
     int displayToolTipNum = 0;
 
-    bool tooltipOn = false;
+    public bool tooltipOn = false;
 
     public void SetTooltip()
     {
@@ -49,7 +49,7 @@ public class UIManager : MonoBehaviour
         panelToolTip.SetActive(false);
     }
 
-    private int currentTab = 1;
+    public int currentTab = 1;
 
     public void SetCurrentTab(int _num)
     {
@@ -95,13 +95,19 @@ public class UIManager : MonoBehaviour
 
     public bool IsOnGameObject(GameObject gameObject)
     {
-        Vector2 inputMousePos = Input.mousePosition;
-        Vector3[] menuPos = new Vector3[4];
-        gameObject.GetComponent<RectTransform>().GetWorldCorners(menuPos);
-        Vector3[] gameObjectPos = new Vector3[2];
-        gameObjectPos[0] = RectTransformUtility.WorldToScreenPoint(Camera.main, menuPos[0]);
-        gameObjectPos[1] = RectTransformUtility.WorldToScreenPoint(Camera.main, menuPos[2]);
-        return (gameObject.activeSelf && inputMousePos.x >= gameObjectPos[0].x && inputMousePos.x <= gameObjectPos[1].x && inputMousePos.y >= gameObjectPos[0].y && inputMousePos.y <= gameObjectPos[1].y);
+        if (gameObject != null)
+        {
+            Vector2 inputMousePos = Input.mousePosition;
+            Vector3[] menuPos = new Vector3[4];
+            gameObject.GetComponent<RectTransform>().GetWorldCorners(menuPos);
+            Vector3[] gameObjectPos = new Vector3[2];
+            gameObjectPos[0] = RectTransformUtility.WorldToScreenPoint(Camera.main, menuPos[0]);
+            gameObjectPos[1] = RectTransformUtility.WorldToScreenPoint(Camera.main, menuPos[2]);
+
+            return (gameObject.activeSelf && inputMousePos.x >= gameObjectPos[0].x && inputMousePos.x <= gameObjectPos[1].x && inputMousePos.y >= gameObjectPos[0].y && inputMousePos.y <= gameObjectPos[1].y);
+        }
+        else
+            return false;
     }
 
     public void SetTooltip(bool _flag)

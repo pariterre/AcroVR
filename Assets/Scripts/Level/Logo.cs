@@ -11,6 +11,7 @@ public class Logo : MonoBehaviour
     private void Start()
     {
         animatorComponent.GetComponent<Animator>();
+        Invoke("AutoToMainMenu", 2.0f);
     }
 
     void ToMainMenu()
@@ -19,12 +20,19 @@ public class Logo : MonoBehaviour
         Destroy(this.gameObject);
     }
 
+    void AutoToMainMenu()
+    {
+        animatorComponent.Play("Curaphic Splash Fade-out");
+        Invoke("ToMainMenu", 0.5f);
+    }
+
     void Update()
     { 
         if (Input.anyKeyDown)
         {
             animatorComponent.Play("Curaphic Splash Fade-out");
             //            mainCanvas.SetActive(true);
+            CancelInvoke();
             Invoke("ToMainMenu", 0.5f);
         }
     }

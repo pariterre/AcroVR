@@ -1,29 +1,43 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class CameraMovement : MonoBehaviour
 {
 
-//    GameObject player;
-    public float dragSpeed = 2;
-    private Vector3 dragOrigin;
-    private Vector3 pos;
+    //    GameObject player;
+    public GameObject tPlayer;
+    private CinemachineVirtualCamera vcam;
 
     void Start()
     {
-//        player = GameObject.FindGameObjectWithTag("Player");
+        //        player = GameObject.FindGameObjectWithTag("Player");
         //        pos = player.transform.Find("FirstViewPoint").transform.position;
 
-//        player = ToolBox.GetInstance().GetManager<DrawManager>().girl1Hip;
+        //        player = ToolBox.GetInstance().GetManager<DrawManager>().girl1Hip;
+
+        vcam = GetComponent<CinemachineVirtualCamera>();
     }
 
     void Update () {
-//        if(ToolBox.GetInstance().GetManager<DrawManager>().girl1Hip != null)
-//        {
-//            transform.LookAt(ToolBox.GetInstance().GetManager<DrawManager>().girl1Hip.transform);
-//            transform.Translate(new Vector3(0,0,player.transform.position.y));
-//        }
+
+        if (tPlayer == null)
+        {
+            tPlayer = GameObject.FindWithTag("Player").transform.Find("Petra.002/hips").gameObject;
+        }
+        else
+            vcam.LookAt = tPlayer.transform;
+
+        /*        if(ToolBox.GetInstance().GetManager<DrawManager>().girl1Hip != null)
+                {
+                    if(ToolBox.GetInstance().GetManager<DrawManager>().girl1Hip.transform.position.z > 1.0f)
+                    {
+                        transform.position = new Vector3(0, 3, 17f);
+                    }
+        //            transform.LookAt(ToolBox.GetInstance().GetManager<DrawManager>().girl1Hip.transform);
+        //            transform.Translate(new Vector3(0,0,player.transform.position.y));
+                }*/
 
         /*        if (Input.GetMouseButtonDown(2))
                 {

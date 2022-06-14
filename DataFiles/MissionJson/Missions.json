@@ -1,0 +1,558 @@
+{
+    "count": 19,
+    "missions": [
+		{
+			"Level": 1,
+			"Name": "1.1 Changez la vitesse horizontale pour 2 m/s et observez le déplacement du corps.",
+			"goal": {
+				"Distance": [1.8, 2.2]
+			},
+			"solution": {
+				"HorizontalVelocity": [2.0]
+			},
+			"maxActions": 1,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": false,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": true,
+				"VerticalPosition": false,
+				"VerticalVelocity": false,
+				"Duration": false
+			},
+			"Condition": 0
+		},
+		{
+			"Level": 1,
+			"Name": "1.2 Entrez la vitesse horizontale permettant de parcourir 5 m avec un temps de simulation de 1 seconde.",
+			"goal": {
+				"Distance": [4.5, 5.5]
+			},
+			"solution": {
+				"HorizontalVelocity": [4.5 , 5.5] 
+			},
+			"maxActions": 1,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": false,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": true,
+				"VerticalPosition": false,
+				"VerticalVelocity": false,
+				"Duration": false
+			},
+			"Condition": 0,
+			"Hint": "La vitesse représente le nombre de mètres parcourus à chaque seconde."
+		},
+		{
+			"Level": 1,
+			"Name": "1.3   Avec une vitesse de 4 m/s, entrez le temps de simulation permettant de parcourir 6 m.",
+			"goal": {
+				"Distance": [5.4, 6.6]
+			},
+			"solution": {
+				"HorizontalVelocity": [4.0],
+				"Duration": [1.35 , 1.65]
+			},
+			"maxActions": 2,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": false,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": true,
+				"VerticalPosition": false,
+				"VerticalVelocity": false,
+				"Duration": false
+			},
+			"Condition": 0,
+			"Hint": "On peut diviser une distance par une vitesse pour obtenir le temps de parcours."
+		},
+		{
+			"Level": 2,
+			"Name": "2.1 Entrez comme vitesse verticale 5 m/s, puis observez la trajectoire de l'athlète.",
+			"goal": {
+				"Duration": [0.9, 1.1]
+			},
+			"solution": {
+				"VerticalVelocity": [5.0]
+			},
+			"maxActions": 1,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": false,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": false,
+				"VerticalPosition": false,
+				"VerticalVelocity": true,
+				"Duration": false
+			},
+			"Condition": 1,
+			"Hint": "La trajectoire se termine lorsque la hauteur finale et la hauteur initiale sont toutes les deux à 0.\nDans l'équation (3), remplacez le temps par 3 s et les deux positions par 0. Vous pouvez ensuite trouver la vitesse initiale.\n(v*t = -1/2 g*t²) peut se transformer en (v = -1/2 g*t)"
+		},
+		{
+			"Level": 2,
+			"Name": "2.2 Entrez la vitesse verticale nécessaire pour avoir un temps de vol de 3 s.",
+			"goal": {
+				"Duration": [2.7, 3.3]
+			},
+			"solution": {
+				"VerticalVelocity": [13.2 , 16.2]
+			},
+			"maxActions": 1,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": false,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": false,
+				"VerticalPosition": false,
+				"VerticalVelocity": true,
+				"Duration": false
+			},
+			"Condition": 1,
+			"Hint": "La trajectoire se termine lorsque la hauteur finale et la hauteur initiale sont toutes les deux à 0.\nDans l'équation (3), remplacez le temps par 3 s et les deux positions par 0. Vous pouvez ensuite trouver la vitesse initiale.\n(v*t = -1/2 g*t²) peut se transformer en (v = -1/2 g*t)"
+		},
+		{
+			"Level": 2,
+			"Name": "2.3 Entrez la vitesse verticale permettant d’atteindre 3 m de hauteur au sommet de la trajectoire.",
+			"goal": {
+				"Distance": [2.7, 3.3]
+			},
+			"solution": {
+				"VerticalVelocity": [7.3 , 8.0]
+			},
+			"maxActions": 1,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": false,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": false,
+				"VerticalPosition": false,
+				"VerticalVelocity": true,
+				"Duration": false
+			},
+			"Condition": 1,
+			"Hint": "La vitesse est de 0 au sommet de la trajectoire. Commencez par remplacer la vitesse finale dans l'équation (2) par 0, puis trouvez comment exprimer la vitesse initiale selon les valeurs restantes.\nDans l'équation (3), remplacez la vitesse initiale par ce que vous avez trouvé dans l'équation (2). Vous devriez avoir une formule qui contient uniquement la hauteur voulue (3 m), la constante g et le temps.\nUne fois que vous avez trouvé le temps (il faut faire une racine carrée), vous pouvez trouver la vitesse initiale à partir de l'équation (2)."
+		},
+		{
+			"Level": 3,
+			"Name": "3.1 Entrez 5 m/s comme vitesses horizontale et verticale. Observer la trajectoire.",
+			"goal": {
+				"Distance": [4.5, 5.5],
+				"Duration": [0.9, 1.1]
+			},
+			"solution": {
+				"VerticalVelocity": [5.0],
+				"HorizontalVelocity": [5.0]
+			},
+			"maxActions": 2,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": false,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": true,
+				"VerticalPosition": false,
+				"VerticalVelocity": true,
+				"Duration": false
+			},
+			"Condition": 1
+		},
+		{
+			"Level": 3,
+			"Name": "3.2 On veut parcourir 10 m horizontalement avec un temps de vol de 2 s. Entrez les vitesses horizontale et verticale.",
+			"goal": {
+				"Distance": [9.0, 11.0],
+				"Duration": [1.8, 2.2]
+			},
+			"solution": {
+				"HorizontalVelocity": [4.1 , 6.1],
+				"VerticalVelocity": [8.8 , 10.8]
+			},
+			"maxActions": 2,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": false,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": true,
+				"VerticalPosition": false,
+				"VerticalVelocity": true,
+				"Duration": false
+			},
+			"Condition": 1,
+			"Hint": "Le temps pour atteindre le sommet de la parabole est 1/2 fois le temps de vol.\nTraitez les problèmes séparément : parcourir 10 m horizontalement en 2 s et obtenir un temps de vol de 2 s."
+		},
+		{
+			"Level": 3,
+			"Name": "3.3 Changez une seule des deux vitesses de 3.2 afin de parcourir 5 m horizontalement en gardant le même temps de vol.",
+			"goal": {
+				"Distance": [4.5, 5.5],
+				"Duration": [1.8, 2.2]
+			},
+			"solution": {
+				"HorizontalVelocity": [2.0 , 3.1],
+				"VerticalVelocity": [8.8 , 10.8]
+			},
+			"maxActions": 2,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": false,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": true,
+				"VerticalPosition": false,
+				"VerticalVelocity": true,
+				"Duration": false
+			},
+			"Condition": 1,
+			"Hint": "La vitesse horizontale n'affecte pas le temps de vol."
+		},
+		{
+			"Level": 3,
+			"Name": "3.4 Changez une seule des deux vitesses de 3.2 afin de parcourir 5 m horizontalement tout en changeant le temps de vol.",
+			"goal": {
+				"Distance": [4.5, 5.5],
+				"Duration": [0.9, 1.1]
+			},
+			"solution": {
+				"HorizontalVelocity": [4.1 , 6.1],
+				"VerticalVelocity": [4.4 , 5.4]
+			},
+			"maxActions": 2,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": false,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": true,
+				"VerticalPosition": false,
+				"VerticalVelocity": true,
+				"Duration": false
+			},
+			"Condition": 1,
+			"Hint": "La distance horizontale parcourue change si le temps de vol change."
+		},
+		{
+			"Level": 3,
+			"Name": "3.5 Entrez les vitesses horizontale et verticale pour atteindre 3 m de hauteur et parcourir 4 m horizontalement.",
+			"goal": {
+				"Distance": [3.6, 4.4],
+				"VerticalDistance": [2.7, 3.3]
+			},
+			"solution": {
+				"HorizontalVelocity": [2.4, 2.7],
+				"VerticalVelocity": [7.3, 8.0]
+			},
+			"maxActions": 2,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": false,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": true,
+				"VerticalPosition": false,
+				"VerticalVelocity": true,
+				"Duration": false
+			},
+			"Condition": 1,
+			"Hint": "Traitez les problèmes séparément, en commençant par trouver le temps de vol et la vitesse verticale.\nRegardez les problèmes précédents : vous pouvez trouver la vitesse verticale en utilisant la même méthode qu'au numéro 2.3."
+		},
+		{
+			"Level": 4,
+			"Name": "4.1 Dans la case vrille/seconde, entrez 1, puis entrez 5 s comme temps de simulation. Lancez et observez.",
+			"goal": {
+				"Vrille" : [4.5, 5.5]
+			},
+			"solution": {
+				"VrilleVelocity": [1.0],
+				"Duration": [5.0]
+			},
+			"maxActions": 2,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": false,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": true,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": false,
+				"VerticalPosition": false,
+				"VerticalVelocity": false,
+				"Duration": true
+			},
+			"Condition": 0
+		},
+		{
+			"Level": 4,
+			"Name": "4.2 Dans la case salto/seconde, entrez 1, puis entrez 5 s comme temps de simulation. Lancez et observez.",
+			"goal": {
+				"Salto" : [4.5, 5.5]
+			},
+			"solution": {
+				"SaltoVelocity": [1.0],
+				"Duration": [5.0]
+			},
+			"maxActions": 2,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": true,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": false,
+				"VerticalPosition": false,
+				"VerticalVelocity": false,
+				"Duration": true
+			},
+			"Condition": 0
+		},
+		{
+			"Level": 4,
+			"Name": "4.3 Entrez la vitesse de vrille nécessaire pour réaliser 10 vrilles en 5 s.",
+			"goal": {
+				"Salto" : [4.5, 5.5]
+			},
+			"solution": {
+				"SaltoVelocity": [1.0],
+				"Duration": [5.0]
+			},
+			"maxActions": 2,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": true,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": false,
+				"VerticalPosition": false,
+				"VerticalVelocity": false,
+				"Duration": true
+			},
+			"Condition": 0
+		},
+		{
+			"Level": 4,
+			"Name": "4.4 Entrez le paramètre permettant de réaliser 10 saltos avec une vitesse de 1 salto/seconde.",
+			"goal": {
+				"Salto" : [9, 11]
+			},
+			"solution": {
+				"SaltoVelocity": [1.0],
+				"Duration": [9, 11]
+			},
+			"maxActions": 2,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": true,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": false,
+				"VerticalPosition": false,
+				"VerticalVelocity": false,
+				"Duration": true
+			},
+			"Condition": 0,
+			"Hint": "Comme la vitesse de vrille est constante, on peut changer le nombre de vrille en changeant le temps total de rotation."
+		},
+		{
+			"Level": 5,
+			"Name": "5.1 Entrez 1 salto/seconde. Ensuite, dans le graphique « Hanche_Flexion », déplacez le 2e noeud (à 1s) jusqu’à 130°. Vous devriez avoir une courbe qui monte progressivement de 0 à 130° en 1 s. Lancez la simulation et observez l’effet sur le nombre de saltos.",
+			"goal": {
+				"Salto" : [1, 1.7]
+			},
+			"solution": {
+				"SaltoVelocity": [1.0],
+				"HancheFlexion": {
+					"Name": "Hip_Flexion",
+					"T": [0,1],
+					"Q": [[0,0],[117,130]]
+				}
+			},
+			"maxActions": 2,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": true,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": false,
+				"VerticalPosition": false,
+				"VerticalVelocity": false,
+				"Duration": false
+			},
+			"Condition": 0,
+			"HancheFlexion": {
+				"Name": "Hip_Flexion",
+				"T": [0,1],
+				"Q": [[0, 0],[0,130]]
+			}
+		},
+		{
+			"Level": 5,
+			"Name": "5.2 L’effet observé en 5.1 est causé par le fait que le moment d’inertie sur l’axe médio-latéral diminue alors que le moment angulaire reste le même. La vitesse angulaire augmente donc. Déplacez maintenant le premier nœud (à 0 s) jusqu’à 90°. Déplacez ensuite le deuxième nœud (à 1 s) afin d’obtenir un nombre de salto inférieur à 1 en gardant une vitesse de salto initiale de 1 salto/seconde.",
+			"goal": {
+				"Salto" : [0, 1]
+			},
+			"solution": {
+				"SaltoVelocity": [1.0],
+				"HancheFlexion": {
+					"Name": "Hip_Flexion",
+					"T": [0,1],
+					"Q": [[81, 99],[0, 90]]
+				}
+			},
+			"maxActions": 2,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": true,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": false,
+				"VerticalPosition": false,
+				"VerticalVelocity": false,
+				"Duration": false
+			},
+			"Condition": 0,
+			"HancheFlexion": {
+				"Name": "Hip_Flexion",
+				"T": [0,1],
+				"Q": [[0, 130],[0, 130]]
+			},
+			"Hint": "Pour faire < 1 salto, il faut réduire la vitesse de rotation durant la simulation. Pour cela, il faut augmenter le moment d'inertie.\nSi on réduit le moment d'inertie en ramenant les hanches vers le corps, on peut augmenter le moment d'inertie en les éloignant."
+		},
+		{
+			"Level": 5,
+			"Name": "5.3 Placez les deux nœuds de façon à obtenir 1 salto à la fin de la simulation, en gardant la vitesse de salto initiale à 1 salto/seconde.",
+			"goal": {
+				"Salto" : [0.9 , 1.1]
+			},
+			"solution": {
+				"SaltoVelocity": [1.0],
+				"HancheFlexion": {
+					"Name": "Hip_Flexion",
+					"T": [0,1],
+					"Q": [[0, 130],[0, 130]]
+				}
+			},
+			"maxActions": 2,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": true,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": false,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": false,
+				"VerticalPosition": false,
+				"VerticalVelocity": false,
+				"Duration": false
+			},
+			"Condition": 0,
+			"HancheFlexion": {
+				"Name": "Hip_Flexion",
+				"T": [0,1],
+				"Q": [[0, 130],[0, 130]]
+			},
+			"Hint": "Pour faire 1 salto en 1 seconde, il faut garder la vitesse initiale, et donc garder le même moment d'inertie.\nOn peut garder le même moment d'inertie en gardant un angle de flexion des hanches constant."
+		},
+		{
+			"Level": 5,
+			"Name": "5.4   Les mêmes principes s’appliquent pour les vrilles. Entrez 1 vrille/seconde. Ensuite, dans le graphique « Bras_Gauche_Abduction », déplacez les nœuds de façon à faire plus d’une vrille durant la simulation. Attention : après avoir déplacé les nœuds, pesez sur le bouton « SYM » afin de copier le mouvement sur le bras droit (vous allez produire des mouvements asymétriques plus loin).",
+			"goal": {
+				"Vrille" : [1 , 2]
+			},
+			"solution": {
+				"VrilleVelocity": [1.0],
+				"BrasGaucheAbduction": {
+					"Name": "Left_Arm_Abduction",
+					"T": [0,1],
+					"Q": [[0, 180],[0, 180]]
+				},
+				"BrasDroitAbduction": {
+					"Name": "Right_Arm_Abduction",
+					"T": [0,1],
+					"Q": [[0, 180],[0, 180]]
+				}
+			},
+			"maxActions": 3,
+			"disableButton":{	
+				"Salto": false,
+				"SaltoVelocity": false,
+				"Inclinaison": false,
+				"InclinaisonVelocity": false,
+				"Vrille": false,
+				"VrilleVelocity": true,
+				"HorizontalPosition": false,
+				"HorizontalVelocity": false,
+				"VerticalPosition": false,
+				"VerticalVelocity": false,
+				"Duration": false
+			},
+			"Condition": 0,
+			"BrasGaucheAbduction": {
+				"Name": "Left_Arm_Abduction",
+				"T": [0,1],
+				"Q": [[0, 180],[0, 180]]
+			},
+			"BrasDroitAbduction": {
+				"Name": "Right_Arm_Abduction",
+				"T": [0,1],
+				"Q": [[0, 180],[0, 180]]
+			},
+			"Hint": "Le moment d'inertie est plus grand lorsque les bras sont éloignés du corps, donc à un angle d'abduction autour de 90 degrés, et plus petit lorsque les bras sont près du corps, vers 0 ou 180 degrés.\nComme on cherche à faire > 1 vrille, il faut réduire le moment d'inertie au cours de la simulation."
+		}
+	]
+}

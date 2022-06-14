@@ -1,0 +1,79 @@
+{
+    "Objective": "1.8.Ski_DoubleArriereTendu",
+    "Duration": 1.5,
+    "Condition": 5,
+    "VerticalSpeed": 3.0,
+    "AnteroposteriorSpeed": 3.5,
+    "SomersaultSpeed": -1.4,
+    "TwistSpeed": 0.0,
+    "Tilt": 0.0,
+    "Rotation": -70.0,
+    "nodes": [
+        {
+            "Name": "Hip_Flexion",
+            "T": [
+                0.020971,
+                0.101721
+            ],
+            "Q": [
+                -0.003971,
+                -0.003971
+            ]
+        },
+        {
+            "Name": "Knee_Flexion",
+            "T": [
+                0.007909,
+                0.020971
+            ],
+            "Q": [
+                -0.002340,
+                -0.002340
+			]
+        },
+        {
+            "Name": "Right_Arm_Flexion",
+            "T": [
+                1.006190,
+                1.402813
+            ],
+            "Q": [
+                -0.011407,
+                -0.011407
+            ]
+        },
+        {
+            "Name": "Right_Arm_Abduction",
+            "T": [
+                1.001440,
+                1.402813
+            ],
+            "Q": [
+                -0.002109,
+                -0.002109
+            ]
+        },
+        {
+            "Name": "Left_Arm_Flexion",
+            "T": [
+                1.006190,
+                1.402813
+            ],
+            "Q": [
+                -0.013304,
+                -0.013304
+            ]
+        },
+        {
+            "Name": "Left_Arm_Abduction",
+            "T": [
+                1.003815,
+                1.402813
+            ],
+            "Q": [
+                -0.005108,
+                -0.005108
+            ]
+        }
+    ]
+}

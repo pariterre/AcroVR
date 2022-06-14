@@ -48,7 +48,7 @@ public class Level1 : MonoBehaviour
         if (GUI.Button(new Rect(Screen.width - 200, 130, 100, 50), "Result"))
         {
 //            ToolBox.GetInstance().GetManager<AniGraphManager>().TaskOffGraphOff();
-            ToolBox.GetInstance().GetManager<AniGraphManager>().ResultGraphOn();
+//            ToolBox.GetInstance().GetManager<AniGraphManager>().ResultGraphOn();
         }
         if (GUI.Button(new Rect(Screen.width - 200, 190, 100, 50), "Save"))
         {
@@ -66,7 +66,7 @@ public class Level1 : MonoBehaviour
         if (GUI.Button(new Rect(Screen.width - 200, 310, 100, 50), "Pause"))
         {
             isPaused = !isPaused;
-            ToolBox.GetInstance().GetManager<DrawManager>().PauseAvatar(isPaused);
+            ToolBox.GetInstance().GetManager<DrawManager>().PauseAvatar();
         }
 
         if (GUI.Button(new Rect(Screen.width - 200, 370, 100, 50), "TakeOffGraph"))
@@ -75,6 +75,8 @@ public class Level1 : MonoBehaviour
             {
                 isTakeOff = true;
                 ToolBox.GetInstance().GetManager<AniGraphManager>().TaskOffGraphOn();
+
+                result.text = ToolBox.GetInstance().GetManager<DrawManager>().DisplayMessage();
             }
             else
             {

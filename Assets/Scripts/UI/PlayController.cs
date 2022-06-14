@@ -19,15 +19,10 @@ public class PlayController : MonoBehaviour
 	bool isTakeOff = false;
 
 	public Text number;
-	public CameraMovement camera;
+//	public CameraMovement camera;
 
 	public Dropdown dropDownPlaySpeed;
-	public Dropdown dropDownPlayMode;
-
-	private void Start()
-	{
-		ToolBox.GetInstance().GetManager<DrawManager>().SetAnimationSpeed(3);
-	}
+//	public Dropdown dropDownPlayMode;
 
 	///===///  OnClick() play control buttons
 	#region		<-- TOP
@@ -35,7 +30,7 @@ public class PlayController : MonoBehaviour
 	/// Play avatar #1 sequence
 	public void PlayAvatar1_DrawManager()
 	{
-		/*		if (number.text != "")
+        /*		if (number.text != "")
 				{
 					ToolBox.GetInstance().GetManager<DrawManager>().SetAnimationSpeed(1);
 
@@ -53,10 +48,24 @@ public class PlayController : MonoBehaviour
 					ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
 				}*/
 
-		if (dropDownPlayMode.captionText.text == MainParameters.Instance.languages.Used.animatorPlayModeSimulation)
+
+//        isPaused = false;
+        ToolBox.GetInstance().GetManager<DrawManager>().PauseAvatar();
+
+        if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 == null)
+        {
+            return;
+        }
+
+        if(!ToolBox.GetInstance().GetManager<DrawManager>().girl1.activeSelf)
+        {
+            return;
+        }
+
+/*        if (dropDownPlayMode.captionText.text == MainParameters.Instance.languages.Used.animatorPlayModeSimulation)
 			ToolBox.GetInstance().GetManager<DrawManager>().SimulationMode();
 		else
-			ToolBox.GetInstance().GetManager<DrawManager>().GestureMode();
+			ToolBox.GetInstance().GetManager<DrawManager>().GestureMode();*/
 
 		string playSpeed = dropDownPlaySpeed.captionText.text;
 		if (playSpeed == MainParameters.Instance.languages.Used.animatorPlaySpeedSlow3)
@@ -70,18 +79,27 @@ public class PlayController : MonoBehaviour
 		else if (playSpeed == MainParameters.Instance.languages.Used.animatorPlaySpeedFast)
 			ToolBox.GetInstance().GetManager<DrawManager>().SetAnimationSpeed(0.8f);
 
+        //		ToolBox.GetInstance().GetManager<DrawManager>().LoadAvatar(DrawManager.AvatarMode.SingleFemale);
 
-		ToolBox.GetInstance().GetManager<DrawManager>().LoadAvatar(DrawManager.AvatarMode.SingleFemale);
-		ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
+        ToolBox.GetInstance().GetManager<DrawManager>().isEditing = false;
+        ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
+        ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
 		ToolBox.GetInstance().GetManager<DrawManager>().PlayAvatar();
-	}
+    }
 
-	/// Pause / un-pause avatar play sequence
-	public void PauseAvatar_DrawManager()
+/*    private void Update()
+    {
+        if (ToolBox.GetInstance().GetManager<DrawManager>().girl1Hip != null && ToolBox.GetInstance().GetManager<DrawManager>().girl1Hip.transform.position.z > 1.0f)
+        {
+            training.LongDistanceCamera();
+        }
+    }*/
+
+    /// Pause / un-pause avatar play sequence
+    public void PauseAvatar_DrawManager()
 	{
-		isPaused = !isPaused;
-		ToolBox.GetInstance().GetManager<DrawManager>().PauseAvatar(isPaused);
-		
+//		isPaused = !isPaused;
+		ToolBox.GetInstance().GetManager<DrawManager>().PauseAvatar();	
 	}
 
 	/// Stop avatar play sequence
@@ -94,8 +112,21 @@ public class PlayController : MonoBehaviour
 	/// Replay avatar play sequence
 	public void ReplayAvatar_DrawManager()
 	{
-		//		ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();		
-		ToolBox.GetInstance().GetManager<DrawManager>().PlayAvatar();
+//        isPaused = false;
+        ToolBox.GetInstance().GetManager<DrawManager>().PauseAvatar();
+
+        if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 == null)
+        {
+            return;
+        }
+
+        if (!ToolBox.GetInstance().GetManager<DrawManager>().girl1.activeSelf)
+        {
+            return;
+        }
+
+        //		ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();		
+        ToolBox.GetInstance().GetManager<DrawManager>().PlayAvatar();
 	}
 
 	/// Play avatar #2 sequence

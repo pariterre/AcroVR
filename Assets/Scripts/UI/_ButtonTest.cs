@@ -55,7 +55,6 @@ public class _ButtonTest : MonoBehaviour
 	public void Test2()
 	{
 		ToolBox.GetInstance().GetManager<GameManager>().MissionLoad();
-
 	}
 
 	public void AvatarFeetTest()
