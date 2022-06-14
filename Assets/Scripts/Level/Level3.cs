@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class Level3 : MonoBehaviour
 {
-    bool isPaused = false;
     bool isTakeOff = false;
 
     bool bFirstView = false;
@@ -26,20 +25,20 @@ public class Level3 : MonoBehaviour
 //        TabCanvas.SetActive(false);
     }
 
-    /*    void OnGUI()
+    void OnGUI()
         {
             if (GUI.Button(new Rect(Screen.width - 200, 10, 100, 50), "Load"))
             {
                 ToolBox.GetInstance().GetManager<GameManager>().MissionLoad();
-                ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar(1);
+                ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
             }
 
-            if (GUI.Button(new Rect(Screen.width - 200, 70, 100, 50), "Load 2"))
-            {
-                ToolBox.GetInstance().GetManager<AniGraphManager>().TaskOffGraphOff();
-                ToolBox.GetInstance().GetManager<GameManager>().MissionLoad();
-                ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar(2);
-            }
+            // if (GUI.Button(new Rect(Screen.width - 200, 70, 100, 50), "Load 2"))
+            // {
+            //     ToolBox.GetInstance().GetManager<AniGraphManager>().TaskOffGraphOff();
+            //     ToolBox.GetInstance().GetManager<GameManager>().MissionLoad();
+            //     ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar(2);
+            // }
             if (GUI.Button(new Rect(Screen.width - 200, 130, 100, 50), "Result"))
             {
                 ToolBox.GetInstance().GetManager<AniGraphManager>().TaskOffGraphOff();
@@ -51,13 +50,12 @@ public class Level3 : MonoBehaviour
             }
             if (GUI.Button(new Rect(Screen.width - 200, 250, 100, 50), "Replay"))
             {
-                ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar(1);
+                ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
             }
 
             if (GUI.Button(new Rect(Screen.width - 200, 310, 100, 50), "Pause"))
             {
-                isPaused = !isPaused;
-                ToolBox.GetInstance().GetManager<DrawManager>().PauseAvatar(isPaused);
+                ToolBox.GetInstance().GetManager<DrawManager>().PauseAvatar();
             }
 
             if (GUI.Button(new Rect(Screen.width - 200, 370, 100, 50), "TakeOffGraph"))
@@ -75,7 +73,7 @@ public class Level3 : MonoBehaviour
             }
 
             GUI.TextField(new Rect(Screen.width - 200, 470, 100, 30), ToolBox.GetInstance().GetManager<StatManager>().dofName);
-        }*/
+        }
 
     public void ShowTab()
     {

@@ -92,8 +92,6 @@ public class DrawManager : MonoBehaviour
 
     float ThetaScale;
 
-    int secondPlaySpeed = 3;
-
     /*    LineRenderer[] lineStickFigure;
         LineRenderer lineCenterOfMass;
         LineRenderer[] lineFilledFigure;

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
@@ -16,8 +16,6 @@ public class PlayController : MonoBehaviour
 	public bool isStopFixed = true;
 	public GameObject avatar3D;
 
-	bool isPaused = false;
-	bool isTakeOff = false;
 
 	public Text number;
 //	public CameraMovement camera;
@@ -50,7 +48,6 @@ public class PlayController : MonoBehaviour
 				}*/
 
 
-//        isPaused = false;
         ToolBox.GetInstance().GetManager<DrawManager>().PauseAvatar();
 
         if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 == null)
@@ -99,7 +96,6 @@ public class PlayController : MonoBehaviour
     /// Pause / un-pause avatar play sequence
     public void PauseAvatar_DrawManager()
 	{
-//		isPaused = !isPaused;
 		ToolBox.GetInstance().GetManager<DrawManager>().PauseAvatar();	
 	}
 
@@ -113,7 +109,6 @@ public class PlayController : MonoBehaviour
 	/// Replay avatar play sequence
 	public void ReplayAvatar_DrawManager()
 	{
-//        isPaused = false;
         ToolBox.GetInstance().GetManager<DrawManager>().PauseAvatar();
 
         if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 == null)

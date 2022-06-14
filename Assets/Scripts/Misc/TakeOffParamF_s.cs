@@ -51,70 +51,59 @@ public class TakeOffParamF_s : MonoBehaviour
     public void CheckTakeOffParamCondition(Dropdown dropDown)
     {
         MainParameters.Instance.joints.condition = dropDown.value;
-    }
+    }   
 
     public void CheckTakeOffParam(GameObject panel)
     {
-        float value = float.Parse(panel.GetComponentInChildren<InputField>().text);
+        float value = float.Parse(panel.GetComponentInChildren<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
 
         if (panel.name == "PanelSomersaultPosition")
         {
-//            panel.GetComponentInChildren<InputField>().text = string.Format(CultureInfo.InvariantCulture, "{0:0.0}", value);
             MainParameters.Instance.joints.takeOffParam.rotation = value;
             ApplyAvatar();
         }
         else if (panel.name == "PanelTiltPosition")
         {
-//            panel.GetComponentInChildren<InputField>().text = string.Format(CultureInfo.InvariantCulture, "{0:0.0}", value);
             MainParameters.Instance.joints.takeOffParam.tilt = value;
             ApplyAvatar();
         }
         else if (panel.name == "PanelTwistPosition")
         {
-//            panel.GetComponentInChildren<InputField>().text = string.Format(CultureInfo.InvariantCulture, "{0:0.0}", value);
             ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamTwistPosition = value;
             ApplyAvatar();
         }
         else if (panel.name == "PanelHorizontalPosition")
         {
-//            panel.GetComponentInChildren<InputField>().text = string.Format(CultureInfo.InvariantCulture, "{0:0.0}", value);
             ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamHorizontalPosition = value;
             ApplyAvatar();
         }
         else if (panel.name == "PanelVerticalPosition")
         {
-//            panel.GetComponentInChildren<InputField>().text = string.Format(CultureInfo.InvariantCulture, "{0:0.0}", value);
             ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamVerticalPosition = value;
             ApplyAvatar();
         }
         else if (panel.name == "PanelHorizontalSpeed")
         {
-//            panel.GetComponentInChildren<InputField>().text = string.Format(CultureInfo.InvariantCulture, "{0:0.0}", value);
             MainParameters.Instance.joints.takeOffParam.anteroposteriorSpeed = value;
         }
         else if (panel.name == "PanelVerticalSpeed")
         {
-//            panel.GetComponentInChildren<InputField>().text = string.Format(CultureInfo.InvariantCulture, "{0:0.0}", value);
             MainParameters.Instance.joints.takeOffParam.verticalSpeed = value;
         }
         else if (panel.name == "PanelSomersaultSpeed")
         {
-//            panel.GetComponentInChildren<InputField>().text = string.Format(CultureInfo.InvariantCulture, "{0:0.000}", value);
             MainParameters.Instance.joints.takeOffParam.somersaultSpeed = value;
         }
         else if (panel.name == "PanelTwistSpeed")
         {
-//            panel.GetComponentInChildren<InputField>().text = string.Format(CultureInfo.InvariantCulture, "{0:0.000}", value);
             MainParameters.Instance.joints.takeOffParam.twistSpeed = value;
         }
         else if (panel.name == "PanelTiltSpeed")
         {
-//            panel.GetComponentInChildren<InputField>().text = string.Format(CultureInfo.InvariantCulture, "{0:0.000}", value);
             ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamTiltSpeed = value;
         }
         else if(panel.name == "PanelTimeDuration")
         {
-//            panel.GetComponentInChildren<InputField>().text = string.Format(CultureInfo.InvariantCulture, "{0:0}", value);
             MainParameters.Instance.joints.duration = value;
         }
     }

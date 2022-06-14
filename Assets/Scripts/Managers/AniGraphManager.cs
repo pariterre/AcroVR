@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ChartAndGraph;
@@ -22,7 +22,6 @@ public class AniGraphManager : MonoBehaviour
     string[] nodesCategories;
     string nodesTemp1Category;
     string nodesTemp2Category;
-    string dataTempCategory;
     public string[] dataCurvesCategories;
     public string[] dataCurvesCategories2;
 
@@ -122,7 +121,6 @@ public class AniGraphManager : MonoBehaviour
         nodesCategories = new string[2] { "Nodes1", "Nodes2" };
         nodesTemp1Category = "NodesTemp1";
         nodesTemp2Category = "NodesTemp2";
-        dataTempCategory = "DataTemp";
         dataCurvesCategories = new string[3] { "Data1", "Data2", "Data3"};
         dataCurvesCategories2 = new string[3] { "Data4", "Data5", "Data6" };
 
@@ -711,18 +709,14 @@ public class AniGraphManager : MonoBehaviour
             graph = GameObject.Find("TrainingMenu").transform.Find("Canvas/TabPanel/TabContainer/TabTwo/Content2/PanelGraph/GraphMultiple/").gameObject.GetComponent<GraphChart>();
     }
 
-//    public void ResultGraphOn()
-//    {
-//        resultCanvas = Instantiate(resultPrefab);
-
-
-            //        resultCanvas.SetActive(false);
-
-                    //        bDraw = true;
-            //        resultCanvas.SetActive(true);
-
-
-//    }
+   public void ResultGraphOn()
+   {
+       Debug.LogWarning("ResultGraphOn function all commented out");
+    //    resultCanvas = Instantiate(resultPrefab);
+    //                resultCanvas.SetActive(false);
+    //                        bDraw = true;
+    //                resultCanvas.SetActive(true);
+   }
 
     public void ResultGraphOff()
     {

@@ -50,7 +50,7 @@ public class DropDownMenu : MonoBehaviour {
         //Show the dropdown list if required (make sure any controls that should appear behind the list are before this block)
         if (DropdownVisible)
         {
-            GUILayout.BeginArea(new Rect(DropDownRect.left, DropDownRect.top + DropDownRect.height, 160, 256), "", "box");
+            GUILayout.BeginArea(new Rect(DropDownRect.xMin, DropDownRect.yMin + DropDownRect.height, 160, 256), "", "box");
             ListScrollPos = GUILayout.BeginScrollView(ListScrollPos, false, true);
             GUILayout.BeginVertical(GUILayout.Width(120));
             for (int i = 0; i < MyListOfStuff.Count; i++)
