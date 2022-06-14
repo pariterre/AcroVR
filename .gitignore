@@ -42,3 +42,5 @@ NuiDatabase
 /Assets/donnes
 
 .vscode/
+
+./LogFile.txt

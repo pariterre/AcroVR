@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -491,7 +492,7 @@ public class GraphSettings : MonoBehaviour
 			stringValue = stringValue.Substring(0, symbolPos);
 		try
 		{
-			value = int.Parse(stringValue);
+			value = int.Parse(stringValue, CultureInfo.InvariantCulture);
 		}
 		catch
 		{

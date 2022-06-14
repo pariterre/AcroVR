@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using System.Text.RegularExpressions;
 
@@ -51,49 +52,49 @@ public class DataFileManager : MonoBehaviour
             values = Regex.Split(fileLines[i], ":");
             if (values[0].Contains("Duration"))
             {
-                jointsTemp.duration = float.Parse(values[1]);
+                jointsTemp.duration = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
 				if (jointsTemp.duration == -999)
                     jointsTemp.duration = MainParameters.Instance.durationDefault;
             }
             else if (values[0].Contains("Condition"))
             {
-                jointsTemp.condition = int.Parse(values[1]);
+                jointsTemp.condition = int.Parse(values[1], CultureInfo.InvariantCulture);
                 if (jointsTemp.condition == -999)
                     jointsTemp.condition = MainParameters.Instance.conditionDefault;
             }
             else if (values[0].Contains("VerticalSpeed"))
             {
-                jointsTemp.takeOffParam.verticalSpeed = float.Parse(values[1]);
+                jointsTemp.takeOffParam.verticalSpeed = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
                 if (jointsTemp.takeOffParam.verticalSpeed == -999)
                     jointsTemp.takeOffParam.verticalSpeed = MainParameters.Instance.takeOffParamDefault.verticalSpeed;
             }
             else if (values[0].Contains("AnteroposteriorSpeed"))
             {
-                jointsTemp.takeOffParam.anteroposteriorSpeed = float.Parse(values[1]);
+                jointsTemp.takeOffParam.anteroposteriorSpeed = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
                 if (jointsTemp.takeOffParam.anteroposteriorSpeed == -999)
                     jointsTemp.takeOffParam.anteroposteriorSpeed = MainParameters.Instance.takeOffParamDefault.anteroposteriorSpeed;
             }
             else if (values[0].Contains("SomersaultSpeed"))
             {
-                jointsTemp.takeOffParam.somersaultSpeed = float.Parse(values[1]);
+                jointsTemp.takeOffParam.somersaultSpeed = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
                 if (jointsTemp.takeOffParam.somersaultSpeed == -999)
                     jointsTemp.takeOffParam.somersaultSpeed = MainParameters.Instance.takeOffParamDefault.somersaultSpeed;
             }
             else if (values[0].Contains("TwistSpeed"))
             {
-                jointsTemp.takeOffParam.twistSpeed = float.Parse(values[1]);
+                jointsTemp.takeOffParam.twistSpeed = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
                 if (jointsTemp.takeOffParam.twistSpeed == -999)
                     jointsTemp.takeOffParam.twistSpeed = MainParameters.Instance.takeOffParamDefault.twistSpeed;
             }
             else if (values[0].Contains("Tilt"))
             {
-                jointsTemp.takeOffParam.tilt = float.Parse(values[1]);
+                jointsTemp.takeOffParam.tilt = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
                 if (jointsTemp.takeOffParam.tilt == -999)
                     jointsTemp.takeOffParam.tilt = MainParameters.Instance.takeOffParamDefault.tilt;
             }
             else if (values[0].Contains("Rotation"))
             {
-                jointsTemp.takeOffParam.rotation = float.Parse(values[1]);
+                jointsTemp.takeOffParam.rotation = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
                 if (jointsTemp.takeOffParam.rotation == -999)
                     jointsTemp.takeOffParam.rotation = MainParameters.Instance.takeOffParamDefault.rotation;
             }
@@ -104,7 +105,7 @@ public class DataFileManager : MonoBehaviour
             }
             else if (ddlNum >= 0)
             {
-                jointsTemp.nodes[ddlNum].ddl = int.Parse(values[0]);
+                jointsTemp.nodes[ddlNum].ddl = int.Parse(values[0], CultureInfo.InvariantCulture);
                 jointsTemp.nodes[ddlNum].name = values[1];
 				jointsTemp.nodes[ddlNum].interpolation = MainParameters.Instance.interpolationDefault;
 				int indexTQ = 2;
@@ -116,9 +117,9 @@ public class DataFileManager : MonoBehaviour
 						jointsTemp.nodes[ddlNum].interpolation.type = MainParameters.InterpolationType.CubicSpline;
 					else
 						jointsTemp.nodes[ddlNum].interpolation.type = MainParameters.InterpolationType.Quintic;
-					jointsTemp.nodes[ddlNum].interpolation.numIntervals = int.Parse(subValues[1]);
-					jointsTemp.nodes[ddlNum].interpolation.slope[0] = float.Parse(subValues[2]);
-					jointsTemp.nodes[ddlNum].interpolation.slope[1] = float.Parse(subValues[3]);
+					jointsTemp.nodes[ddlNum].interpolation.numIntervals = int.Parse(subValues[1], CultureInfo.InvariantCulture);
+					jointsTemp.nodes[ddlNum].interpolation.slope[0] = float.Parse(subValues[2], NumberStyles.Number, CultureInfo.InvariantCulture);
+					jointsTemp.nodes[ddlNum].interpolation.slope[1] = float.Parse(subValues[3], NumberStyles.Number, CultureInfo.InvariantCulture);
 					indexTQ++;
 				}
 				jointsTemp.nodes[ddlNum].T = ExtractDataTQ(values[indexTQ]);
@@ -182,7 +183,7 @@ public class DataFileManager : MonoBehaviour
         string[] subValues = Regex.Split(values, ",");
         float[] data = new float[subValues.Length];
         for (int i = 0; i < subValues.Length; i++)
-            data[i] = float.Parse(subValues[i]);
+            data[i] = float.Parse(subValues[i], NumberStyles.Number, CultureInfo.InvariantCulture);
         return data;
     }
 

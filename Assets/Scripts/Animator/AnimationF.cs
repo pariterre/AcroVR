@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -155,14 +156,13 @@ public class AnimationF : MonoBehaviour
 		Main.Instance.EnableDisableControls(false, true);
 
 		// Lecture des paramètres de décolage
-
 		MainParameters.Instance.joints.condition = MovementF.Instance.dropDownCondition.value;
-		MainParameters.Instance.joints.takeOffParam.rotation = float.Parse(MovementF.Instance.inputFieldSomersaultPosition.text);
-		MainParameters.Instance.joints.takeOffParam.tilt = float.Parse(MovementF.Instance.inputFieldTilt.text);
-		MainParameters.Instance.joints.takeOffParam.anteroposteriorSpeed = float.Parse(MovementF.Instance.inputFieldHorizontalSpeed.text);
-		MainParameters.Instance.joints.takeOffParam.verticalSpeed = float.Parse(MovementF.Instance.inputFieldVerticalSpeed.text);
-		MainParameters.Instance.joints.takeOffParam.somersaultSpeed = float.Parse(MovementF.Instance.inputFieldSomersaultSpeed.text);
-		MainParameters.Instance.joints.takeOffParam.twistSpeed = float.Parse(MovementF.Instance.inputFieldTwistSpeed.text);
+		MainParameters.Instance.joints.takeOffParam.rotation = float.Parse(MovementF.Instance.inputFieldSomersaultPosition.text, NumberStyles.Number, CultureInfo.InvariantCulture);
+		MainParameters.Instance.joints.takeOffParam.tilt = float.Parse(MovementF.Instance.inputFieldTilt.text, NumberStyles.Number, CultureInfo.InvariantCulture);
+		MainParameters.Instance.joints.takeOffParam.anteroposteriorSpeed = float.Parse(MovementF.Instance.inputFieldHorizontalSpeed.text, NumberStyles.Number, CultureInfo.InvariantCulture);
+		MainParameters.Instance.joints.takeOffParam.verticalSpeed = float.Parse(MovementF.Instance.inputFieldVerticalSpeed.text, NumberStyles.Number, CultureInfo.InvariantCulture);
+		MainParameters.Instance.joints.takeOffParam.somersaultSpeed = float.Parse(MovementF.Instance.inputFieldSomersaultSpeed.text, NumberStyles.Number, CultureInfo.InvariantCulture);
+		MainParameters.Instance.joints.takeOffParam.twistSpeed = float.Parse(MovementF.Instance.inputFieldTwistSpeed.text, NumberStyles.Number, CultureInfo.InvariantCulture);
 
 		// Lecture du mode d'exécution de l'animation
 

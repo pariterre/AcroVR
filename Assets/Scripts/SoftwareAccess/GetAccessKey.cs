@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -150,7 +151,7 @@ public class GetAccessKey : MonoBehaviour
 	{
 		int[] intNumbers = new int[stringToConvert.Length];
 		for (int i = 0; i < stringToConvert.Length; i++)
-			intNumbers[i] = int.Parse(stringToConvert.Substring(i, 1));
+			intNumbers[i] = int.Parse(stringToConvert.Substring(i, 1), CultureInfo.InvariantCulture);
 		return intNumbers;
 	}
 

@@ -1,5 +1,6 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,7 +24,7 @@ public class TakeOffParamF : MonoBehaviour
 
 	public void CheckTakeOffParam(GameObject panel)
 	{
-		float value = float.Parse(panel.GetComponentInChildren<InputField>().text);
+		float value = float.Parse(panel.GetComponentInChildren<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
 		if (panel.name == "PanelSomersaultPosition")
 		{
 			if (value < -180 || value > 180)

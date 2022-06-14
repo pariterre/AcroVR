@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -116,10 +117,10 @@ public class GameMode : MonoBehaviour
     {
         if (num > 0)
         {
-            TwistSpeed = float.Parse(PanelTwistSpeed.GetComponent<InputField>().text);
-            HorizontalSpeed = float.Parse(PanelHorizontalSpeed.GetComponent<InputField>().text);
-            VerticalSpeed = float.Parse(PanelVerticalSpeed.GetComponent<InputField>().text);
-            Duration = float.Parse(PanelDuration.GetComponent<InputField>().text);
+            TwistSpeed = float.Parse(PanelTwistSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
+            HorizontalSpeed = float.Parse(PanelHorizontalSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
+            VerticalSpeed = float.Parse(PanelVerticalSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
+            Duration = float.Parse(PanelDuration.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
 
             CheckGameResult();
         }

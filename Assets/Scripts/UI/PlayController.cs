@@ -1,5 +1,6 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,7 +35,7 @@ public class PlayController : MonoBehaviour
 				{
 					ToolBox.GetInstance().GetManager<DrawManager>().SetAnimationSpeed(1);
 
-					float num = float.Parse(number.text);
+					float num = float.Parse(number.text, NumberStyles.Number, CultureInfo.InvariantCulture);
 					ToolBox.GetInstance().GetManager<GameManager>().InitAnimationInfo(num);
 					ToolBox.GetInstance().GetManager<DrawManager>().LoadAvatar(DrawManager.AvatarMode.SingleFemale);
 

@@ -20,7 +20,7 @@ public class Level1 : MonoBehaviour
     {
         if (GUI.Button(new Rect(Screen.width - 200, 10, 100, 50), "Load"))
         {
-            /*        float v = float.Parse(missionInput.text);
+            /*        float v = float.Parse(missionInput.text, NumberStyles.Number, CultureInfo.InvariantCulture);
                     float difference  = Mathf.Abs(v - mission.solution.Velocity);
                     if (difference < 0.5) transform.parent.GetComponentInChildren<StatManager>().info.Score = 100;
                     else if(difference < 1.0) transform.parent.GetComponentInChildren<StatManager>().info.Score = 80;
