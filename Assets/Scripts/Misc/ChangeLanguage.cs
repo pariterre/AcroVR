@@ -15,6 +15,8 @@ public class ChangeLanguage : MonoBehaviour
     {
         public string Training;
         public string TrainingSub;
+        public string Mission;
+        public string MissionSub;
         public string Setting;
         public string SettingSub;
         public string Quit;
@@ -50,6 +52,10 @@ public class ChangeLanguage : MonoBehaviour
     public Text TrainingSub;
     public Text hTraining;
     public Text hTrainingSub;
+    public Text Mission;
+    public Text MissionSub;
+    public Text hMission;
+    public Text hMissionSub;
     public Text Setting;
     public Text SettingSub;
     public Text hSetting;
@@ -108,6 +114,10 @@ public class ChangeLanguage : MonoBehaviour
         languages.french.Training = "Training";
         languages.english.TrainingSub = "Practice and Free Play";
         languages.french.TrainingSub = "Pratique et jeu libre";
+        languages.english.Mission = "Mission";
+        languages.french.Mission = "Mission";
+        languages.english.MissionSub = "Test your skills";
+        languages.french.MissionSub = "Testez vos compétences";
         languages.english.Setting = "Settings";
         languages.french.Setting = "Réglages";
         languages.english.SettingSub = "Set up Options";
@@ -167,6 +177,10 @@ public class ChangeLanguage : MonoBehaviour
             hTraining.text = languages.english.Training;
             TrainingSub.text = languages.english.TrainingSub;
             hTrainingSub.text = languages.english.TrainingSub;
+            Mission.text = languages.english.Mission;
+            hMission.text = languages.english.Mission;
+            MissionSub.text = languages.english.MissionSub;
+            hMissionSub.text = languages.english.MissionSub;
             Setting.text = languages.english.Setting;
             hSetting.text = languages.english.Setting;
             SettingSub.text = languages.english.SettingSub;
@@ -220,6 +234,10 @@ public class ChangeLanguage : MonoBehaviour
             hTraining.text = languages.french.Training;
             TrainingSub.text = languages.french.TrainingSub;
             hTrainingSub.text = languages.french.TrainingSub;
+            Mission.text = languages.french.Mission;
+            hMission.text = languages.french.Mission;
+            MissionSub.text = languages.french.MissionSub;
+            hMissionSub.text = languages.french.MissionSub;
             Setting.text = languages.french.Setting;
             hSetting.text = languages.french.Setting;
             SettingSub.text = languages.french.SettingSub;

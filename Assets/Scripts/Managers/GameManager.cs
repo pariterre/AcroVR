@@ -169,7 +169,7 @@ public class GameManager : MonoBehaviour
 				Debug.Log("Erreur GameManager(Start): " + e.Message);
 		}
 		LoadConditions(conditionJsonFileName);
-//        LoadMissions(@"MissionJson\Missions.json");
+        LoadMissions(string.Format(@"{0}/MissionJson/Missions.json", pathDataFiles));
 	}
 
     public int MissionLoad()

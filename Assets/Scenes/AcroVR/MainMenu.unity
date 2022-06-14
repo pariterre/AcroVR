@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3469,7 +3469,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 230, y: -377}
+  m_AnchoredPosition: {x: 230, y: -482}
   m_SizeDelta: {x: 390, y: 88}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &503720966
@@ -3588,6 +3588,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 503720964}
   m_CullTransparentMesh: 0
+--- !u!114 &504203787 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 446463802195891056, guid: 62907b904771b5143b55737d0ea468a3,
+    type: 3}
+  m_PrefabInstance: {fileID: 1805619139}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &530871926 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 450208974852251328, guid: 62907b904771b5143b55737d0ea468a3,
@@ -3672,6 +3684,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 535831776}
   m_CullTransparentMesh: 0
+--- !u!114 &583529010 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 446239383378149248, guid: 62907b904771b5143b55737d0ea468a3,
+    type: 3}
+  m_PrefabInstance: {fileID: 1805619139}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &599189383 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 446608730157641814, guid: 62907b904771b5143b55737d0ea468a3,
@@ -4861,6 +4885,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 746436619}
   m_CullTransparentMesh: 0
+--- !u!114 &749082829 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 446467143850984236, guid: 62907b904771b5143b55737d0ea468a3,
+    type: 3}
+  m_PrefabInstance: {fileID: 1805619139}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &756222821
 GameObject:
   m_ObjectHideFlags: 0
@@ -7923,6 +7959,10 @@ MonoBehaviour:
   TrainingSub: {fileID: 229604764}
   hTraining: {fileID: 1329122}
   hTrainingSub: {fileID: 677245844}
+  Mission: {fileID: 583529010}
+  MissionSub: {fileID: 749082829}
+  hMission: {fileID: 1742602925}
+  hMissionSub: {fileID: 504203787}
   Setting: {fileID: 1449676125}
   SettingSub: {fileID: 1293838441}
   hSetting: {fileID: 114352747}
@@ -10934,6 +10974,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1741807346}
   m_CullTransparentMesh: 0
+--- !u!114 &1742602925 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 446063938752788492, guid: 62907b904771b5143b55737d0ea468a3,
+    type: 3}
+  m_PrefabInstance: {fileID: 1805619139}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1755262830
 GameObject:
   m_ObjectHideFlags: 0
@@ -12906,22 +12958,22 @@ PrefabInstance:
     - target: {fileID: 340565100031785222, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 340565100031785222, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 340565100031785222, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 230
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 340565100031785222, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -167
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 340593999171147254, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
@@ -13056,7 +13108,7 @@ PrefabInstance:
     - target: {fileID: 340790766379237106, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -377
+      value: -272
       objectReference: {fileID: 0}
     - target: {fileID: 340795425193167522, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
@@ -13291,7 +13343,7 @@ PrefabInstance:
     - target: {fileID: 446063938752788492, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
       propertyPath: m_Text
-      value: Jeu hors ligne
+      value: Mission
       objectReference: {fileID: 0}
     - target: {fileID: 446120688045202894, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
@@ -13406,7 +13458,7 @@ PrefabInstance:
     - target: {fileID: 446239383378149248, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
       propertyPath: m_Text
-      value: Jeu hors ligne
+      value: Mission
       objectReference: {fileID: 0}
     - target: {fileID: 446406427046469212, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
@@ -13421,12 +13473,12 @@ PrefabInstance:
     - target: {fileID: 446463802195891056, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
       propertyPath: m_Text
-      value: Jouez au jeu avec un avatar 3D
+      value: "Test your skills\x13"
       objectReference: {fileID: 0}
     - target: {fileID: 446467143850984236, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
       propertyPath: m_Text
-      value: Jouez au jeu avec un avatar 3D
+      value: Test your skills
       objectReference: {fileID: 0}
     - target: {fileID: 446508740750053102, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
@@ -13681,12 +13733,12 @@ PrefabInstance:
     - target: {fileID: 550482918645021974, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 550482918645021974, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
       propertyPath: m_Name
-      value: PlayGame
+      value: Mission
       objectReference: {fileID: 0}
     - target: {fileID: 550491612546637920, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
