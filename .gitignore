@@ -44,3 +44,5 @@ NuiDatabase
 .vscode/
 
 *LogFile.txt
+
+.vs/

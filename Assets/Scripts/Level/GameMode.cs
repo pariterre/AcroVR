@@ -27,15 +27,19 @@ public class GameMode : MonoBehaviour
     float VerticalSpeed = 0;
     float Duration = 0;
 
-    private int currMission = 0;
-    private int num = 0;
+    private int currentMission = 0;
+    private int numberOfMissions = 0;
     private int resultValue = 0;
 
     void Start()
     {
-        num = ToolBox.GetInstance().GetManager<GameManager>().numMission;
+        numberOfMissions = ToolBox.GetInstance().GetManager<GameManager>().numMission;
+        ShowCurrentMission();
+    }
 
-        if (num > 0)
+    void ShowCurrentMission() {
+
+        if (numberOfMissions > 0)
         {
             MissionName.GetComponent<Animator>().Play("Panel In");
 
@@ -43,9 +47,9 @@ public class GameMode : MonoBehaviour
             {
                 if (ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[i].Level == ToolBox.GetInstance().GetManager<GameManager>().numLevel)
                 {
-                    currMission = i + num - 1;
-                    MissionName.GetComponentInChildren<Text>().text = ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[currMission].Name;
-                    CheckParameterOnOff(currMission);
+                    currentMission = i + numberOfMissions - 1;
+                    MissionName.GetComponentInChildren<Text>().text = ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[currentMission].Name;
+                    CheckParameterOnOff(currentMission);
                     break;
                 }
             }
@@ -54,68 +58,32 @@ public class GameMode : MonoBehaviour
 
     void CheckParameterOnOff(int _n)
     {
+        void ManageInputField(bool keepEnabled, InputField field)
+        {
+            if (keepEnabled) return;
+
+            field.enabled = false;
+            field.image.color = Color.blue;
+        }
+
         Buttons btn = ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[_n].disableButton;
 
-        if(!btn.Salto)
-        {
-            PanelSomersaultPosition.GetComponent<InputField>().enabled = false;
-            PanelSomersaultPosition.GetComponent<InputField>().image.color = Color.blue;
-        }
-        if (!btn.SaltoVelocity)
-        {
-            PanelSomersaultSpeed.GetComponent<InputField>().enabled = false;
-            PanelSomersaultSpeed.GetComponent<InputField>().image.color = Color.blue;
-        }
-        if (!btn.Inclinaison)
-        {
-            PanelTiltPosition.GetComponent<InputField>().enabled = false;
-            PanelTiltPosition.GetComponent<InputField>().image.color = Color.blue;
-        }
-        if (!btn.InclinaisonVelocity)
-        {
-            PanelTiltSpeed.GetComponent<InputField>().enabled = false;
-            PanelTiltSpeed.GetComponent<InputField>().image.color = Color.blue;
-        }
-        if (!btn.Vrille)
-        {
-            PanelTwistPosition.GetComponent<InputField>().enabled = false;
-            PanelTwistPosition.GetComponent<InputField>().image.color = Color.blue;
-        }
-        if (!btn.VrilleVelocity)
-        {
-            PanelTwistSpeed.GetComponent<InputField>().enabled = false;
-            PanelTwistSpeed.GetComponent<InputField>().image.color = Color.blue;
-        }
-        if (!btn.HorizontalPosition)
-        {
-            PanelHorizontalPosition.GetComponent<InputField>().enabled = false;
-            PanelHorizontalPosition.GetComponent<InputField>().image.color = Color.blue;
-        }
-        if (!btn.HorizontalVelocity)
-        {
-            PanelHorizontalSpeed.GetComponent<InputField>().enabled = false;
-            PanelHorizontalSpeed.GetComponent<InputField>().image.color = Color.blue;
-        }
-        if (!btn.VerticalPosition)
-        {
-            PanelVerticalPosition.GetComponent<InputField>().enabled = false;
-            PanelVerticalPosition.GetComponent<InputField>().image.color = Color.blue;
-        }
-        if (!btn.VerticalVelocity)
-        {
-            PanelVerticalSpeed.GetComponent<InputField>().enabled = false;
-            PanelVerticalSpeed.GetComponent<InputField>().image.color = Color.blue;
-        }
-        if (!btn.Duration)
-        {
-            PanelDuration.GetComponent<InputField>().enabled = false;
-            PanelDuration.GetComponent<InputField>().image.color = Color.blue;
-        }
+        ManageInputField(btn.Salto, PanelSomersaultPosition.GetComponent<InputField>());
+        ManageInputField(btn.SaltoVelocity, PanelSomersaultSpeed.GetComponent<InputField>());
+        ManageInputField(btn.Inclinaison, PanelTiltPosition.GetComponent<InputField>());
+        ManageInputField(btn.InclinaisonVelocity, PanelTiltSpeed.GetComponent<InputField>());
+        ManageInputField(btn.Vrille, PanelTwistPosition.GetComponent<InputField>());
+        ManageInputField(btn.VrilleVelocity, PanelTwistSpeed.GetComponent<InputField>());
+        ManageInputField(btn.HorizontalPosition, PanelHorizontalPosition.GetComponent<InputField>());
+        ManageInputField(btn.HorizontalVelocity, PanelHorizontalSpeed.GetComponent<InputField>());
+        ManageInputField(btn.VerticalPosition, PanelVerticalPosition.GetComponent<InputField>());
+        ManageInputField(btn.VerticalVelocity, PanelVerticalSpeed.GetComponent<InputField>());
+        ManageInputField(btn.Duration, PanelDuration.GetComponent<InputField>());
     }
 
     public void GetTakeOffParameters()
     {
-        if (num > 0)
+        if (numberOfMissions > 0)
         {
             TwistSpeed = float.Parse(PanelTwistSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
             HorizontalSpeed = float.Parse(PanelHorizontalSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
@@ -128,7 +96,7 @@ public class GameMode : MonoBehaviour
 
     void CheckGameResult()
     {
-        MissionInfo mission = ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[currMission];
+        MissionInfo mission = ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[currentMission];
 
         if(HorizontalSpeed != 0)
         {
@@ -175,6 +143,12 @@ public class GameMode : MonoBehaviour
         return (input >= min && input <= max);
     }
 
+    IEnumerator WaitThenNextLevel()
+    {
+        yield return new WaitForSeconds(3);
+        ShowCurrentMission();
+    }
+
     void Update()
     {
         if (ToolBox.GetInstance().GetManager<GameManager>().numMission > 0)
@@ -188,25 +162,28 @@ public class GameMode : MonoBehaviour
 
         if (resultValue > 0)
         {
-            if(slider.value >= ToolBox.GetInstance().GetManager<DrawManager>().numberFrames)
+            if(slider.value >= ToolBox.GetInstance().GetManager<DrawManager>().numberFrames - 1)
             {
                 MissionName.GetComponent<Animator>().Play("Panel In");
 
                 if (resultValue == 1)
+                {
                     MissionName.GetComponentInChildren<Text>().text = "Succès";
+                    StartCoroutine(WaitThenNextLevel());
+                    resultValue = 0;
+                    ToolBox.GetInstance().GetManager<GameManager>().numMission = numberOfMissions + 1;
+                }
                 else
                 {
                     string txt = "Désolé, vous n’avez pas atteint l’objectif avec une précision suffisante.\n";
                     string hints = null;
 
-                    if (ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[currMission].Hint != null)
-                        hints = ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[currMission].Hint;
+                    if (ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[currentMission].Hint != null)
+                        hints = ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[currentMission].Hint;
 
                     MissionName.GetComponentInChildren<Text>().text = txt + hints;
                 }
 
-                ToolBox.GetInstance().GetManager<GameManager>().numMission = num;
-                resultValue = 0;
             }
         }
     }
