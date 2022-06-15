@@ -109,8 +109,6 @@ public class DrawManager : MonoBehaviour
     float pauseStart = 0;
     float pauseTime = 0;
 
-    IntPtr ptr_model;
-
     bool isSimulationMode = true;
     public AvatarMode setAvatar = AvatarMode.SingleFemale;
 
@@ -791,11 +789,6 @@ public class DrawManager : MonoBehaviour
 
         var sol = Ode.RK547M(0, joints.duration + joints.lagrangianModel.dt, new Vector(x0), ShortDynamics_s, options);
 
-        ///////
-//        ptr_model = c_biorbdModel(new StringBuilder("Modele_HuManS_somersault.s2mMod"));
-//        var sol = Ode.RK45(0, new Vector(x0), ShortDynamicsBiorbd_s, options); //FD avec Biorbd
-        ///////
-       
         var points = sol.SolveFromToStep(0, joints.duration + joints.lagrangianModel.dt, joints.lagrangianModel.dt).ToArray();
 
         // test0 = point[51]
@@ -958,12 +951,6 @@ public class DrawManager : MonoBehaviour
         options.InitialStep = joints.lagrangianModel.dt;
 
         var sol = Ode.RK547M(0, joints.duration + joints.lagrangianModel.dt, new Vector(x0), ShortDynamicsSecond, options);
-
-        ///////
-        //        ptr_model = c_biorbdModel(new StringBuilder("Modele_HuManS_somersault.s2mMod"));
-        //        var sol = Ode.RK45(0, new Vector(x0), ShortDynamicsBiorbd_s, options); //FD avec Biorbd
-        ///////
-
         var points = sol.SolveFromToStep(0, joints.duration + joints.lagrangianModel.dt, joints.lagrangianModel.dt).ToArray();
 
         double[] t = new double[points.GetUpperBound(0) + 1];
@@ -1062,110 +1049,6 @@ public class DrawManager : MonoBehaviour
         }
     }
 
-    private float[] qValuesHumans2Biorbd(float[] vecteurHumans)
-    {
-        //Correspondace des DDL entre les 2 modèles via un fichier matlab
-        int nDDL = 14;// c_nQ(ptr_model);
-        float[] vecteurBiorbd = new float[nDDL];
-
-        vecteurBiorbd[0] = vecteurHumans[6];
-        vecteurBiorbd[1] = vecteurHumans[7];
-        vecteurBiorbd[2] = vecteurHumans[8];
-        vecteurBiorbd[3] = -vecteurHumans[9];
-        vecteurBiorbd[4] = vecteurHumans[10];
-        vecteurBiorbd[5] = vecteurHumans[11];
-
-        vecteurBiorbd[6] = vecteurHumans[0];
-        vecteurBiorbd[7] = -vecteurHumans[1];
-        vecteurBiorbd[8] = vecteurHumans[0];
-        vecteurBiorbd[9] = -vecteurHumans[1];
-        vecteurBiorbd[10] = vecteurHumans[2];
-        vecteurBiorbd[11] = vecteurHumans[3];
-        vecteurBiorbd[12] = vecteurHumans[4];
-        vecteurBiorbd[13] = -vecteurHumans[5];
-
-        return vecteurBiorbd;
-    }
-
-    private double[] Humans2Biorbd(double[] vecteurHumans)
-    {
-        //Correspondace des DDL entre les 2 modèles via un fichier matlab
-        int nDDL = 14;// c_nQ(ptr_model);
-        int nDDLhumans = 12;
-        double[] vecteurBiorbd = new double[nDDL * 2];
-
-        vecteurBiorbd[0] = vecteurHumans[6];
-        vecteurBiorbd[1] = vecteurHumans[7];
-        vecteurBiorbd[2] = vecteurHumans[8];
-        vecteurBiorbd[3] = -vecteurHumans[9];
-        vecteurBiorbd[4] = vecteurHumans[10];
-        vecteurBiorbd[5] = vecteurHumans[11];
-
-        vecteurBiorbd[6] = vecteurHumans[0];
-        vecteurBiorbd[7] = -vecteurHumans[1];
-        vecteurBiorbd[8] = vecteurHumans[0];
-        vecteurBiorbd[9] = -vecteurHumans[1];
-        vecteurBiorbd[10] = vecteurHumans[2];
-        vecteurBiorbd[11] = vecteurHumans[3];
-        vecteurBiorbd[12] = vecteurHumans[4];
-        vecteurBiorbd[13] = -vecteurHumans[5];
-
-        vecteurBiorbd[0 + nDDL] = vecteurHumans[6 + nDDLhumans];
-        vecteurBiorbd[1 + nDDL] = vecteurHumans[7 + nDDLhumans];
-        vecteurBiorbd[2 + nDDL] = vecteurHumans[8 + nDDLhumans];
-        vecteurBiorbd[3 + nDDL] = -vecteurHumans[9 + nDDLhumans];
-        vecteurBiorbd[4 + nDDL] = vecteurHumans[10 + nDDLhumans];
-        vecteurBiorbd[5 + nDDL] = vecteurHumans[11 + nDDLhumans];
-
-        vecteurBiorbd[6 + nDDL] = vecteurHumans[0 + nDDLhumans];
-        vecteurBiorbd[7 + nDDL] = -vecteurHumans[1 + nDDLhumans];
-        vecteurBiorbd[8 + nDDL] = vecteurHumans[0 + nDDLhumans];
-        vecteurBiorbd[9 + nDDL] = -vecteurHumans[1 + nDDLhumans];
-        vecteurBiorbd[10 + nDDL] = vecteurHumans[2 + nDDLhumans];
-        vecteurBiorbd[11 + nDDL] = vecteurHumans[3 + nDDLhumans];
-        vecteurBiorbd[12 + nDDL] = vecteurHumans[4 + nDDLhumans];
-        vecteurBiorbd[13 + nDDL] = -vecteurHumans[5 + nDDLhumans];
-        return vecteurBiorbd;
-    }
-
-    private double[] Biorbd2Humans(double[] vecteurBiorbd)
-    {
-        //Correspondace des DDL entre les 2 modèles via un fichier matlab
-        int nDDL = 12; //nDDL modèle humans
-        int nDDLbiorbd = 14;// c_nQ(ptr_model);
-        double[] vecteurHumans = new double[nDDL * 2];
-
-        vecteurHumans[6] = vecteurBiorbd[0];
-        vecteurHumans[7] = vecteurBiorbd[1];
-        vecteurHumans[8] = vecteurBiorbd[2];
-        vecteurHumans[9] = -vecteurBiorbd[3];
-        vecteurHumans[10] = vecteurBiorbd[4];
-        vecteurHumans[11] = vecteurBiorbd[5];
-
-        vecteurHumans[0] = vecteurBiorbd[6];
-        vecteurHumans[1] = -vecteurBiorbd[7];
-        vecteurHumans[2] = vecteurBiorbd[10];
-        vecteurHumans[3] = vecteurBiorbd[11];
-        vecteurHumans[4] = vecteurBiorbd[12];
-        vecteurHumans[5] = -vecteurBiorbd[13];
-
-        vecteurHumans[6 + nDDL] = vecteurBiorbd[0 + nDDLbiorbd];
-        vecteurHumans[7 + nDDL] = vecteurBiorbd[1 + nDDLbiorbd];
-        vecteurHumans[8 + nDDL] = vecteurBiorbd[2 + nDDLbiorbd];
-        vecteurHumans[9 + nDDL] = -vecteurBiorbd[3 + nDDLbiorbd];
-        vecteurHumans[10 + nDDL] = vecteurBiorbd[4 + nDDLbiorbd];
-        vecteurHumans[11 + nDDL] = vecteurBiorbd[5 + nDDLbiorbd];
-
-        vecteurHumans[0 + nDDL] = vecteurBiorbd[6 + nDDLbiorbd];
-        vecteurHumans[1 + nDDL] = -vecteurBiorbd[7 + nDDLbiorbd];
-        vecteurHumans[2 + nDDL] = vecteurBiorbd[10 + nDDLbiorbd];
-        vecteurHumans[3 + nDDL] = vecteurBiorbd[11 + nDDLbiorbd];
-        vecteurHumans[4 + nDDL] = vecteurBiorbd[12 + nDDLbiorbd];
-        vecteurHumans[5 + nDDL] = -vecteurBiorbd[13 + nDDLbiorbd];
-
-        return vecteurHumans;
-    }
-
     private double[,] TransformerVecteurEnMatrice(double[] vecteur)
     {
         //Utilisée pour des matrices carrées
@@ -1208,125 +1091,6 @@ public class DrawManager : MonoBehaviour
             }
         }
         return nouveauVecteur;
-    }
-
-    private Vector ShortDynamicsBiorbd_s(double t, Vector x)
-    {
-        //Declaration des pointeurs
-        IntPtr ptr_massMatrix;
-        IntPtr ptr_tau;
-        IntPtr ptr_Q;
-        IntPtr ptr_V;
-        IntPtr ptr_qddot2;
-        IntPtr ptr_matA;
-        IntPtr ptr_solX;
-
-        int NDDL = c_nQ(ptr_model); //Récupère le nombre de DDL du modèle biorbd
-        int NROOT = 6; //On admet que la racine possède 6 ddl
-        int NDDLhumans = 12;
-        double[] xBiorbd = new double[NDDL * 2];
-
-        double[] Qintegrateur = new double[NDDL];
-        double[] Vintegrateur = new double[NDDL];
-        double[] m_taud = new double[NDDL];
-        double[] massMatrix = new double[NDDL * NDDL];
-
-        float[] qd = new float[NDDLhumans];
-        float[] qdotd = new float[NDDLhumans];
-        float[] qddotd = new float[NDDLhumans];
-        float[] qdBiorbd = new float[NDDL];
-        float[] qdotdBiorbd = new float[NDDL];
-        float[] qddotdBiorbd = new float[NDDL];
-
-        double[] qddot2 = new double[NDDL];
-        double[] qddot1integ = new double[NDDL * 2];
-        double[] qddot1integHumans = new double[NDDLhumans];
-
-        //Allocations des pointeurs, sinon génère erreurs de segmentation
-        ptr_Q = Marshal.AllocCoTaskMem(sizeof(double) * Qintegrateur.Length);
-        ptr_V = Marshal.AllocCoTaskMem(sizeof(double) * Vintegrateur.Length);
-        ptr_qddot2 = Marshal.AllocCoTaskMem(sizeof(double) * qddot2.Length);
-        ptr_massMatrix = Marshal.AllocCoTaskMem(sizeof(double) * massMatrix.Length);
-        ptr_tau = Marshal.AllocCoTaskMem(sizeof(double) * m_taud.Length);
-
-        xBiorbd = Humans2Biorbd(x); //On convertit les DDL du modèle humans pour le modèle biorbd
-
-        for (int i = 0; i < NDDL; i++)
-        {
-            Qintegrateur[i] = xBiorbd[i];
-            Vintegrateur[i] = xBiorbd[i + NDDL];
-        }
-
-        Trajectory_s(MainParameters.Instance.joints.lagrangianModel, (float)t, MainParameters.Instance.joints.lagrangianModel.q2, out qd, out qdotd, out qddotd);
-
-        qdBiorbd = qValuesHumans2Biorbd(qd);
-        qdotdBiorbd = qValuesHumans2Biorbd(qdotd);
-        qddotdBiorbd = qValuesHumans2Biorbd(qddotd);
-
-        for (int i = 0; i < qddot2.Length; i++)
-        {
-            qddot2[i] = qddotdBiorbd[i] + 10 * (qdBiorbd[i] - Qintegrateur[i]) + 3 * (qdotdBiorbd[i] - Vintegrateur[i]);
-        }
-
-        for (int i = 0; i < NROOT; i++)
-        {
-            qddot2[i] = 0;
-        }
-
-        Marshal.Copy(Qintegrateur, 0, ptr_Q, Qintegrateur.Length);
-        Marshal.Copy(Vintegrateur, 0, ptr_V, Vintegrateur.Length);
-        Marshal.Copy(qddot2, 0, ptr_qddot2, qddot2.Length);
-
-        c_massMatrix(ptr_model, ptr_Q, ptr_massMatrix); //Génère la matrice de masse
-
-        Marshal.Copy(ptr_massMatrix, massMatrix, 0, massMatrix.Length);
-
-        c_inverseDynamics(ptr_model, ptr_Q, ptr_V, ptr_qddot2, ptr_tau);
-
-        Marshal.Copy(ptr_tau, m_taud, 0, m_taud.Length);
-
-        double[,] squareMassMatrix = new double[NDDL, NDDL];
-        squareMassMatrix = TransformerVecteurEnMatrice(massMatrix); //La matrice de masse générée est sous forme d'un vecteur de taille NDDL*NDDL
-
-        double[,] matriceA = new double[NROOT, NROOT];
-        matriceA = RetrecirMatriceCarre(squareMassMatrix, NROOT); //On réduit la matrice de masse
-
-        double[] matAGrandVecteur = new double[NROOT * NROOT];
-        matAGrandVecteur = TransformerMatriceEnVecteur(matriceA); //La nouvelle matrice doit être convertie en vecteur pour qu'elle puisse être utilisée dans biorbd
-
-        ptr_matA = Marshal.AllocCoTaskMem(sizeof(double) * matAGrandVecteur.Length);
-        ptr_solX = Marshal.AllocCoTaskMem(sizeof(double) * NROOT);
-
-        Marshal.Copy(matAGrandVecteur, 0, ptr_matA, matAGrandVecteur.Length);
-
-        c_solveLinearSystem(ptr_matA, NROOT, NROOT, ptr_tau, ptr_solX); //Résouds l'équation Ax=b
-
-        double[] solutionX = new double[NROOT];
-        Marshal.Copy(ptr_solX, solutionX, 0, solutionX.Length);
-
-        for (int i = 0; i < NROOT; i++)
-        {
-            qddot2[i] = -solutionX[i];
-        }
-
-        for (int i = 0; i < NDDL; i++)
-        {
-            qddot1integ[i] = Vintegrateur[i];
-            qddot1integ[i + NDDL] = qddot2[i];
-        }
-
-        qddot1integHumans = Biorbd2Humans(qddot1integ); //Reconvertit les DDL du modèle biorbd vers le modèle humans
-
-        //Desallocation des pointeurs
-        Marshal.FreeCoTaskMem(ptr_Q);
-        Marshal.FreeCoTaskMem(ptr_V);
-        Marshal.FreeCoTaskMem(ptr_qddot2);
-        Marshal.FreeCoTaskMem(ptr_massMatrix);
-        Marshal.FreeCoTaskMem(ptr_tau);
-        Marshal.FreeCoTaskMem(ptr_matA);
-        Marshal.FreeCoTaskMem(ptr_solX);
-
-        return new Vector(qddot1integHumans);
     }
 
     private Vector ShortDynamics_s(double t, Vector x)

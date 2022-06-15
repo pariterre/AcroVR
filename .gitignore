@@ -35,7 +35,7 @@ sysinfo.txt
 # OS generated #
 # ============ #
 *.Trashes
-*Thumbs.db
+*Thumbs.db*
 
 Library
 NuiDatabase
