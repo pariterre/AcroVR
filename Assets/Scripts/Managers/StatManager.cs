@@ -293,7 +293,7 @@ public class StatManager : MonoBehaviour
 //                            circle.GetComponent<MeshRenderer>().enabled = false;
                             ToolBox.GetInstance().GetManager<DrawManager>().isEditing = false;
                             circle = null;
-                            ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
+                            // ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
                         }
                     }
                     else if (circle.name == "ControlRightArm")
@@ -320,7 +320,7 @@ public class StatManager : MonoBehaviour
 //                            circle.GetComponent<MeshRenderer>().enabled = false;
                             ToolBox.GetInstance().GetManager<DrawManager>().isEditing = false;
                             circle = null;
-                            ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
+                            //ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
                         }
                     }
                     else
@@ -331,7 +331,7 @@ public class StatManager : MonoBehaviour
 //                        circle.GetComponent<MeshRenderer>().enabled = false;
                         ToolBox.GetInstance().GetManager<DrawManager>().isEditing = false;
                         circle = null;
-                        ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
+                        //ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
                         //                        ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
                     }
                     /*                    if (circle.transform.position == hit.collider.transform.position)

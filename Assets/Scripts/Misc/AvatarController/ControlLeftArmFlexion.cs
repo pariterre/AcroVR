@@ -105,17 +105,11 @@ public class ControlLeftArmFlexion : MonoBehaviour
     void HandleDof(float _value)
     {
         transform.rotation = Quaternion.Euler(0,_value, 0);
-
-//        if (girl.transform.forward.x >= 0)
-//            dof = _value / 30;
-//        else
-            dof = _value / 30;
+        dof = _value / 30;
 
         MainParameters.Instance.joints.nodes[4].Q[node] = (float)dof;
         ToolBox.GetInstance().GetManager<GameManager>().InterpolationDDL();
         ToolBox.GetInstance().GetManager<GameManager>().DisplayDDL(4, true);
-
-        ToolBox.GetInstance().GetManager<DrawManager>().ControlOneFrame();
-        //        ToolBox.GetInstance().GetManager<DrawManager>().ControlLeftArmFlexion((float)dof);
+        ToolBox.GetInstance().GetManager<DrawManager>().ControlLeftArmFlexion((float)dof);
     }
 }
