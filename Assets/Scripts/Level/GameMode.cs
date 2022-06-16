@@ -20,6 +20,8 @@ public class GameMode : MonoBehaviour
     public GameObject PanelVerticalSpeed;
     public GameObject PanelDuration;
 
+    private GameManager gameManager;
+
     public Slider slider;
 
     float TwistSpeed = 0;
@@ -33,7 +35,9 @@ public class GameMode : MonoBehaviour
 
     void Start()
     {
-        numberOfMissions = ToolBox.GetInstance().GetManager<GameManager>().numMission;
+        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
+
+        numberOfMissions = gameManager.numMission;
         ShowCurrentMission();
     }
 
@@ -43,12 +47,12 @@ public class GameMode : MonoBehaviour
         {
             MissionName.GetComponent<Animator>().Play("Panel In");
 
-            for (int i = 0; i < ToolBox.GetInstance().GetManager<GameManager>().listMission.count; i++)
+            for (int i = 0; i < gameManager.listMission.count; i++)
             {
-                if (ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[i].Level == ToolBox.GetInstance().GetManager<GameManager>().numLevel)
+                if (gameManager.listMission.missions[i].Level == gameManager.numLevel)
                 {
                     currentMission = i + numberOfMissions - 1;
-                    MissionName.GetComponentInChildren<Text>().text = ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[currentMission].Name;
+                    MissionName.GetComponentInChildren<Text>().text = gameManager.listMission.missions[currentMission].Name;
                     CheckParameterOnOff(currentMission);
                     break;
                 }
@@ -66,7 +70,7 @@ public class GameMode : MonoBehaviour
             field.image.color = Color.blue;
         }
 
-        Buttons btn = ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[_n].disableButton;
+        Buttons btn = gameManager.listMission.missions[_n].disableButton;
 
         ManageInputField(btn.Salto, PanelSomersaultPosition.GetComponent<InputField>());
         ManageInputField(btn.SaltoVelocity, PanelSomersaultSpeed.GetComponent<InputField>());
@@ -96,7 +100,7 @@ public class GameMode : MonoBehaviour
 
     void CheckGameResult()
     {
-        MissionInfo mission = ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[currentMission];
+        MissionInfo mission = gameManager.listMission.missions[currentMission];
 
         if(HorizontalSpeed != 0)
         {
@@ -143,19 +147,19 @@ public class GameMode : MonoBehaviour
         return (input >= min && input <= max);
     }
 
-    IEnumerator WaitThenNextLevel()
+    IEnumerator WaitThenShowCurrentMission(int time)
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(time);
         ShowCurrentMission();
     }
 
     void Update()
     {
-        if (ToolBox.GetInstance().GetManager<GameManager>().numMission > 0)
+        if (gameManager.numMission > 0)
         {
             if (Input.anyKeyDown)
             {
-                ToolBox.GetInstance().GetManager<GameManager>().numMission = 0;
+                gameManager.numMission = 0;
                 MissionName.GetComponent<Animator>().Play("Panel Out");
             }
         }
@@ -169,17 +173,17 @@ public class GameMode : MonoBehaviour
                 if (resultValue == 1)
                 {
                     MissionName.GetComponentInChildren<Text>().text = "Succès";
-                    StartCoroutine(WaitThenNextLevel());
                     resultValue = 0;
-                    ToolBox.GetInstance().GetManager<GameManager>().numMission = numberOfMissions + 1;
+                    gameManager.numMission = numberOfMissions + 1;
+                    StartCoroutine(WaitThenShowCurrentMission(3));
                 }
                 else
                 {
                     string txt = "Désolé, vous n’avez pas atteint l’objectif avec une précision suffisante.\n";
                     string hints = null;
 
-                    if (ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[currentMission].Hint != null)
-                        hints = ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[currentMission].Hint;
+                    if (gameManager.listMission.missions[currentMission].Hint != null)
+                        hints = gameManager.listMission.missions[currentMission].Hint;
 
                     MissionName.GetComponentInChildren<Text>().text = txt + hints;
                 }
