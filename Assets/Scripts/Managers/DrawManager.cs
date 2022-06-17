@@ -35,8 +35,8 @@ public class DrawManager : MonoBehaviour
     ////////////////
     /// <summary>
     /// Hip
-    private GameObject girl1LeftUp;
-    private GameObject girl1RightUp;
+    private GameObject girl1LeftThighUp;
+    private GameObject girl1RightThighUp;
     // Knee
     private GameObject girl1LeftLeg;
     private GameObject girl1RightLeg;
@@ -145,8 +145,8 @@ public class DrawManager : MonoBehaviour
 
         ///////////////////////////
         // Hip
-        /*        girl1LeftUp = girl1.transform.Find("Petra.002/hips/thigh.L").gameObject;
-                girl1RightUp = girl1.transform.Find("Petra.002/hips/thigh.R").gameObject;
+        /*        girl1LeftThighUp = girl1.transform.Find("Petra.002/hips/thigh.L").gameObject;
+                girl1RightThighUp = girl1.transform.Find("Petra.002/hips/thigh.R").gameObject;
                 // Knee
                 girl1LeftLeg = girl1.transform.Find("Petra.002/hips/thigh.L/shin.L").gameObject;
                 girl1RightLeg = girl1.transform.Find("Petra.002/hips/thigh.R/shin.R").gameObject;
@@ -268,8 +268,8 @@ public class DrawManager : MonoBehaviour
             girl1Prefab = (GameObject)Resources.Load(namePrefab1, typeof(GameObject));
             girl1 = Instantiate(girl1Prefab);
 
-            girl1LeftUp = girl1.transform.Find("Petra.002/hips/thigh.L").gameObject;
-            girl1RightUp = girl1.transform.Find("Petra.002/hips/thigh.R").gameObject;
+            girl1LeftThighUp = girl1.transform.Find("Petra.002/hips/thigh.L").gameObject;
+            girl1RightThighUp = girl1.transform.Find("Petra.002/hips/thigh.R").gameObject;
             // Knee
             girl1LeftLeg = girl1.transform.Find("Petra.002/hips/thigh.L/shin.L").gameObject;
             girl1RightLeg = girl1.transform.Find("Petra.002/hips/thigh.R/shin.R").gameObject;
@@ -328,8 +328,8 @@ public class DrawManager : MonoBehaviour
             girl1Prefab = (GameObject)Resources.Load(namePrefab1, typeof(GameObject));
             girl1 = Instantiate(girl1Prefab);
 
-            girl1LeftUp = girl1.transform.Find("Petra.002/hips/thigh.L").gameObject;
-            girl1RightUp = girl1.transform.Find("Petra.002/hips/thigh.R").gameObject;
+            girl1LeftThighUp = girl1.transform.Find("Petra.002/hips/thigh.L").gameObject;
+            girl1RightThighUp = girl1.transform.Find("Petra.002/hips/thigh.R").gameObject;
             // Knee
             girl1LeftLeg = girl1.transform.Find("Petra.002/hips/thigh.L/shin.L").gameObject;
             girl1RightLeg = girl1.transform.Find("Petra.002/hips/thigh.R/shin.R").gameObject;
@@ -1370,8 +1370,8 @@ public class DrawManager : MonoBehaviour
 
             /////////////
             ////// Hip
-            girl1LeftUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg + 180, 0f, 0f);
-            girl1RightUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg - 180, 0f, 0f);
+            girl1LeftThighUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg + 180, 0f, 0f);
+            girl1RightThighUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg - 180, 0f, 0f);
             // Knee
             girl1LeftLeg.transform.localEulerAngles = new Vector3((float)qf[1] * Mathf.Rad2Deg, 0f, 0f);
             girl1RightLeg.transform.localEulerAngles = new Vector3((float)qf[1] * Mathf.Rad2Deg, 0f, 0f);
@@ -1410,8 +1410,8 @@ public class DrawManager : MonoBehaviour
 //        if (q.GetUpperBound(1) == 0) return;
 
         qf = MathFunc.MatrixGetColumnD(q, 1);
-        girl1LeftUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg + 180, 0f, 0f);
-        girl1RightUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg - 180, 0f, 0f);
+        girl1LeftThighUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg + 180, 0f, 0f);
+        girl1RightThighUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg - 180, 0f, 0f);
 
         girl1LeftLeg.transform.localEulerAngles = new Vector3((float)qf[1] * Mathf.Rad2Deg, 0f, 0f);
         girl1RightLeg.transform.localEulerAngles = new Vector3((float)qf[1] * Mathf.Rad2Deg, 0f, 0f);
@@ -1447,14 +1447,8 @@ public class DrawManager : MonoBehaviour
 
     public void ControlThigh(float _qf)
     {
-        q1 = MakeSimulation();
-        qf = MathFunc.MatrixGetColumnD(q1, frameN);
-
-        girl1LeftUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg + 180, 0f, 0f);
-        girl1RightUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg - 180, 0f, 0f);
-
-//        girl1LeftUp.transform.localEulerAngles = new Vector3(-_qf * Mathf.Rad2Deg + 180, 0f, 0f);
-//        girl1RightUp.transform.localEulerAngles = new Vector3(-_qf * Mathf.Rad2Deg - 180, 0f, 0f);
+        girl1LeftThighUp.transform.localEulerAngles = new Vector3(-_qf * Mathf.Rad2Deg + 180f, 0f, 0f);
+        girl1RightThighUp.transform.localEulerAngles = new Vector3(-_qf * Mathf.Rad2Deg - 180f, 0f, 0f);
     }
 
     public void ControlOneFrame()
@@ -1464,8 +1458,8 @@ public class DrawManager : MonoBehaviour
         q1 = MakeSimulation();
         qf = MathFunc.MatrixGetColumnD(q1, frameN);
 
-        girl1LeftUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg + 180, 0f, 0f);
-        girl1RightUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg - 180, 0f, 0f);
+        girl1LeftThighUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg + 180, 0f, 0f);
+        girl1RightThighUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg - 180, 0f, 0f);
         girl1LeftLeg.transform.localEulerAngles = new Vector3((float)qf[1] * Mathf.Rad2Deg, 0f, 0f);
         girl1RightLeg.transform.localEulerAngles = new Vector3((float)qf[1] * Mathf.Rad2Deg, 0f, 0f);
         girl1RightArm.transform.localRotation = Quaternion.AngleAxis(-(float)qf[2] * Mathf.Rad2Deg, Vector3.up) *

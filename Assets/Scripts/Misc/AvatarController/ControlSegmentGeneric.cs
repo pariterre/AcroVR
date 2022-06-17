@@ -4,12 +4,12 @@ using UnityEngine;
 
 public abstract class ControlSegmentGeneric : MonoBehaviour
 {
-    [HideInInspector] public double dof;
+    public float angle { get; protected set;}
     [HideInInspector] public int node = 0;
 
     protected Vector3 mouseDistance;
     protected Vector3 lastPosition;
-    protected GameObject girl;
+    protected GameObject avatar;
 
     protected GameObject arrowPrefab;
     protected GameObject arrow;
@@ -18,12 +18,22 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
     protected GameObject circle;
 
     protected abstract string dofName { get; }
-    protected abstract int index { get; }
+    protected abstract int jointIndex { get; }
+    protected abstract DrawingCallback drawingCallback { get; }
 
-    public virtual void Init(GameObject _girl, double _dof)
+    // Cache variables
+    bool isInitialized = false;
+    protected GameManager gameManager;
+    protected DrawManager drawManager;
+    protected delegate void DrawingCallback(float value);
+
+    public virtual void Init(GameObject _avatar, float _angle)
     {
-        girl = _girl;
-        dof = _dof;
+        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+
+        avatar = _avatar;
+        angle = _angle;
 
         if (!arrow)
         {
@@ -41,37 +51,46 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
         }
         else
             circle.SetActive(true);
+
+        isInitialized = true;
     }
 
     public void DestroyCircle()
     {
+        if (!isInitialized) return;
+
         circle.SetActive(false);
         arrow.SetActive(false);
     }
 
-    private void Update()
+    void Update()
     {
+        if (!isInitialized) return;
+
         if (arrow)
             arrow.transform.position = gameObject.transform.position + new Vector3(0, 0, 0.1f);
 
         if (circle)
             circle.transform.position = gameObject.transform.position;
-
     }
 
     void OnMouseDown()
     {
-        if(ToolBox.GetInstance().GetManager<DrawManager>().isEditing)
+        if (!isInitialized) return;
+
+        if(drawManager.isEditing)
         {
             lastPosition = Input.mousePosition;
-            mouseDistance.x = (float)dof * 30f;
+            mouseDistance.x = angle * 30f;
             ToolBox.GetInstance().GetManager<StatManager>().dofName = dofName;
         }
     }
 
     void OnMouseDrag()
     {
-        if (ToolBox.GetInstance().GetManager<DrawManager>().isEditing)
+        if (!isInitialized) return;
+
+        if (drawManager.isEditing)
         {
             Vector3 newPosition = Input.mousePosition;
             mouseDistance += newPosition - lastPosition;
@@ -83,7 +102,9 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
 
     void OnMouseUp()
     {
-        if (ToolBox.GetInstance().GetManager<DrawManager>().isEditing)
+        if (!isInitialized) return;
+
+        if (drawManager.isEditing)
         {
             mouseDistance = Vector3.zero;
             lastPosition = Vector3.zero;
@@ -92,13 +113,16 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
 
     protected virtual void HandleDof(float _value)
     {
+        if (!isInitialized) return;
+
+        Debug.LogWarning(_value);
         transform.rotation = Quaternion.Euler(0, -_value, 0);
-        dof = -_value / 30;
+        angle = -_value / 30; // Don't know what this 30 is for
 
-        MainParameters.Instance.joints.nodes[1].Q[node] = (float)dof;
-        ToolBox.GetInstance().GetManager<GameManager>().InterpolationDDL();
-        ToolBox.GetInstance().GetManager<GameManager>().DisplayDDL(1, true);
+        MainParameters.Instance.joints.nodes[jointIndex].Q[node] = angle;
+        gameManager.InterpolationDDL();
+        gameManager.DisplayDDL(jointIndex, true);
 
-        ToolBox.GetInstance().GetManager<DrawManager>().ControlShin((float)dof);
+        drawingCallback(angle);
     }
 }

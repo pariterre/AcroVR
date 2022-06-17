@@ -232,13 +232,13 @@ public class StatManager : MonoBehaviour
                     switch (circle.name)
                     {
                         case "ControlShin":
-                            circle.GetComponent<ControlShin>().Init(transform.parent.GetComponentInChildren<DrawManager>().girl1, transform.parent.GetComponentInChildren<DrawManager>().qf[1]);
+                            circle.GetComponent<ControlShin>().Init(transform.parent.GetComponentInChildren<DrawManager>().girl1, (float)transform.parent.GetComponentInChildren<DrawManager>().qf[1]);
                             circle.GetComponent<ControlShin>().node = AddNode(1);
                             error.GetComponent<BaseProfile>().InitDropdownDDLNames(1);
                             error.GetComponent<BaseProfile>().NodeName("KneeFlexion");
                             break;
                         case "ControlThigh":
-                            circle.GetComponent<ControlThigh>().Init(transform.parent.GetComponentInChildren<DrawManager>().girl1, transform.parent.GetComponentInChildren<DrawManager>().qf[0]);
+                            circle.GetComponent<ControlThigh>().Init(transform.parent.GetComponentInChildren<DrawManager>().girl1, (float)transform.parent.GetComponentInChildren<DrawManager>().qf[0]);
                             circle.GetComponent<ControlThigh>().node = AddNode(0);
                             error.GetComponent<BaseProfile>().InitDropdownDDLNames(0);
                             error.GetComponent<BaseProfile>().NodeName("HipFlexion");
@@ -603,13 +603,13 @@ public class StatManager : MonoBehaviour
         switch(_dof)
         {
             case 0:
-                Q[node + 1] = (float)circle.GetComponent<ControlThigh>().dof;
+                Q[node + 1] = (float)circle.GetComponent<ControlThigh>().angle;
                 break;
             case 1:
-                Q[node + 1] = (float)circle.GetComponent<ControlShin>().dof;
+                Q[node + 1] = (float)circle.GetComponent<ControlShin>().angle;
                 break;
             case 2:
-                //                Q[node + 1] = (float)circle.GetComponent<ControlLeftArmFlexion>().dof;
+                //                Q[node + 1] = (float)circle.GetComponent<ControlLeftArmFlexion>().angle;
                 Q[node + 1] = (float)circle.GetComponent<ControlRightArmFlexion>().dof;
                 break;
             case 3:
