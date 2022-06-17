@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class ControlThigh : ControlSegmentGeneric
 {
-    protected override string dofName { get { return "HipFlexion"; } }
-    protected override int jointIndex { get { return 0; } }
+    public override string dofName { get { return "HipFlexion"; } }
+    public override int avatarIndex { get { return 0; } }
+    public override int qIndex { get { return 1; } }
     protected override DrawingCallback drawingCallback { get {return drawManager.ControlThigh;} }
+    protected override Vector3 arrowOrientation { get {return new Vector3();} }
+    public override int direction { get { return 1; } }
 }

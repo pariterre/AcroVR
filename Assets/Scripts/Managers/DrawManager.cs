@@ -103,7 +103,7 @@ public class DrawManager : MonoBehaviour
     float[,] q1;
     float[,] q1_girl2;
 
-    public bool isPaused = false;
+    public bool isPaused = true;
     public bool isEditing = false;
 
     float pauseStart = 0;
@@ -227,8 +227,6 @@ public class DrawManager : MonoBehaviour
     {
         if (MainParameters.Instance.joints.nodes == null) return;
 
-        transform.parent.GetComponentInChildren<StatManager>().SetAvatarCamera();
-
         isPaused = false;
 
         //        if(cntAvatar == 1)
@@ -286,8 +284,6 @@ public class DrawManager : MonoBehaviour
 
     public bool LoadAvatar(AvatarMode mode)
     {
-        transform.parent.GetComponentInChildren<StatManager>().SetAvatarCamera();
-
         isPaused = false;
         secondPaused = false;
 
@@ -402,7 +398,7 @@ public class DrawManager : MonoBehaviour
         girl1.transform.rotation = Quaternion.identity;
         girl1.transform.position = Vector3.zero;
         ResetAvatar();
-        transform.parent.GetComponentInChildren<StatManager>().DestroyHandleCircle();
+        // transform.parent.GetComponentInChildren<StatManager>().DestroyHandleCircle();
 
         // test0 = q1[12,51]
         // test1 = q1[12,54]
@@ -1410,17 +1406,13 @@ public class DrawManager : MonoBehaviour
 //        if (q.GetUpperBound(1) == 0) return;
 
         qf = MathFunc.MatrixGetColumnD(q, 1);
-        girl1LeftThighUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg + 180, 0f, 0f);
-        girl1RightThighUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg - 180, 0f, 0f);
+        ControlThigh((float)qf[0]);
+        ControlShin((float)qf[1]);
+        ControlLeftArmAbduction((float)qf[5]);
 
-        girl1LeftLeg.transform.localEulerAngles = new Vector3((float)qf[1] * Mathf.Rad2Deg, 0f, 0f);
-        girl1RightLeg.transform.localEulerAngles = new Vector3((float)qf[1] * Mathf.Rad2Deg, 0f, 0f);
 
 //        girl1LeftArm.transform.localRotation = Quaternion.AngleAxis((float)qf[2] * Mathf.Rad2Deg, Vector3.up) *
 //                                            Quaternion.AngleAxis(-(float)qf[3] * Mathf.Rad2Deg + 90f, Vector3.forward);
-
-//        girl1RightArm.transform.localRotation = Quaternion.AngleAxis(-(float)qf[4] * Mathf.Rad2Deg, Vector3.up) *
-//                                            Quaternion.AngleAxis((float)qf[5] * Mathf.Rad2Deg - 90f, Vector3.forward);
 
 
         girl1RightArm.transform.localRotation = Quaternion.AngleAxis(-(float)qf[2] * Mathf.Rad2Deg, Vector3.up) *
@@ -1449,6 +1441,24 @@ public class DrawManager : MonoBehaviour
     {
         girl1LeftThighUp.transform.localEulerAngles = new Vector3(-_qf * Mathf.Rad2Deg + 180f, 0f, 0f);
         girl1RightThighUp.transform.localEulerAngles = new Vector3(-_qf * Mathf.Rad2Deg - 180f, 0f, 0f);
+    }
+
+    public void ControlRightArmAbduction(float _qf)
+    {
+        // TODO Check flexion axis
+        float flexion = girl1LeftArm.transform.localRotation.x;
+        Debug.LogWarning(flexion);
+        girl1RightArm.transform.localRotation = Quaternion.AngleAxis(flexion * Mathf.Rad2Deg, Vector3.up) * 
+                                                Quaternion.AngleAxis(-_qf * Mathf.Rad2Deg - 90f, Vector3.forward);
+    }
+
+    public void ControlLeftArmAbduction(float _qf)
+    {
+        // TODO Check flexion axis
+        float flexion = girl1LeftArm.transform.localRotation.x;
+        Debug.LogWarning(flexion);
+        girl1LeftArm.transform.localRotation = Quaternion.AngleAxis(flexion * Mathf.Rad2Deg, Vector3.right) * 
+                                                Quaternion.AngleAxis(-_qf * Mathf.Rad2Deg + 90f, Vector3.forward);
     }
 
     public void ControlOneFrame()
@@ -1482,13 +1492,7 @@ public class DrawManager : MonoBehaviour
         lHoldFlexion = _qf;
     }
 
-    public void ControlLeftArmAbduction(float _qf)
-    {
-        girl1LeftArm.transform.localRotation = Quaternion.AngleAxis(lHoldFlexion * Mathf.Rad2Deg, Vector3.up) * 
-                                                Quaternion.AngleAxis(-_qf * Mathf.Rad2Deg + 90f, Vector3.forward);
 
-        lHoldAbduction = -_qf;
-    }
 
     public void ControlRightArmFlexion(float _qf)
     {
@@ -1498,13 +1502,7 @@ public class DrawManager : MonoBehaviour
         rHoldFlexion = -_qf;
     }
 
-    public void ControlRightArmAbduction(float _qf)
-    {
-        girl1RightArm.transform.localRotation = Quaternion.AngleAxis(rHoldFlexion * Mathf.Rad2Deg, Vector3.up) * 
-                                                Quaternion.AngleAxis(-_qf * Mathf.Rad2Deg - 90f, Vector3.forward);
-
-        rHoldAbduction = -_qf;
-    }*/
+*/
 
     public void PauseAvatar()
     {

@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class ControlShin : ControlSegmentGeneric
 {
-    protected override string dofName { get { return "KneeFlexion"; } }
-    protected override int jointIndex { get { return 1; } }
+    public override string dofName { get { return "KneeFlexion"; } }
+    public override int avatarIndex { get { return 1; } }
+    public override int qIndex { get { return 1; } }
     protected override DrawingCallback drawingCallback { get {return drawManager.ControlShin;} }
-
+    protected override Vector3 arrowOrientation { get {return new Vector3();} }
+    public override int direction { get { return -1; } }
 }

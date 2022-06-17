@@ -33,7 +33,8 @@ public class StatManager : MonoBehaviour
     public PlayerInfo info;
 //    private GameObject circlePrefab;
 //    private GameObject circlePrefab_shoulder;
-    private GameObject circle;
+    GameObject selectedJoint;
+    string previousSelectedJointName;
     RaycastHit hit;
 
 //    private List<GameObject> circles = new List<GameObject>();
@@ -43,18 +44,40 @@ public class StatManager : MonoBehaviour
 
     public string dofName;
 
-    Camera avatarCamera;
+    Camera _avatarCameraInternal;
+    Ray mouseRay { get {
+        if(_avatarCameraInternal == null)
+            _avatarCameraInternal = GameObject.Find("AvatarCamera").GetComponent<Camera>();
+        return _avatarCameraInternal.ScreenPointToRay(Input.mousePosition);
+    }}
     Color colorBlue;
     Color colorWhite;
 
-    GameObject error;
     GameObject arrow;
 
     //    GameObject errorPrefab;
     //    Text errorMessage;
 
+    // Caching
+    GameManager gameManager;
+    DrawManager drawManager;
+    LevelManager levelManager;
+    GameObject error;
+    BaseProfile _baseProfileInternal;
+    BaseProfile baseProfile { get {
+        if (error == null) error = GameObject.Find("Training");
+        if (_baseProfileInternal == null) _baseProfileInternal = error.GetComponent<BaseProfile>();
+        return _baseProfileInternal;}
+    }
+
+
     void Start()
     {
+        gameManager = transform.parent.GetComponentInChildren<GameManager>();
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        levelManager = transform.parent.GetComponentInChildren<LevelManager>();
+        error = GameObject.Find("Training");
+
         //        circlePrefab = (GameObject)Resources.Load("HandleCircle", typeof(GameObject));
 //        circlePrefab_shoulder = (GameObject)Resources.Load("HandleCircle_shoulder", typeof(GameObject));
 
@@ -77,12 +100,6 @@ public class StatManager : MonoBehaviour
         errorMessage.text = _msg;
         Invoke("ResetError", 0.5f);
     }*/
-
-    public void SetAvatarCamera()
-    {
-        if(avatarCamera == null)
-            avatarCamera = GameObject.Find("AvatarCamera").GetComponent<Camera>();
-    }
 
     public void ProfileLoad(string fileName)
     {
@@ -176,231 +193,66 @@ public class StatManager : MonoBehaviour
         info = JsonUtility.FromJson<PlayerInfo>(dataAsJson);
     }
 
-    /*    private void ResetError()
-        {
-            errorPrefab.SetActive(false);
-            errorMessage.text = "";
-        }*/
-
     void Update()
     {
-        if (transform.parent.GetComponentInChildren<LevelManager>().currentState != SceneState.Training) return;
+        if (levelManager.currentState != SceneState.Training) return;
 
-        if (Input.GetMouseButtonDown(1) && ToolBox.GetInstance().GetManager<DrawManager>().frameN == 0)
+        if (Input.GetMouseButtonDown(1) && Physics.Raycast(mouseRay, out hit))
         {
-            SetAvatarCamera();
-            Ray ray = avatarCamera.ScreenPointToRay(Input.mousePosition);
-
-            if (Physics.Raycast(ray, out hit))
-            {
-                if (error == null) error = GameObject.Find("Training");
-
-                if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
-                {
-                    error.GetComponent<BaseProfile>().ErrorMessage("Please pause first while animating 3D avatar");
-                }
-                else
-                {
-                    error.GetComponent<BaseProfile>().ErrorMessage("Veuillez d'abord faire une pause pendant l'animation de l'avatar 3D");
-                }
-            }
-            return;
+            HandleJointClick();
         }
 
-        if (Input.GetMouseButtonDown(1) && ToolBox.GetInstance().GetManager<DrawManager>().frameN != 0
-            && ToolBox.GetInstance().GetManager<DrawManager>().frameN < ToolBox.GetInstance().GetManager<DrawManager>().numberFrames
-            )
+        if (Input.GetMouseButton(0) && !drawManager.isEditing)
         {
-            //            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            Ray ray = avatarCamera.ScreenPointToRay(Input.mousePosition);
-
-            if (Physics.Raycast(ray, out hit))
+            if (drawManager.girl1 != null)
             {
-                if (error == null) error = GameObject.Find("Training");
-//                if (arrow == null) arrow = GameObject.Find("Arrow");
-
-                if (!circle)
-                {
-                    transform.parent.GetComponentInChildren<DrawManager>().isEditing = true;
-                    circle = hit.collider.gameObject;
-                    //                    circle.GetComponent<MeshRenderer>().enabled = true;
-                    //                    circle.GetComponent<MeshRenderer>().material.SetColor("_Color", colorWhite);
-
-                    //                    arrow.SetActive(true);
-                    //                    arrow.transform.position = circle.transform.position;
-
-                    switch (circle.name)
-                    {
-                        case "ControlShin":
-                            circle.GetComponent<ControlShin>().Init(transform.parent.GetComponentInChildren<DrawManager>().girl1, (float)transform.parent.GetComponentInChildren<DrawManager>().qf[1]);
-                            circle.GetComponent<ControlShin>().node = AddNode(1);
-                            error.GetComponent<BaseProfile>().InitDropdownDDLNames(1);
-                            error.GetComponent<BaseProfile>().NodeName("KneeFlexion");
-                            break;
-                        case "ControlThigh":
-                            circle.GetComponent<ControlThigh>().Init(transform.parent.GetComponentInChildren<DrawManager>().girl1, (float)transform.parent.GetComponentInChildren<DrawManager>().qf[0]);
-                            circle.GetComponent<ControlThigh>().node = AddNode(0);
-                            error.GetComponent<BaseProfile>().InitDropdownDDLNames(0);
-                            error.GetComponent<BaseProfile>().NodeName("HipFlexion");
-                            break;
-                        case "ControlLeftArm":
-                            circle.GetComponent<ControlLeftArmAbduction>().bActive = false;
-                            circle.GetComponent<ControlLeftArmFlexion>().bActive = true;
-                            circle.GetComponent<ControlLeftArmFlexion>().Init(transform.parent.GetComponentInChildren<DrawManager>().girl1, transform.parent.GetComponentInChildren<DrawManager>().qf[2]);
-                            circle.GetComponent<ControlLeftArmFlexion>().node = AddNode(4);
-                            error.GetComponent<BaseProfile>().InitDropdownDDLNames(4);
-                            error.GetComponent<BaseProfile>().NodeName("LeftArmFlexion");
-                            break;
-                        case "ControlRightArm":
-                            circle.GetComponent<ControlRightArmAbduction>().bActive = false;
-                            circle.GetComponent<ControlRightArmFlexion>().bActive = true;
-                            circle.GetComponent<ControlRightArmFlexion>().Init(transform.parent.GetComponentInChildren<DrawManager>().girl1, transform.parent.GetComponentInChildren<DrawManager>().qf[4]);
-                            circle.GetComponent<ControlRightArmFlexion>().node = AddNode(2);
-                            error.GetComponent<BaseProfile>().InitDropdownDDLNames(2);
-                            error.GetComponent<BaseProfile>().NodeName("RightArmFlexion");
-                            break;
-                    }
-
-                    //                    circle = Instantiate(circlePrefab, hit.collider.transform.position, Quaternion.identity);
-                    //                    circle.GetComponent<HandleCircle>().Init(transform.parent.GetComponentInChildren<DrawManager>().girl1, hit.collider.gameObject, transform.parent.GetComponentInChildren<DrawManager>().qf);
-//                    CameraRotate(hit.collider.gameObject.name);
-                    //                    AddNodeInDof();
-                    ToolBox.GetInstance().GetManager<DrawManager>().isEditing = true;
-                }
-                else
-                {
-                    if (circle.name == "ControlLeftArm")
-                    {
-                        if (!circle.GetComponent<ControlLeftArmAbduction>().bActive)
-                        {
-                            circle.GetComponent<ControlLeftArmFlexion>().DestroyCircle();
-
-                            previousFrameN = 0;
-//                            circle.GetComponent<MeshRenderer>().material.SetColor("_Color", colorBlue);
-                            circle.GetComponent<ControlLeftArmFlexion>().bActive = false;
-                            circle.GetComponent<ControlLeftArmAbduction>().bActive = true;
-                            circle.GetComponent<ControlLeftArmAbduction>().Init(transform.parent.GetComponentInChildren<DrawManager>().girl1, transform.parent.GetComponentInChildren<DrawManager>().qf[3]);
-                            circle.GetComponent<ControlLeftArmAbduction>().node = AddNode(5);
-                            error.GetComponent<BaseProfile>().InitDropdownDDLNames(5);
-                            error.GetComponent<BaseProfile>().NodeName("LeftArmAbduction");
-                        }
-                        else
-                        {
-                            circle.GetComponent<ControlLeftArmAbduction>().DestroyCircle();
-
-                            circle.GetComponent<ControlLeftArmFlexion>().bActive = false;
-                            circle.GetComponent<ControlLeftArmAbduction>().bActive = false;
-//                            circle.GetComponent<MeshRenderer>().enabled = false;
-                            ToolBox.GetInstance().GetManager<DrawManager>().isEditing = false;
-                            circle = null;
-                            // ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
-                        }
-                    }
-                    else if (circle.name == "ControlRightArm")
-                    {
-                        if (!circle.GetComponent<ControlRightArmAbduction>().bActive)
-                        {
-                            circle.GetComponent<ControlRightArmFlexion>().DestroyCircle();
-
-                            previousFrameN = 0;
-//                            circle.GetComponent<MeshRenderer>().material.SetColor("_Color", colorBlue);
-                            circle.GetComponent<ControlRightArmFlexion>().bActive = false;
-                            circle.GetComponent<ControlRightArmAbduction>().bActive = true;
-                            circle.GetComponent<ControlRightArmAbduction>().Init(transform.parent.GetComponentInChildren<DrawManager>().girl1, transform.parent.GetComponentInChildren<DrawManager>().qf[5]);
-                            circle.GetComponent<ControlRightArmAbduction>().node = AddNode(3);
-                            error.GetComponent<BaseProfile>().InitDropdownDDLNames(3);
-                            error.GetComponent<BaseProfile>().NodeName("RightArmAbduction");
-                        }
-                        else
-                        {
-                            circle.GetComponent<ControlRightArmAbduction>().DestroyCircle();
-
-                            circle.GetComponent<ControlRightArmFlexion>().bActive = false;
-                            circle.GetComponent<ControlRightArmAbduction>().bActive = false;
-//                            circle.GetComponent<MeshRenderer>().enabled = false;
-                            ToolBox.GetInstance().GetManager<DrawManager>().isEditing = false;
-                            circle = null;
-                            //ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
-                        }
-                    }
-                    else
-                    {
-                        if(circle.name == "ControlThigh") circle.GetComponent<ControlThigh>().DestroyCircle();
-                        else if (circle.name == "ControlShin") circle.GetComponent<ControlShin>().DestroyCircle();
-
-//                        circle.GetComponent<MeshRenderer>().enabled = false;
-                        ToolBox.GetInstance().GetManager<DrawManager>().isEditing = false;
-                        circle = null;
-                        //ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
-                        //                        ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
-                    }
-                    /*                    if (circle.transform.position == hit.collider.transform.position)
-                                        {
-                                            if (circle.GetComponent<HandleCircle>().target.name == "upper_arm.L")
-                                            {
-                                                if (transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation.eulerAngles.y != 90)
-                                                {
-                                                    transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Euler(Vector3.up * 90);
-                                                    circle.transform.position = transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.L/upper_arm.L").gameObject.transform.position;
-                    //                                circle.GetComponent<HandleCircle>().rotateTarget = true;
-                                                }
-                                                else
-                                                {
-                                                    DestroyHandleCircle();
-                                                    transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.identity;
-                                                }
-                                            }
-                                            else if (circle.GetComponent<HandleCircle>().target.name == "upper_arm.R")
-                                            {
-                                                if (transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation.eulerAngles.y != 270)
-                                                {
-                                                    transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Euler(Vector3.up * -90);
-                                                    circle.transform.position = transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.R/upper_arm.R").gameObject.transform.position;
-                    //                                circle.GetComponent<HandleCircle>().rotateTarget = true;
-                                                }
-                                                else
-                                                {
-                                                    DestroyHandleCircle();
-                                                    transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.identity;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                DestroyHandleCircle();
-                                                transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.identity;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            DestroyHandleCircle();
-                                            transform.parent.GetComponentInChildren<DrawManager>().isEditing = true;
-
-                                            circle = Instantiate(circlePrefab, hit.collider.transform.position, Quaternion.identity);
-                                            circle.GetComponent<HandleCircle>().Init(transform.parent.GetComponentInChildren<DrawManager>().girl1, hit.collider.gameObject, transform.parent.GetComponentInChildren<DrawManager>().qf);
-                                            AddNodeInDof();
-                                        }*/
-                }
-            }
-        }
-
-        if (Input.GetKey(KeyCode.LeftShift) && Input.GetMouseButton(0))
-        {
-            if (transform.parent.GetComponentInChildren<DrawManager>().girl1 != null)
-            {
-                transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.Rotate(Vector3.up * 100f * Time.deltaTime);
-                if (circle)
-                    circle.transform.position = hit.collider.gameObject.transform.position;
+                drawManager.girl1.transform.Rotate(Vector3.up * 100f * Time.deltaTime);
+                if (selectedJoint)
+                    selectedJoint.transform.position = hit.collider.gameObject.transform.position;
             }
         }
     }
 
-    private IEnumerator RotateLerp(float _goal, float _speed)
+    void ResetTemporaries(){
+        if (!drawManager.isEditing) return;
+
+        drawManager.isEditing = false;
+
+        selectedJoint.GetComponent<ControlSegmentGeneric>().DestroyCircle();
+        selectedJoint = null;
+        previousSelectedJointName = null;
+
+        previousFrameN = 0;
+    }
+
+    void HandleJointClick() {
+        // For some reason it is impossible to modify the first node
+        // TODO: Fix that
+        if (drawManager.frameN == 0) return;
+
+        var previousNameTp = previousSelectedJointName;
+        ResetTemporaries();
+
+        selectedJoint = hit.collider.gameObject;
+        if (selectedJoint.name == previousNameTp) return;
+        
+        drawManager.isEditing = true;
+
+        previousSelectedJointName = selectedJoint.name;
+        ControlSegmentGeneric controlSegment = selectedJoint.GetComponent<ControlSegmentGeneric>();
+        controlSegment.Init(AddNode);
+
+        baseProfile.InitDropdownDDLNames(controlSegment.avatarIndex);
+        baseProfile.NodeName(controlSegment.dofName);
+    }
+
+    IEnumerator RotateLerp(float _goal, float _speed)
     {
         float curr = 0;
         while (_goal > curr)
         {
-            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Lerp(Quaternion.identity, Quaternion.Euler(Vector3.up * _goal), _speed * Time.time);
-            curr = transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation.eulerAngles.y;
+            drawManager.girl1.transform.rotation = Quaternion.Lerp(Quaternion.identity, Quaternion.Euler(Vector3.up * _goal), _speed * Time.time);
+            curr = drawManager.girl1.transform.rotation.eulerAngles.y;
             yield return new WaitForEndOfFrame();
         }
     }
@@ -410,29 +262,29 @@ public class StatManager : MonoBehaviour
         if (_n == "shin.L" || _n == "thigh.L")
         {
  //            StartCoroutine(RotateLerp(90, 0.2f));
-            //            circle.transform.position = transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.Find("Petra.002/hips/thigh.L/shin.L").gameObject.transform.position;
-            //            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Lerp(Quaternion.identity, Quaternion.Euler(Vector3.up * 90), 0.2f * Time.time);                                                                                                                                                                                                              //            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Euler(Vector3.up * 90);
-//            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Euler(Vector3.up * 90);
-//            circle.transform.position = transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.Find("Petra.002/hips/thigh.L/shin.L").gameObject.transform.position;
+            //            selectedJoint.transform.position = drawManager.girl1.transform.Find("Petra.002/hips/thigh.L/shin.L").gameObject.transform.position;
+            //            drawManager.girl1.transform.rotation = Quaternion.Lerp(Quaternion.identity, Quaternion.Euler(Vector3.up * 90), 0.2f * Time.time);                                                                                                                                                                                                              //            drawManager.girl1.transform.rotation = Quaternion.Euler(Vector3.up * 90);
+//            drawManager.girl1.transform.rotation = Quaternion.Euler(Vector3.up * 90);
+//            selectedJoint.transform.position = drawManager.girl1.transform.Find("Petra.002/hips/thigh.L/shin.L").gameObject.transform.position;
 /*            for (int i = 0; i < 16; i++)
             {
                 float angle = i * Mathf.PI * 2f / 16;
                 Vector3 newPos = new Vector3(Mathf.Cos(angle) * 0.2f, 0, Mathf.Sin(angle) * 0.2f);
                 GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = circle.transform;
+                go.transform.parent = selectedJoint.transform;
             }*/
         }
         else if (_n == "shin.R" || _n == "thigh.R")
         {
-            //            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Lerp(Quaternion.identity, Quaternion.Euler(Vector3.up * -90), 0.2f * Time.time);
-//            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Euler(Vector3.up * -90);
-//            circle.transform.position = transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.Find("Petra.002/hips/thigh.R/shin.R").gameObject.transform.position;
+            //            drawManager.girl1.transform.rotation = Quaternion.Lerp(Quaternion.identity, Quaternion.Euler(Vector3.up * -90), 0.2f * Time.time);
+//            drawManager.girl1.transform.rotation = Quaternion.Euler(Vector3.up * -90);
+//            selectedJoint.transform.position = drawManager.girl1.transform.Find("Petra.002/hips/thigh.R/shin.R").gameObject.transform.position;
 /*            for (int i = 0; i < 16; i++)
             {
                 float angle = i * Mathf.PI * 2f / 16;
                 Vector3 newPos = new Vector3(Mathf.Cos(angle) * 0.2f, 0, Mathf.Sin(angle) * 0.2f);
                 GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = circle.transform;
+                go.transform.parent = selectedJoint.transform;
             }*/
         }
         else if (_n == "upper_arm.L")
@@ -442,17 +294,17 @@ public class StatManager : MonoBehaviour
                 float angle = i * Mathf.PI * 2f / 16;
                 Vector3 newPos = new Vector3(Mathf.Cos(angle) * 0.2f, 0, Mathf.Sin(angle) * 0.2f);
                 GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = circle.transform;
+                go.transform.parent = selectedJoint.transform;
             }
             for (int i = 0; i < 16; i++)
             {
                 float angle = i * Mathf.PI * 2f / 16;
                 Vector3 newPos = new Vector3(0, Mathf.Cos(angle) * 0.2f, Mathf.Sin(angle) * 0.2f);
                 GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = circle.transform;
+                go.transform.parent = selectedJoint.transform;
             }*/
 
-            //            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Euler(Vector3.up * 90);
+            //            drawManager.girl1.transform.rotation = Quaternion.Euler(Vector3.up * 90);
         }
         else if (_n == "upper_arm.R")
         {
@@ -461,126 +313,46 @@ public class StatManager : MonoBehaviour
                 float angle = i * Mathf.PI * 2f / 16;
                 Vector3 newPos = new Vector3(Mathf.Cos(angle) * 0.2f, 0, Mathf.Sin(angle) * 0.2f);
                 GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = circle.transform;
+                go.transform.parent = selectedJoint.transform;
             }
             for (int i = 0; i < 16; i++)
             {
                 float angle = i * Mathf.PI * 2f / 16;
                 Vector3 newPos = new Vector3(0, Mathf.Cos(angle) * 0.2f, Mathf.Sin(angle) * 0.2f);
                 GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = circle.transform;
+                go.transform.parent = selectedJoint.transform;
             }*/
 
-            //            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Euler(Vector3.up * -90);
-        }
-    }
-
-    public void DestroyHandleCircle()
-    {
-        transform.parent.GetComponentInChildren<DrawManager>().isEditing = false;
-
-        if (circle != null)
-        {
-//            Destroy(circle.gameObject);
-
-            if (circle.name == "ControlThigh") circle.GetComponent<ControlThigh>().DestroyCircle();
-            else if (circle.name == "ControlShin") circle.GetComponent<ControlShin>().DestroyCircle();
-            else if (circle.name == "ControlLeftArm")
-            {
-                if (!circle.GetComponent<ControlLeftArmAbduction>().bActive)
-                    circle.GetComponent<ControlLeftArmFlexion>().DestroyCircle();
-                else
-                    circle.GetComponent<ControlLeftArmAbduction>().DestroyCircle();
-            }
-            else if (circle.name == "ControlRightArm")
-            {
-                if (!circle.GetComponent<ControlRightArmAbduction>().bActive)
-                    circle.GetComponent<ControlRightArmFlexion>().DestroyCircle();
-                else
-                    circle.GetComponent<ControlRightArmAbduction>().DestroyCircle();
-            }
-
-            circle = null;
+            //            drawManager.girl1.transform.rotation = Quaternion.Euler(Vector3.up * -90);
         }
     }
 
     public int FindPreviousNode(int _dof)
     {
         int i = 0;
-        while (i < MainParameters.Instance.joints.nodes[_dof].T.Length && transform.parent.GetComponentInChildren<DrawManager>().frameN*0.02 > MainParameters.Instance.joints.nodes[_dof].T[i])
+        while (
+                i < MainParameters.Instance.joints.nodes[_dof].T.Length
+                && drawManager.frameN * 0.02 > MainParameters.Instance.joints.nodes[_dof].T[i]
+            )
+        {
             i++;
+        }
         return i - 1;
-    }
-
-    private void ModifyNode(int _dof)
-    {
-        int node = FindPreviousNode(_dof);
-        MainParameters.Instance.joints.nodes[_dof].Q[node] = (float)circle.GetComponent<HandleCircle>().dof[_dof];
-
-        transform.parent.GetComponentInChildren<DrawManager>().isEditing = false;
-        transform.parent.GetComponentInChildren<DrawManager>().frameN = (int)(MainParameters.Instance.joints.nodes[_dof].T[node] / 0.02f);
-        transform.parent.GetComponentInChildren<DrawManager>().PlayOneFrame();
-
-        transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-        transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(_dof, true);
-        transform.parent.GetComponentInChildren<DrawManager>().isEditing = true;
-    }
-
-    private void AddNodeInDof()
-    {
-        if (circle.GetComponent<HandleCircle>().target.name == "shin.L" || circle.GetComponent<HandleCircle>().target.name == "shin.R")
-        {
-            int node = AddNode(1);
-            circle.GetComponent<HandleCircle>().node = node;
-//                           ModifyNode(1);
-            //                MainParameters.Instance.joints.nodes[1].Q[AddNode(1)] = (float)circle.GetComponent<HandleCircle>().dof[1];
-            //                print(MainParameters.Instance.joints.nodes[1].Q[AddNode(1)]);
-            //                print((-(float)circle.GetComponent<HandleCircle>().dof[1]* Mathf.Rad2Deg + 180)* Mathf.PI / 180);
-            //                transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-            //                transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(1, true);
-        }
-        else if (circle.GetComponent<HandleCircle>().target.name == "thigh.L" || circle.GetComponent<HandleCircle>().target.name == "thigh.R")
-        {
-            int node = AddNode(0);
-            circle.GetComponent<HandleCircle>().node = node;
-//            ModifyNode(0);
-            //                MainParameters.Instance.joints.nodes[0].Q[AddNode(0)] = (float)circle.GetComponent<HandleCircle>().dof[0];
-            //                transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-            //                transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(0, true);
-        }
-        else if (circle.GetComponent<HandleCircle>().target.name == "upper_arm.L")
-        {
-//            circle.GetComponent<HandleCircle>().node = AddNode(2);
-            //                mouseDistance.x = (float)dof[3] * 30f;
-            //                mouseDistance.y = (float)dof[2] * 30f;
-            //            transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-            //            transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(2, true);
-        }
-        else if (circle.GetComponent<HandleCircle>().target.name == "upper_arm.R")
-        {
-//            circle.GetComponent<HandleCircle>().node = AddNode(4);
-            //                mouseDistance.x = (float)dof[5] * 30f;
-            //                mouseDistance.y = (float)dof[4] * 30f;
-            //            transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-            //            transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(4, true);
-        }
     }
 
     public int AddNode(int _dof)
     {
-        transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-        transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(_dof, true);
+        gameManager.InterpolationDDL();
+        gameManager.DisplayDDL(_dof, true);
 
         int node = FindPreviousNode(_dof);
 
-        if (previousFrameN <= transform.parent.GetComponentInChildren<DrawManager>().frameN + 1 &&
-            previousFrameN >= transform.parent.GetComponentInChildren<DrawManager>().frameN - 1
-            )
+        if (previousFrameN >= drawManager.frameN - 1 && previousFrameN <= drawManager.frameN + 1)
         {
             return node;
         }
 
-        float marginT = transform.parent.GetComponentInChildren<DrawManager>().frameN * 0.02f;
+        float marginT = drawManager.frameN * 0.02f;
 
         float[] T = new float[MainParameters.Instance.joints.nodes[_dof].T.Length + 1];
         float[] Q = new float[MainParameters.Instance.joints.nodes[_dof].Q.Length + 1];
@@ -596,33 +368,33 @@ public class StatManager : MonoBehaviour
             return node;
         }
 
-        previousFrameN = transform.parent.GetComponentInChildren<DrawManager>().frameN;
+        previousFrameN = drawManager.frameN;
 
-        T[node + 1] = transform.parent.GetComponentInChildren<DrawManager>().frameN * 0.02f;
+        T[node + 1] = drawManager.frameN * 0.02f;
 
         switch(_dof)
         {
             case 0:
-                Q[node + 1] = (float)circle.GetComponent<ControlThigh>().angle;
+                Q[node + 1] = (float)selectedJoint.GetComponent<ControlThigh>().angle;
                 break;
             case 1:
-                Q[node + 1] = (float)circle.GetComponent<ControlShin>().angle;
+                Q[node + 1] = (float)selectedJoint.GetComponent<ControlShin>().angle;
                 break;
             case 2:
-                //                Q[node + 1] = (float)circle.GetComponent<ControlLeftArmFlexion>().angle;
-                Q[node + 1] = (float)circle.GetComponent<ControlRightArmFlexion>().dof;
+                //                Q[node + 1] = (float)selectedJoint.GetComponent<ControlLeftArmFlexion>().angle;
+                Q[node + 1] = (float)selectedJoint.GetComponent<ControlRightArmFlexion>().dof;
                 break;
             case 3:
-                //                Q[node + 1] = (float)circle.GetComponent<ControlLeftArmAbduction>().dof;
-                Q[node + 1] = (float)circle.GetComponent<ControlRightArmAbduction>().dof;
+                //                Q[node + 1] = (float)selectedJoint.GetComponent<ControlLeftArmAbduction>().dof;
+                Q[node + 1] = (float)selectedJoint.GetComponent<ControlRightArmAbduction>().angle;
                 break;
             case 4:
-                Q[node + 1] = (float)circle.GetComponent<ControlLeftArmFlexion>().dof;
-                //                Q[node + 1] = (float)circle.GetComponent<ControlRightArmFlexion>().dof;
+                Q[node + 1] = (float)selectedJoint.GetComponent<ControlLeftArmFlexion>().dof;
+                //                Q[node + 1] = (float)selectedJoint.GetComponent<ControlRightArmFlexion>().dof;
                 break;
             case 5:
-                Q[node + 1] = (float)circle.GetComponent<ControlLeftArmAbduction>().dof;
-                //                Q[node + 1] = (float)circle.GetComponent<ControlRightArmAbduction>().dof;
+                Q[node + 1] = (float)selectedJoint.GetComponent<ControlLeftArmAbduction>().angle;
+                //                Q[node + 1] = (float)selectedJoint.GetComponent<ControlRightArmAbduction>().dof;
                 break;
         }
 
@@ -634,45 +406,8 @@ public class StatManager : MonoBehaviour
         MainParameters.Instance.joints.nodes[_dof].T = MathFunc.MatrixCopy(T);
         MainParameters.Instance.joints.nodes[_dof].Q = MathFunc.MatrixCopy(Q);
 
-        transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-        transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(_dof, true);
-
-        return node + 1;
-    }
-
-    public int AddNode2(int _dof)
-    {
-        transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-        transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(_dof, true);
-
-        int node = FindPreviousNode(_dof);
-
-        if (previousFrameN2 == transform.parent.GetComponentInChildren<DrawManager>().frameN)
-        {
-            return node;
-        }
-        previousFrameN2 = transform.parent.GetComponentInChildren<DrawManager>().frameN;
-
-        float[] T = new float[MainParameters.Instance.joints.nodes[_dof].T.Length + 1];
-        float[] Q = new float[MainParameters.Instance.joints.nodes[_dof].Q.Length + 1];
-        for (int i = 0; i <= node; i++)
-        {
-            T[i] = MainParameters.Instance.joints.nodes[_dof].T[i];
-            Q[i] = MainParameters.Instance.joints.nodes[_dof].Q[i];
-        }
-
-        T[node + 1] = transform.parent.GetComponentInChildren<DrawManager>().frameN * 0.02f;
-        Q[node + 1] = (float)circle.GetComponent<HandleCircle>().dof[_dof];
-        for (int i = node + 1; i < MainParameters.Instance.joints.nodes[_dof].T.Length; i++)
-        {
-            T[i + 1] = MainParameters.Instance.joints.nodes[_dof].T[i];
-            Q[i + 1] = MainParameters.Instance.joints.nodes[_dof].Q[i];
-        }
-        MainParameters.Instance.joints.nodes[_dof].T = MathFunc.MatrixCopy(T);
-        MainParameters.Instance.joints.nodes[_dof].Q = MathFunc.MatrixCopy(Q);
-
-        transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-        transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(_dof, true);
+        gameManager.InterpolationDDL();
+        gameManager.DisplayDDL(_dof, true);
 
         return node + 1;
     }

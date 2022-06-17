@@ -5,35 +5,42 @@ using UnityEngine;
 public abstract class ControlSegmentGeneric : MonoBehaviour
 {
     public float angle { get; protected set;}
-    [HideInInspector] public int node = 0;
+    int node;
 
     protected Vector3 mouseDistance;
     protected Vector3 lastPosition;
-    protected GameObject avatar;
 
     protected GameObject arrowPrefab;
     protected GameObject arrow;
+    protected abstract Vector3 arrowOrientation { get; }
 
     protected GameObject circlePrefab;
     protected GameObject circle;
 
-    protected abstract string dofName { get; }
-    protected abstract int jointIndex { get; }
+    // Abstract getter
+    public abstract string dofName { get; }
+    public abstract int avatarIndex { get; }
+    public abstract int qIndex { get; }
     protected abstract DrawingCallback drawingCallback { get; }
+    public abstract int direction { get; }
 
     // Cache variables
     bool isInitialized = false;
     protected GameManager gameManager;
     protected DrawManager drawManager;
-    protected delegate void DrawingCallback(float value);
 
-    public virtual void Init(GameObject _avatar, float _angle)
+    // Delegate
+    protected delegate void DrawingCallback(float value);
+    public delegate int GetNodeCallback(int index);
+
+    public virtual void Init(GetNodeCallback getNodeCallback)
     {
+        node = getNodeCallback(avatarIndex);
+
         gameManager = ToolBox.GetInstance().GetManager<GameManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
 
-        avatar = _avatar;
-        angle = _angle;
+        angle = (float)drawManager.qf[qIndex];
 
         if (!arrow)
         {
@@ -59,8 +66,8 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
     {
         if (!isInitialized) return;
 
-        circle.SetActive(false);
-        arrow.SetActive(false);
+        Destroy(circle);
+        Destroy(arrow);
     }
 
     void Update()
@@ -115,14 +122,12 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
     {
         if (!isInitialized) return;
 
-        Debug.LogWarning(_value);
-        transform.rotation = Quaternion.Euler(0, -_value, 0);
-        angle = -_value / 30; // Don't know what this 30 is for
-
-        MainParameters.Instance.joints.nodes[jointIndex].Q[node] = angle;
+        angle = direction * _value / 30; // Don't know what this 30 is for
+        MainParameters.Instance.joints.nodes[avatarIndex].Q[node] = angle;
         gameManager.InterpolationDDL();
-        gameManager.DisplayDDL(jointIndex, true);
+        gameManager.DisplayDDL(avatarIndex, true);
 
-        drawingCallback(angle);
+        // TODO: check why direction is needed twice...
+        drawingCallback(direction * angle);
     }
 }
