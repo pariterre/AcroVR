@@ -255,31 +255,7 @@ public class AniGraphManager : MonoBehaviour
                 transform.parent.GetComponentInChildren<DrawManager>().isEditing = true;
                 transform.parent.GetComponentInChildren<DrawManager>().frameN = (int)(MainParameters.Instance.joints.nodes[ddlUsed].T[nodeUsed]/0.02f);
                 transform.parent.GetComponentInChildren<DrawManager>().ControlOneFrame();
-/*                switch (ddlUsed)
-                {
-                    case 0:
-                        transform.parent.GetComponentInChildren<DrawManager>().ControlThigh((float)mousePosY / Mathf.Rad2Deg);
-                        break;
-                    case 1:
-                        transform.parent.GetComponentInChildren<DrawManager>().ControlShin((float)mousePosY / Mathf.Rad2Deg);
-                        break;
-                    case 2:
-                        transform.parent.GetComponentInChildren<DrawManager>().ControlRightArmFlexion((float)mousePosY / Mathf.Rad2Deg);
-                        //                        transform.parent.GetComponentInChildren<DrawManager>().ControlLeftArmFlexion((float)mousePosY / Mathf.Rad2Deg);
-                        break;
-                    case 3:
-                        transform.parent.GetComponentInChildren<DrawManager>().ControlRightArmAbduction(-(float)mousePosY / Mathf.Rad2Deg);
-                        //                        transform.parent.GetComponentInChildren<DrawManager>().ControlLeftArmAbduction((float)mousePosY / Mathf.Rad2Deg);
-                        break;
-                    case 4:
-                        transform.parent.GetComponentInChildren<DrawManager>().ControlLeftArmFlexion((float)mousePosY / Mathf.Rad2Deg);
-                        //                        transform.parent.GetComponentInChildren<DrawManager>().ControlRightArmFlexion((float)mousePosY / Mathf.Rad2Deg);
-                        break;
-                    case 5:
-                        transform.parent.GetComponentInChildren<DrawManager>().ControlLeftArmAbduction((float)mousePosY / Mathf.Rad2Deg);
-                        //                        transform.parent.GetComponentInChildren<DrawManager>().ControlRightArmAbduction(-(float)mousePosY / Mathf.Rad2Deg);
-                        break;
-                }*/
+
             }
         }
     }

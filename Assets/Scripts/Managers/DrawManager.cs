@@ -127,41 +127,10 @@ public class DrawManager : MonoBehaviour
     public float secondTimeElapsed = 0;
     public float resultDistance = 0;
 
-//    private float lHoldFlexion = 0;
-//    private float lHoldAbduction = 0;
-//    private float rHoldFlexion = 0;
-//    private float rHoldAbduction = 0;
-
-
     void Awake()
     {
         transform.parent.GetComponentInChildren<GameManager>().WriteToLogFile("Start!");
-
-        //        girl1Prefab = (GameObject)Resources.Load("girl1", typeof(GameObject));
-        //        man1Prefab = (GameObject)Resources.Load("man1", typeof(GameObject));
-
-        //        girl1 = Instantiate(girl1Prefab);
-        //        girl1 = Instantiate(man1Prefab);
-
-        ///////////////////////////
-        // Hip
-        /*        girl1LeftThighUp = girl1.transform.Find("Petra.002/hips/thigh.L").gameObject;
-                girl1RightThighUp = girl1.transform.Find("Petra.002/hips/thigh.R").gameObject;
-                // Knee
-                girl1LeftLeg = girl1.transform.Find("Petra.002/hips/thigh.L/shin.L").gameObject;
-                girl1RightLeg = girl1.transform.Find("Petra.002/hips/thigh.R/shin.R").gameObject;
-                // Shoulder
-                girl1RightArm = girl1.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.R/upper_arm.R").gameObject;
-                girl1LeftArm = girl1.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.L/upper_arm.L").gameObject;
-                // Root
-                girl1Hip = girl1.transform.Find("Petra.002/hips").gameObject;
-                ///////////////////////////
-
-                firstView = girl1.transform.Find("Petra.002/hips/FirstViewPoint").gameObject;*/
-        //        stickMan = GameObject.Find("StickMan");
-
         ThetaScale = 0.01f;
-//        girl1.SetActive(false);
         cntAvatar = 1;
         //        avatarSpawnpoint = GameObject.FindGameObjectWithTag("AnchorAvatarToWorld");
         //        avatarVector3 = avatarSpawnpoint.transform.position;

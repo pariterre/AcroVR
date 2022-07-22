@@ -69,7 +69,6 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
     public void DestroyCircle()
     {
         if (!isInitialized) return;
-        if (statManager.currentJointSubIdx != jointSubIndex) return;
 
         Destroy(circle);
         Destroy(arrow);

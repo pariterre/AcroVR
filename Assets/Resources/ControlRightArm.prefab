@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 33922625216068038}
   - component: {fileID: 135097752912033250}
   - component: {fileID: 23195901987591042}
-  - component: {fileID: 114467695726034444}
   - component: {fileID: 114714590879277624}
+  - component: {fileID: 114467695726034444}
   m_Layer: 9
   m_Name: ControlRightArm
   m_TagString: Untagged
@@ -93,21 +93,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &114467695726034444
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1086356469008356}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 829b450047ef89f47a621b58cf61f0f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dof: 0
-  node: 0
-  bActive: 0
 --- !u!114 &114714590879277624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,6 +105,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ab72e98ac5a34d4c8fcd41147036fc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dof: 0
-  node: 0
-  bActive: 0
+--- !u!114 &114467695726034444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1086356469008356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 829b450047ef89f47a621b58cf61f0f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
