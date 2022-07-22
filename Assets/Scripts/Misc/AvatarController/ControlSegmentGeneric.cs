@@ -21,14 +21,16 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
     // Abstract getter
     public abstract string dofName { get; }
     public abstract int avatarIndex { get; }
+    public abstract int jointSubIndex { get; }
     public abstract int qIndex { get; }
     protected abstract DrawingCallback drawingCallback { get; }
     public abstract int direction { get; }
 
     // Cache variables
-    bool isInitialized = false;
+    protected bool isInitialized = false;
     protected GameManager gameManager;
     protected DrawManager drawManager;
+    protected StatManager statManager;
 
     // Delegate
     protected delegate void DrawingCallback(float value);
@@ -40,6 +42,7 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
 
         gameManager = ToolBox.GetInstance().GetManager<GameManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        statManager = ToolBox.GetInstance().GetManager<StatManager>();
 
         angle = (float)drawManager.qf[qIndex];
 
@@ -66,14 +69,18 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
     public void DestroyCircle()
     {
         if (!isInitialized) return;
+        if (statManager.currentJointSubIdx != jointSubIndex) return;
 
         Destroy(circle);
         Destroy(arrow);
+        circle = null;
+        arrow = null;
     }
 
     void Update()
     {
         if (!isInitialized) return;
+        if (statManager.currentJointSubIdx != jointSubIndex) return;
 
         if (arrow)
             arrow.transform.position = gameObject.transform.position + new Vector3(0, 0, 0.1f);
@@ -85,25 +92,27 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
     void OnMouseDown()
     {
         if (!isInitialized) return;
+        if (statManager.currentJointSubIdx != jointSubIndex) return;
 
         if(drawManager.isEditing)
         {
             lastPosition = Input.mousePosition;
             mouseDistance.x = angle * 30f;
-            ToolBox.GetInstance().GetManager<StatManager>().dofName = dofName;
+            statManager.dofName = dofName;
         }
     }
 
     void OnMouseDrag()
     {
         if (!isInitialized) return;
+        if (statManager.currentJointSubIdx != jointSubIndex) return;
 
         if (drawManager.isEditing)
         {
             Vector3 newPosition = Input.mousePosition;
             mouseDistance += newPosition - lastPosition;
 
-            HandleDof(mouseDistance.x);
+            HandleDof(mouseDistance.x / 30);
             lastPosition = newPosition;
         }
     }
@@ -111,6 +120,7 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
     void OnMouseUp()
     {
         if (!isInitialized) return;
+        if (statManager.currentJointSubIdx != jointSubIndex) return;
 
         if (drawManager.isEditing)
         {
@@ -119,16 +129,18 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
         }
     }
 
-    protected virtual void HandleDof(float _value)
+    protected virtual void HandleDof(float _nextAngle)
     {
         if (!isInitialized) return;
+        if (statManager.currentJointSubIdx != jointSubIndex) return;
+        if (angle == _nextAngle) return;
 
-        angle = direction * _value / 30; // Don't know what this 30 is for
+        angle = _nextAngle; 
         MainParameters.Instance.joints.nodes[avatarIndex].Q[node] = angle;
         gameManager.InterpolationDDL();
         gameManager.DisplayDDL(avatarIndex, true);
 
         // TODO: check why direction is needed twice...
-        drawingCallback(direction * angle);
+        drawingCallback(angle);
     }
 }

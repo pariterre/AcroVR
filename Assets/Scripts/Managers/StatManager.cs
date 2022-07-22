@@ -33,8 +33,9 @@ public class StatManager : MonoBehaviour
     public PlayerInfo info;
 //    private GameObject circlePrefab;
 //    private GameObject circlePrefab_shoulder;
-    GameObject selectedJoint;
-    string previousSelectedJointName;
+    protected GameObject selectedJoint;
+    ControlSegmentGeneric currentControlSegment;
+    public int currentJointSubIdx;
     RaycastHit hit;
 
 //    private List<GameObject> circles = new List<GameObject>();
@@ -204,6 +205,7 @@ public class StatManager : MonoBehaviour
 
         if (Input.GetMouseButton(0) && !drawManager.isEditing)
         {
+            // TODO: Model always rotates wherever we click
             if (drawManager.girl1 != null)
             {
                 drawManager.girl1.transform.Rotate(Vector3.up * 100f * Time.deltaTime);
@@ -218,32 +220,42 @@ public class StatManager : MonoBehaviour
 
         drawManager.isEditing = false;
 
-        selectedJoint.GetComponent<ControlSegmentGeneric>().DestroyCircle();
+        currentControlSegment.DestroyCircle();
+        currentControlSegment = null;
         selectedJoint = null;
-        previousSelectedJointName = null;
+        currentJointSubIdx = -1;
 
         previousFrameN = 0;
     }
 
     void HandleJointClick() {
-        // For some reason it is impossible to modify the first node
-        // TODO: Fix that
+        // TODO: For some reason it is impossible to modify the first node
         if (drawManager.frameN == 0) return;
 
-        var previousNameTp = previousSelectedJointName;
+        var _previousTp = selectedJoint;
+        var _nextJointSubIdx = currentJointSubIdx + 1;  // Assume for now same joint
         ResetTemporaries();
 
         selectedJoint = hit.collider.gameObject;
-        if (selectedJoint.name == previousNameTp) return;
+        ControlSegmentGeneric[] _controlSegment = selectedJoint.GetComponents<ControlSegmentGeneric>();
+        if (selectedJoint != _previousTp){
+            // If not the same joint, reset to 0
+            _nextJointSubIdx = 0;
+        } else {
+            // If we reached the end, joint is unselected
+            if (_nextJointSubIdx >= _controlSegment.Length){ 
+                return;
+            }
+        }
         
         drawManager.isEditing = true;
 
-        previousSelectedJointName = selectedJoint.name;
-        ControlSegmentGeneric controlSegment = selectedJoint.GetComponent<ControlSegmentGeneric>();
-        controlSegment.Init(AddNode);
+        currentJointSubIdx = _nextJointSubIdx;
+        currentControlSegment = _controlSegment[currentJointSubIdx];
+        currentControlSegment.Init(AddNode);
 
-        baseProfile.InitDropdownDDLNames(controlSegment.avatarIndex);
-        baseProfile.NodeName(controlSegment.dofName);
+        baseProfile.InitDropdownDDLNames(currentControlSegment.avatarIndex);
+        baseProfile.NodeName(currentControlSegment.dofName);
     }
 
     IEnumerator RotateLerp(float _goal, float _speed)
