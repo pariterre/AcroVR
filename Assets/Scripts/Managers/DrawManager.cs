@@ -1456,9 +1456,18 @@ public class DrawManager : MonoBehaviour
     {
         // TODO Check flexion axis
         float flexion = girl1LeftArm.transform.localRotation.x;
-        Debug.LogWarning(flexion);
-        girl1LeftArm.transform.localRotation = Quaternion.AngleAxis(flexion * Mathf.Rad2Deg, Vector3.right) * 
+        Debug.LogWarning("Check flexion value");
+        girl1LeftArm.transform.localRotation = Quaternion.AngleAxis(flexion * Mathf.Rad2Deg, Vector3.up) * 
                                                 Quaternion.AngleAxis(-_qf * Mathf.Rad2Deg + 90f, Vector3.forward);
+    }
+
+    public void ControlLeftArmFlexion(float _qf)
+    {
+        // TODO Check abduction axis
+        float abduction = girl1LeftArm.transform.localRotation.y;
+        Debug.LogWarning("Check abduction value");
+        girl1LeftArm.transform.localRotation = Quaternion.AngleAxis(_qf * Mathf.Rad2Deg, Vector3.up);
+                                                //* Quaternion.AngleAxis(abduction * Mathf.Rad2Deg + 90f, Vector3.forward);
     }
 
     public void ControlOneFrame()
@@ -1484,13 +1493,7 @@ public class DrawManager : MonoBehaviour
                                                 Quaternion.AngleAxis((float)qf[11] * Mathf.Rad2Deg, Vector3.up);
         }
     }
-/*    public void ControlLeftArmFlexion(float _qf)
-    {
-        girl1LeftArm.transform.localRotation = Quaternion.AngleAxis(_qf * Mathf.Rad2Deg, Vector3.up) *
-                                                Quaternion.AngleAxis(lHoldAbduction * Mathf.Rad2Deg + 90f, Vector3.forward);
-
-        lHoldFlexion = _qf;
-    }
+/*   
 
 
 

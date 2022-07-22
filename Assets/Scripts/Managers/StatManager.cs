@@ -385,16 +385,13 @@ public class StatManager : MonoBehaviour
                 Q[node + 1] = (float)selectedJoint.GetComponent<ControlRightArmFlexion>().dof;
                 break;
             case 3:
-                //                Q[node + 1] = (float)selectedJoint.GetComponent<ControlLeftArmAbduction>().dof;
                 Q[node + 1] = (float)selectedJoint.GetComponent<ControlRightArmAbduction>().angle;
                 break;
             case 4:
-                Q[node + 1] = (float)selectedJoint.GetComponent<ControlLeftArmFlexion>().dof;
-                //                Q[node + 1] = (float)selectedJoint.GetComponent<ControlRightArmFlexion>().dof;
+                Q[node + 1] = (float)selectedJoint.GetComponent<ControlLeftArmFlexion>().angle;
                 break;
             case 5:
                 Q[node + 1] = (float)selectedJoint.GetComponent<ControlLeftArmAbduction>().angle;
-                //                Q[node + 1] = (float)selectedJoint.GetComponent<ControlRightArmAbduction>().dof;
                 break;
         }
 

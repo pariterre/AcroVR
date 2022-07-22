@@ -13,6 +13,7 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
     protected GameObject arrowPrefab;
     protected GameObject arrow;
     protected abstract Vector3 arrowOrientation { get; }
+    protected abstract Quaternion circleOrientation { get; }
 
     protected GameObject circlePrefab;
     protected GameObject circle;
@@ -54,7 +55,7 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
         {
             circlePrefab = (GameObject)Resources.Load("NodeCircle", typeof(GameObject));
             circle = Instantiate(circlePrefab, gameObject.transform.position, Quaternion.identity);
-            circle.transform.rotation = Quaternion.Euler(90, 0, 0);
+            circle.transform.rotation = circleOrientation;
         }
         else
             circle.SetActive(true);
