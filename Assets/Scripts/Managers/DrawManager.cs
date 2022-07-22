@@ -1244,17 +1244,7 @@ public class DrawManager : MonoBehaviour
                         qf_girl2[MainParameters.Instance.joints.lagrangianModel.q1[i] - 1] = 0;
             }
 
-        girl2LeftUp.transform.localEulerAngles = new Vector3(-(float)qf_girl2[0] * Mathf.Rad2Deg, 0f, 0f);
-        girl2RightUp.transform.localEulerAngles = new Vector3(-(float)qf_girl2[0] * Mathf.Rad2Deg, 0f, 0f);
-        girl2LeftLeg.transform.localEulerAngles = new Vector3((float)qf_girl2[1] * Mathf.Rad2Deg, 0f, 0f);
-        girl2RightLeg.transform.localEulerAngles = new Vector3((float)qf_girl2[1] * Mathf.Rad2Deg, 0f, 0f);
-
-        girl2RightArm.transform.localRotation = Quaternion.AngleAxis(-(float)qf_girl2[2] * Mathf.Rad2Deg, Vector3.up) *
-                                                        Quaternion.AngleAxis((float)qf_girl2[3] * Mathf.Rad2Deg, Vector3.forward);
-        girl2LeftArm.transform.localRotation = Quaternion.AngleAxis((float)qf_girl2[4] * Mathf.Rad2Deg, Vector3.up) *
-                                                        Quaternion.AngleAxis(-(float)qf_girl2[5] * Mathf.Rad2Deg, Vector3.forward);
-
-
+        SetAllDof(qf_girl2);
         girl2Hip.transform.localRotation = Quaternion.AngleAxis((float)qf_girl2[9] * Mathf.Rad2Deg, Vector3.right) *
                                             Quaternion.AngleAxis((float)qf_girl2[10] * Mathf.Rad2Deg, Vector3.forward) *
                                             Quaternion.AngleAxis((float)qf_girl2[11] * Mathf.Rad2Deg, Vector3.up);
@@ -1415,14 +1405,7 @@ public class DrawManager : MonoBehaviour
         q1 = MakeSimulation();
         qf = MathFunc.MatrixGetColumnD(q1, frameN);
 
-        girl1LeftThighUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg, 0f, 0f);
-        girl1RightThighUp.transform.localEulerAngles = new Vector3(-(float)qf[0] * Mathf.Rad2Deg, 0f, 0f);
-        girl1LeftLeg.transform.localEulerAngles = new Vector3((float)qf[1] * Mathf.Rad2Deg, 0f, 0f);
-        girl1RightLeg.transform.localEulerAngles = new Vector3((float)qf[1] * Mathf.Rad2Deg, 0f, 0f);
-        girl1RightArm.transform.localRotation = Quaternion.AngleAxis(-(float)qf[2] * Mathf.Rad2Deg, Vector3.up) *
-                                                        Quaternion.AngleAxis((float)qf[3] * Mathf.Rad2Deg, Vector3.forward);
-        girl1LeftArm.transform.localRotation = Quaternion.AngleAxis((float)qf[4] * Mathf.Rad2Deg, Vector3.up) *
-                                                        Quaternion.AngleAxis(-(float)qf[5] * Mathf.Rad2Deg, Vector3.forward);
+        SetAllDof(qf);
         if (isSimulationMode)
         {
             girl1Hip.transform.position = new Vector3((float)qf[6], (float)qf[8], (float)qf[7]);

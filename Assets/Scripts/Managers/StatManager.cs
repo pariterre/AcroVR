@@ -393,8 +393,7 @@ public class StatManager : MonoBehaviour
                 Q[node + 1] = (float)selectedJoint.GetComponent<ControlShin>().angle;
                 break;
             case 2:
-                //                Q[node + 1] = (float)selectedJoint.GetComponent<ControlLeftArmFlexion>().angle;
-                Q[node + 1] = (float)selectedJoint.GetComponent<ControlRightArmFlexion>().dof;
+                Q[node + 1] = (float)selectedJoint.GetComponent<ControlRightArmFlexion>().angle;
                 break;
             case 3:
                 Q[node + 1] = (float)selectedJoint.GetComponent<ControlRightArmAbduction>().angle;
