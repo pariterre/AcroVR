@@ -72,11 +72,12 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
     {
         if (!isInitialized) return;
 
-        Destroy(circle);
-        Destroy(arrow);
+        if (circle)
+            Destroy(circle);
+        if (arrow)
+            Destroy(arrow);
         circle = null;
         arrow = null;
-        drawManager.StopEditing();
     }
 
     void Update()
@@ -91,7 +92,10 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
             circle.transform.position = gameObject.transform.position;
     }
 
-    float CurrentAngle { get { return MainParameters.Instance.joints.nodes[avatarIndex].Q[node]; } }
+    protected float CurrentAngle {
+        get { return MainParameters.Instance.joints.nodes[avatarIndex].Q[node]; } 
+        set { MainParameters.Instance.joints.nodes[avatarIndex].Q[node] = value; }
+    }
 
     void OnMouseDown()
     {
@@ -100,7 +104,6 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
 
         if(drawManager.isEditing)
         {
-            drawManager.StartEditing();
             initAngle = CurrentAngle;
             lastPosition = Input.mousePosition;
             mouseDistance.x = angle * 30f;
@@ -141,9 +144,7 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
         if (statManager.currentJointSubIdx != jointSubIndex) return;
         if (angle == _nextAngle) return;
 
-        angle = _nextAngle / avatarRotationDragSpeed; 
-
-        MainParameters.Instance.joints.nodes[avatarIndex].Q[node] = angle + initAngle;
+        CurrentAngle = _nextAngle / avatarRotationDragSpeed + initAngle;
         gameManager.InterpolationDDL();
         gameManager.DisplayDDL(avatarIndex, true);
 

@@ -8,9 +8,9 @@ using System.Globalization;
 
 public class SliderPlayAnimation : MonoBehaviour
 {
-	// Variables
-	DrawManager drawManager;
-	public Slider slider;
+    // Variables
+    DrawManager drawManager;
+    public Slider slider;
     //	public PlayController playController;
     //	public GameObject result;
     //	public GameObject worldCanvas;
@@ -20,59 +20,47 @@ public class SliderPlayAnimation : MonoBehaviour
     public GameObject pauseBackground;
 
     void Start()
-	{
-		drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
-		//slider.onValueChanged.AddListener(delegate { ValueChangeCheck(); });
+    {
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        //slider.onValueChanged.AddListener(delegate { ValueChangeCheck(); });
 
-		//isPaused = !isPaused;
-		//ToolBox.GetInstance().GetManager<DrawManager>().PauseAvatar(isPaused);
-	}
+        //isPaused = !isPaused;
+        //drawManager.PauseAvatar(isPaused);
+    }
 
-	void Update()
-	{
-        if (drawManager.numberFrames >= drawManager.secondNumberFrames) slider.value = drawManager.frameN;
-        else slider.value = drawManager.secondFrameN;
+    void Update()
+    {
+        if (drawManager.numberFrames >= drawManager.secondNumberFrames)
+            slider.value = drawManager.frameN;
+        else 
+            slider.value = drawManager.secondFrameN;
 
         if(drawManager.cntAvatar > 1)
         {
             if (drawManager.numberFrames >= drawManager.secondNumberFrames)
             {
                 if (drawManager.timeElapsed > 0 && !drawManager.isPaused)
-                    textChrono.text = ToolBox.GetInstance().GetManager<DrawManager>().frameN * 0.02 + " s";
-                //                    textChrono.text = string.Format("{0:0.0}", drawManager.timeElapsed) + " s";
+                    textChrono.text = drawManager.frameNtime + " s";
             }
             else
             {
                 if (drawManager.secondTimeElapsed > 0 && !drawManager.secondPaused)
-                    textChrono.text = ToolBox.GetInstance().GetManager<DrawManager>().secondFrameN * 0.02 + " s";
-                //                    textChrono.text = string.Format("{0:0.0}", drawManager.secondTimeElapsed) + " s";
+                    textChrono.text = drawManager.secondFrameNtime + " s";
             }
         }
         else
         {
             if (drawManager.timeElapsed > 0 && !drawManager.isPaused)
             {
-                textChrono.text = ToolBox.GetInstance().GetManager<DrawManager>().frameN * 0.02 + " s";
-                //                textChrono.text = string.Format("{0:0.0}", drawManager.timeElapsed) + " s";
+                textChrono.text = drawManager.frameNtime + " s";
             }
         }
-
-        /*		if (slider.value > 100)
-                {
-        //			worldCanvas.SetActive(false);
-                    result.SetActive(true);
-                    result.GetComponent<Animator>().Play("Panel In");
-                    ToolBox.GetInstance().GetManager<DrawManager>().PlayEnd();
-                }*/
     }
 
 
-	///===///  OnClick() functions
-	#region		<-- TOP
-
-	public void OnPlayAnimationSlider()
-	{
-        if (ToolBox.GetInstance().GetManager<DrawManager>().isEditing) return;
+    public void OnPlayAnimationSlider()
+    {
+        if (drawManager.isEditing) return;
 
         slider.minValue = 0f;
 
@@ -80,12 +68,12 @@ public class SliderPlayAnimation : MonoBehaviour
         {
             pauseButton.isOn = false;
 
-            if (!ToolBox.GetInstance().GetManager<DrawManager>().isPaused)
+            if (!drawManager.isPaused)
             {
-                ToolBox.GetInstance().GetManager<DrawManager>().isPaused = true;
+                drawManager.isPaused = true;
 
                 if (drawManager.cntAvatar>1 && !drawManager.secondPaused)
-                    ToolBox.GetInstance().GetManager<DrawManager>().secondPaused = true;
+                    drawManager.secondPaused = true;
             }
 
             if (pauseBackground.activeSelf)
@@ -96,38 +84,35 @@ public class SliderPlayAnimation : MonoBehaviour
         {
             if (drawManager.numberFrames >= drawManager.secondNumberFrames)
             {
-                //                slider.maxValue = (float)drawManager.numberFrames;
-                //                drawManager.frameN = (int)slider.value;
                 slider.maxValue = (float)drawManager.numberFrames - 1;
-                drawManager.frameN = (int)slider.value;
+                drawManager.setFrameN((int)slider.value);
 
-                if (slider.value >= drawManager.secondNumberFrames) drawManager.secondFrameN = drawManager.secondNumberFrames;
-                else drawManager.secondFrameN = (int)slider.value;
+                if (slider.value >= drawManager.secondNumberFrames)
+                    drawManager.setSecondFrameN(drawManager.secondNumberFrames);
+                else 
+                    drawManager.setSecondFrameN((int)slider.value);
 
-                textChrono.text = ToolBox.GetInstance().GetManager<DrawManager>().frameN * 0.02 + " s";
+                textChrono.text = drawManager.frameNtime + " s";
             }
             else
             {
-                //                slider.maxValue = (float)drawManager.secondNumberFrames;
-                //                drawManager.secondFrameN = (int)slider.value;
                 slider.maxValue = (float)drawManager.secondNumberFrames - 1;
-                drawManager.secondFrameN = (int)slider.value;
+                drawManager.setSecondFrameN((int)slider.value);
 
-                if (slider.value >= drawManager.numberFrames) drawManager.frameN = drawManager.numberFrames;
-                else drawManager.frameN = (int)slider.value;
+                if (slider.value >= drawManager.numberFrames)
+                    drawManager.setFrameN(drawManager.numberFrames);
+                else 
+                    drawManager.setFrameN((int)slider.value);
 
-                textChrono.text = ToolBox.GetInstance().GetManager<DrawManager>().secondFrameN * 0.02 + " s";
+                textChrono.text = drawManager.secondFrameNtime + " s";
             }
         }
         else
         {
             slider.maxValue = (float)drawManager.numberFrames -1;
-            drawManager.frameN = (int)slider.value;
+            drawManager.setFrameN((int)slider.value);
 
-            textChrono.text = ToolBox.GetInstance().GetManager<DrawManager>().frameN * 0.02 + " s";
+            textChrono.text = drawManager.frameNtime + " s";
         }
     }
-
-    #endregion		<-- BOTTOM
-
 }

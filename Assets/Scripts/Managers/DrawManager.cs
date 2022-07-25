@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Linq;
 using System.Text;
@@ -25,6 +25,7 @@ public class DrawManager : MonoBehaviour
     [DllImport(dllpath)] static extern void c_solveLinearSystem(IntPtr matA, int nbCol, int nbLigne, IntPtr matB, IntPtr solX);
 
     ////////////////
+    protected StatManager statManager;
     public GameObject avatarSpawnpoint;
     public Vector3 avatarVector3;
     public GameObject girl1;
@@ -73,8 +74,13 @@ public class DrawManager : MonoBehaviour
     float[,] q_girl2;
     public double[] qf;
     double[] qf_girl2;
-    public int frameN = 0;
-    public int secondFrameN = 0;
+    public float frameRate { get; } = 0.02f;
+    public int frameN { get; protected set; } = 0;
+    public void setFrameN(int value) { frameN = value; }
+    public float frameNtime { get { return frameN * frameRate; } }
+    public int secondFrameN { get; protected set; } = 0;
+    public void setSecondFrameN(int value) { secondFrameN = value; }
+    public float secondFrameNtime { get { return secondFrameN * frameRate; } }
     int firstFrame = 0;
     internal int numberFrames = 0;
     public float timeElapsed = 0;
@@ -142,6 +148,11 @@ public class DrawManager : MonoBehaviour
         //        Cursor.visible = false;
 
         secondResultMessages = new List<string>();
+    }
+
+    void Start()
+    {
+        statManager = ToolBox.GetInstance().GetManager<StatManager>();
     }
 
     void Update()
@@ -385,7 +396,6 @@ public class DrawManager : MonoBehaviour
         girl1.transform.rotation = Quaternion.identity;
         girl1.transform.position = Vector3.zero;
         ResetAvatar();
-        // transform.parent.GetComponentInChildren<StatManager>().DestroyHandleCircle();
 
         // test0 = q1[12,51]
         // test1 = q1[12,54]
@@ -1298,9 +1308,12 @@ public class DrawManager : MonoBehaviour
     public void StartEditing()
     {
         isEditing = true;
+        canPlay = false;
     }
 
-    public void StopEditing() {
+    public void StopEditing()
+    {
+        statManager.ResetTemporaries();
         isEditing = false;
     }
 

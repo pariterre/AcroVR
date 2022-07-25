@@ -31,19 +31,12 @@ public struct PlayerReplayInfo
 public class StatManager : MonoBehaviour
 {
     public PlayerInfo info;
-//    private GameObject circlePrefab;
-//    private GameObject circlePrefab_shoulder;
     protected GameObject selectedJoint;
+    protected ControlSegmentGeneric currentControlSegment;
     protected bool isRotating = false;
     protected Vector3 initPosition;
-    ControlSegmentGeneric currentControlSegment;
     public int currentJointSubIdx;
     RaycastHit hit;
-
-//    private List<GameObject> circles = new List<GameObject>();
-
-    private int previousFrameN = 0;
-    public int previousFrameN2 = 0;
 
     public string dofName;
 
@@ -215,7 +208,7 @@ public class StatManager : MonoBehaviour
                 drawManager.girl1.transform.Rotate(Vector3.up * -mouseDistance.x / 5f);
                 initPosition = newPosition;
             }
-            if (!isRotating && drawManager.girl1 != null && hasHit && !drawManager.isEditing)
+            if (drawManager.girl1 != null && !drawManager.isEditing && !isRotating && hasHit)
             {
                 initPosition = Input.mousePosition;
                 isRotating = true;
@@ -233,23 +226,17 @@ public class StatManager : MonoBehaviour
         }
     }
 
-    void ResetTemporaries(){
+    public void ResetTemporaries(){
         if (!drawManager.isEditing) return;
 
-        drawManager.StopEditing();
-
-        currentControlSegment.DestroyCircle();
+        if (currentControlSegment)
+            currentControlSegment.DestroyCircle();
         currentControlSegment = null;
         selectedJoint = null;
         currentJointSubIdx = -1;
-
-        previousFrameN = 0;
     }
 
     void HandleJointClick() {
-        // TODO: For some reason it is impossible to modify the first node
-        if (drawManager.frameN == 0) return;
-
         var _previousTp = selectedJoint;
         var _nextJointSubIdx = currentJointSubIdx + 1;  // Assume for now same joint
         ResetTemporaries();
@@ -261,11 +248,11 @@ public class StatManager : MonoBehaviour
             _nextJointSubIdx = 0;
         } else {
             // If we reached the end, joint is unselected
-            if (_nextJointSubIdx >= _controlSegment.Length){ 
+            if (_nextJointSubIdx >= _controlSegment.Length){
+                drawManager.StopEditing();
                 return;
             }
         }
-        
         drawManager.StartEditing();
 
         currentJointSubIdx = _nextJointSubIdx;
@@ -276,93 +263,18 @@ public class StatManager : MonoBehaviour
         baseProfile.NodeName(currentControlSegment.dofName);
     }
 
-    IEnumerator RotateLerp(float _goal, float _speed)
-    {
-        float curr = 0;
-        while (_goal > curr)
-        {
-            drawManager.girl1.transform.rotation = Quaternion.Lerp(Quaternion.identity, Quaternion.Euler(Vector3.up * _goal), _speed * Time.time);
-            curr = drawManager.girl1.transform.rotation.eulerAngles.y;
-            yield return new WaitForEndOfFrame();
-        }
-    }
-
-    void CameraRotate(string _n)
-    {
-        if (_n == "shin.L" || _n == "thigh.L")
-        {
- //            StartCoroutine(RotateLerp(90, 0.2f));
-            //            selectedJoint.transform.position = drawManager.girl1.transform.Find("Petra.002/hips/thigh.L/shin.L").gameObject.transform.position;
-            //            drawManager.girl1.transform.rotation = Quaternion.Lerp(Quaternion.identity, Quaternion.Euler(Vector3.up * 90), 0.2f * Time.time);                                                                                                                                                                                                              //            drawManager.girl1.transform.rotation = Quaternion.Euler(Vector3.up * 90);
-//            drawManager.girl1.transform.rotation = Quaternion.Euler(Vector3.up * 90);
-//            selectedJoint.transform.position = drawManager.girl1.transform.Find("Petra.002/hips/thigh.L/shin.L").gameObject.transform.position;
-/*            for (int i = 0; i < 16; i++)
-            {
-                float angle = i * Mathf.PI * 2f / 16;
-                Vector3 newPos = new Vector3(Mathf.Cos(angle) * 0.2f, 0, Mathf.Sin(angle) * 0.2f);
-                GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = selectedJoint.transform;
-            }*/
-        }
-        else if (_n == "shin.R" || _n == "thigh.R")
-        {
-            //            drawManager.girl1.transform.rotation = Quaternion.Lerp(Quaternion.identity, Quaternion.Euler(Vector3.up * -90), 0.2f * Time.time);
-//            drawManager.girl1.transform.rotation = Quaternion.Euler(Vector3.up * -90);
-//            selectedJoint.transform.position = drawManager.girl1.transform.Find("Petra.002/hips/thigh.R/shin.R").gameObject.transform.position;
-/*            for (int i = 0; i < 16; i++)
-            {
-                float angle = i * Mathf.PI * 2f / 16;
-                Vector3 newPos = new Vector3(Mathf.Cos(angle) * 0.2f, 0, Mathf.Sin(angle) * 0.2f);
-                GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = selectedJoint.transform;
-            }*/
-        }
-        else if (_n == "upper_arm.L")
-        {
-/*            for (int i = 0; i < 16; i++)
-            {
-                float angle = i * Mathf.PI * 2f / 16;
-                Vector3 newPos = new Vector3(Mathf.Cos(angle) * 0.2f, 0, Mathf.Sin(angle) * 0.2f);
-                GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = selectedJoint.transform;
-            }
-            for (int i = 0; i < 16; i++)
-            {
-                float angle = i * Mathf.PI * 2f / 16;
-                Vector3 newPos = new Vector3(0, Mathf.Cos(angle) * 0.2f, Mathf.Sin(angle) * 0.2f);
-                GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = selectedJoint.transform;
-            }*/
-
-            //            drawManager.girl1.transform.rotation = Quaternion.Euler(Vector3.up * 90);
-        }
-        else if (_n == "upper_arm.R")
-        {
-/*            for (int i = 0; i < 16; i++)
-            {
-                float angle = i * Mathf.PI * 2f / 16;
-                Vector3 newPos = new Vector3(Mathf.Cos(angle) * 0.2f, 0, Mathf.Sin(angle) * 0.2f);
-                GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = selectedJoint.transform;
-            }
-            for (int i = 0; i < 16; i++)
-            {
-                float angle = i * Mathf.PI * 2f / 16;
-                Vector3 newPos = new Vector3(0, Mathf.Cos(angle) * 0.2f, Mathf.Sin(angle) * 0.2f);
-                GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = selectedJoint.transform;
-            }*/
-
-            //            drawManager.girl1.transform.rotation = Quaternion.Euler(Vector3.up * -90);
-        }
-    }
-
     public int FindPreviousNode(int _dof)
     {
+        int last = MainParameters.Instance.joints.nodes[_dof].T.Length - 1;
+        if (drawManager.frameN == 0) 
+            return 0;
+        else if (drawManager.frameNtime == MainParameters.Instance.joints.nodes[_dof].T[last]) 
+            return last;
+
         int i = 0;
         while (
                 i < MainParameters.Instance.joints.nodes[_dof].T.Length
-                && drawManager.frameN * 0.02 > MainParameters.Instance.joints.nodes[_dof].T[i]
+                && drawManager.frameNtime >= MainParameters.Instance.joints.nodes[_dof].T[i]
             )
         {
             i++;
@@ -376,13 +288,9 @@ public class StatManager : MonoBehaviour
         gameManager.DisplayDDL(_dof, true);
 
         int node = FindPreviousNode(_dof);
-
-        if (previousFrameN >= drawManager.frameN - 1 && previousFrameN <= drawManager.frameN + 1)
-        {
+        if (MainParameters.Instance.joints.nodes[_dof].T[node] == drawManager.frameNtime)
             return node;
-        }
 
-        float marginT = drawManager.frameN * 0.02f;
 
         float[] T = new float[MainParameters.Instance.joints.nodes[_dof].T.Length + 1];
         float[] Q = new float[MainParameters.Instance.joints.nodes[_dof].Q.Length + 1];
@@ -393,36 +301,8 @@ public class StatManager : MonoBehaviour
             Q[i] = MainParameters.Instance.joints.nodes[_dof].Q[i];
         }
 
-        if (T[node] >= marginT - 0.02f && T[node] <= marginT + 0.02f)
-        {
-            return node;
-        }
-
-        previousFrameN = drawManager.frameN;
-
-        T[node + 1] = drawManager.frameN * 0.02f;
-
-        switch(_dof)
-        {
-            case 0:
-                Q[node + 1] = (float)selectedJoint.GetComponent<ControlThigh>().angle;
-                break;
-            case 1:
-                Q[node + 1] = (float)selectedJoint.GetComponent<ControlShin>().angle;
-                break;
-            case 2:
-                Q[node + 1] = (float)selectedJoint.GetComponent<ControlRightArmFlexion>().angle;
-                break;
-            case 3:
-                Q[node + 1] = (float)selectedJoint.GetComponent<ControlRightArmAbduction>().angle;
-                break;
-            case 4:
-                Q[node + 1] = (float)selectedJoint.GetComponent<ControlLeftArmFlexion>().angle;
-                break;
-            case 5:
-                Q[node + 1] = (float)selectedJoint.GetComponent<ControlLeftArmAbduction>().angle;
-                break;
-        }
+        T[node + 1] = drawManager.frameNtime;
+        Q[node + 1] = currentControlSegment.angle;
 
         for (int i = node + 1; i < MainParameters.Instance.joints.nodes[_dof].T.Length; i++)
         {

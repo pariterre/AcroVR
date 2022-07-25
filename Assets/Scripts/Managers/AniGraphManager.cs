@@ -12,6 +12,8 @@ public class AniGraphManager : MonoBehaviour
 {
 //    GameObject resultPrefab;
     //GameObject resultCanvas;
+    protected DrawManager drawManager;
+    protected GameManager gameManager;
     public GraphChart graph;
     GameObject takeoffPrefab;
     public GameObject takeoffCanvas;
@@ -102,6 +104,9 @@ public class AniGraphManager : MonoBehaviour
 
     void Start()
     {
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
+
         /*        GameObject graphCanvas = GameObject.Find("TakeOffGraph");
                 graph = graphCanvas.GetComponent<GraphChart>();
 
@@ -243,18 +248,19 @@ public class AniGraphManager : MonoBehaviour
                 }
 
                 MainParameters.Instance.joints.nodes[ddlUsed].Q[nodeUsed] = (float)mousePosY / Mathf.Rad2Deg;
-                transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-                transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(ddlUsed, true);
-                //                transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(0, true);
+                gameManager.InterpolationDDL();
+                gameManager.DisplayDDL(ddlUsed, true);
+                //                gameManager.DisplayDDL(0, true);
                 //            MovementF.Instance.InterpolationAndDisplayDDL(ddlUsed, ddlUsed, (int)Mathf.Round(MainParameters.Instance.joints.nodes[ddlUsed].T[nodeUsed] / MainParameters.Instance.joints.lagrangianModel.dt), false);
 
-                //                int temp = transform.parent.GetComponentInChildren<DrawManager>().frameN;
-                //                transform.parent.GetComponentInChildren<DrawManager>().ShowAvatar();
-                //                transform.parent.GetComponentInChildren<DrawManager>().frameN = temp;
+                //                int temp = drawManager.frameN;
+                //                drawManager.ShowAvatar();
+                //                drawManager.frameN = temp;
 
-                transform.parent.GetComponentInChildren<DrawManager>().StartEditing();
-                transform.parent.GetComponentInChildren<DrawManager>().frameN = (int)(MainParameters.Instance.joints.nodes[ddlUsed].T[nodeUsed]/0.02f);
-                transform.parent.GetComponentInChildren<DrawManager>().ControlOneFrame();
+
+                drawManager.StartEditing();
+                drawManager.setFrameN((int)(MainParameters.Instance.joints.nodes[ddlUsed].T[nodeUsed]/drawManager.frameRate));
+                drawManager.ControlOneFrame();
 
             }
         }
@@ -585,7 +591,7 @@ public class AniGraphManager : MonoBehaviour
 //        takeoffCanvas.SetActive(false);
         graph = takeoffCanvas.GetComponentInChildren<GraphChart>();
 
-        transform.parent.GetComponentInChildren<DrawManager>().PlayEnd();
+        drawManager.PlayEnd();
 //        takeoffCanvas.SetActive(true);
     }
 
