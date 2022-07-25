@@ -76,6 +76,7 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
         Destroy(arrow);
         circle = null;
         arrow = null;
+        drawManager.StopEditing();
     }
 
     void Update()
@@ -99,6 +100,7 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
 
         if(drawManager.isEditing)
         {
+            drawManager.StartEditing();
             initAngle = CurrentAngle;
             lastPosition = Input.mousePosition;
             mouseDistance.x = angle * 30f;

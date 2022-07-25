@@ -253,7 +253,7 @@ public class BaseProfile : LevelBase
         ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("Back Button Click: BackToMenu()");
 
         ToolBox.GetInstance().GetManager<GameManager>().InitAnimationInfo();
-        ToolBox.GetInstance().GetManager<DrawManager>().isEditing = false;
+        ToolBox.GetInstance().GetManager<DrawManager>().StopEditing();
         ToolBox.GetInstance().GetManager<DrawManager>().animateON = false;
         ToolBox.GetInstance().GetManager<AniGraphManager>().cntAvatar = 0;
         ToolBox.GetInstance().GetManager<DrawManager>().ResetPause();
@@ -379,7 +379,7 @@ public class BaseProfile : LevelBase
 
         dropDownCondition.value = MainParameters.Instance.joints.condition;
 
-        ToolBox.GetInstance().GetManager<DrawManager>().isEditing = false;
+        ToolBox.GetInstance().GetManager<DrawManager>().StopEditing();
         ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
         ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
 
@@ -490,7 +490,7 @@ public class BaseProfile : LevelBase
         TakeOffOn();
         InitDropdownDDLNames(0);
 
-        ToolBox.GetInstance().GetManager<DrawManager>().isEditing = false;
+        ToolBox.GetInstance().GetManager<DrawManager>().StopEditing();
         ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
         ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
 
@@ -754,7 +754,7 @@ public class BaseProfile : LevelBase
         else if (playSpeed == MainParameters.Instance.languages.Used.animatorPlaySpeedFast)
             ToolBox.GetInstance().GetManager<DrawManager>().SetAnimationSpeed(0.8f);
 
-        ToolBox.GetInstance().GetManager<DrawManager>().isEditing = false;
+        ToolBox.GetInstance().GetManager<DrawManager>().StopEditing();
         ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
         ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
         ToolBox.GetInstance().GetManager<DrawManager>().PlayAvatar();

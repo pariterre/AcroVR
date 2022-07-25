@@ -110,7 +110,7 @@ public class DrawManager : MonoBehaviour
     float[,] q1_girl2;
 
     public bool isPaused = true;
-    public bool isEditing = false;
+    public bool isEditing { get; protected set; } = false;
 
     float pauseStart = 0;
     float pauseTime = 0;
@@ -1293,6 +1293,15 @@ public class DrawManager : MonoBehaviour
 
         qf = MathFunc.MatrixGetColumnD(q, 1);
         SetAllDof(qf);
+    }
+
+    public void StartEditing()
+    {
+        isEditing = true;
+    }
+
+    public void StopEditing() {
+        isEditing = false;
     }
 
     public void SetAllDof(double[] _qf){

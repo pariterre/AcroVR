@@ -252,7 +252,7 @@ public class AniGraphManager : MonoBehaviour
                 //                transform.parent.GetComponentInChildren<DrawManager>().ShowAvatar();
                 //                transform.parent.GetComponentInChildren<DrawManager>().frameN = temp;
 
-                transform.parent.GetComponentInChildren<DrawManager>().isEditing = true;
+                transform.parent.GetComponentInChildren<DrawManager>().StartEditing();
                 transform.parent.GetComponentInChildren<DrawManager>().frameN = (int)(MainParameters.Instance.joints.nodes[ddlUsed].T[nodeUsed]/0.02f);
                 transform.parent.GetComponentInChildren<DrawManager>().ControlOneFrame();
 

@@ -47,9 +47,13 @@ public class StatManager : MonoBehaviour
 
     Camera _avatarCameraInternal;
     Ray mouseRay { get {
-        if(_avatarCameraInternal == null)
-            _avatarCameraInternal = GameObject.Find("AvatarCamera").GetComponent<Camera>();
-        return _avatarCameraInternal.ScreenPointToRay(Input.mousePosition);
+            if (_avatarCameraInternal == null)
+            {
+                var tp = GameObject.Find("AvatarCamera"); 
+                if (tp == null) return new Ray();
+                _avatarCameraInternal = tp.GetComponent<Camera>();
+            }
+            return _avatarCameraInternal.ScreenPointToRay(Input.mousePosition);
     }}
     Color colorBlue;
     Color colorWhite;
@@ -198,27 +202,27 @@ public class StatManager : MonoBehaviour
     {
         if (levelManager.currentState != SceneState.Training) return;
 
-        if (Input.GetMouseButtonDown(1) && Physics.Raycast(mouseRay, out hit))
-        {
-            HandleJointClick();
-        }
+        bool hasHit = Physics.Raycast(mouseRay, out hit);
 
-        if (Input.GetMouseButton(0) && !drawManager.isEditing)
+        if (Input.GetMouseButton(0) && hasHit && !drawManager.isEditing)
         {
             // TODO: Model always rotates wherever we click
             if (drawManager.girl1 != null)
             {
                 drawManager.girl1.transform.Rotate(Vector3.up * 100f * Time.deltaTime);
-                if (selectedJoint)
-                    selectedJoint.transform.position = hit.collider.gameObject.transform.position;
             }
+        }
+
+        if (Input.GetMouseButtonDown(1) && hasHit)
+        {
+            HandleJointClick();
         }
     }
 
     void ResetTemporaries(){
         if (!drawManager.isEditing) return;
 
-        drawManager.isEditing = false;
+        drawManager.StopEditing();
 
         currentControlSegment.DestroyCircle();
         currentControlSegment = null;
@@ -248,7 +252,7 @@ public class StatManager : MonoBehaviour
             }
         }
         
-        drawManager.isEditing = true;
+        drawManager.StartEditing();
 
         currentJointSubIdx = _nextJointSubIdx;
         currentControlSegment = _controlSegment[currentJointSubIdx];
