@@ -34,6 +34,8 @@ public class StatManager : MonoBehaviour
 //    private GameObject circlePrefab;
 //    private GameObject circlePrefab_shoulder;
     protected GameObject selectedJoint;
+    protected bool isRotating = false;
+    protected Vector3 initPosition;
     ControlSegmentGeneric currentControlSegment;
     public int currentJointSubIdx;
     RaycastHit hit;
@@ -204,13 +206,25 @@ public class StatManager : MonoBehaviour
 
         bool hasHit = Physics.Raycast(mouseRay, out hit);
 
-        if (Input.GetMouseButton(0) && hasHit && !drawManager.isEditing)
+        if (Input.GetMouseButton(0))
         {
-            // TODO: Model always rotates wherever we click
-            if (drawManager.girl1 != null)
+            if (isRotating)
             {
-                drawManager.girl1.transform.Rotate(Vector3.up * 100f * Time.deltaTime);
+                Vector3 newPosition = Input.mousePosition;
+                Vector3 mouseDistance = newPosition - initPosition;
+                drawManager.girl1.transform.Rotate(Vector3.up * -mouseDistance.x / 5f);
+                initPosition = newPosition;
             }
+            if (!isRotating && drawManager.girl1 != null && hasHit && !drawManager.isEditing)
+            {
+                initPosition = Input.mousePosition;
+                isRotating = true;
+            }
+
+        }
+        else
+        {
+            isRotating = false;
         }
 
         if (Input.GetMouseButtonDown(1) && hasHit)
