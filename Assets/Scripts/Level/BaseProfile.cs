@@ -7,6 +7,13 @@ using Cinemachine;
 
 public class BaseProfile : LevelBase
 {
+    protected LevelManager levelManager;
+    protected GameManager gameManager;
+    protected DrawManager drawManager;
+    protected AniGraphManager aniGraphManager;
+    protected UIManager uiManager;
+
+
     public Dropdown dropDownCondition;
     public Dropdown dropDownDDLNames;
 //    public GameObject anchorSidePOV = null;
@@ -37,7 +44,6 @@ public class BaseProfile : LevelBase
     public InputField simulationDuration;
 
     public Toggle pauseButton;
-    public GameObject pauseBackground;
 
     public Text fileName;
 
@@ -61,7 +67,7 @@ public class BaseProfile : LevelBase
 
     public void SwtichCameraView()
     {
-        if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 == null)
+        if (drawManager.girl1 == null)
         {
             if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
             {
@@ -80,13 +86,13 @@ public class BaseProfile : LevelBase
                 FirstPOVCamera();
                 break;
             case CameraView.FrontPOV:
-                FrontCameraPOV(ToolBox.GetInstance().GetManager<DrawManager>().CheckPositionAvatar());
+                FrontCameraPOV(drawManager.CheckPositionAvatar());
                 break;
             case CameraView.SidePOV:
-                SideCameraPOV(ToolBox.GetInstance().GetManager<DrawManager>().CheckPositionAvatar());
+                SideCameraPOV(drawManager.CheckPositionAvatar());
                 break;
             case CameraView.ThreeQuarterPOV:
-                ThreeQuarterCameraPOV(ToolBox.GetInstance().GetManager<DrawManager>().CheckPositionAvatar());
+                ThreeQuarterCameraPOV(drawManager.CheckPositionAvatar());
                 break;
         }
     }
@@ -97,7 +103,7 @@ public class BaseProfile : LevelBase
 
         if(cameraList[15] == null)
         {
-            cameraList[15] = ToolBox.GetInstance().GetManager<DrawManager>().GetFirstViewTransform();
+            cameraList[15] = drawManager.GetFirstViewTransform();
         }
 
         for (int i = 0; i < cameraList.Length; i++)
@@ -106,8 +112,8 @@ public class BaseProfile : LevelBase
 
             if(cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt == null)
             {
-                if(ToolBox.GetInstance().GetManager<DrawManager>().girl1 != null)
-                    cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt = ToolBox.GetInstance().GetManager<DrawManager>().girl1.transform.Find("Petra.002/hips").gameObject.transform;
+                if(drawManager.girl1 != null)
+                    cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt = drawManager.girl1.transform.Find("Petra.002/hips").gameObject.transform;
             }
         }
 
@@ -151,8 +157,8 @@ public class BaseProfile : LevelBase
 
             if (cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt == null)
             {
-                if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 != null)
-                    cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt = ToolBox.GetInstance().GetManager<DrawManager>().girl1.transform.Find("Petra.002/hips").gameObject.transform;
+                if (drawManager.girl1 != null)
+                    cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt = drawManager.girl1.transform.Find("Petra.002/hips").gameObject.transform;
             }
         }
 
@@ -195,8 +201,8 @@ public class BaseProfile : LevelBase
 
             if (cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt == null)
             {
-                if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 != null)
-                    cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt = ToolBox.GetInstance().GetManager<DrawManager>().girl1.transform.Find("Petra.002/hips").gameObject.transform;
+                if (drawManager.girl1 != null)
+                    cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt = drawManager.girl1.transform.Find("Petra.002/hips").gameObject.transform;
             }
         }
 
@@ -238,8 +244,8 @@ public class BaseProfile : LevelBase
 
             if (cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt == null)
             {
-                if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 != null)
-                    cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt = ToolBox.GetInstance().GetManager<DrawManager>().girl1.transform.Find("Petra.002/hips").gameObject.transform;
+                if (drawManager.girl1 != null)
+                    cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt = drawManager.girl1.transform.Find("Petra.002/hips").gameObject.transform;
             }
         }
 
@@ -250,38 +256,38 @@ public class BaseProfile : LevelBase
 
     public void BackToMenu()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("Back Button Click: BackToMenu()");
+        gameManager.WriteToLogFile("Back Button Click: BackToMenu()");
 
-        ToolBox.GetInstance().GetManager<GameManager>().InitAnimationInfo();
-        ToolBox.GetInstance().GetManager<DrawManager>().StopEditing();
-        ToolBox.GetInstance().GetManager<DrawManager>().animateON = false;
-        ToolBox.GetInstance().GetManager<AniGraphManager>().cntAvatar = 0;
-        ToolBox.GetInstance().GetManager<DrawManager>().ResetPause();
-        ToolBox.GetInstance().GetManager<DrawManager>().ResetFrame();
-        ToolBox.GetInstance().GetManager<AniGraphManager>().isTutorial = 0;
-        ToolBox.GetInstance().GetManager<GameManager>().numMission = 0;
+        gameManager.InitAnimationInfo();
+        drawManager.StopEditing();
+        drawManager.animateON = false;
+        aniGraphManager.cntAvatar = 0;
+        drawManager.ResetPause();
+        drawManager.ResetFrame();
+        aniGraphManager.isTutorial = 0;
+        gameManager.numMission = 0;
 
-        ToolBox.GetInstance().GetManager<LevelManager>().GotoScreen("MainMenu");
+        levelManager.GotoScreen("MainMenu");
     }
 
     public void ToProfile()
     {
-        ToolBox.GetInstance().GetManager<LevelManager>().GotoScreen("Profile");
+        levelManager.GotoScreen("Profile");
     }
 
     public void ToTraining()
     {
-        ToolBox.GetInstance().GetManager<LevelManager>().GotoScreen("Training");
+        levelManager.GotoScreen("Training");
     }
 
     public void ToNextLevel()
     {
-        ToolBox.GetInstance().GetManager<LevelManager>().NextLevel();
+        levelManager.NextLevel();
     }
 
     public void ToQuit()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("End!");
+        gameManager.WriteToLogFile("End!");
 
         if (Application.isEditor)
         {
@@ -297,12 +303,12 @@ public class BaseProfile : LevelBase
 
 //    public void ShowResultGraph()
 //    {
-//        ToolBox.GetInstance().GetManager<AniGraphManager>().ResultGraphOn();
+//        aniGraphManager.ResultGraphOn();
 //    }
 
     public void ToBaseLevel1()
     {
-        ToolBox.GetInstance().GetManager<LevelManager>().GotoScreen("BaseLevel1");
+        levelManager.GotoScreen("BaseLevel1");
     }
 
     private void ShowTakeOff()
@@ -312,10 +318,10 @@ public class BaseProfile : LevelBase
 
 
         ///////////////////////////
-        twistPosition.text = ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamTwistPosition.ToString();
-        horizontalPosition.text = ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamHorizontalPosition.ToString();
-        verticalPosition.text = ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamVerticalPosition.ToString();
-        tiltSpeed.text = ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamTiltSpeed.ToString();
+        twistPosition.text = drawManager.takeOffParamTwistPosition.ToString();
+        horizontalPosition.text = drawManager.takeOffParamHorizontalPosition.ToString();
+        verticalPosition.text = drawManager.takeOffParamVerticalPosition.ToString();
+        tiltSpeed.text = drawManager.takeOffParamTiltSpeed.ToString();
         ///////////////////////////
 
 
@@ -329,14 +335,14 @@ public class BaseProfile : LevelBase
 
     public void MissionLoad()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("Load Button Click");
+        gameManager.WriteToLogFile("Load Button Click");
 
         //        AvatarCamera.transform.position = anchorThirdPOV.transform.position;
         //        AvatarCamera.transform.rotation = anchorThirdPOV.transform.rotation;
 
-        int ret = ToolBox.GetInstance().GetManager<GameManager>().MissionLoad();
+        int ret = gameManager.MissionLoad();
 
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("Load return value: " + ret.ToString());
+        gameManager.WriteToLogFile("Load return value: " + ret.ToString());
 
         if (ret < 0)
         {
@@ -365,31 +371,29 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("Success to load a file");
+        gameManager.WriteToLogFile("Success to load a file");
 
         fileName.text = Path.GetFileName(MainParameters.Instance.joints.fileName);
 
-        if (ToolBox.GetInstance().GetManager<DrawManager>().setAvatar == DrawManager.AvatarMode.SingleFemale)
-            ToolBox.GetInstance().GetManager<DrawManager>().LoadAvatar(DrawManager.AvatarMode.SingleFemale);
+        if (drawManager.setAvatar == DrawManager.AvatarMode.SingleFemale)
+            drawManager.LoadAvatar(DrawManager.AvatarMode.SingleFemale);
         else
-            ToolBox.GetInstance().GetManager<DrawManager>().LoadAvatar(DrawManager.AvatarMode.SingleMale);
+            drawManager.LoadAvatar(DrawManager.AvatarMode.SingleMale);
 
         TakeOffOn();
         InitDropdownDDLNames(0);
 
         dropDownCondition.value = MainParameters.Instance.joints.condition;
 
-        ToolBox.GetInstance().GetManager<DrawManager>().StopEditing();
-        ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
-        ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
+        drawManager.StopEditing();
+        drawManager.MakeSimulationFrame();
+        drawManager.ShowAvatar();
 
-        ToolBox.GetInstance().GetManager<DrawManager>().animateON = false;
+        drawManager.animateON = false;
 
-        FrontCameraPOV(ToolBox.GetInstance().GetManager<DrawManager>().CheckPositionAvatar());
+        FrontCameraPOV(drawManager.CheckPositionAvatar());
 
-        if (!pauseBackground.activeSelf) pauseBackground.SetActive(true);
-
-        /*        if (ToolBox.GetInstance().GetManager<DrawManager>().CheckPositionAvatar())
+        /*        if (drawManager.CheckPositionAvatar())
                 {
                     CameraPOV(POV.LongFrontView);
         //            LongDistanceCamera();
@@ -402,24 +406,24 @@ public class BaseProfile : LevelBase
                 }*/
 
         TutorialMessage();
-        ToolBox.GetInstance().GetManager<AniGraphManager>().cntAvatar = 0;
+        aniGraphManager.cntAvatar = 0;
 
-        float t = (ToolBox.GetInstance().GetManager<DrawManager>().numberFrames-1) * 0.02f;
+        float t = (drawManager.numberFrames-1) * 0.02f;
         endFrameText.text = t + " sec";
 
         if (t < MainParameters.Instance.joints.duration) MainParameters.Instance.joints.duration = t;
 
-        ToolBox.GetInstance().GetManager<GameManager>().InterpolationDDL();
-        ToolBox.GetInstance().GetManager<GameManager>().DisplayDDL(0, true);
+        gameManager.InterpolationDDL();
+        gameManager.DisplayDDL(0, true);
 
         ShowTakeOff();
     }
 
     public void MissionLoad2()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("Load Two avatar Button Click");
+        gameManager.WriteToLogFile("Load Two avatar Button Click");
 
-        int ret = ToolBox.GetInstance().GetManager<GameManager>().LoadSimulationSecond();
+        int ret = gameManager.LoadSimulationSecond();
 
         if (ret < 0)
         {
@@ -448,13 +452,13 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("Success to load one");
+        gameManager.WriteToLogFile("Success to load one");
 
         ShowTakeOff();
 
-        if (ToolBox.GetInstance().GetManager<DrawManager>().setAvatar == DrawManager.AvatarMode.SingleFemale)
+        if (drawManager.setAvatar == DrawManager.AvatarMode.SingleFemale)
         {
-            if (!ToolBox.GetInstance().GetManager<DrawManager>().LoadAvatar(DrawManager.AvatarMode.DoubleFemale))
+            if (!drawManager.LoadAvatar(DrawManager.AvatarMode.DoubleFemale))
             {
                 if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
                 {
@@ -470,7 +474,7 @@ public class BaseProfile : LevelBase
         }
         else
         {
-            if (!ToolBox.GetInstance().GetManager<DrawManager>().LoadAvatar(DrawManager.AvatarMode.DoubleMale))
+            if (!drawManager.LoadAvatar(DrawManager.AvatarMode.DoubleMale))
             {
                 if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
                 {
@@ -485,22 +489,19 @@ public class BaseProfile : LevelBase
             }
         }
 
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("Success to load two");
+        gameManager.WriteToLogFile("Success to load two");
 
         TakeOffOn();
         InitDropdownDDLNames(0);
 
-        ToolBox.GetInstance().GetManager<DrawManager>().StopEditing();
-        ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
-        ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
+        drawManager.StopEditing();
+        drawManager.MakeSimulationFrame();
+        drawManager.ShowAvatar();
 
-        ToolBox.GetInstance().GetManager<DrawManager>().animateON = false;
+        drawManager.animateON = false;
 
-        FrontCameraPOV(ToolBox.GetInstance().GetManager<DrawManager>().CheckPositionAvatar());
 
-        if (!pauseBackground.activeSelf) pauseBackground.SetActive(true);
-
-        /*        if (ToolBox.GetInstance().GetManager<DrawManager>().CheckPositionAvatar())
+        /*        if (drawManager.CheckPositionAvatar())
                 {
                     CameraPOV(POV.LongFrontView);
         //            LongDistanceCamera();
@@ -514,35 +515,35 @@ public class BaseProfile : LevelBase
 
         TutorialMessage();
 
-        ToolBox.GetInstance().GetManager<AniGraphManager>().cntAvatar = 1;
+        aniGraphManager.cntAvatar = 1;
 
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("Success to load one");
+        gameManager.WriteToLogFile("Success to load one");
     }
 
     public void SaveFile()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("SaveFile()");
+        gameManager.WriteToLogFile("SaveFile()");
 
-        ToolBox.GetInstance().GetManager<GameManager>().SaveFile();
+        gameManager.SaveFile();
     }
 
     public void TakeOffOn()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("GraphOn");
+        gameManager.WriteToLogFile("GraphOn");
 
-        ToolBox.GetInstance().GetManager<AniGraphManager>().GraphOn();
+        aniGraphManager.GraphOn();
     }
 
     public void TakeOffOff()
     {
-        ToolBox.GetInstance().GetManager<AniGraphManager>().TaskOffGraphOff();
+        aniGraphManager.TaskOffGraphOff();
     }
 
     public void InitDropdownDDLNames(int ddl)
     {
-        if (ToolBox.GetInstance().GetManager<UIManager>().GetCurrentTab() != 2) return;
+        if (uiManager.GetCurrentTab() != 2) return;
 
-        if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 == null)
+        if (drawManager.girl1 == null)
         {
             if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
             {
@@ -555,7 +556,7 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("InitDropdownDDLNames() ddl: " + ddl.ToString());
+        gameManager.WriteToLogFile("InitDropdownDDLNames() ddl: " + ddl.ToString());
 
         List<string> dropDownOptions = new List<string>();
         for (int i = 0; i < 6; i++)
@@ -581,10 +582,10 @@ public class BaseProfile : LevelBase
 
         if (ddl >= 0)
         {
-            ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurveAndNodes(0, ddl, axisRange);
+            aniGraphManager.DisplayCurveAndNodes(0, ddl, axisRange);
             if (MainParameters.Instance.joints.nodes[ddl].ddlOppositeSide >= 0)
             {
-                ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurveAndNodes(1, MainParameters.Instance.joints.nodes[ddl].ddlOppositeSide, axisRange);
+                aniGraphManager.DisplayCurveAndNodes(1, MainParameters.Instance.joints.nodes[ddl].ddlOppositeSide, axisRange);
             }
         }
     }
@@ -596,7 +597,7 @@ public class BaseProfile : LevelBase
 
 /*    public void FirstPOVCamera()
     {
-        if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 == null)
+        if (drawManager.girl1 == null)
         {
             if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
             {
@@ -609,13 +610,13 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        AvatarCamera.transform.position = ToolBox.GetInstance().GetManager<DrawManager>().GetFirstViewTransform().transform.position;
-        AvatarCamera.transform.rotation = ToolBox.GetInstance().GetManager<DrawManager>().GetFirstViewTransform().transform.rotation;
+        AvatarCamera.transform.position = drawManager.GetFirstViewTransform().transform.position;
+        AvatarCamera.transform.rotation = drawManager.GetFirstViewTransform().transform.rotation;
     }*/
 
     public void ThirdPOVCamera()
     {
-        if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 == null)
+        if (drawManager.girl1 == null)
         {
             if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
             {
@@ -628,9 +629,9 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        FrontCameraPOV(ToolBox.GetInstance().GetManager<DrawManager>().CheckPositionAvatar());
+        FrontCameraPOV(drawManager.CheckPositionAvatar());
 
-        /*        if (ToolBox.GetInstance().GetManager<DrawManager>().CheckPositionAvatar())
+        /*        if (drawManager.CheckPositionAvatar())
                 {
                     CameraPOV(POV.LongFrontView);
         //            LongDistanceCamera();
@@ -645,7 +646,7 @@ public class BaseProfile : LevelBase
 
     public void SidePOVCamera()
     {
-        if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 == null)
+        if (drawManager.girl1 == null)
         {
             if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
             {
@@ -659,11 +660,11 @@ public class BaseProfile : LevelBase
         }
 
 
-        SideCameraPOV(ToolBox.GetInstance().GetManager<DrawManager>().CheckPositionAvatar());
+        SideCameraPOV(drawManager.CheckPositionAvatar());
 
-/*        if(ToolBox.GetInstance().GetManager<DrawManager>().CheckPositionAvatar())
+/*        if(drawManager.CheckPositionAvatar())
         {
-            ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("CheckPositionAvatar()");
+            gameManager.WriteToLogFile("CheckPositionAvatar()");
 
             CameraPOV(POV.LongSideView);
 //            AvatarCamera.transform.position = new Vector3(-15, 3, 7f);
@@ -680,7 +681,7 @@ public class BaseProfile : LevelBase
 
     public void ThreeQuarterPOVCamera()
     {
-        if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 == null)
+        if (drawManager.girl1 == null)
         {
             if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
             {
@@ -693,12 +694,12 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        ThreeQuarterCameraPOV(ToolBox.GetInstance().GetManager<DrawManager>().CheckPositionAvatar());
+        ThreeQuarterCameraPOV(drawManager.CheckPositionAvatar());
     }
 
     public void LongDistanceCamera()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("LongDistanceCamera()");
+        gameManager.WriteToLogFile("LongDistanceCamera()");
 
 //        AvatarCamera.transform.position = new Vector3(0, 3, 17f);
 //        AvatarCamera.transform.rotation = anchorThirdPOV.transform.rotation;
@@ -706,9 +707,9 @@ public class BaseProfile : LevelBase
 
     public void PlayAvatar()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("PlayAvatar()");
+        gameManager.WriteToLogFile("PlayAvatar()");
 
-        if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 == null)
+        if (drawManager.girl1 == null)
         {
             if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
             {
@@ -721,68 +722,61 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
-        ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
+        drawManager.MakeSimulationFrame();
+        drawManager.ShowAvatar();
     }
 
     public void PlayAvatarButton()
     {
         pauseButton.isOn = true;
-        if (!pauseBackground.activeSelf) pauseBackground.SetActive(true);
 
-        ToolBox.GetInstance().GetManager<DrawManager>().ResetPause();
+        drawManager.ResetPause();
 
-        if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 == null)
+        if (drawManager.girl1 == null)
         {
             return;
         }
 
-        if (!ToolBox.GetInstance().GetManager<DrawManager>().girl1.activeSelf)
+        if (!drawManager.girl1.activeSelf)
         {
             return;
         }
 
         string playSpeed = dropDownPlaySpeed.captionText.text;
         if (playSpeed == MainParameters.Instance.languages.Used.animatorPlaySpeedSlow3)
-            ToolBox.GetInstance().GetManager<DrawManager>().SetAnimationSpeed(10);
+            drawManager.SetAnimationSpeed(10);
         else if (playSpeed == MainParameters.Instance.languages.Used.animatorPlaySpeedSlow2)
-            ToolBox.GetInstance().GetManager<DrawManager>().SetAnimationSpeed(3);
+            drawManager.SetAnimationSpeed(3);
         else if (playSpeed == MainParameters.Instance.languages.Used.animatorPlaySpeedSlow1)
-            ToolBox.GetInstance().GetManager<DrawManager>().SetAnimationSpeed(1.5f);
+            drawManager.SetAnimationSpeed(1.5f);
         else if (playSpeed == MainParameters.Instance.languages.Used.animatorPlaySpeedNormal)
-            ToolBox.GetInstance().GetManager<DrawManager>().SetAnimationSpeed(1);
+            drawManager.SetAnimationSpeed(1);
         else if (playSpeed == MainParameters.Instance.languages.Used.animatorPlaySpeedFast)
-            ToolBox.GetInstance().GetManager<DrawManager>().SetAnimationSpeed(0.8f);
+            drawManager.SetAnimationSpeed(0.8f);
 
-        ToolBox.GetInstance().GetManager<DrawManager>().StopEditing();
-        ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
-        ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
-        ToolBox.GetInstance().GetManager<DrawManager>().PlayAvatar();
+        drawManager.StopEditing();
+        drawManager.MakeSimulationFrame();
+        drawManager.ShowAvatar();
+        drawManager.PlayAvatar();
 
         SwtichCameraView();
 
         TakeOffOn();
         InitDropdownDDLNames(0);
-        ToolBox.GetInstance().GetManager<GameManager>().InterpolationDDL();
-        ToolBox.GetInstance().GetManager<GameManager>().DisplayDDL(0, false);
+        gameManager.InterpolationDDL();
+        gameManager.DisplayDDL(0, false);
     }
 
     public void PauseAvatarButton()
     {
-//        isPaused = !isPaused;
-        ToolBox.GetInstance().GetManager<DrawManager>().PauseAvatar();
-
-        if (ToolBox.GetInstance().GetManager<DrawManager>().isPaused)
-            pauseBackground.SetActive(false);
-        else
-            pauseBackground.SetActive(true);
+        drawManager.PauseAvatar();
     }
 
     public void SetTab(int _num)
     {
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("SetTab() _num: " + _num.ToString());
+        gameManager.WriteToLogFile("SetTab() _num: " + _num.ToString());
 
-        if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 == null)
+        if (drawManager.girl1 == null)
         {
             if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
             {
@@ -795,56 +789,56 @@ public class BaseProfile : LevelBase
 //            return;
         }
 
-        ToolBox.GetInstance().GetManager<UIManager>().SetCurrentTab(_num);
+        uiManager.SetCurrentTab(_num);
     }
 
     public void SetFrench()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("SetFrench()");
+        gameManager.WriteToLogFile("SetFrench()");
 
         MainParameters.Instance.languages.Used = MainParameters.Instance.languages.french;
     }
 
     public void SetEnglish()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("SetEnglish()");
+        gameManager.WriteToLogFile("SetEnglish()");
 
         MainParameters.Instance.languages.Used = MainParameters.Instance.languages.english;
     }
 
     public void SetTooltip(bool _flag)
     {
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("SetTooltip() _flag: " + _flag.ToString());
+        gameManager.WriteToLogFile("SetTooltip() _flag: " + _flag.ToString());
 
-        ToolBox.GetInstance().GetManager<UIManager>().SetTooltip(_flag);
+        uiManager.SetTooltip(_flag);
     }
 
     public void SetMaleAvatar()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("SetMaleAvatar()");
+        gameManager.WriteToLogFile("SetMaleAvatar()");
 
-        ToolBox.GetInstance().GetManager<DrawManager>().setAvatar = DrawManager.AvatarMode.SingleMale;
+        drawManager.setAvatar = DrawManager.AvatarMode.SingleMale;
     }
 
     public void SetFemaleAvatar()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("SetFemaleAvatar()");
+        gameManager.WriteToLogFile("SetFemaleAvatar()");
 
-        ToolBox.GetInstance().GetManager<DrawManager>().setAvatar = DrawManager.AvatarMode.SingleFemale;
+        drawManager.setAvatar = DrawManager.AvatarMode.SingleFemale;
     }
 
     public void SetSimulationMode()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("SetSimulationMode()");
+        gameManager.WriteToLogFile("SetSimulationMode()");
 
-        ToolBox.GetInstance().GetManager<DrawManager>().SimulationMode();
+        drawManager.SimulationMode();
     }
 
     public void SetGestureMode()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().WriteToLogFile("SetGestureMode()");
+        gameManager.WriteToLogFile("SetGestureMode()");
 
-        ToolBox.GetInstance().GetManager<DrawManager>().GestureMode();
+        drawManager.GestureMode();
     }
 
     public void ErrorMessage(string _msg)
@@ -873,16 +867,16 @@ public class BaseProfile : LevelBase
 
     public void TutorialMessage()
     {
-        if (ToolBox.GetInstance().GetManager<DrawManager>().girl1 == null) return;
+        if (drawManager.girl1 == null) return;
 
-        if(ToolBox.GetInstance().GetManager<AniGraphManager>().isTutorial == 0)
+        if(aniGraphManager.isTutorial == 0)
         {
             TakeOffOn();
             InitDropdownDDLNames(0);
-            ToolBox.GetInstance().GetManager<GameManager>().InterpolationDDL();
-            ToolBox.GetInstance().GetManager<GameManager>().DisplayDDL(0, true);
+            gameManager.InterpolationDDL();
+            gameManager.DisplayDDL(0, true);
 
-            ToolBox.GetInstance().GetManager<AniGraphManager>().isTutorial++;
+            aniGraphManager.isTutorial++;
             TutorialObject.GetComponent<Animator>().Play("Panel In");
 
             if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
@@ -902,13 +896,22 @@ public class BaseProfile : LevelBase
         }
     }
 
+    void Start()
+    {
+        levelManager = ToolBox.GetInstance().GetManager<LevelManager>();
+        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        aniGraphManager = ToolBox.GetInstance().GetManager<AniGraphManager>();
+        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
+    }
+
     private void Update()
     {
-        if(ToolBox.GetInstance().GetManager<AniGraphManager>().isTutorial == 1)
+        if(aniGraphManager.isTutorial == 1)
         {
             if(Input.anyKeyDown)
             {
-                ToolBox.GetInstance().GetManager<AniGraphManager>().isTutorial++;
+                aniGraphManager.isTutorial++;
                 TutorialObject.GetComponent<Animator>().Play("Panel Out");
             }
         }

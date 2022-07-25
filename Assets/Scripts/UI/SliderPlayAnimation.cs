@@ -11,21 +11,13 @@ public class SliderPlayAnimation : MonoBehaviour
     // Variables
     DrawManager drawManager;
     public Slider slider;
-    //	public PlayController playController;
-    //	public GameObject result;
-    //	public GameObject worldCanvas;
 
     public Text textChrono;
     public Toggle pauseButton;
-    public GameObject pauseBackground;
 
     void Start()
     {
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
-        //slider.onValueChanged.AddListener(delegate { ValueChangeCheck(); });
-
-        //isPaused = !isPaused;
-        //drawManager.PauseAvatar(isPaused);
     }
 
     void Update()
@@ -75,9 +67,6 @@ public class SliderPlayAnimation : MonoBehaviour
                 if (drawManager.cntAvatar>1 && !drawManager.secondPaused)
                     drawManager.secondPaused = true;
             }
-
-            if (pauseBackground.activeSelf)
-                pauseBackground.SetActive(false);
         }
 
         if (drawManager.cntAvatar > 1)

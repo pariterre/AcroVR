@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Linq;
 using System.Text;
@@ -1308,7 +1308,6 @@ public class DrawManager : MonoBehaviour
     public void StartEditing()
     {
         isEditing = true;
-        canPlay = false;
     }
 
     public void StopEditing()
