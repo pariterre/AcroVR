@@ -26,8 +26,6 @@ public class TrainingTooltip : MonoBehaviour
         public string PointOfView;
         public string AnimationSpeed;
         public string StartButton;
-        public string PauseButton;
-        public string ReplayButton;
         public string Condition;
         public string SimulationTime;
         public string Duration;
@@ -70,8 +68,6 @@ public class TrainingTooltip : MonoBehaviour
 //    public Text textTakeOffInitialPosture;
 
     public Text StartButton;
-    public Text PauseButton;
-    public Text ReplayButton;
 
     public Dropdown dropDownTakeOffCondition;
     public Dropdown dropDownAnimationSpeed;
@@ -123,10 +119,6 @@ public class TrainingTooltip : MonoBehaviour
 
         languages.english.StartButton = "Start";
         languages.french.StartButton = "Démarrer";
-        languages.english.PauseButton = "Pause";
-        languages.french.PauseButton = "Pause";
-        languages.english.ReplayButton = "Replay";
-        languages.french.ReplayButton = "Rejouer";
 
         languages.english.Condition = "Condition of Take-off";
         languages.french.Condition = "Condition de décollage";
@@ -321,8 +313,6 @@ public class TrainingTooltip : MonoBehaviour
             PointOfView.text = languages.english.PointOfView;
             AnimationSpeed.text = languages.english.AnimationSpeed;
             StartButton.text = languages.english.StartButton;
-            PauseButton.text = languages.english.PauseButton;
-            ReplayButton.text = languages.english.ReplayButton;
 
             SimulationTime.text = languages.english.SimulationTime;
             Duration.text = languages.english.Duration;
@@ -350,8 +340,6 @@ public class TrainingTooltip : MonoBehaviour
             PointOfView.text = languages.french.PointOfView;
             AnimationSpeed.text = languages.french.AnimationSpeed;
             StartButton.text = languages.french.StartButton;
-            PauseButton.text = languages.french.PauseButton;
-            ReplayButton.text = languages.french.ReplayButton;
 
             SimulationTime.text = languages.french.SimulationTime;
             Duration.text = languages.french.Duration;

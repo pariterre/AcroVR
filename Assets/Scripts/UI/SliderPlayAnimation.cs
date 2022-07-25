@@ -13,7 +13,8 @@ public class SliderPlayAnimation : MonoBehaviour
     public Slider slider;
 
     public Text textChrono;
-    public Toggle pauseButton;
+    public Button playButton;
+    public Button pauseButton;
 
     void Start()
     {
@@ -58,7 +59,7 @@ public class SliderPlayAnimation : MonoBehaviour
 
         if (Input.GetMouseButton(0) && ToolBox.GetInstance().GetManager<UIManager>().IsOnGameObject(slider.gameObject))
         {
-            pauseButton.isOn = false;
+            pauseButton.interactable = false;
 
             if (!drawManager.isPaused)
             {

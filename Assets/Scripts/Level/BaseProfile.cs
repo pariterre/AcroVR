@@ -43,7 +43,8 @@ public class BaseProfile : LevelBase
 
     public InputField simulationDuration;
 
-    public Toggle pauseButton;
+    public Button playButton;
+    public Button pauseButton;
 
     public Text fileName;
 
@@ -65,7 +66,7 @@ public class BaseProfile : LevelBase
     {
     }
 
-    public void SwtichCameraView()
+    public void SwitchCameraView()
     {
         if (drawManager.girl1 == null)
         {
@@ -728,16 +729,12 @@ public class BaseProfile : LevelBase
 
     public void PlayAvatarButton()
     {
-        pauseButton.isOn = true;
+        playButton.interactable = false;
+        pauseButton.interactable = true;
 
         drawManager.ResetPause();
 
-        if (drawManager.girl1 == null)
-        {
-            return;
-        }
-
-        if (!drawManager.girl1.activeSelf)
+        if (drawManager.girl1 == null || !drawManager.girl1.activeSelf)
         {
             return;
         }
@@ -759,12 +756,9 @@ public class BaseProfile : LevelBase
         drawManager.ShowAvatar();
         drawManager.PlayAvatar();
 
-        SwtichCameraView();
+        SwitchCameraView();
 
         TakeOffOn();
-        InitDropdownDDLNames(0);
-        gameManager.InterpolationDDL();
-        gameManager.DisplayDDL(0, false);
     }
 
     public void PauseAvatarButton()
