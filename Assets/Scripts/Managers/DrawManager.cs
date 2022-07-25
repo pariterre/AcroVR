@@ -35,14 +35,20 @@ public class DrawManager : MonoBehaviour
     ////////////////
     /// <summary>
     /// Hip
-    private GameObject girl1LeftThighUp;
-    private GameObject girl1RightThighUp;
+    private GameObject girl1LeftThigh;
+    private ControlThigh girl1ThighControl;
+    private GameObject girl1RightThigh;
     // Knee
     private GameObject girl1LeftLeg;
+    private ControlShin girl1LegControl;
     private GameObject girl1RightLeg;
     // Shoulder
     private GameObject girl1LeftArm;
+    private ControlLeftArmAbduction girl1LeftArmControlAbd;
+    private ControlLeftArmFlexion girl1LeftArmControlFlex;
     private GameObject girl1RightArm;
+    private ControlRightArmAbduction girl1RightArmControlAbd;
+    private ControlRightArmFlexion girl1RightArmControlFlex;
     // Root
     public GameObject girl1Hip;
     /// </summary>
@@ -98,7 +104,7 @@ public class DrawManager : MonoBehaviour
 
         public GameObject stickMan;*/
 
-    public int cntAvatar;
+    public int cntAvatar = 1;
 
     float[,] q1;
     float[,] q1_girl2;
@@ -129,9 +135,7 @@ public class DrawManager : MonoBehaviour
 
     void Awake()
     {
-        transform.parent.GetComponentInChildren<GameManager>().WriteToLogFile("Start!");
         ThetaScale = 0.01f;
-        cntAvatar = 1;
         //        avatarSpawnpoint = GameObject.FindGameObjectWithTag("AnchorAvatarToWorld");
         //        avatarVector3 = avatarSpawnpoint.transform.position;
 
@@ -153,11 +157,9 @@ public class DrawManager : MonoBehaviour
 
         if (frameN <= 0 && !isPaused) timeStarted = Time.time;
         if (Time.time - (timeStarted + pauseTime) >= (timeFrame * frameN) * factorPlaySpeed)
-//        if (Time.time - (timeStarted) >= (timeFrame * frameN) * factorPlaySpeed)
         {
             if(!isPaused)
                 timeElapsed = Time.time - (timeStarted + pauseTime);
-            //            timeElapsed = Time.time - (timeStarted);
 
             if (frameN < numberFrames-1)
                 PlayOneFrame();
@@ -165,20 +167,17 @@ public class DrawManager : MonoBehaviour
                 PlayEnd();
         }
 
-        if (cntAvatar > 1)
+        if (Time.time - (timeStarted + pauseTime) >= (timeFrame * secondFrameN) * factorPlaySpeed)
         {
-            if (Time.time - (timeStarted + pauseTime) >= (timeFrame * secondFrameN) * factorPlaySpeed)
-            {
-                if (!secondPaused)
-                    secondTimeElapsed = Time.time - (timeStarted + pauseTime);
+            if (!secondPaused)
+                secondTimeElapsed = Time.time - (timeStarted + pauseTime);
 
-                if (secondFrameN < secondNumberFrames-1)
-                {
-                    PlayOneFrameForSecond();
-                }
-                else
-                    secondPaused = true;
+            if (secondFrameN < secondNumberFrames-1)
+            {
+                PlayOneFrameForSecond();
             }
+            else
+                secondPaused = true;
         }
     }
 
@@ -232,24 +231,72 @@ public class DrawManager : MonoBehaviour
 
         if (girl1 == null)
         {
-            girl1Prefab = (GameObject)Resources.Load(namePrefab1, typeof(GameObject));
-            girl1 = Instantiate(girl1Prefab);
-
-            girl1LeftThighUp = girl1.transform.Find("Petra.002/hips/zero_thigh.L/thigh.L").gameObject;
-            girl1RightThighUp = girl1.transform.Find("Petra.002/hips/zero_thigh.R/thigh.R").gameObject;
-            // Knee
-            girl1LeftLeg = girl1.transform.Find("Petra.002/hips/zero_thigh.L/thigh.L/zero_shin.L/shin.L").gameObject;
-            girl1RightLeg = girl1.transform.Find("Petra.002/hips/zero_thigh.R/thigh.R/zero_shin.R/shin.R").gameObject;
-            // Shoulder
-            girl1RightArm = girl1.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R").gameObject;
-            girl1LeftArm = girl1.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L").gameObject;
-            // Root
-            girl1Hip = girl1.transform.Find("Petra.002/hips").gameObject;
-            ///////////////////////////
-
-            firstView = girl1.transform.Find("Petra.002/hips/FirstViewPoint").gameObject;
+            LoadGirlPrefab(
+                namePrefab1, ref girl1Prefab, ref girl1, 
+                ref girl1LeftThigh, ref girl1RightThigh, ref girl1LeftLeg, ref girl1RightLeg, 
+                ref girl1LeftArm, ref girl1RightArm, ref girl1Hip, ref firstView);
+            LoadAvatarControls(girl1,
+                ref girl1ThighControl, ref girl1LegControl,
+                ref girl1LeftArmControlAbd, ref girl1RightArmControlAbd, ref girl1LeftArmControlFlex, ref girl1RightArmControlFlex);
         }
-        girl1Hip.transform.localPosition = new Vector3(0f, 0.1f, 0f);
+    }
+
+    protected void LoadGirlPrefab(
+        String namePrefab, 
+        ref GameObject prefab,
+        ref GameObject avatar, 
+        ref GameObject leftThigh, 
+        ref GameObject rightThigh,
+        ref GameObject leftLeg,
+        ref GameObject rightLeg,
+        ref GameObject leftArm,
+        ref GameObject rightArm,
+        ref GameObject hip,
+        ref GameObject view
+    )
+    {
+        prefab = (GameObject)Resources.Load(namePrefab, typeof(GameObject));
+        avatar = Instantiate(prefab);
+
+        leftThigh = avatar.transform.Find("Petra.002/hips/zero_thigh.L/thigh.L").gameObject;
+        rightThigh = avatar.transform.Find("Petra.002/hips/zero_thigh.R/thigh.R").gameObject;
+        // Knee
+        leftLeg = avatar.transform.Find("Petra.002/hips/zero_thigh.L/thigh.L/zero_shin.L/shin.L").gameObject;
+        rightLeg = avatar.transform.Find("Petra.002/hips/zero_thigh.R/thigh.R/zero_shin.R/shin.R").gameObject;
+        // Shoulder
+        rightArm = avatar.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R").gameObject;
+        leftArm = avatar.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L").gameObject;
+        // Root
+        hip = avatar.transform.Find("Petra.002/hips").gameObject;
+        ///////////////////////////
+
+        view = avatar.transform.Find("Petra.002/hips/FirstViewPoint").gameObject;
+
+        // Zero position
+        avatar.transform.position = Vector3.zero;
+        hip.transform.position = Vector3.zero;
+        hip.transform.localEulerAngles = new Vector3(-10f, 0f, 0f);
+        hip.transform.localPosition = new Vector3(0f, 0.1f, 0f);
+        leftArm.transform.localRotation = Quaternion.identity;
+        rightArm.transform.localRotation = Quaternion.identity;
+    }
+
+    protected void LoadAvatarControls(
+        GameObject avatar, 
+        ref ControlThigh thigh, 
+        ref ControlShin shin, 
+        ref ControlLeftArmAbduction leftArmAbd, 
+        ref ControlRightArmAbduction rightArmAbd, 
+        ref ControlLeftArmFlexion leftArmFlex, 
+        ref ControlRightArmFlexion rightArmFlex
+    )
+    {
+        thigh = avatar.transform.Find("Petra.002/hips/zero_thigh.L/thigh.L/ControlThigh").GetComponent<ControlThigh>();
+        shin = avatar.transform.Find("Petra.002/hips/zero_thigh.L/thigh.L/zero_shin.L/shin.L/ControlShin").GetComponent<ControlShin>();
+        leftArmAbd = avatar.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L/ControlLeftArm").GetComponent<ControlLeftArmAbduction>();
+        rightArmAbd = avatar.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R/ControlRightArm").GetComponent<ControlRightArmAbduction>();
+        leftArmFlex = avatar.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L/ControlLeftArm").GetComponent<ControlLeftArmFlexion>();
+        rightArmFlex = avatar.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R/ControlRightArm").GetComponent<ControlRightArmFlexion>();
     }
 
     public bool LoadAvatar(AvatarMode mode)
@@ -291,32 +338,18 @@ public class DrawManager : MonoBehaviour
 
         if (girl1 == null)
         {
-            girl1Prefab = (GameObject)Resources.Load(namePrefab1, typeof(GameObject));
-            girl1 = Instantiate(girl1Prefab);
+            LoadGirlPrefab(
+                namePrefab1, ref girl1Prefab, ref girl1, 
+                ref girl1LeftThigh, ref girl1RightThigh, ref girl1LeftLeg, ref girl1RightLeg, 
+                ref girl1RightArm, ref girl1LeftArm, ref girl1Hip, ref firstView
+            );
 
-            girl1LeftThighUp = girl1.transform.Find("Petra.002/hips/zero_thigh.L/thigh.L").gameObject;
-            girl1RightThighUp = girl1.transform.Find("Petra.002/hips/zero_thigh.R/thigh.R").gameObject;
-            // Knee
-            girl1LeftLeg = girl1.transform.Find("Petra.002/hips/zero_thigh.L/thigh.L/zero_shin.L/shin.L").gameObject;
-            girl1RightLeg = girl1.transform.Find("Petra.002/hips/zero_thigh.R/thigh.R/zero_shin.R/shin.R").gameObject;
-            // Shoulder
-            girl1RightArm = girl1.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R").gameObject;
-            girl1LeftArm = girl1.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L").gameObject;
-            // Root
-            girl1Hip = girl1.transform.Find("Petra.002/hips").gameObject;
-            ///////////////////////////
-
-            firstView = girl1.transform.Find("Petra.002/hips/FirstViewPoint").gameObject;
+            LoadAvatarControls(girl1, 
+                ref girl1ThighControl, ref girl1LegControl, 
+                ref girl1LeftArmControlAbd, ref girl1RightArmControlAbd, ref girl1LeftArmControlFlex, ref girl1RightArmControlFlex);
         }
 
         q1 = MakeSimulation();
-
-        girl1.transform.position = Vector3.zero;
-        girl1Hip.transform.position = Vector3.zero;
-        girl1LeftArm.transform.localRotation = Quaternion.identity;
-        girl1RightArm.transform.localRotation = Quaternion.identity;
-        girl1Hip.transform.localEulerAngles = new Vector3(-10f, 0f, 0f);
-        girl1Hip.transform.localPosition = new Vector3(0f, 0.1f, 0f);
 
         if (cntAvatar > 1)
         {
@@ -324,30 +357,13 @@ public class DrawManager : MonoBehaviour
             // Hip
             if (girl2 == null)
             {
-                girl2Prefab = (GameObject)Resources.Load(namePrefab2, typeof(GameObject));
-                girl2 = Instantiate(girl2Prefab);
-                girl2LeftUp = girl2.transform.Find("Petra.002/hips/thigh.L").gameObject;
-                girl2RightUp = girl2.transform.Find("Petra.002/hips/thigh.R").gameObject;
-                // Knee
-                girl2LeftLeg = girl2.transform.Find("Petra.002/hips/thigh.L/shin.L").gameObject;
-                girl2RightLeg = girl2.transform.Find("Petra.002/hips/thigh.R/shin.R").gameObject;
-                // Shoulder
-                girl2RightArm = girl2.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.R/upper_arm.R").gameObject;
-                girl2LeftArm = girl2.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.L/upper_arm.L").gameObject;
-                // Root
-                girl2Hip = girl2.transform.Find("Petra.002/hips").gameObject;
+
+                LoadGirlPrefab(
+                    namePrefab2, ref girl2Prefab, ref girl2,
+                    ref girl2LeftUp, ref girl2RightUp, ref girl2LeftLeg, ref girl2RightLeg,
+                    ref girl2RightArm, ref girl2LeftArm, ref girl2Hip, ref firstView
+                );
             }
-            ////////////////////
-
-/*            int ret = transform.parent.GetComponentInChildren<GameManager>().MissionLoad();
-
-            if (ret < 0)
-            {
-                if (girl1) girl1.SetActive(false);
-                if (girl2) girl2.SetActive(false);
-                transform.parent.GetComponentInChildren<GameManager>().WriteToLogFile("Failed to load files for the second avatar");
-                return false;
-            }*/
 
             q1_girl2 = MakeSimulationSecond();
             q_girl2 = MathFunc.MatrixCopy(q1_girl2);
@@ -1257,8 +1273,6 @@ public class DrawManager : MonoBehaviour
 
     public void PlayOneFrame()
     {
-        MainParameters.StrucJoints joints = MainParameters.Instance.joints;
-
         if (!isEditing)
         {
             if (q.GetUpperBound(1) >= frameN)
@@ -1289,13 +1303,16 @@ public class DrawManager : MonoBehaviour
         SetLeftArm(_qf);
     }
 
-    public void SetQfThigh(float _value){
-        qf[0] = _value;
+    public void SetQfThigh(float _value)
+    {
+        int ddl = girl1ThighControl.avatarIndex;
+        qf[ddl] = _value;
     }
 
     public void SetThigh(double[] _qf){
-        girl1LeftThighUp.transform.localEulerAngles = new Vector3(-(float)_qf[0], 0f, 0f) * Mathf.Rad2Deg;
-        girl1RightThighUp.transform.localEulerAngles = new Vector3(-(float)_qf[0], 0f, 0f) * Mathf.Rad2Deg;
+        int ddl = girl1ThighControl.avatarIndex;
+        girl1LeftThigh.transform.localEulerAngles = new Vector3(-(float)_qf[ddl], 0f, 0f) * Mathf.Rad2Deg;
+        girl1RightThigh.transform.localEulerAngles = new Vector3(-(float)_qf[ddl], 0f, 0f) * Mathf.Rad2Deg;
     }
 
     public void ControlThigh(float _value)
@@ -1304,14 +1321,17 @@ public class DrawManager : MonoBehaviour
         SetThigh(qf);
     }
 
-    public void SetQfShin(float _value){
-        qf[1] = _value;
+    public void SetQfShin(float _value)
+    {
+        int ddl = girl1LegControl.avatarIndex;
+        qf[ddl] = _value;
     }
 
     public void SetShin(double[] _qf)
     {
-        girl1LeftLeg.transform.localEulerAngles = new Vector3((float)_qf[1], 0f, 0f) * Mathf.Rad2Deg;
-        girl1RightLeg.transform.localEulerAngles = new Vector3((float)_qf[1], 0f, 0f) * Mathf.Rad2Deg;
+        int ddl = girl1LegControl.avatarIndex;
+        girl1LeftLeg.transform.localEulerAngles = new Vector3((float)_qf[ddl], 0f, 0f) * Mathf.Rad2Deg;
+        girl1RightLeg.transform.localEulerAngles = new Vector3((float)_qf[ddl], 0f, 0f) * Mathf.Rad2Deg;
     }
 
     public void ControlShin(float _value)
@@ -1320,16 +1340,22 @@ public class DrawManager : MonoBehaviour
         SetShin(qf);
     }
 
-    public void SetQfRightArmAbduction(float _value){
-        qf[2] = _value;
+    public void SetQfRightArmAbduction(float _value)
+    {
+        int ddl = girl1RightArmControlAbd.avatarIndex;
+        qf[ddl] = _value;
     }
-    public void SetQfRightArmFlexion(float _value){
-        qf[3] = _value;
+    public void SetQfRightArmFlexion(float _value)
+    {
+        int ddl =girl1RightArmControlFlex.avatarIndex;
+        qf[ddl] = _value;
     }
 
     protected void SetRightArm(double[] _qf)
     {
-        girl1RightArm.transform.localEulerAngles = new Vector3((float)_qf[3], 0, (float)_qf[2]) * Mathf.Rad2Deg;
+        int ddlAbduction = girl1RightArmControlAbd.avatarIndex;
+        int ddlFlexion = girl1RightArmControlFlex.avatarIndex;
+        girl1RightArm.transform.localEulerAngles = new Vector3((float)_qf[ddlFlexion], 0, (float)_qf[ddlAbduction]) * Mathf.Rad2Deg;
     }
 
     public void ControlRightArmAbduction(float _value)
@@ -1344,15 +1370,22 @@ public class DrawManager : MonoBehaviour
         SetRightArm(qf);
     }
 
-    public void SetQfLeftArmAbduction(float _value){
+    public void SetQfLeftArmAbduction(float _value)
+    {
+        int ddl = girl1LeftArmControlAbd.avatarIndex;
+        qf[ddl] = _value;
+    }
+    public void SetQfLeftArmFlexion(float _value)
+    {
+        int ddl = girl1LeftArmControlFlex.avatarIndex;
         qf[4] = _value;
     }
-    public void SetQfLeftArmFlexion(float _value){
-        qf[5] = _value;
-    }
 
-    protected void SetLeftArm(double[] _qf){
-        girl1LeftArm.transform.localEulerAngles = new Vector3((float)_qf[5], 0, (float)_qf[4]) * Mathf.Rad2Deg;
+    protected void SetLeftArm(double[] _qf)
+    {
+        int ddlAbduction = girl1LeftArmControlAbd.avatarIndex;
+        int ddlFlexion = girl1LeftArmControlFlex.avatarIndex;
+        girl1LeftArm.transform.localEulerAngles = new Vector3((float)_qf[ddlFlexion], 0, (float)_qf[ddlAbduction]) * Mathf.Rad2Deg;
     }
 
     public void ControlLeftArmAbduction(float _value)

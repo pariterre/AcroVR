@@ -5,10 +5,12 @@ using UnityEngine;
 public abstract class ControlSegmentGeneric : MonoBehaviour
 {
     public float angle { get; protected set;}
+    protected float initAngle;
     int node;
 
     protected Vector3 mouseDistance;
     protected Vector3 lastPosition;
+    protected float avatarRotationDragSpeed = 5f;
 
     protected GameObject arrowPrefab;
     protected GameObject arrow;
@@ -88,6 +90,8 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
             circle.transform.position = gameObject.transform.position;
     }
 
+    float CurrentAngle { get { return MainParameters.Instance.joints.nodes[avatarIndex].Q[node]; } }
+
     void OnMouseDown()
     {
         if (!isInitialized) return;
@@ -95,6 +99,7 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
 
         if(drawManager.isEditing)
         {
+            initAngle = CurrentAngle;
             lastPosition = Input.mousePosition;
             mouseDistance.x = angle * 30f;
             statManager.dofName = dofName;
@@ -134,12 +139,12 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
         if (statManager.currentJointSubIdx != jointSubIndex) return;
         if (angle == _nextAngle) return;
 
-        angle = _nextAngle; 
-        MainParameters.Instance.joints.nodes[avatarIndex].Q[node] = angle;
+        angle = _nextAngle / avatarRotationDragSpeed; 
+
+        MainParameters.Instance.joints.nodes[avatarIndex].Q[node] = angle + initAngle;
         gameManager.InterpolationDDL();
         gameManager.DisplayDDL(avatarIndex, true);
 
-        // TODO: check why direction is needed twice...
-        drawingCallback(angle);
+        drawingCallback(CurrentAngle);
     }
 }
