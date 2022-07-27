@@ -116,5 +116,10 @@ public class SliderPlayAnimation : MonoBehaviour
 
             textChrono.text = drawManager.frameNtime + " s";
         }
+
+        if ((int)slider.value == (int)slider.maxValue)
+        {
+            showPlayButton();
+        }
     }
 }

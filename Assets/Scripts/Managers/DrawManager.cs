@@ -69,6 +69,7 @@ public class DrawManager : MonoBehaviour
     /// </summary>
 
     private GameObject firstView;
+    public bool canResumeAnimation { get; protected set; } = false;
 
     float[,] q;
     float[,] q_girl2;
@@ -227,6 +228,7 @@ public class DrawManager : MonoBehaviour
     {
         isPaused = false;
         secondPaused = false;
+        canResumeAnimation = false;
 
         string namePrefab1 = "";
         switch (mode)
@@ -429,6 +431,7 @@ public class DrawManager : MonoBehaviour
 //        Play_s(q1, 0, q1.GetUpperBound(1) + 1);
 
         animateON = true;
+        canResumeAnimation = true;
     }
 
     public void PlayEnd()
@@ -1043,50 +1046,6 @@ public class DrawManager : MonoBehaviour
         }
     }
 
-    private double[,] TransformerVecteurEnMatrice(double[] vecteur)
-    {
-        //Utilisée pour des matrices carrées
-        double nouvelleDimension = Math.Sqrt(vecteur.Length);
-        int dim = (int)nouvelleDimension;
-        double[,] nouvelleMatrice = new double[dim, dim];
-        for (int i = 0; i < nouvelleMatrice.GetLength(0); i++)
-        {
-            for (int j = 0; j < nouvelleMatrice.GetLength(1); j++)
-            {
-                nouvelleMatrice[j, i] = vecteur[j + nouvelleMatrice.GetLength(0) * i]; //On change le vecteur en matrice carrée
-            }
-        }
-        return nouvelleMatrice;
-    }
-
-    private double[,] RetrecirMatriceCarre(double[,] matrice, int nouvelleTaille)
-    {
-        //NouvelleTaille doit être inférieure à la taille de matrice
-        double[,] nouvelleMatrice = new double[nouvelleTaille, nouvelleTaille];
-        for (int i = 0; i < nouvelleTaille; i++)
-        {
-            for (int j = 0; j < nouvelleTaille; j++)
-            {
-                nouvelleMatrice[i, j] = matrice[i, j];
-            }
-        }
-        return nouvelleMatrice;
-    }
-
-    private double[] TransformerMatriceEnVecteur(double[,] matrice)
-    {
-        //Utilisée pour des matrices carrées
-        double[] nouveauVecteur = new double[matrice.GetLength(0) * matrice.GetLength(1)];
-        for (int i = 0; i < matrice.GetLength(0); i++)
-        {
-            for (int j = 0; j < matrice.GetLength(1); j++)
-            {
-                nouveauVecteur[j + i * matrice.GetLength(0)] = matrice[j, i]; //On change la matriceA carré en vecteur n fois plus grand
-            }
-        }
-        return nouveauVecteur;
-    }
-
     private Vector ShortDynamics_s(double t, Vector x)
     {
         int nDDL = MainParameters.Instance.joints.lagrangianModel.nDDL;
@@ -1308,6 +1267,7 @@ public class DrawManager : MonoBehaviour
     public void StartEditing()
     {
         isEditing = true;
+        canResumeAnimation = false;
     }
 
     public void StopEditing()
@@ -1459,6 +1419,7 @@ public class DrawManager : MonoBehaviour
 
     public void ResetFrame()
     {
+        canResumeAnimation = false;
         frameN = 0;
         firstFrame = 0;
         numberFrames = 0;
@@ -1469,95 +1430,6 @@ public class DrawManager : MonoBehaviour
 
         secondFrameN = 0;
         cntAvatar = 1;
-    }
-    /*    void OnGUI()
-        {
-            // Need to remove OnGui function
-            //frameN = (int)GUI.HorizontalScrollbar(new Rect(Screen.width - 200, 430, 100, 30), frameN, 1.0F, 0.0F, numberFrames);
-
-            if(transform.parent.GetComponentInChildren<AniGraphManager>().takeoffCanvas.activeSelf)
-            {
-                //            DrawingLine.DrawLine(new Vector2(frameN * 500/numberFrames + 32f, 325), new Vector2(frameN * 500 / numberFrames + 32f, 565), UnityEngine.Color.red, 4, false);
-
-                if(MainParameters.Instance.joints.tc > 0)
-                    DrawingLine.DrawLine(new Vector2((frameN * 0.02f * 96 / MainParameters.Instance.joints.tc) + 30f, 325), new Vector2((frameN * 0.02f * 96 / MainParameters.Instance.joints.tc) + 30f, 565), UnityEngine.Color.red, 4, false);
-                else
-                    DrawingLine.DrawLine(new Vector2((frameN * 0.02f * 500 / MainParameters.Instance.joints.duration) + 30f, 325), new Vector2((frameN * 0.02f * 500 / MainParameters.Instance.joints.duration) + 30f, 565), UnityEngine.Color.red, 4, false);
-
-            }
-        }*/
-
-    private void Line(LineRenderer lineRendererObject, Vector3 position1, Vector3 position2)
-    {
-        Vector3[] pos = new Vector3[2];
-        lineRendererObject.positionCount = 2;
-        pos[0] = position1;
-        pos[1] = position2;
-        lineRendererObject.SetPositions(pos);
-    }
-
-    private void Circle(LineRenderer lineRendererObject, float radius, Vector3 center)
-    {
-        int nLines;
-        float Theta = 0f;
-
-        nLines = (int)((1f / ThetaScale) + 1.1f);
-        Vector3[] pos = new Vector3[nLines];
-        lineRendererObject.positionCount = nLines;
-        for (int i = 0; i < nLines; i++)
-        {
-            float x = radius * Mathf.Cos(Theta);
-            float y = radius * Mathf.Sin(Theta);
-            pos[i] = center + new Vector3(x, y, 0);
-            Theta += (2.0f * Mathf.PI * ThetaScale);
-        }
-        lineRendererObject.SetPositions(pos);
-    }
-
-    private void Triangle(LineRenderer lineRendererObject, Vector3 position1, Vector3 position2, Vector3 position3)
-    {
-        Vector3[] pos = new Vector3[4];
-        lineRendererObject.positionCount = 4;
-        pos[0] = position1;
-        pos[1] = position2;
-        pos[2] = position3;
-        pos[3] = position1;
-        lineRendererObject.SetPositions(pos);
-    }
-
-    private void Delete(LineRenderer lineRendererObject)
-    {
-        lineRendererObject.positionCount = 0;
-        //Destroy(lineRendererObject);
-    }
-
-    private void AddMarginOnMinMax(float factor)
-    {
-        float margin;
-
-        margin = (tagXMax - tagXMin) * factor;
-        tagXMin -= margin;
-        tagXMax += margin;
-
-        margin = (tagYMax - tagYMin) * factor;
-        tagYMin -= margin;
-        tagYMax += margin;
-
-        margin = (tagZMax - tagZMin) * factor;
-        tagZMin -= margin;
-        tagZMax += margin;
-    }
-
-    private void EvaluateFactorTags2Screen()
-    {
-        factorTags2ScreenX = animationMaxDimOnScreen / (tagXMax - tagXMin);
-        factorTags2ScreenY = animationMaxDimOnScreen / (tagYMax - tagYMin);
-        if (tagXMax - tagXMin > tagYMax - tagYMin && tagXMax - tagXMin > tagZMax - tagZMin)
-            factorTags2Screen = factorTags2ScreenX;
-        else if (tagYMax - tagYMin > tagZMax - tagZMin)
-            factorTags2Screen = factorTags2ScreenY;
-        else
-            factorTags2Screen = animationMaxDimOnScreen / (tagZMax - tagZMin);
     }
 
     public void SimulationMode()

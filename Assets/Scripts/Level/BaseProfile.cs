@@ -16,8 +16,6 @@ public class BaseProfile : LevelBase
 
     public Dropdown dropDownCondition;
     public Dropdown dropDownDDLNames;
-//    public GameObject anchorSidePOV = null;
-//    public GameObject anchorThirdPOV = null;
     public Camera AvatarCamera;
 
     public Dropdown dropDownPlaySpeed;
@@ -727,6 +725,12 @@ public class BaseProfile : LevelBase
 
     public void PlayAvatarButton()
     {
+        if (drawManager.canResumeAnimation)
+        {
+            drawManager.PauseAvatar();
+            return;
+        }
+
         drawManager.ResetPause();
 
         if (drawManager.girl1 == null || !drawManager.girl1.activeSelf)
