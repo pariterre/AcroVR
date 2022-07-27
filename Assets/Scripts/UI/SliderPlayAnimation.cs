@@ -19,6 +19,7 @@ public class SliderPlayAnimation : MonoBehaviour
     void Start()
     {
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        slider.minValue = 0f;
     }
 
     void Update()
@@ -67,54 +68,17 @@ public class SliderPlayAnimation : MonoBehaviour
     {
         if (drawManager.isEditing) return;
 
-        slider.minValue = 0f;
-
-        if (Input.GetMouseButton(0) && ToolBox.GetInstance().GetManager<UIManager>().IsOnGameObject(slider.gameObject))
-        {
-            ShowPlayButton();
-
-            if (!drawManager.isPaused)
-            {
-                drawManager.isPaused = true;
-
-                if (drawManager.cntAvatar>1 && !drawManager.secondPaused)
-                    drawManager.secondPaused = true;
-            }
-        }
+        slider.maxValue = (float)drawManager.numberFrames - 1;
+        var currentFrame = (int)slider.value;
+        drawManager.setFrameN(currentFrame);
+        textChrono.text = drawManager.frameNtime + " s";
 
         if (drawManager.cntAvatar > 1)
         {
-            if (drawManager.numberFrames >= drawManager.secondNumberFrames)
-            {
-                slider.maxValue = (float)drawManager.numberFrames - 1;
-                drawManager.setFrameN((int)slider.value);
-
-                if (slider.value >= drawManager.secondNumberFrames)
-                    drawManager.setSecondFrameN(drawManager.secondNumberFrames);
-                else 
-                    drawManager.setSecondFrameN((int)slider.value);
-
-                textChrono.text = drawManager.frameNtime + " s";
-            }
-            else
-            {
-                slider.maxValue = (float)drawManager.secondNumberFrames - 1;
-                drawManager.setSecondFrameN((int)slider.value);
-
-                if (slider.value >= drawManager.numberFrames)
-                    drawManager.setFrameN(drawManager.numberFrames);
-                else 
-                    drawManager.setFrameN((int)slider.value);
-
-                textChrono.text = drawManager.secondFrameNtime + " s";
-            }
-        }
-        else
-        {
-            slider.maxValue = (float)drawManager.numberFrames -1;
-            drawManager.setFrameN((int)slider.value);
-
-            textChrono.text = drawManager.frameNtime + " s";
+            var secondCurrentFrame = currentFrame;
+            if (secondCurrentFrame >= drawManager.secondNumberFrames)
+                secondCurrentFrame = drawManager.secondNumberFrames - 1;
+            drawManager.setSecondFrameN(secondCurrentFrame);
         }
 
         if ((int)slider.value == 0 || (int)slider.value == (int)slider.maxValue)
@@ -122,6 +86,17 @@ public class SliderPlayAnimation : MonoBehaviour
             drawManager.setCanResumeAnimation(false);
             ShowPlayButton();
         }
+
+        if (Input.GetMouseButton(0) && ToolBox.GetInstance().GetManager<UIManager>().IsOnGameObject(slider.gameObject))
+        {
+            ShowPlayButton();
+            drawManager.isPaused = true;
+
+            if (drawManager.cntAvatar > 1)
+                drawManager.secondPaused = true;
+        }
+
+
     }
 
     public void EnableSlider()

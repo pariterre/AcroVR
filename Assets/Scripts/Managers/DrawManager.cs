@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Linq;
 using System.Text;
@@ -139,7 +139,9 @@ public class DrawManager : MonoBehaviour
 
     void Update()
     {
-        if (isPaused && pauseStart == 0) pauseStart = Time.time;
+        if (isPaused && pauseStart == 0) 
+            pauseStart = Time.time;
+
         if (!isPaused && pauseStart != 0)
         {
             pauseTime = Time.time - pauseStart;
@@ -405,6 +407,7 @@ public class DrawManager : MonoBehaviour
     {
         if (MainParameters.Instance.joints.nodes == null) return;
         animateON = true;
+        ShowAvatar();
         canResumeAnimation = true;
     }
 
