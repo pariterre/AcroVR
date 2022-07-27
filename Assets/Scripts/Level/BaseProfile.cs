@@ -709,7 +709,7 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        drawManager.ShowAvatar(true);
+        drawManager.ShowAvatar();
     }
 
     public void PlayAvatarButton()

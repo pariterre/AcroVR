@@ -101,7 +101,7 @@ public class TakeOffParamF_s : MonoBehaviour
     private void ApplyAvatar()
     {
 //        drawManager.GestureMode();
-        drawManager.ShowAvatar(true);
+        drawManager.ShowAvatar();
         drawManager.InitPoseAvatar();
 
         //        drawManager.PlayAvatar();

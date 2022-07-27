@@ -184,10 +184,10 @@ public class DrawManager : MonoBehaviour
         }*/
 
 
-    public void UpdateFullKinematics()
+    public void UpdateFullKinematics(bool restartToZero)
     {
         MakeSimulationFrame();
-        Play_s(q1, 0, q1.GetUpperBound(1) + 1);
+        Play_s(q1, 0, q1.GetUpperBound(1) + 1, restartToZero);
     }
 
     public void MakeSimulationFrame()
@@ -369,16 +369,15 @@ public class DrawManager : MonoBehaviour
         girl1Hip.transform.position = new Vector3(0f, 0.1f, 0f);
     }
 
-    public void ShowAvatar(bool _shouldResetAvatar)
+    public void ShowAvatar()
     {
         MakeSimulationFrame();
         if (MainParameters.Instance.joints.nodes == null) return;
         girl1.transform.rotation = Quaternion.identity;
         girl1.transform.position = Vector3.zero;
-        if (_shouldResetAvatar)
-            ResetAvatar();
+        ResetAvatar();
 
-        Play_s(q1, 0, q1.GetUpperBound(1) + 1);
+        Play_s(q1, 0, q1.GetUpperBound(1) + 1, true);
 
         if (cntAvatar > 1)
         {
@@ -403,7 +402,7 @@ public class DrawManager : MonoBehaviour
     public void PlayAvatar()
     {
         if (MainParameters.Instance.joints.nodes == null) return;
-        ShowAvatar(true);
+        ShowAvatar();
         Resume();
         canResumeAnimation = true;
     }
@@ -435,12 +434,13 @@ public class DrawManager : MonoBehaviour
         return string.Join(Environment.NewLine, secondResultMessages.ToArray());
     }
 
-    protected void Play_s(float[,] qq, int frFrame, int nFrames)
+    protected void Play_s(float[,] qq, int frFrame, int nFrames, bool restartToZero)
     {
         MainParameters.StrucJoints joints = MainParameters.Instance.joints;
 
         q = MathFunc.MatrixCopy(qq);
-        frameN = 0;
+        if (restartToZero)
+            frameN = 0;
         firstFrame = frFrame;
         numberFrames = nFrames;
 
@@ -1188,7 +1188,7 @@ public class DrawManager : MonoBehaviour
     public void StopEditing()
     {
         statManager.ResetTemporaries();
-        UpdateFullKinematics();
+        UpdateFullKinematics(false);
         isEditing = false;
         Pause();
         if (SliderInitialized) slider.EnableSlider();
