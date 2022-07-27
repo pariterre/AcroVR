@@ -81,14 +81,24 @@ public class TrainingTooltip : MonoBehaviour
     private double mousePosY;
     public GameObject panelAddRemoveNode;
 
+    protected GameManager gameManager;
+    protected DrawManager drawManager;
+    protected UIManager uiManager;
+    protected AniGraphManager aniGraphManager;
+
     private void Start()
     {
-        if (ToolBox.GetInstance().GetManager<DrawManager>().setAvatar == DrawManager.AvatarMode.SingleFemale)
-            ToolBox.GetInstance().GetManager<DrawManager>().InitAvatar(DrawManager.AvatarMode.SingleFemale);
-        else
-            ToolBox.GetInstance().GetManager<DrawManager>().InitAvatar(DrawManager.AvatarMode.SingleMale);
+        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
+        aniGraphManager = ToolBox.GetInstance().GetManager<AniGraphManager>();
 
-        ToolBox.GetInstance().GetManager<GameManager>().InitAnimationInfo();
+        if (drawManager.setAvatar == DrawManager.AvatarMode.SingleFemale)
+            drawManager.InitAvatar(DrawManager.AvatarMode.SingleFemale);
+        else
+            drawManager.InitAvatar(DrawManager.AvatarMode.SingleMale);
+
+        gameManager.InitAnimationInfo();
 
         languages.french.Tab1Title = "1. Décollage";
         languages.english.Tab1Title = "1. Take Off";
@@ -140,7 +150,7 @@ public class TrainingTooltip : MonoBehaviour
         languages.french.TakeOffVertical = "Verticale";
 
         ChangedLanguage();
-        ToolBox.GetInstance().GetManager<UIManager>().SetTooltip();
+        uiManager.SetTooltip();
 
         bp.FrontCameraPOV(0);
 
@@ -151,31 +161,31 @@ public class TrainingTooltip : MonoBehaviour
     {
         if (name.text != "")
         {
-            ToolBox.GetInstance().GetManager<GameManager>().SaveCondition(dropDownTakeOffCondition.value, name.text);
+            gameManager.SaveCondition(dropDownTakeOffCondition.value, name.text);
             UpdateDropDown();
         }
     }
 
     public void DeleteCondition()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().RemoveCondition(dropDownTakeOffCondition.value);
+        gameManager.RemoveCondition(dropDownTakeOffCondition.value);
         UpdateDropDown();
     }
 
     public void NameCondition()
     {
-        ConditionName.text = ToolBox.GetInstance().GetManager<GameManager>().listCondition.conditions[dropDownTakeOffCondition.value].name;
+        ConditionName.text = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].name;
     }
 
     public void UpdateDropDown()
     {
         dropDownTakeOffCondition.options.Clear();
 
-        for (int i = 0; i < ToolBox.GetInstance().GetManager<GameManager>().listCondition.count; i++)
+        for (int i = 0; i < gameManager.listCondition.count; i++)
         {
             dropDownTakeOffCondition.options.Add(new Dropdown.OptionData()
             {
-                text = ToolBox.GetInstance().GetManager<GameManager>().listCondition.conditions[i].name
+                text = gameManager.listCondition.conditions[i].name
             });
         }
 
@@ -188,7 +198,7 @@ public class TrainingTooltip : MonoBehaviour
 
     public void UpdateGravity()
     {
-        checkGravity.isOn = ToolBox.GetInstance().GetManager<GameManager>().listCondition.conditions[dropDownTakeOffCondition.value].Gravity;
+        checkGravity.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].Gravity;
         ChangedGravity();
     }
 
@@ -198,22 +208,22 @@ public class TrainingTooltip : MonoBehaviour
         {
             MainParameters.Instance.joints.condition = dropDownTakeOffCondition.value;
             if (MainParameters.Instance.joints.condition == 0) MainParameters.Instance.joints.condition = 1;
-            ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamGravity = true;
+            drawManager.takeOffParamGravity = true;
         }
         else
         {
             MainParameters.Instance.joints.condition = 0;
-            ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamGravity = false;
+            drawManager.takeOffParamGravity = false;
         }
     }
 
     public void UpdatePositions()
     {
-        bp.somersaultPosition.text = ToolBox.GetInstance().GetManager<GameManager>().listCondition.conditions[dropDownTakeOffCondition.value].SomersaultPosition.ToString();
-        bp.twistPosition.text = ToolBox.GetInstance().GetManager<GameManager>().listCondition.conditions[dropDownTakeOffCondition.value].TwistPosition.ToString();
-        bp.tiltPosition.text = ToolBox.GetInstance().GetManager<GameManager>().listCondition.conditions[dropDownTakeOffCondition.value].TiltPosition.ToString();
-        bp.horizontalPosition.text = ToolBox.GetInstance().GetManager<GameManager>().listCondition.conditions[dropDownTakeOffCondition.value].HorizontalPosition.ToString();
-        bp.verticalPosition.text = ToolBox.GetInstance().GetManager<GameManager>().listCondition.conditions[dropDownTakeOffCondition.value].VerticalPosition.ToString();
+        bp.somersaultPosition.text = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].SomersaultPosition.ToString();
+        bp.twistPosition.text = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].TwistPosition.ToString();
+        bp.tiltPosition.text = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].TiltPosition.ToString();
+        bp.horizontalPosition.text = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].HorizontalPosition.ToString();
+        bp.verticalPosition.text = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].VerticalPosition.ToString();
     }
 
     private void ChangedLanguage()
@@ -348,35 +358,35 @@ public class TrainingTooltip : MonoBehaviour
 
     private void Update()
     {
-        if(ToolBox.GetInstance().GetManager<UIManager>().GetCurrentTab() == 1 && ToolBox.GetInstance().GetManager<UIManager>().tooltipOn)
+        if(uiManager.GetCurrentTab() == 1 && uiManager.tooltipOn)
         {
-            ToolBox.GetInstance().GetManager<UIManager>().ShowToolTip(1, textTakeOffHorizontal.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffHorizontal);
-            ToolBox.GetInstance().GetManager<UIManager>().ShowToolTip(2, textTakeOffVertical.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffVertical);
-            ToolBox.GetInstance().GetManager<UIManager>().ShowToolTip(3, textTakeOffSomersault.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffSomersaultPosition);
-//            ToolBox.GetInstance().GetManager<UIManager>().ShowToolTip(4, textTakeOffInitialPosture.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffInitialPosture);
-            ToolBox.GetInstance().GetManager<UIManager>().ShowToolTip(5, textTakeOffSomersault.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffSomersaultSpeed);
-            ToolBox.GetInstance().GetManager<UIManager>().ShowToolTip(6, textTakeOffTilt.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffTilt);
-            ToolBox.GetInstance().GetManager<UIManager>().ShowToolTip(7, textTakeOffTwist.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffTwist);
+            uiManager.ShowToolTip(1, textTakeOffHorizontal.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffHorizontal);
+            uiManager.ShowToolTip(2, textTakeOffVertical.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffVertical);
+            uiManager.ShowToolTip(3, textTakeOffSomersault.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffSomersaultPosition);
+//            uiManager.ShowToolTip(4, textTakeOffInitialPosture.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffInitialPosture);
+            uiManager.ShowToolTip(5, textTakeOffSomersault.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffSomersaultSpeed);
+            uiManager.ShowToolTip(6, textTakeOffTilt.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffTilt);
+            uiManager.ShowToolTip(7, textTakeOffTwist.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffTwist);
         }
 
-        if (ToolBox.GetInstance().GetManager<AniGraphManager>().graph != null)
-            ToolBox.GetInstance().GetManager<AniGraphManager>().graph.MouseToClient(out mousePosX, out mousePosY);
+        if (aniGraphManager.graph != null)
+            aniGraphManager.graph.MouseToClient(out mousePosX, out mousePosY);
         else
             return;
 
-        if (Input.GetMouseButtonDown(1) && ToolBox.GetInstance().GetManager<UIManager>().IsOnGameObject(ToolBox.GetInstance().GetManager<AniGraphManager>().graph.gameObject))
+        if (Input.GetMouseButtonDown(1) && uiManager.IsOnGameObject(aniGraphManager.graph.gameObject))
         {
-            if (ToolBox.GetInstance().GetManager<AniGraphManager>().mouseRightButtonON)
+            if (aniGraphManager.mouseRightButtonON)
             {
-                ToolBox.GetInstance().GetManager<AniGraphManager>().mouseRightButtonON = false;
-                ToolBox.GetInstance().GetManager<AniGraphManager>().mouseLeftButtonON = false;
+                aniGraphManager.mouseRightButtonON = false;
+                aniGraphManager.mouseLeftButtonON = false;
                 panelAddRemoveNode.SetActive(false);
             }
             else
             {
-                ToolBox.GetInstance().GetManager<AniGraphManager>().mouseRightButtonON = true;
-                ToolBox.GetInstance().GetManager<AniGraphManager>().mousePosSaveX = (float)mousePosX;
-                ToolBox.GetInstance().GetManager<AniGraphManager>().mousePosSaveY = (float)mousePosY;
+                aniGraphManager.mouseRightButtonON = true;
+                aniGraphManager.mousePosSaveX = (float)mousePosX;
+                aniGraphManager.mousePosSaveY = (float)mousePosY;
                 //            buttonAddNode.GetComponentInChildren<Text>().text = MainParameters.Instance.languages.Used.movementButtonAddNode;
                 //            buttonRemoveNode.GetComponentInChildren<Text>().text = MainParameters.Instance.languages.Used.movementButtonRemoveNode;
                 //            buttonCancelChanges1.GetComponentInChildren<Text>().text = MainParameters.Instance.languages.Used.movementButtonCancelChanges;
@@ -390,9 +400,9 @@ public class TrainingTooltip : MonoBehaviour
         Vector3 mousePosWorldSpace;
         Vector3[] menuPos = new Vector3[4];
         Vector3[] graphPos = new Vector3[4];
-        ToolBox.GetInstance().GetManager<AniGraphManager>().graph.PointToWorldSpace(out mousePosWorldSpace, mousePosX, mousePosY);
+        aniGraphManager.graph.PointToWorldSpace(out mousePosWorldSpace, mousePosX, mousePosY);
         panel.GetComponent<RectTransform>().GetWorldCorners(menuPos);
-        ToolBox.GetInstance().GetManager<AniGraphManager>().graph.GetComponent<RectTransform>().GetWorldCorners(graphPos);
+        aniGraphManager.graph.GetComponent<RectTransform>().GetWorldCorners(graphPos);
         float width = menuPos[2].x - menuPos[1].x;
 //        if (mousePosWorldSpace.x < graphPos[2].x - width)
             panel.transform.position = mousePosWorldSpace + new Vector3(width / 2, 0, 0);
@@ -411,14 +421,14 @@ public class TrainingTooltip : MonoBehaviour
 
     public void AddNode()
     {
-        int ddl = ToolBox.GetInstance().GetManager<AniGraphManager>().ddlUsed;
-        int node = FindPreviousNode(ddl, ToolBox.GetInstance().GetManager<AniGraphManager>().mousePosSaveX);
+        int ddl = aniGraphManager.ddlUsed;
+        int node = FindPreviousNode(ddl, aniGraphManager.mousePosSaveX);
 
         //                int node = GraphManager.Instance.FindPreviousNode();
         //        int ddl = GraphManager.Instance.ddlUsed;
 
-        ToolBox.GetInstance().GetManager<GameManager>().InterpolationDDL();
-        ToolBox.GetInstance().GetManager<GameManager>().DisplayDDL(ddl, true);
+        gameManager.InterpolationDDL();
+        gameManager.DisplayDDL(ddl, true);
 
         float[] T = new float[MainParameters.Instance.joints.nodes[ddl].T.Length + 1];
         float[] Q = new float[MainParameters.Instance.joints.nodes[ddl].Q.Length + 1];
@@ -427,8 +437,8 @@ public class TrainingTooltip : MonoBehaviour
             T[i] = MainParameters.Instance.joints.nodes[ddl].T[i];
             Q[i] = MainParameters.Instance.joints.nodes[ddl].Q[i];
         }
-        T[node + 1] = ToolBox.GetInstance().GetManager<AniGraphManager>().mousePosSaveX;
-        Q[node + 1] = ToolBox.GetInstance().GetManager<AniGraphManager>().mousePosSaveY * Mathf.PI / 180;
+        T[node + 1] = aniGraphManager.mousePosSaveX;
+        Q[node + 1] = aniGraphManager.mousePosSaveY * Mathf.PI / 180;
 
         for (int i = node + 1; i < MainParameters.Instance.joints.nodes[ddl].T.Length; i++)
         {
@@ -439,30 +449,30 @@ public class TrainingTooltip : MonoBehaviour
         MainParameters.Instance.joints.nodes[ddl].Q = MathFunc.MatrixCopy(Q);
 
 //        int frame = (int)Mathf.Round(mousePosSaveX / MainParameters.Instance.joints.lagrangianModel.dt);
-        //        ToolBox.GetInstance().GetManager<AniGraphManager>().InterpolationAndDisplayDDL(ddl, ddl, frame, false);
+        //        aniGraphManager.InterpolationAndDisplayDDL(ddl, ddl, frame, false);
 
-        ToolBox.GetInstance().GetManager<GameManager>().InterpolationDDL();
-        ToolBox.GetInstance().GetManager<GameManager>().DisplayDDL(ddl, false);
+        gameManager.InterpolationDDL();
+        gameManager.DisplayDDL(ddl, false);
 
-        ToolBox.GetInstance().GetManager<AniGraphManager>().mouseRightButtonON = false;
+        aniGraphManager.mouseRightButtonON = false;
     }
 
     public void RemoveNode()
     {
-        int ddl = ToolBox.GetInstance().GetManager<AniGraphManager>().ddlUsed;
+        int ddl = aniGraphManager.ddlUsed;
 
         if (MainParameters.Instance.joints.nodes[ddl].T.Length < 3 || MainParameters.Instance.joints.nodes[ddl].Q.Length < 3)
         {
             //            GraphManager.Instance.panelMoveErrMsg.GetComponentInChildren<Text>().text = MainParameters.Instance.languages.Used.errorMsgNotEnoughNodes;
             //            GraphManager.Instance.mouseTracking = false;
             //            GraphManager.Instance.panelMoveErrMsg.SetActive(true);
-            ToolBox.GetInstance().GetManager<AniGraphManager>().mouseLeftButtonON = false;
-            ToolBox.GetInstance().GetManager<AniGraphManager>().mouseRightButtonON = false;
+            aniGraphManager.mouseLeftButtonON = false;
+            aniGraphManager.mouseRightButtonON = false;
             return;
         }
 
 
-        int node = ToolBox.GetInstance().GetManager<AniGraphManager>().FindNearestNode();
+        int node = aniGraphManager.FindNearestNode();
 
         float[] T = new float[MainParameters.Instance.joints.nodes[ddl].T.Length - 1];
         float[] Q = new float[MainParameters.Instance.joints.nodes[ddl].Q.Length - 1];
@@ -479,9 +489,9 @@ public class TrainingTooltip : MonoBehaviour
         MainParameters.Instance.joints.nodes[ddl].T = MathFunc.MatrixCopy(T);
         MainParameters.Instance.joints.nodes[ddl].Q = MathFunc.MatrixCopy(Q);
 
-        ToolBox.GetInstance().GetManager<GameManager>().InterpolationDDL();
-        ToolBox.GetInstance().GetManager<GameManager>().DisplayDDL(ddl, false);
+        gameManager.InterpolationDDL();
+        gameManager.DisplayDDL(ddl, false);
 
-        ToolBox.GetInstance().GetManager<AniGraphManager>().mouseRightButtonON = false;
+        aniGraphManager.mouseRightButtonON = false;
     }
 }
