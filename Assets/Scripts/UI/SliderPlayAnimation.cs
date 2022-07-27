@@ -117,7 +117,7 @@ public class SliderPlayAnimation : MonoBehaviour
             textChrono.text = drawManager.frameNtime + " s";
         }
 
-        if ((int)slider.value == (int)slider.maxValue)
+        if ((int)slider.value == 0 || (int)slider.value == (int)slider.maxValue)
         {
             drawManager.setCanResumeAnimation(false);
             ShowPlayButton();

@@ -261,7 +261,7 @@ public class AniGraphManager : MonoBehaviour
                 drawManager.StartEditing();
                 drawManager.setFrameN((int)(MainParameters.Instance.joints.nodes[ddlUsed].T[nodeUsed]/drawManager.frameRate));
                 drawManager.ControlOneFrame();
-
+                drawManager.StopEditing();
             }
         }
     }

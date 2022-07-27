@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Linq;
 using System.Text;
@@ -83,7 +83,7 @@ public class DrawManager : MonoBehaviour
     public float timeElapsed = 0;
     public float timeFrame = 0;
     float timeStarted = 0;
-    public bool animateON = false;
+    protected bool animateON = false;
     float factorPlaySpeed = 1f;
 
     string playMode = MainParameters.Instance.languages.Used.animatorPlayModeSimulation;
@@ -347,8 +347,6 @@ public class DrawManager : MonoBehaviour
 
         if (cntAvatar > 1)
         {
-            ///////////////////////////
-            // Hip
             if (girl2 == null)
             {
 
@@ -363,6 +361,7 @@ public class DrawManager : MonoBehaviour
             q_girl2 = MathFunc.MatrixCopy(q1_girl2);
         }
 
+        animateON = false;
         return true;
     }
 
@@ -373,15 +372,12 @@ public class DrawManager : MonoBehaviour
 
     public void ShowAvatar()
     {
-        //        cntAvatar = num;
+        MakeSimulationFrame();
         if (MainParameters.Instance.joints.nodes == null) return;
-        //        girl1.SetActive(true);
         girl1.transform.rotation = Quaternion.identity;
         girl1.transform.position = Vector3.zero;
         ResetAvatar();
 
-        // test0 = q1[12,51]
-        // test1 = q1[12,54]
         Play_s(q1, 0, q1.GetUpperBound(1) + 1);
 
         if (cntAvatar > 1)
@@ -408,9 +404,6 @@ public class DrawManager : MonoBehaviour
     public void PlayAvatar()
     {
         if (MainParameters.Instance.joints.nodes == null) return;
-
-//        Play_s(q1, 0, q1.GetUpperBound(1) + 1);
-
         animateON = true;
         canResumeAnimation = true;
     }
@@ -418,15 +411,6 @@ public class DrawManager : MonoBehaviour
     public void PlayEnd()
     {
         isPaused = true;
-//        animateON = false;
-//        frameN = 0;
-//        secondFrameN = 0;
-
-//        DisplayNewMessage(false, false, string.Format(" {0} = {1:0.00} s", MainParameters.Instance.languages.Used.displayMsgSimulationDuration, timeElapsed));
-//        DisplayNewMessage(false, true, string.Format(" {0}", MainParameters.Instance.languages.Used.displayMsgEndSimulation));
-
-//        transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-//        transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(0, true);
     }
 
     private void DisplayNewMessage(bool clear, bool display, string message)
@@ -479,56 +463,6 @@ public class DrawManager : MonoBehaviour
         {
             secondFrameN = 0;
         }
-
-            //        animateON = true;
-
-            /*        if (lineStickFigure == null && lineCenterOfMass == null && lineFilledFigure == null)
-                    {
-                        GameObject lineObject = new GameObject();
-                        LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
-                        lineRenderer.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
-                        lineRenderer.startWidth = 0.04f;
-                        lineRenderer.endWidth = 0.04f;
-
-                        lineStickFigure = new LineRenderer[joints.lagrangianModel.stickFigure.Length / 2];
-
-                        for (int i = 0; i < joints.lagrangianModel.stickFigure.Length / 2; i++)
-                        {
-                            lineStickFigure[i] = Instantiate(lineRenderer);
-                            lineStickFigure[i].name = string.Format("LineStickFigure{0}", i + 1);
-                            lineStickFigure[i].transform.parent = stickMan.transform;
-
-                            if (i <= 2 || (i >= 17 && i <= 19))                             // Côté gauche (jambe, pied, bras et main)
-                            {
-                                lineStickFigure[i].startColor = new Color(0, 0.5882f, 0, 1);
-                                lineStickFigure[i].endColor = new Color(0, 0.5882f, 0, 1);
-                            }
-                            else if ((i >= 3 && i <= 5) || (i >= 20 && i <= 22))             // Côté droit
-                            {
-                                lineStickFigure[i].startColor = new Color(0.9412f, 0, 0.9412f, 1);
-                                lineStickFigure[i].endColor = new Color(0.9412f, 0, 0.9412f, 1);
-                            }
-                        }
-
-                        lineCenterOfMass = Instantiate(lineRenderer);
-                        lineCenterOfMass.startColor = Color.red;
-                        lineCenterOfMass.endColor = Color.red;
-                        lineCenterOfMass.name = "LineCenterOfMass";
-                        lineCenterOfMass.transform.parent = stickMan.transform;
-
-                        lineFilledFigure = new LineRenderer[joints.lagrangianModel.filledFigure.Length / 4];
-
-                        for (int i = 0; i < joints.lagrangianModel.filledFigure.Length / 4; i++)
-                        {
-                            lineFilledFigure[i] = Instantiate(lineRenderer);
-                            lineFilledFigure[i].startColor = Color.yellow;
-                            lineFilledFigure[i].endColor = Color.yellow;
-                            lineFilledFigure[i].name = string.Format("LineFilledFigure{0}", i + 1);
-                            lineFilledFigure[i].transform.parent = stickMan.transform;
-                        }
-
-                        Destroy(lineObject);
-                    }*/
     }
 
     private void Quintic_s(float t, float ti, float tj, float qi, float qj, out float p, out float v, out float a)
@@ -1404,6 +1338,7 @@ public class DrawManager : MonoBehaviour
     public void ResetFrame()
     {
         canResumeAnimation = false;
+        animateON = false;
         frameN = 0;
         firstFrame = 0;
         numberFrames = 0;

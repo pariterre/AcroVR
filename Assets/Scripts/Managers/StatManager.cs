@@ -78,28 +78,13 @@ public class StatManager : MonoBehaviour
         levelManager = transform.parent.GetComponentInChildren<LevelManager>();
         error = GameObject.Find("Training");
 
-        //        circlePrefab = (GameObject)Resources.Load("HandleCircle", typeof(GameObject));
-//        circlePrefab_shoulder = (GameObject)Resources.Load("HandleCircle_shoulder", typeof(GameObject));
-
         colorBlue = Color.blue;
         colorBlue.a = 0.5f;
 
         colorWhite = Color.white;
         colorWhite.a = 0.5f;
 
-/*        errorPrefab = (GameObject)Resources.Load("ErrorMessage", typeof(GameObject));
-        errorPrefab = Instantiate(errorPrefab);
-        errorMessage = errorPrefab.GetComponentInChildren<Text>();
-        errorMessage.text = "";
-        errorPrefab.SetActive(false);*/
     }
-
-/*    public void SetErrorMessage(string _msg)
-    {
-        errorPrefab.SetActive(true);
-        errorMessage.text = _msg;
-        Invoke("ResetError", 0.5f);
-    }*/
 
     public void ProfileLoad(string fileName)
     {
@@ -114,42 +99,6 @@ public class StatManager : MonoBehaviour
         }
     }
 
-    private void ProfileReplayLoad(string fileName)
-    {
-        string dataAsJson = File.ReadAllText(fileName);
-        PlayerReplayInfo replayInfo = JsonUtility.FromJson<PlayerReplayInfo>(dataAsJson);
-
-        info = replayInfo.player;
-
-        MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
-        jointsTemp.fileName = fileName;
-        jointsTemp.nodes = null;
-        jointsTemp.duration = replayInfo.replay.Duration;
-//        jointsTemp.condition = replayInfo.replay.Condition;
-        jointsTemp.takeOffParam.verticalSpeed = replayInfo.replay.VerticalSpeed;
-        jointsTemp.takeOffParam.anteroposteriorSpeed = replayInfo.replay.AnteroposteriorSpeed;
-        jointsTemp.takeOffParam.somersaultSpeed = replayInfo.replay.SomersaultSpeed;
-        jointsTemp.takeOffParam.twistSpeed = replayInfo.replay.TwistSpeed;
-        jointsTemp.takeOffParam.tilt = replayInfo.replay.Tilt;
-        jointsTemp.takeOffParam.rotation = replayInfo.replay.Rotation;
-
-        jointsTemp.nodes = new MainParameters.StrucNodes[replayInfo.replay.nodes.Count];
-
-        for (int i = 0; i < replayInfo.replay.nodes.Count; i++)
-        {
-            jointsTemp.nodes[i].ddl = i + 1;
-            jointsTemp.nodes[i].name = replayInfo.replay.nodes[i].Name;
-            jointsTemp.nodes[i].interpolation = MainParameters.Instance.interpolationDefault;
-            jointsTemp.nodes[i].T = replayInfo.replay.nodes[i].T;
-            jointsTemp.nodes[i].Q = replayInfo.replay.nodes[i].Q;
-            jointsTemp.nodes[i].ddlOppositeSide = -1;
-        }
-
-        MainParameters.Instance.joints = jointsTemp;
-
-        LagrangianModelSimple lagrangianModelSimple = new LagrangianModelSimple();
-        MainParameters.Instance.joints.lagrangianModel = lagrangianModelSimple.GetParameters;
-    }
 
     public void ProfileReplaySave(string fileName)
     {
@@ -159,7 +108,6 @@ public class StatManager : MonoBehaviour
 
         replayInfo.replay.Objective = "defalut";
         replayInfo.replay.Duration = MainParameters.Instance.joints.duration;
-//        replayInfo.replay.Condition = MainParameters.Instance.joints.condition;
         replayInfo.replay.VerticalSpeed = MainParameters.Instance.joints.takeOffParam.verticalSpeed;
         replayInfo.replay.AnteroposteriorSpeed = MainParameters.Instance.joints.takeOffParam.anteroposteriorSpeed;
         replayInfo.replay.SomersaultSpeed = MainParameters.Instance.joints.takeOffParam.somersaultSpeed;

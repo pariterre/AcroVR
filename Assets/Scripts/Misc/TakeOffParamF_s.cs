@@ -111,7 +111,6 @@ public class TakeOffParamF_s : MonoBehaviour
     private void ApplyAvatar()
     {
 //        ToolBox.GetInstance().GetManager<DrawManager>().GestureMode();
-        ToolBox.GetInstance().GetManager<DrawManager>().MakeSimulationFrame();
         ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
         ToolBox.GetInstance().GetManager<DrawManager>().InitPoseAvatar();
 

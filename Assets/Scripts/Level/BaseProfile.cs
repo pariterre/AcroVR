@@ -257,7 +257,6 @@ public class BaseProfile : LevelBase
 
         gameManager.InitAnimationInfo();
         drawManager.StopEditing();
-        drawManager.animateON = false;
         aniGraphManager.cntAvatar = 0;
         drawManager.ResetPause();
         drawManager.ResetFrame();
@@ -383,10 +382,6 @@ public class BaseProfile : LevelBase
         dropDownCondition.value = MainParameters.Instance.joints.condition;
 
         drawManager.StopEditing();
-        drawManager.MakeSimulationFrame();
-        drawManager.ShowAvatar();
-
-        drawManager.animateON = false;
 
         FrontCameraPOV(drawManager.CheckPositionAvatar());
 
@@ -492,11 +487,6 @@ public class BaseProfile : LevelBase
         InitDropdownDDLNames(0);
 
         drawManager.StopEditing();
-        drawManager.MakeSimulationFrame();
-        drawManager.ShowAvatar();
-
-        drawManager.animateON = false;
-
 
         /*        if (drawManager.CheckPositionAvatar())
                 {
@@ -719,7 +709,6 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        drawManager.MakeSimulationFrame();
         drawManager.ShowAvatar();
     }
 
@@ -751,8 +740,6 @@ public class BaseProfile : LevelBase
             drawManager.SetAnimationSpeed(0.8f);
 
         drawManager.StopEditing();
-        drawManager.MakeSimulationFrame();
-        drawManager.ShowAvatar();
         drawManager.PlayAvatar();
 
         SwitchCameraView();
