@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Microsoft.Research.Oslo;
 using System.Runtime.InteropServices;
-using System.Collections;
 using System.Collections.Generic;
 
 public class DrawManager : MonoBehaviour
@@ -24,18 +23,17 @@ public class DrawManager : MonoBehaviour
     [DllImport(dllpath)] static extern void c_inverseDynamics(IntPtr model, IntPtr q, IntPtr qdot, IntPtr qddot, IntPtr tau);
     [DllImport(dllpath)] static extern void c_solveLinearSystem(IntPtr matA, int nbCol, int nbLigne, IntPtr matB, IntPtr solX);
 
-    ////////////////
     protected StatManager statManager;
+    protected SliderPlayAnimation slider;
+
     public GameObject avatarSpawnpoint;
     public Vector3 avatarVector3;
     public GameObject girl1;
     public GameObject girl2;
     GameObject girl1Prefab;
     GameObject girl2Prefab;
-    GameObject man1Prefab;
-    ////////////////
-    /// <summary>
-    /// Hip
+
+    // Hip
     private GameObject girl1LeftThigh;
     private ControlThigh girl1ThighControl;
     private GameObject girl1RightThigh;
@@ -52,10 +50,8 @@ public class DrawManager : MonoBehaviour
     private ControlRightArmFlexion girl1RightArmControlFlex;
     // Root
     public GameObject girl1Hip;
-    /// </summary>
 
-    /// <summary>
-    /// Hip
+    // Hip
     private GameObject girl2LeftUp;
     private GameObject girl2RightUp;
     // Knee
@@ -66,10 +62,10 @@ public class DrawManager : MonoBehaviour
     private GameObject girl2RightArm;
     // Root
     private GameObject girl2Hip;
-    /// </summary>
 
     private GameObject firstView;
     public bool canResumeAnimation { get; protected set; } = false;
+    public void setCanResumeAnimation(bool value) { canResumeAnimation = value; }
 
     float[,] q;
     float[,] q_girl2;
@@ -90,27 +86,7 @@ public class DrawManager : MonoBehaviour
     public bool animateON = false;
     float factorPlaySpeed = 1f;
 
-    float tagXMin = 0;
-    float tagXMax = 0;
-    float tagYMin = 0;
-    float tagYMax = 0;
-    float tagZMin = 0;
-    float tagZMax = 0;
-    float factorTags2Screen = 1;
-    float factorTags2ScreenX = 1;
-    float factorTags2ScreenY = 1;
-    float animationMaxDimOnScreen = 20;
-
     string playMode = MainParameters.Instance.languages.Used.animatorPlayModeSimulation;
-
-    float ThetaScale;
-
-    /*    LineRenderer[] lineStickFigure;
-        LineRenderer lineCenterOfMass;
-        LineRenderer[] lineFilledFigure;
-
-        public GameObject stickMan;*/
-
     public int cntAvatar = 1;
 
     float[,] q1;
@@ -135,25 +111,30 @@ public class DrawManager : MonoBehaviour
 
     public int secondNumberFrames = 0;
     public bool secondPaused = false;
-    public List<string> secondResultMessages;
+    public List<string> secondResultMessages = new List<string>();
 
     public float secondTimeElapsed = 0;
     public float resultDistance = 0;
 
-    void Awake()
-    {
-        ThetaScale = 0.01f;
-        //        avatarSpawnpoint = GameObject.FindGameObjectWithTag("AnchorAvatarToWorld");
-        //        avatarVector3 = avatarSpawnpoint.transform.position;
-
-        //        Cursor.visible = false;
-
-        secondResultMessages = new List<string>();
-    }
 
     void Start()
     {
         statManager = ToolBox.GetInstance().GetManager<StatManager>();
+    }
+
+    protected bool SliderInitialized
+    {
+        get
+        {
+            if (slider != null)
+                return true;
+
+
+            slider = FindObjectOfType<SliderPlayAnimation>();
+            if (slider == null)
+                return false;
+            return true;
+        }
     }
 
     void Update()
@@ -1264,16 +1245,19 @@ public class DrawManager : MonoBehaviour
         SetAllDof(qf);
     }
 
+
     public void StartEditing()
     {
         isEditing = true;
         canResumeAnimation = false;
+        if (SliderInitialized) slider.DisableSlider();
     }
 
     public void StopEditing()
     {
         statManager.ResetTemporaries();
         isEditing = false;
+        if (SliderInitialized) slider.EnableSlider();
     }
 
     public void SetAllDof(double[] _qf){

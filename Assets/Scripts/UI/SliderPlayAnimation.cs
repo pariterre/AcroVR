@@ -51,13 +51,13 @@ public class SliderPlayAnimation : MonoBehaviour
     }
 
 
-    public void showPlayButton()
+    public void ShowPlayButton()
     {
         playButton.gameObject.SetActive(true);
         pauseButton.gameObject.SetActive(false);
     }
 
-    public void showPauseButton()
+    public void ShowPauseButton()
     {
         playButton.gameObject.SetActive(false);
         pauseButton.gameObject.SetActive(true);
@@ -71,7 +71,7 @@ public class SliderPlayAnimation : MonoBehaviour
 
         if (Input.GetMouseButton(0) && ToolBox.GetInstance().GetManager<UIManager>().IsOnGameObject(slider.gameObject))
         {
-            showPlayButton();
+            ShowPlayButton();
 
             if (!drawManager.isPaused)
             {
@@ -119,7 +119,23 @@ public class SliderPlayAnimation : MonoBehaviour
 
         if ((int)slider.value == (int)slider.maxValue)
         {
-            showPlayButton();
+            drawManager.setCanResumeAnimation(false);
+            ShowPlayButton();
         }
     }
+
+    public void EnableSlider()
+    {
+        slider.interactable = true;
+        playButton.interactable = true;
+        pauseButton.interactable = true;
+    }
+
+    public void DisableSlider()
+    {
+        slider.interactable = false;
+        playButton.interactable = false;
+        pauseButton.interactable = false;
+    }
+
 }

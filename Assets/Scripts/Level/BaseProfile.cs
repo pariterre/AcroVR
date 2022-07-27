@@ -727,7 +727,7 @@ public class BaseProfile : LevelBase
     {
         if (drawManager.canResumeAnimation)
         {
-            drawManager.PauseAvatar();
+            PauseAvatarButton();
             return;
         }
 
@@ -759,14 +759,20 @@ public class BaseProfile : LevelBase
 
         TakeOffOn();
 
-        sliderPlay.showPauseButton();
+        sliderPlay.ShowPauseButton();
     }
 
     public void PauseAvatarButton()
     {
         if (!drawManager.PauseAvatar()) 
             return;
-        sliderPlay.showPlayButton();
+        if (drawManager.isPaused)
+        {
+            sliderPlay.ShowPlayButton();
+        } else
+        {
+            sliderPlay.ShowPauseButton();
+        }
     }
 
     public void SetTab(int _num)
