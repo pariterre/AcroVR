@@ -51,6 +51,18 @@ public class SliderPlayAnimation : MonoBehaviour
     }
 
 
+    public void showPlayButton()
+    {
+        playButton.gameObject.SetActive(true);
+        pauseButton.gameObject.SetActive(false);
+    }
+
+    public void showPauseButton()
+    {
+        playButton.gameObject.SetActive(false);
+        pauseButton.gameObject.SetActive(true);
+    }
+
     public void OnPlayAnimationSlider()
     {
         if (drawManager.isEditing) return;
@@ -59,7 +71,7 @@ public class SliderPlayAnimation : MonoBehaviour
 
         if (Input.GetMouseButton(0) && ToolBox.GetInstance().GetManager<UIManager>().IsOnGameObject(slider.gameObject))
         {
-            pauseButton.interactable = false;
+            showPlayButton();
 
             if (!drawManager.isPaused)
             {

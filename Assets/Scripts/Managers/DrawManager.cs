@@ -1438,21 +1438,17 @@ public class DrawManager : MonoBehaviour
         }
     }
 
-    public void PauseAvatar()
+    public bool PauseAvatar()
     {
-        if (MainParameters.Instance.joints.nodes == null) return;
-
-        if (girl1 == null)
-            return;
-
-        if (!girl1.activeSelf)
-            return;
+        if (MainParameters.Instance.joints.nodes == null || girl1 == null || !girl1.activeSelf) 
+            return false;
 
         girl1.transform.rotation = Quaternion.identity;
         isPaused = !isPaused;
 
         if (cntAvatar > 1)
             secondPaused = !secondPaused;
+        return true;
     }
 
     public void ResetPause()

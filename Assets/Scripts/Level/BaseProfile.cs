@@ -42,9 +42,7 @@ public class BaseProfile : LevelBase
     public InputField verticalSpeed;
 
     public InputField simulationDuration;
-
-    public Button playButton;
-    public Button pauseButton;
+    public SliderPlayAnimation sliderPlay;
 
     public Text fileName;
 
@@ -729,9 +727,6 @@ public class BaseProfile : LevelBase
 
     public void PlayAvatarButton()
     {
-        playButton.interactable = false;
-        pauseButton.interactable = true;
-
         drawManager.ResetPause();
 
         if (drawManager.girl1 == null || !drawManager.girl1.activeSelf)
@@ -759,11 +754,15 @@ public class BaseProfile : LevelBase
         SwitchCameraView();
 
         TakeOffOn();
+
+        sliderPlay.showPauseButton();
     }
 
     public void PauseAvatarButton()
     {
-        drawManager.PauseAvatar();
+        if (!drawManager.PauseAvatar()) 
+            return;
+        sliderPlay.showPlayButton();
     }
 
     public void SetTab(int _num)
