@@ -6,29 +6,19 @@ using System.Globalization;
 
 public class TakeOffParamF_s : MonoBehaviour
 {
+    protected GameManager gameManager;
+    protected DrawManager drawManager;
+
     public BaseProfile bp;
 
-/*    void OnEnable()
+    void OnEnable()
     {
-        float value = MainParameters.Instance.joints.takeOffParam.rotation;
-        transform.Find("PanelParameters/PanelParametersColumn1/PanelSomersaultPosition").gameObject.GetComponentInChildren<InputField>().text = string.Format("{0:0.0}", value);
-        value = MainParameters.Instance.joints.takeOffParam.tilt;
-        transform.Find("PanelParameters/PanelParametersColumn1/PanelTilt").gameObject.GetComponentInChildren<InputField>().text = string.Format("{0:0.0}", value);
-        value = MainParameters.Instance.joints.takeOffParam.anteroposteriorSpeed;
-        transform.Find("PanelParameters/PanelParametersColumn2/PanelHorizontalSpeed").gameObject.GetComponentInChildren<InputField>().text = string.Format("{0:0.0}", value);
-        value = MainParameters.Instance.joints.takeOffParam.verticalSpeed;
-        transform.Find("PanelParameters/PanelParametersColumn2/PanelVerticalSpeed").gameObject.GetComponentInChildren<InputField>().text = string.Format("{0:0.0}", value);
-        value = MainParameters.Instance.joints.takeOffParam.somersaultSpeed;
-        transform.Find("PanelParameters/PanelParametersColumn2/PanelSomersaultSpeed").gameObject.GetComponentInChildren<InputField>().text = string.Format("{0:0.000}", value);
-        value = MainParameters.Instance.joints.takeOffParam.twistSpeed;
-        transform.Find("PanelParameters/PanelParametersColumn2/PanelTwistSpeed").gameObject.GetComponentInChildren<InputField>().text = string.Format("{0:0.000}", value);
-    }*/
+        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+    }
 
     public void DropDownDDLNamesOnValueChanged(int value)
     {
-//        ToolBox.GetInstance().GetManager<GameManager>().InterpolationDDL();
-//        ToolBox.GetInstance().GetManager<GameManager>().DisplayDDL(value, true);
-
         MainParameters.Instance.joints.condition = value;
 
         UpdatePositions(value);
@@ -36,14 +26,14 @@ public class TakeOffParamF_s : MonoBehaviour
 
     public void UpdatePositions(int value)
     {
-        if (!ToolBox.GetInstance().GetManager<GameManager>().listCondition.conditions[value].Gravity)
+        if (!gameManager.listCondition.conditions[value].Gravity)
             MainParameters.Instance.joints.condition = 0;
 
-        MainParameters.Instance.joints.takeOffParam.rotation = ToolBox.GetInstance().GetManager<GameManager>().listCondition.conditions[value].SomersaultPosition;
-        ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamTwistPosition = ToolBox.GetInstance().GetManager<GameManager>().listCondition.conditions[value].TwistPosition;
-        MainParameters.Instance.joints.takeOffParam.tilt = ToolBox.GetInstance().GetManager<GameManager>().listCondition.conditions[value].TiltPosition;
-        ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamHorizontalPosition = ToolBox.GetInstance().GetManager<GameManager>().listCondition.conditions[value].HorizontalPosition;
-        ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamVerticalPosition = ToolBox.GetInstance().GetManager<GameManager>().listCondition.conditions[value].VerticalPosition;
+        MainParameters.Instance.joints.takeOffParam.rotation = gameManager.listCondition.conditions[value].SomersaultPosition;
+        drawManager.takeOffParamTwistPosition = gameManager.listCondition.conditions[value].TwistPosition;
+        MainParameters.Instance.joints.takeOffParam.tilt = gameManager.listCondition.conditions[value].TiltPosition;
+        drawManager.takeOffParamHorizontalPosition = gameManager.listCondition.conditions[value].HorizontalPosition;
+        drawManager.takeOffParamVerticalPosition = gameManager.listCondition.conditions[value].VerticalPosition;
 
         ApplyAvatar();
     }
@@ -69,17 +59,17 @@ public class TakeOffParamF_s : MonoBehaviour
         }
         else if (panel.name == "PanelTwistPosition")
         {
-            ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamTwistPosition = value;
+            drawManager.takeOffParamTwistPosition = value;
             ApplyAvatar();
         }
         else if (panel.name == "PanelHorizontalPosition")
         {
-            ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamHorizontalPosition = value;
+            drawManager.takeOffParamHorizontalPosition = value;
             ApplyAvatar();
         }
         else if (panel.name == "PanelVerticalPosition")
         {
-            ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamVerticalPosition = value;
+            drawManager.takeOffParamVerticalPosition = value;
             ApplyAvatar();
         }
         else if (panel.name == "PanelHorizontalSpeed")
@@ -100,7 +90,7 @@ public class TakeOffParamF_s : MonoBehaviour
         }
         else if (panel.name == "PanelTiltSpeed")
         {
-            ToolBox.GetInstance().GetManager<DrawManager>().takeOffParamTiltSpeed = value;
+            drawManager.takeOffParamTiltSpeed = value;
         }
         else if(panel.name == "PanelTimeDuration")
         {
@@ -110,17 +100,17 @@ public class TakeOffParamF_s : MonoBehaviour
 
     private void ApplyAvatar()
     {
-//        ToolBox.GetInstance().GetManager<DrawManager>().GestureMode();
-        ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
-        ToolBox.GetInstance().GetManager<DrawManager>().InitPoseAvatar();
+//        drawManager.GestureMode();
+        drawManager.ShowAvatar(true);
+        drawManager.InitPoseAvatar();
 
-        //        ToolBox.GetInstance().GetManager<DrawManager>().PlayAvatar();
+        //        drawManager.PlayAvatar();
 
-        /*        if (ToolBox.GetInstance().GetManager<DrawManager>().CheckPositionAvatar())
+        /*        if (drawManager.CheckPositionAvatar())
                     bp.CameraPOV(BaseProfile.POV.LongFrontView);
                 else
                     bp.CameraPOV(BaseProfile.POV.FrontView);*/
 
-        bp.FrontCameraPOV(ToolBox.GetInstance().GetManager<DrawManager>().CheckPositionAvatar());
+        bp.FrontCameraPOV(drawManager.CheckPositionAvatar());
     }
 }

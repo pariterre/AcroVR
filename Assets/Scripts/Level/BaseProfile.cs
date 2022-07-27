@@ -258,7 +258,7 @@ public class BaseProfile : LevelBase
         gameManager.InitAnimationInfo();
         drawManager.StopEditing();
         aniGraphManager.cntAvatar = 0;
-        drawManager.ResetPause();
+        drawManager.Pause();
         drawManager.ResetFrame();
         aniGraphManager.isTutorial = 0;
         gameManager.numMission = 0;
@@ -709,7 +709,7 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        drawManager.ShowAvatar();
+        drawManager.ShowAvatar(true);
     }
 
     public void PlayAvatarButton()
@@ -720,7 +720,7 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        drawManager.ResetPause();
+        drawManager.Resume();
 
         if (drawManager.girl1 == null || !drawManager.girl1.activeSelf)
         {

@@ -10,10 +10,10 @@ using UnityEditor;
 
 public class AniGraphManager : MonoBehaviour
 {
-//    GameObject resultPrefab;
-    //GameObject resultCanvas;
     protected DrawManager drawManager;
     protected GameManager gameManager;
+    protected UIManager uiManager;
+
     public GraphChart graph;
     GameObject takeoffPrefab;
     public GameObject takeoffCanvas;
@@ -57,47 +57,6 @@ public class AniGraphManager : MonoBehaviour
     public bool mouseRightButtonON = false;
 
     public int isTutorial = 0;
-    /*    private DopeSheetEditor m_DopeSheetEditor;
-        private CurveEditor m_CurveEditor1;
-        private CurveEditor m_CurveEditor2;
-        private CurveEditor m_CurveEditor3;
-        private CurveEditor m_CurveEditor4;
-        public Rect windowRect1 = new Rect(0, 0, 270, 150);
-    //    public Rect windowRect1 = new Rect(0, 0, 550, 330);
-        public Rect windowRect2 = new Rect(270, 0, 270, 150);
-        public Rect windowRect3 = new Rect(0, 150, 270, 150);
-        public Rect windowRect4 = new Rect(270, 150, 270, 150);
-
-        public class GuiListItem
-        {
-            public bool Selected;
-            public string Name;
-            public GuiListItem(bool mSelected, string mName)
-            {
-                Selected = mSelected;
-                Name = mName;
-            }
-            public GuiListItem(string mName)
-            {
-                Selected = false;
-                Name = mName;
-            }
-            public void enable()
-            {
-                Selected = true;
-            }
-            public void disable()
-            {
-                Selected = false;
-            }
-        }
-
-        private Vector2 ListScrollPos;
-        private List<GuiListItem> MyListOfStuff;
-        private int SelectedListItem;
-        private bool DropdownVisible;
-        Dictionary<int, List<Texture2D>> gifFiles = new Dictionary<int, List<Texture2D>>();*/
-
     public float speed = 0.3f;
 
     public int cntAvatar = 0;
@@ -106,14 +65,8 @@ public class AniGraphManager : MonoBehaviour
     {
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
         gameManager = ToolBox.GetInstance().GetManager<GameManager>();
+        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
 
-        /*        GameObject graphCanvas = GameObject.Find("TakeOffGraph");
-                graph = graphCanvas.GetComponent<GraphChart>();
-
-                graphCanvas = GameObject.Find("ResultGraph");
-                resultGraph = graphCanvas.GetComponent<GraphChart>();*/
-
-//        resultPrefab = (GameObject)Resources.Load("ResultPrefab", typeof(GameObject));
         data1GraphLine = (Material)Resources.Load("Data1GraphLine", typeof(Material));
         data2GraphLine = (Material)Resources.Load("Data2GraphLine", typeof(Material));
         data3GraphLine = (Material)Resources.Load("Data3GraphLine", typeof(Material));
@@ -188,19 +141,7 @@ public class AniGraphManager : MonoBehaviour
     {
         if (MainParameters.Instance.joints.nodes == null) return;
 
-/*        if (Input.GetMouseButtonDown(0))
-        {
-                        graph.DataSource.StartBatch();
-                                    graph.DataSource.ClearCategory("Player1");
-                                    for (int i = 0; i < 30; i++)
-                                    {
-                                        graph.DataSource.AddPointToCategory("Player1", Random.value * 10f, Random.value * 10f);
-                                    }
-                                    graph.DataSource.EndBatch();
-        }*/
-
-//        if (graph && takeoffCanvas.activeSelf)
-        if (graph && transform.parent.GetComponentInChildren<UIManager>().GetCurrentTab() == 2)
+        if (graph && uiManager.GetCurrentTab() == 2)
         {
             graph.MouseToClient(out mousePosX, out mousePosY);
             if (mousePosX < graph.DataSource.HorizontalViewOrigin || mousePosX > graph.DataSource.HorizontalViewOrigin + graph.DataSource.HorizontalViewSize ||
@@ -260,7 +201,6 @@ public class AniGraphManager : MonoBehaviour
 
                 drawManager.StartEditing();
                 drawManager.setFrameN((int)(MainParameters.Instance.joints.nodes[ddlUsed].T[nodeUsed]/drawManager.frameRate));
-                drawManager.ControlOneFrame();
                 drawManager.StopEditing();
             }
         }

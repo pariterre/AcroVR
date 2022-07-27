@@ -9,7 +9,8 @@ using System.Globalization;
 public class SliderPlayAnimation : MonoBehaviour
 {
     // Variables
-    DrawManager drawManager;
+    protected DrawManager drawManager;
+    protected UIManager uiManager;
     public Slider slider;
 
     public Text textChrono;
@@ -19,6 +20,7 @@ public class SliderPlayAnimation : MonoBehaviour
     void Start()
     {
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
         slider.minValue = 0f;
     }
 
@@ -87,16 +89,14 @@ public class SliderPlayAnimation : MonoBehaviour
             ShowPlayButton();
         }
 
-        if (Input.GetMouseButton(0) && ToolBox.GetInstance().GetManager<UIManager>().IsOnGameObject(slider.gameObject))
+        if (Input.GetMouseButton(0) && uiManager.IsOnGameObject(slider.gameObject))
         {
             ShowPlayButton();
-            drawManager.isPaused = true;
+            drawManager.Pause();
 
             if (drawManager.cntAvatar > 1)
                 drawManager.secondPaused = true;
         }
-
-
     }
 
     public void EnableSlider()

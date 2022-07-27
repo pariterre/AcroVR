@@ -83,16 +83,17 @@ public class DrawManager : MonoBehaviour
     public float timeElapsed = 0;
     public float timeFrame = 0;
     float timeStarted = 0;
-    protected bool animateON = false;
     float factorPlaySpeed = 1f;
 
     string playMode = MainParameters.Instance.languages.Used.animatorPlayModeSimulation;
     public int cntAvatar = 1;
 
-    float[,] q1;
+    protected float[,] q1;
     float[,] q1_girl2;
 
-    public bool isPaused = true;
+    public bool isPaused { get; protected set; } = true;
+    public void Pause() { isPaused = true; secondPaused = false; }
+    public void Resume(){ isPaused = false; secondPaused = false; }
     public bool isEditing { get; protected set; } = false;
 
     float pauseStart = 0;
@@ -148,8 +149,6 @@ public class DrawManager : MonoBehaviour
             pauseStart = 0;
         }
 
-        if (!animateON) return;
-
         if (frameN <= 0 && !isPaused) timeStarted = Time.time;
         if (Time.time - (timeStarted + pauseTime) >= (timeFrame * frameN) * factorPlaySpeed)
         {
@@ -178,21 +177,22 @@ public class DrawManager : MonoBehaviour
 
     /*    void FixedUpdate()
         {
-            if (!animateON) return;
-
             if (frameN < numberFrames)
                 PlayOneFrame();
             else
                 PlayEnd();
         }*/
 
+
+    public void UpdateFullKinematics()
+    {
+        MakeSimulationFrame();
+        Play_s(q1, 0, q1.GetUpperBound(1) + 1);
+    }
+
     public void MakeSimulationFrame()
     {
         if (MainParameters.Instance.joints.nodes == null) return;
-
-        isPaused = false;
-
-        //        if(cntAvatar == 1)
         q1 = MakeSimulation();
 
         girl1.transform.position = Vector3.zero;
@@ -209,8 +209,7 @@ public class DrawManager : MonoBehaviour
 
     public void InitAvatar(AvatarMode mode)
     {
-        isPaused = false;
-        secondPaused = false;
+        Pause();
         canResumeAnimation = false;
 
         string namePrefab1 = "";
@@ -297,8 +296,7 @@ public class DrawManager : MonoBehaviour
 
     public bool LoadAvatar(AvatarMode mode)
     {
-        isPaused = false;
-        secondPaused = false;
+        Pause();
 
         string namePrefab1 = "";
         string namePrefab2 = "";
@@ -363,22 +361,22 @@ public class DrawManager : MonoBehaviour
             q_girl2 = MathFunc.MatrixCopy(q1_girl2);
         }
 
-        animateON = false;
         return true;
     }
 
-    private void ResetAvatar()
+    public void ResetAvatar()
     {
         girl1Hip.transform.position = new Vector3(0f, 0.1f, 0f);
     }
 
-    public void ShowAvatar()
+    public void ShowAvatar(bool _shouldResetAvatar)
     {
         MakeSimulationFrame();
         if (MainParameters.Instance.joints.nodes == null) return;
         girl1.transform.rotation = Quaternion.identity;
         girl1.transform.position = Vector3.zero;
-        ResetAvatar();
+        if (_shouldResetAvatar)
+            ResetAvatar();
 
         Play_s(q1, 0, q1.GetUpperBound(1) + 1);
 
@@ -390,7 +388,6 @@ public class DrawManager : MonoBehaviour
 
             secondNumberFrames = q1_girl2.GetUpperBound(1) + 1;
         }
-        girl1Hip.transform.localPosition = new Vector3(0f, 0.1f, 0f);
     }
 
     public void SetAnimationSpeed(float speed)
@@ -406,14 +403,14 @@ public class DrawManager : MonoBehaviour
     public void PlayAvatar()
     {
         if (MainParameters.Instance.joints.nodes == null) return;
-        animateON = true;
-        ShowAvatar();
+        ShowAvatar(true);
+        Resume();
         canResumeAnimation = true;
     }
 
     public void PlayEnd()
     {
-        isPaused = true;
+        Pause();
     }
 
     private void DisplayNewMessage(bool clear, bool display, string message)
@@ -438,7 +435,7 @@ public class DrawManager : MonoBehaviour
         return string.Join(Environment.NewLine, secondResultMessages.ToArray());
     }
 
-    private void Play_s(float[,] qq, int frFrame, int nFrames)
+    protected void Play_s(float[,] qq, int frFrame, int nFrames)
     {
         MainParameters.StrucJoints joints = MainParameters.Instance.joints;
 
@@ -1176,8 +1173,6 @@ public class DrawManager : MonoBehaviour
 
     public void InitPoseAvatar()
     {
-        animateON = false;
-
         qf = MathFunc.MatrixGetColumnD(q, 1);
         SetAllDof(qf);
     }
@@ -1193,7 +1188,9 @@ public class DrawManager : MonoBehaviour
     public void StopEditing()
     {
         statManager.ResetTemporaries();
+        UpdateFullKinematics();
         isEditing = false;
+        Pause();
         if (SliderInitialized) slider.EnableSlider();
     }
 
@@ -1332,16 +1329,9 @@ public class DrawManager : MonoBehaviour
         return true;
     }
 
-    public void ResetPause()
-    {
-        isPaused = false;
-        secondPaused = false;
-    }
-
     public void ResetFrame()
     {
         canResumeAnimation = false;
-        animateON = false;
         frameN = 0;
         firstFrame = 0;
         numberFrames = 0;
