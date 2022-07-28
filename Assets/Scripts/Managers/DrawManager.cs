@@ -67,7 +67,7 @@ public class DrawManager : MonoBehaviour
 
     private GameObject firstView;
     public bool canResumeAnimation { get; protected set; } = false;
-    public void setCanResumeAnimation(bool value) { canResumeAnimation = value; }
+    public void SetCanResumeAnimation(bool value) { canResumeAnimation = value; }
 
     float[,] q;
     float[,] q_girl2;
@@ -75,10 +75,10 @@ public class DrawManager : MonoBehaviour
     double[] qf_girl2;
     public float frameRate { get; } = 0.02f;
     public int frameN { get; protected set; } = 0;
-    public void setFrameN(int value) { frameN = value; }
+    public void SetFrameN(int value) { frameN = value; }
     public float frameNtime { get { return frameN * frameRate; } }
     public int secondFrameN { get; protected set; } = 0;
-    public void setSecondFrameN(int value) { secondFrameN = value; }
+    public void SetSecondFrameN(int value) { secondFrameN = value; }
     public float secondFrameNtime { get { return secondFrameN * frameRate; } }
     int firstFrame = 0;
     internal int numberFrames = 0;

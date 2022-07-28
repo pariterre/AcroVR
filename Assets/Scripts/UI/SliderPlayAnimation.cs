@@ -79,7 +79,7 @@ public class SliderPlayAnimation : MonoBehaviour
 
         slider.maxValue = (float)drawManager.numberFrames - 1;
         var currentFrame = (int)slider.value;
-        drawManager.setFrameN(currentFrame);
+        drawManager.SetFrameN(currentFrame);
         textChrono.text = drawManager.frameNtime + " s";
 
         if (drawManager.cntAvatar > 1)
@@ -87,12 +87,12 @@ public class SliderPlayAnimation : MonoBehaviour
             var secondCurrentFrame = currentFrame;
             if (secondCurrentFrame >= drawManager.secondNumberFrames)
                 secondCurrentFrame = drawManager.secondNumberFrames - 1;
-            drawManager.setSecondFrameN(secondCurrentFrame);
+            drawManager.SetSecondFrameN(secondCurrentFrame);
         }
 
         if ((int)slider.value == 0 || (int)slider.value == (int)slider.maxValue)
         {
-            drawManager.setCanResumeAnimation(false);
+            drawManager.SetCanResumeAnimation(false);
             ShowPlayButton();
         }
 
