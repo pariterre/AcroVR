@@ -821,14 +821,14 @@ public class BaseProfile : LevelBase
     {
         gameManager.WriteToLogFile("SetSimulationMode()");
 
-        drawManager.SimulationMode();
+        drawManager.SetToSimulationMode();
     }
 
     public void SetGestureMode()
     {
         gameManager.WriteToLogFile("SetGestureMode()");
 
-        drawManager.GestureMode();
+        drawManager.SetToGestureMode();
     }
 
     public void ErrorMessage(string _msg)

@@ -33,33 +33,14 @@ public class SliderPlayAnimation : MonoBehaviour
 
     void Update()
     {
-        if (drawManager.numberFrames >= drawManager.secondNumberFrames)
-            slider.value = drawManager.frameN;
-        else 
-            slider.value = drawManager.secondFrameN;
-
-        if(drawManager.cntAvatar > 1)
-        {
-            if (drawManager.numberFrames >= drawManager.secondNumberFrames)
-            {
-                if (drawManager.timeElapsed > 0 && !drawManager.isPaused)
-                    textChrono.text = drawManager.frameNtime + " s";
-            }
-            else
-            {
-                if (drawManager.secondTimeElapsed > 0 && !drawManager.secondPaused)
-                    textChrono.text = drawManager.secondFrameNtime + " s";
-            }
-        }
-        else
-        {
-            if (drawManager.timeElapsed > 0 && !drawManager.isPaused)
-            {
-                textChrono.text = drawManager.frameNtime + " s";
-            }
-        }
+        if (drawManager.timeElapsed > 0 && !drawManager.isPaused)
+            textChrono.text = drawManager.frameNtime + " s";
     }
 
+    public void SetSlider(int value)
+    {
+        slider.value = value;
+    }
 
     public void ShowPlayButton()
     {

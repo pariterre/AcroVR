@@ -75,7 +75,10 @@ public class DrawManager : MonoBehaviour
     double[] qf_girl2;
     public float frameRate { get; } = 0.02f;
     public int frameN { get; protected set; } = 0;
-    public void SetFrameN(int value) { frameN = value; }
+    public void SetFrameN(int value) { 
+        frameN = value;
+        if (sliderAnimation) sliderAnimation.SetSlider(frameN);
+    }
     public float frameNtime { get { return frameN * frameRate; } }
     public int secondFrameN { get; protected set; } = 0;
     public void SetSecondFrameN(int value) { secondFrameN = value; }
@@ -101,7 +104,17 @@ public class DrawManager : MonoBehaviour
     float pauseStart = 0;
     float pauseTime = 0;
 
-    bool isSimulationMode = true;
+    protected bool IsSimulationMode = true;
+    protected bool IsGestureMode { get { return !IsSimulationMode; } }
+    public void SetToSimulationMode()
+    {
+        IsSimulationMode = true;
+    }
+
+    public void SetToGestureMode()
+    {
+        IsSimulationMode = false;
+    }
     public AvatarMode setAvatar = AvatarMode.SingleFemale;
 
     public float takeOffParamTwistPosition = 0;
@@ -187,15 +200,6 @@ public class DrawManager : MonoBehaviour
             UpdateGraphInNFrames -= 1;
     }
 
-    /*    void FixedUpdate()
-        {
-            if (frameN < numberFrames)
-                PlayOneFrame();
-            else
-                PlayEnd();
-        }*/
-
-
     public void UpdateFullKinematics(bool restartToZero)
     {
         MakeSimulationFrame();
@@ -206,12 +210,6 @@ public class DrawManager : MonoBehaviour
     {
         if (MainParameters.Instance.joints.nodes == null) return;
         q1 = MakeSimulation();
-
-        girl1.transform.position = Vector3.zero;
-        girl1LeftArm.transform.localRotation = Quaternion.identity;
-        girl1RightArm.transform.localRotation = Quaternion.identity;
-        girl1Hip.transform.localEulerAngles = new Vector3(-10f, 0f, 0f);
-
         if(cntAvatar > 1)
         {
             q1_girl2 = MakeSimulationSecond();
@@ -282,8 +280,7 @@ public class DrawManager : MonoBehaviour
         // Zero position
         avatar.transform.position = Vector3.zero;
         hip.transform.position = Vector3.zero;
-        hip.transform.localEulerAngles = new Vector3(-10f, 0f, 0f);
-        hip.transform.localPosition = new Vector3(0f, 0.1f, 0f);
+        CenterAvatar(avatar, hip);
         leftArm.transform.localRotation = Quaternion.identity;
         rightArm.transform.localRotation = Quaternion.identity;
     }
@@ -376,18 +373,32 @@ public class DrawManager : MonoBehaviour
         return true;
     }
 
-    public void ResetAvatar()
+    public void CenterAvatar(GameObject avatar, GameObject _hip)
     {
-        girl1Hip.transform.position = new Vector3(0f, 0.1f, 0f);
+        // TODO: CHECK IF THE NEXT TWO LINES ARE RELEVANT
+        //avatar.transform.rotation = Quaternion.identity;
+        //avatar.transform.position = Vector3.zero;
+        // TODO: FIX WHEN AXIAL ROTATION > PI (AND IN GENERAL FOR GIMBAL LOCKS)
+        // TODO: MAKE COMPUTATION AS SOON AS THE NUMBER ARE CHANGED SO THE SLIDER WORKS IMMEDIATELY
+
+        var _hipTranslations = new Vector3(0f, 0.1f, 0f);
+        var _hipRotations = new Vector3(10f, 0f, 0f);
+        if (IsSimulationMode && qf != null)
+        {
+            _hipTranslations = Vector3.zero;  // The offset is computed by the position of the feet in MakeSimulation
+            Vector3 _scaling = avatar.transform.localScale;
+            _hipTranslations += new Vector3((float)qf[6] * _scaling.x, (float)qf[8] * _scaling.y, (float)qf[7] * _scaling.z);
+            _hipRotations += new Vector3((float)qf[9] * Mathf.Rad2Deg, (float)qf[10] * Mathf.Rad2Deg, (float)qf[11] * Mathf.Rad2Deg);
+        }
+        _hip.transform.localPosition = _hipTranslations;
+        _hip.transform.localEulerAngles = _hipRotations;
     }
 
     public void ShowAvatar()
     {
         MakeSimulationFrame();
         if (MainParameters.Instance.joints.nodes == null) return;
-        girl1.transform.rotation = Quaternion.identity;
-        girl1.transform.position = Vector3.zero;
-        ResetAvatar();
+        CenterAvatar(girl1, girl1Hip);
 
         Play_s(q1, 0, q1.GetUpperBound(1) + 1, true);
 
@@ -395,7 +406,7 @@ public class DrawManager : MonoBehaviour
         {
             girl2.transform.rotation = Quaternion.identity;
             girl2.transform.position = Vector3.zero;
-            girl2Hip.transform.position = new Vector3(0f, 1f, 0f);
+            CenterAvatar(girl1, girl2Hip);
 
             secondNumberFrames = q1_girl2.GetUpperBound(1) + 1;
         }
@@ -452,7 +463,7 @@ public class DrawManager : MonoBehaviour
 
         q = MathFunc.MatrixCopy(qq);
         if (restartToZero)
-            frameN = 0;
+            SetFrameN(0);
         firstFrame = frFrame;
         numberFrames = nFrames;
 
@@ -602,7 +613,7 @@ public class DrawManager : MonoBehaviour
         // q0[12], q0dot[12], q0dotdot[12]
 
         int[] rotation = new int[3] { joints.lagrangianModel.root_somersault, joints.lagrangianModel.root_tilt, joints.lagrangianModel.root_twist };
-        int[] rotationS = MathFunc.Sign(rotation);
+        int[] rotationSign = MathFunc.Sign(rotation);
         for (int i = 0; i < rotation.Length; i++) rotation[i] = Math.Abs(rotation[i]);
 
         int[] translation = new int[3] { joints.lagrangianModel.root_right, joints.lagrangianModel.root_foreward, joints.lagrangianModel.root_upward };
@@ -665,7 +676,7 @@ public class DrawManager : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
             u1[i] = cg[i] - q0[translation[i] - 1] * translationS[i];
-            rot[i, 0] = q0dot[rotation[i] - 1] * rotationS[i];
+            rot[i, 0] = q0dot[rotation[i] - 1] * rotationSign[i];
         }
         float[,] u = { { 0, -u1[2], u1[1] }, { u1[2], 0, -u1[0] }, { -u1[1], u1[0], 0 } };
         float[,] rotM = MathFunc.MatrixMultiply(u, rot);
@@ -1179,7 +1190,7 @@ public class DrawManager : MonoBehaviour
                         qf[MainParameters.Instance.joints.lagrangianModel.q1[i] - 1] = 0;
             }
             SetAllDof(qf);
-            if (!isPaused) frameN++;
+            if (!isPaused) SetFrameN(frameN + 1);
         }
     }
 
@@ -1208,7 +1219,7 @@ public class DrawManager : MonoBehaviour
     }
 
     public void SetAllDof(double[] _qf){
-        girl1Hip.transform.localPosition = new Vector3(0f, 0.1f, 0f);
+        CenterAvatar(girl1, girl1Hip);
         SetThigh(_qf);
         SetShin(_qf);
         SetRightArm(_qf);
@@ -1314,13 +1325,13 @@ public class DrawManager : MonoBehaviour
 
     public void ControlOneFrame()
     {
-        if (frameN > numberFrames-1) frameN = numberFrames-1;
+        if (frameN > numberFrames-1) SetFrameN(numberFrames-1);
 
         q1 = MakeSimulation();
         qf = MathFunc.MatrixGetColumnD(q1, frameN);
 
         SetAllDof(qf);
-        if (isSimulationMode)
+        if (IsSimulationMode)
         {
             girl1Hip.transform.position = new Vector3((float)qf[6], (float)qf[8], (float)qf[7]);
             girl1Hip.transform.localRotation = Quaternion.AngleAxis((float)qf[9] * Mathf.Rad2Deg, Vector3.right) *
@@ -1345,7 +1356,7 @@ public class DrawManager : MonoBehaviour
     public void ResetFrame()
     {
         canResumeAnimation = false;
-        frameN = 0;
+        SetFrameN(0);
         firstFrame = 0;
         numberFrames = 0;
         timeElapsed = 0;
@@ -1355,15 +1366,5 @@ public class DrawManager : MonoBehaviour
 
         secondFrameN = 0;
         cntAvatar = 1;
-    }
-
-    public void SimulationMode()
-    {
-        isSimulationMode = true;
-    }
-
-    public void GestureMode()
-    {
-        isSimulationMode = false;
     }
 }
