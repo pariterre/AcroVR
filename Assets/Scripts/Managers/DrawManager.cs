@@ -24,7 +24,8 @@ public class DrawManager : MonoBehaviour
     [DllImport(dllpath)] static extern void c_solveLinearSystem(IntPtr matA, int nbCol, int nbLigne, IntPtr matB, IntPtr solX);
 
     protected StatManager statManager;
-    protected SliderPlayAnimation slider;
+    protected SliderPlayAnimation sliderAnimation;
+    protected DisplayResultGraphicS resultGraphics;
 
     public GameObject avatarSpawnpoint;
     public Vector3 avatarVector3;
@@ -123,19 +124,24 @@ public class DrawManager : MonoBehaviour
         statManager = ToolBox.GetInstance().GetManager<StatManager>();
     }
 
-    protected bool SliderInitialized
+    public void RegisterResultShow(DisplayResultGraphicS _newResultGraphics)
     {
-        get
-        {
-            if (slider != null)
-                return true;
+        resultGraphics = _newResultGraphics;
+    }
 
+    public void UnregisterResultShow()
+    {
+        resultGraphics = null;
+    }
 
-            slider = FindObjectOfType<SliderPlayAnimation>();
-            if (slider == null)
-                return false;
-            return true;
-        }
+    public void RegisterSliderAnimation(SliderPlayAnimation _newSliderAnimation)
+    {
+        sliderAnimation = _newSliderAnimation;
+    }
+
+    public void UnregisterSliderAnimation()
+    {
+        sliderAnimation = null;
     }
 
     void Update()
@@ -187,7 +193,7 @@ public class DrawManager : MonoBehaviour
     public void UpdateFullKinematics(bool restartToZero)
     {
         MakeSimulationFrame();
-        Play_s(q1, 0, q1.GetUpperBound(1) + 1, restartToZero);
+        Play_s(q1, 0, q1.GetUpperBound(1) + 1, restartToZero);   
     }
 
     public void MakeSimulationFrame()
@@ -1182,7 +1188,7 @@ public class DrawManager : MonoBehaviour
     {
         isEditing = true;
         canResumeAnimation = false;
-        if (SliderInitialized) slider.DisableSlider();
+        if (sliderAnimation) sliderAnimation.DisableSlider();
     }
 
     public void StopEditing()
@@ -1191,7 +1197,8 @@ public class DrawManager : MonoBehaviour
         UpdateFullKinematics(false);
         isEditing = false;
         Pause();
-        if (SliderInitialized) slider.EnableSlider();
+        if (sliderAnimation) sliderAnimation.EnableSlider();
+        if (resultGraphics) resultGraphics.UpdateResults();
     }
 
     public void SetAllDof(double[] _qf){

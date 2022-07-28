@@ -5,6 +5,9 @@ using ChartAndGraph;
 
 public class DisplayResultGraphicS : MonoBehaviour
 {
+    protected DrawManager drawManager;
+    protected AniGraphManager aniGraphManager;
+
 	public Dropdown dropDownGraphicName;
 	public GraphChart graph;
 	public int panelGraphicNumber;
@@ -19,16 +22,14 @@ public class DisplayResultGraphicS : MonoBehaviour
     public Text resultText;
     public Text resultText2;
 
-    bool calledFromScript;
-
-	void Start()
+	void Awake()
 	{
-		calledFromScript = false;
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        aniGraphManager = ToolBox.GetInstance().GetManager<AniGraphManager>();
 	}
 
 	void OnEnable()
 	{
-		calledFromScript = true;
 		List<string> dropDownOptions = new List<string>();
 		dropDownOptions.Add(MainParameters.Instance.languages.Used.resultsGraphicsSelectionRotationsVsTime);
 		dropDownOptions.Add(MainParameters.Instance.languages.Used.resultsGraphicsSelectionTiltVsTime);
@@ -40,29 +41,29 @@ public class DisplayResultGraphicS : MonoBehaviour
 		dropDownGraphicName.AddOptions(dropDownOptions);
 		dropDownGraphicName.value = MainParameters.Instance.resultsGraphicsUsed[panelGraphicNumber - 1];
 
-		calledFromScript = false;
+        DropDownGraphicNameOnValueChanged(MainParameters.Instance.resultsGraphicsUsed[panelGraphicNumber - 1]);
 
-//        if(ToolBox.GetInstance().GetManager<AniGraphManager>().bDraw)
-            DropDownGraphicNameOnValueChanged(MainParameters.Instance.resultsGraphicsUsed[panelGraphicNumber - 1]);
-	}
+        drawManager.RegisterResultShow(this);
+    }
 
     public void CloseBox()
     {
-        ToolBox.GetInstance().GetManager<AniGraphManager>().ResultGraphOff();
+        aniGraphManager.ResultGraphOff();
+        drawManager.UnregisterResultShow();
     }
 
     public void ShowResult()
     {
         if (MainParameters.Instance.joints.q0 == null) return;
 
-        if (ToolBox.GetInstance().GetManager<AniGraphManager>().cntAvatar == 1)
+        if (aniGraphManager.cntAvatar == 1)
         {
-            resultText.text = ToolBox.GetInstance().GetManager<DrawManager>().DisplayMessage();
-            resultText2.text = ToolBox.GetInstance().GetManager<DrawManager>().DisplayMessageSecond();
+            resultText.text = drawManager.DisplayMessage();
+            resultText2.text = drawManager.DisplayMessageSecond();
         }
         else
         {
-            resultText.text = ToolBox.GetInstance().GetManager<DrawManager>().DisplayMessage();
+            resultText.text = drawManager.DisplayMessage();
             resultText2.text = "";
         }
     }
@@ -71,7 +72,7 @@ public class DisplayResultGraphicS : MonoBehaviour
     {
         if (MainParameters.Instance.joints.q0 == null) return;
 
-        ToolBox.GetInstance().GetManager<AniGraphManager>().cntAvatar = value;
+        aniGraphManager.cntAvatar = value;
         DropDownGraphicNameOnValueChanged(MainParameters.Instance.resultsGraphicsUsed[panelGraphicNumber - 1]);
         ShowResult();
     }
@@ -80,8 +81,6 @@ public class DisplayResultGraphicS : MonoBehaviour
     {
         if (MainParameters.Instance.joints.q0 == null) return;
         if (MainParameters.Instance.joints.rot == null) return;
-
-        if (calledFromScript) return;
 
         MainParameters.Instance.resultsGraphicsUsed[panelGraphicNumber - 1] = value;
 
@@ -130,11 +129,17 @@ public class DisplayResultGraphicS : MonoBehaviour
         ShowResult();
     }
 
+    public void UpdateResults()
+    {
+        ShowResultGraph(MainParameters.Instance.resultsGraphicsUsed[panelGraphicNumber - 1]);
+        ShowResult();
+    }
+
     private void ShowResultGraph(int _v)
     {
-        if(ToolBox.GetInstance().GetManager<AniGraphManager>().cntAvatar == 1)
+        if(aniGraphManager.cntAvatar == 1)
         {
-            if (ToolBox.GetInstance().GetManager<DrawManager>().girl2 == null)
+            if (drawManager.girl2 == null)
             {
                 graph.DataSource.StartBatch();
 
@@ -154,22 +159,58 @@ public class DisplayResultGraphicS : MonoBehaviour
             switch (_v)
             {
                 case 0:
-                    ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MainParameters.Instance.joints.t, MainParameters.Instance.joints.rot, ToolBox.GetInstance().GetManager<DrawManager>().secondParameters.joints.t, ToolBox.GetInstance().GetManager<DrawManager>().secondParameters.joints.rot);
+                    aniGraphManager.DisplayCurves(
+                        graph, 
+                        MainParameters.Instance.joints.t,
+                        MainParameters.Instance.joints.rot,
+                        drawManager.secondParameters.joints.t,
+                        drawManager.secondParameters.joints.rot
+                        );
                     break;
                 case 1:
-                    ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MainParameters.Instance.joints.t, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1), ToolBox.GetInstance().GetManager<DrawManager>().secondParameters.joints.t, MathFunc.MatrixGetColumn(ToolBox.GetInstance().GetManager<DrawManager>().secondParameters.joints.rot, 1));
+                    aniGraphManager.DisplayCurves(
+                        graph,
+                        MainParameters.Instance.joints.t,
+                        MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1), 
+                        drawManager.secondParameters.joints.t, 
+                        MathFunc.MatrixGetColumn(drawManager.secondParameters.joints.rot, 1)
+                    );
                     break;
                 case 2:
-                    ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1), MathFunc.MatrixGetColumn(ToolBox.GetInstance().GetManager<DrawManager>().secondParameters.joints.rot, 0), MathFunc.MatrixGetColumn(ToolBox.GetInstance().GetManager<DrawManager>().secondParameters.joints.rot, 1));
+                    aniGraphManager.DisplayCurves(
+                        graph, 
+                        MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), 
+                        MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1), 
+                        MathFunc.MatrixGetColumn(drawManager.secondParameters.joints.rot, 0), 
+                        MathFunc.MatrixGetColumn(drawManager.secondParameters.joints.rot, 1)
+                    );
                     break;
                 case 3:
-                    ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1), MathFunc.MatrixGetColumn(ToolBox.GetInstance().GetManager<DrawManager>().secondParameters.joints.rot, 2), MathFunc.MatrixGetColumn(ToolBox.GetInstance().GetManager<DrawManager>().secondParameters.joints.rot, 1));
+                    aniGraphManager.DisplayCurves(
+                        graph, 
+                        MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2), 
+                        MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1), 
+                        MathFunc.MatrixGetColumn(drawManager.secondParameters.joints.rot, 2), 
+                        MathFunc.MatrixGetColumn(drawManager.secondParameters.joints.rot, 1)
+                    );
                     break;
                 case 4:
-                    ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2), MathFunc.MatrixGetColumn(ToolBox.GetInstance().GetManager<DrawManager>().secondParameters.joints.rot, 0), MathFunc.MatrixGetColumn(ToolBox.GetInstance().GetManager<DrawManager>().secondParameters.joints.rot, 2));
+                    aniGraphManager.DisplayCurves(
+                        graph, 
+                        MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), 
+                        MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2), 
+                        MathFunc.MatrixGetColumn(drawManager.secondParameters.joints.rot, 0), 
+                        MathFunc.MatrixGetColumn(drawManager.secondParameters.joints.rot, 2)
+                    );
                     break;
                 case 5:
-                    ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MainParameters.Instance.joints.t, MainParameters.Instance.joints.rotdot, ToolBox.GetInstance().GetManager<DrawManager>().secondParameters.joints.t, ToolBox.GetInstance().GetManager<DrawManager>().secondParameters.joints.rotdot);
+                    aniGraphManager.DisplayCurves(
+                        graph, 
+                        MainParameters.Instance.joints.t, 
+                        MainParameters.Instance.joints.rotdot, 
+                        drawManager.secondParameters.joints.t, 
+                        drawManager.secondParameters.joints.rotdot
+                    );
                     break;
             }
         }
@@ -179,27 +220,27 @@ public class DisplayResultGraphicS : MonoBehaviour
             {
                 case 0:
 //				GraphManager.Instance.DisplayCurves(graph, MainParameters.Instance.joints.t, MainParameters.Instance.joints.rot);
-                    ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MainParameters.Instance.joints.t, MainParameters.Instance.joints.rot);
+                    aniGraphManager.DisplayCurves(graph, MainParameters.Instance.joints.t, MainParameters.Instance.joints.rot);
                     break;
                 case 1:
 //				GraphManager.Instance.DisplayCurves(graph, MainParameters.Instance.joints.t, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
-                    ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MainParameters.Instance.joints.t, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
+                    aniGraphManager.DisplayCurves(graph, MainParameters.Instance.joints.t, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
                     break;
                 case 2:
 //				GraphManager.Instance.DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
-                    ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
+                    aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
                     break;
                 case 3:
 //				GraphManager.Instance.DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
-                    ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
+                    aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
                     break;
                 case 4:
 //				GraphManager.Instance.DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2));
-                    ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2));
+                    aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2));
                     break;
                 case 5:
 //				GraphManager.Instance.DisplayCurves(graph, MainParameters.Instance.joints.t, MainParameters.Instance.joints.rotdot);
-                    ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MainParameters.Instance.joints.t, MainParameters.Instance.joints.rotdot);
+                    aniGraphManager.DisplayCurves(graph, MainParameters.Instance.joints.t, MainParameters.Instance.joints.rotdot);
                     break;
             }
         }

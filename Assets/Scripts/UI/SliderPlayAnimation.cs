@@ -22,6 +22,13 @@ public class SliderPlayAnimation : MonoBehaviour
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
         uiManager = ToolBox.GetInstance().GetManager<UIManager>();
         slider.minValue = 0f;
+
+        drawManager.RegisterSliderAnimation(this);
+    }
+
+    void Destroy()
+    {
+        drawManager.UnregisterSliderAnimation();
     }
 
     void Update()
