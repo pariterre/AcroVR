@@ -819,16 +819,16 @@ public class BaseProfile : LevelBase
 
     public void SetSimulationMode()
     {
-        gameManager.WriteToLogFile("SetSimulationMode()");
+        gameManager.WriteToLogFile("ActivateSimulationMode()");
 
-        drawManager.SetToSimulationMode();
+        drawManager.ActivateSimulationMode();
     }
 
     public void SetGestureMode()
     {
-        gameManager.WriteToLogFile("SetGestureMode()");
+        gameManager.WriteToLogFile("ActivateGestureMode()");
 
-        drawManager.SetToGestureMode();
+        drawManager.ActivateGestureMode();
     }
 
     public void ErrorMessage(string _msg)

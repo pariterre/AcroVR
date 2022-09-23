@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Linq;
 using System.Text;
@@ -34,6 +34,7 @@ public class DrawManager : MonoBehaviour
     public GameObject girl2;
     GameObject girl1Prefab;
     GameObject girl2Prefab;
+    float InitialFeetHeight = (float)Double.NaN;
 
     // Hip
     private GameObject girl1LeftThigh;
@@ -69,9 +70,9 @@ public class DrawManager : MonoBehaviour
     public bool canResumeAnimation { get; protected set; } = false;
     public void SetCanResumeAnimation(bool value) { canResumeAnimation = value; }
 
-    float[,] q;
+    float[,] allQ;
     float[,] q_girl2;
-    public double[] qf;
+    public double[] qf { get; protected set; }
     double[] qf_girl2;
     public float frameRate { get; } = 0.02f;
     public int frameN { get; protected set; } = 0;
@@ -104,17 +105,16 @@ public class DrawManager : MonoBehaviour
     float pauseStart = 0;
     float pauseTime = 0;
 
-    protected bool IsSimulationMode = true;
-    protected bool IsGestureMode { get { return !IsSimulationMode; } }
-    public void SetToSimulationMode()
-    {
-        IsSimulationMode = true;
-    }
+    // TODO: add a IsEditing that behaves like GestureMode up when the play button is pressed, then act
+    // as previously selected one
+    protected int CurrentVizualisationMode = 0;
+    protected bool IsSimulationMode { get { return CurrentVizualisationMode == 0; } }
+    public void ActivateSimulationMode() { CurrentVizualisationMode = 0; }
+    protected bool IsGestureMode { get { return CurrentVizualisationMode == 1; } }
+    public void ActivateGestureMode() { CurrentVizualisationMode = 1; }
+    protected bool IsEditorMode { get { return CurrentVizualisationMode == 2; } }
+    public void ActivateEditorMode() { CurrentVizualisationMode = 2; }
 
-    public void SetToGestureMode()
-    {
-        IsSimulationMode = false;
-    }
     public AvatarMode setAvatar = AvatarMode.SingleFemale;
 
     public float takeOffParamTwistPosition = 0;
@@ -381,12 +381,12 @@ public class DrawManager : MonoBehaviour
         // TODO: FIX WHEN AXIAL ROTATION > PI (AND IN GENERAL FOR GIMBAL LOCKS)
         // TODO: MAKE COMPUTATION AS SOON AS THE NUMBER ARE CHANGED SO THE SLIDER WORKS IMMEDIATELY
 
-        var _hipTranslations = new Vector3(0f, 0.1f, 0f);
+
+        Vector3 _scaling = avatar.transform.localScale;
+        var _hipTranslations = Double.IsNaN(InitialFeetHeight) ? new Vector3(0f, 0f, 0f) : new Vector3(0f, -InitialFeetHeight * _scaling.y, 0f);
         var _hipRotations = new Vector3(10f, 0f, 0f);
         if (IsSimulationMode && qf != null)
         {
-            _hipTranslations = Vector3.zero;  // The offset is computed by the position of the feet in MakeSimulation
-            Vector3 _scaling = avatar.transform.localScale;
             _hipTranslations += new Vector3((float)qf[6] * _scaling.x, (float)qf[8] * _scaling.y, (float)qf[7] * _scaling.z);
             _hipRotations += new Vector3((float)qf[9] * Mathf.Rad2Deg, (float)qf[10] * Mathf.Rad2Deg, (float)qf[11] * Mathf.Rad2Deg);
         }
@@ -461,7 +461,7 @@ public class DrawManager : MonoBehaviour
     {
         MainParameters.StrucJoints joints = MainParameters.Instance.joints;
 
-        q = MathFunc.MatrixCopy(qq);
+        allQ = MathFunc.MatrixCopy(qq);
         if (restartToZero)
             SetFrameN(0);
         firstFrame = frFrame;
@@ -599,6 +599,9 @@ public class DrawManager : MonoBehaviour
         MainParameters.StrucJoints joints = MainParameters.Instance.joints;
         float[] q0 = new float[joints.lagrangianModel.nDDL];
         float[] q0dot = new float[joints.lagrangianModel.nDDL];
+        if (Double.IsNaN(InitialFeetHeight)){
+            InitialFeetHeight = FeetHeight(q0);
+        }
 
         //        float[] q0dotdot = new float[joints.lagrangianModel.nDDL];
         //        Trajectory_s(joints.lagrangianModel, 0, joints.lagrangianModel.q2, out q0, out q0dot, out q0dotdot);
@@ -609,7 +612,7 @@ public class DrawManager : MonoBehaviour
             q0[i] = nodes.Q[0];
         }
 
-        // Biginning Pose
+        // Beginning Pose
         // q0[12], q0dot[12], q0dotdot[12]
 
         int[] rotation = new int[3] { joints.lagrangianModel.root_somersault, joints.lagrangianModel.root_tilt, joints.lagrangianModel.root_twist };
@@ -686,29 +689,8 @@ public class DrawManager : MonoBehaviour
             q0dot[translation[i] - 1] = q0dot[translation[i] - 1] * translationS[i];
         }
 
-        float hFeet = Math.Min(tagZ[joints.lagrangianModel.feet[0] - 1], tagZ[joints.lagrangianModel.feet[1] - 1]);
-        float hHand = Math.Min(tagZ[joints.lagrangianModel.hand[0] - 1], tagZ[joints.lagrangianModel.hand[1] - 1]);
-
-        // hFeet = min(tagZ[3],tagZ[7])
-        // hHand = min(tagZ[14],tagZ[20])
-
-        //        if (joints.condition < 8 && Math.Cos(rotRadians) > 0)
-        //            q0[Math.Abs(joints.lagrangianModel.root_upward) - 1] += joints.lagrangianModel.hauteurs[joints.condition] - hFeet;
-        //        else
-        //            q0[Math.Abs(joints.lagrangianModel.root_upward) - 1] += joints.lagrangianModel.hauteurs[joints.condition] - hHand;
-
-        if (Math.Cos(rotRadians) > 0)
-            q0[Math.Abs(joints.lagrangianModel.root_upward) - 1] -= hFeet;
-        else
-            q0[Math.Abs(joints.lagrangianModel.root_upward) - 1] -= hHand;
-
-        //q0[8] = joints.lagrangianModel.hauteurs[joints.condition] - hFeet
-
-        //////////////////////////////////////////
-        // by choi
         q0[Math.Abs(joints.lagrangianModel.root_foreward) - 1] += takeOffParamHorizontalPosition;
         q0[Math.Abs(joints.lagrangianModel.root_upward) - 1] += takeOffParamVerticalPosition;
-        //////////////////////////////////////////
 
         double[] x0 = new double[joints.lagrangianModel.nDDL * 2];
         for (int i = 0; i < joints.lagrangianModel.nDDL; i++)
@@ -721,7 +703,6 @@ public class DrawManager : MonoBehaviour
 
         Options options = new Options();
         options.InitialStep = joints.lagrangianModel.dt;
-
         var sol = Ode.RK547M(0, joints.duration + joints.lagrangianModel.dt, new Vector(x0), ShortDynamics_s, options);
 
         var points = sol.SolveFromToStep(0, joints.duration + joints.lagrangianModel.dt, joints.lagrangianModel.dt).ToArray();
@@ -754,11 +735,12 @@ public class DrawManager : MonoBehaviour
             for (int j = 0; j < joints.lagrangianModel.nDDL; j++)
                 qq[j] = q[j, i];
             EvaluateTags_s(qq, out tagX, out tagY, out tagZ);
-            if (joints.condition > 0 && tagZ.Min() < -0.05f)
-            {
-                MainParameters.Instance.joints.tc = (float)t[i];
-                break;
-            }
+            // Cut the trial when the feet crosses 0
+            // if (joints.condition > 0 && tagZ.Min() < -0.05f)
+            // {
+            //     MainParameters.Instance.joints.tc = (float)t[i];
+            //     break;
+            // }
         }
 
         MainParameters.Instance.joints.t = new float[tIndex];
@@ -799,6 +781,22 @@ public class DrawManager : MonoBehaviour
         DisplayNewMessage(false, true, string.Format(" {0} = {1:0}°", MainParameters.Instance.languages.Used.displayMsgFinalTilt, MainParameters.Instance.joints.rot[tIndex - 1, 1] * 360));
 
         return qOut;
+    }
+
+
+    protected float FeetHeight(float[] q){
+        double[] qDouble = new double[q.Length];
+        for (int i = 0; i<q.Length; ++i)
+            qDouble[i] = q[i];
+
+        float[] tagX;
+        float[] tagY;
+        float[] tagZ;
+        EvaluateTags_s(qDouble, out tagX, out tagY, out tagZ);
+        return Math.Min(
+            tagZ[MainParameters.Instance.joints.lagrangianModel.feet[0] - 1], 
+            tagZ[MainParameters.Instance.joints.lagrangianModel.feet[1] - 1]
+        );
     }
 
     private float[,] MakeSimulationSecond()
@@ -1148,22 +1146,22 @@ public class DrawManager : MonoBehaviour
 
     public float CheckPositionAvatar()
     {
-        /*        qf = MathFunc.MatrixGetColumnD(q, 1);
+        /*        qf = MathFunc.MatrixGetColumnD(allQ, 1);
                 if ((float)qf[8] > 3.0f) return true;
-                qf = MathFunc.MatrixGetColumnD(q, numberFrames -1);
+                qf = MathFunc.MatrixGetColumnD(allQ, numberFrames -1);
                 if ((float)qf[8] > 3.0f) return true;
                 return false;*/
 
-        if(q == null) return 0;
-        if (q.GetUpperBound(1) == 0) return 0;
+        if(allQ == null) return 0;
+        if (allQ.GetUpperBound(1) == 0) return 0;
 
-        float vertical = Mathf.Max((float)MathFunc.MatrixGetColumnD(q, 1)[8], (float)MathFunc.MatrixGetColumnD(q, numberFrames - 1)[8]);
-        float horizontal = Mathf.Max((float)MathFunc.MatrixGetColumnD(q,1)[7], (float)MathFunc.MatrixGetColumnD(q, numberFrames - 1)[7]);
+        float vertical = Mathf.Max((float)MathFunc.MatrixGetColumnD(allQ, 1)[8], (float)MathFunc.MatrixGetColumnD(allQ, numberFrames - 1)[8]);
+        float horizontal = Mathf.Max((float)MathFunc.MatrixGetColumnD(allQ,1)[7], (float)MathFunc.MatrixGetColumnD(allQ, numberFrames - 1)[7]);
 
         float max = Mathf.Max(vertical, horizontal);
 
-        resultDistance = Vector3.Distance(new Vector3((float)MathFunc.MatrixGetColumnD(q, 1)[6], (float)MathFunc.MatrixGetColumnD(q, 1)[8], (float)MathFunc.MatrixGetColumnD(q, 1)[7]),
-            new Vector3((float)MathFunc.MatrixGetColumnD(q, numberFrames - 1)[6], (float)MathFunc.MatrixGetColumnD(q, numberFrames - 1)[8], (float)MathFunc.MatrixGetColumnD(q, numberFrames - 1)[7]));
+        resultDistance = Vector3.Distance(new Vector3((float)MathFunc.MatrixGetColumnD(allQ, 1)[6], (float)MathFunc.MatrixGetColumnD(allQ, 1)[8], (float)MathFunc.MatrixGetColumnD(allQ, 1)[7]),
+            new Vector3((float)MathFunc.MatrixGetColumnD(allQ, numberFrames - 1)[6], (float)MathFunc.MatrixGetColumnD(allQ, numberFrames - 1)[8], (float)MathFunc.MatrixGetColumnD(allQ, numberFrames - 1)[7]));
 
         if (q_girl2 != null && cntAvatar > 1)
         {
@@ -1182,9 +1180,9 @@ public class DrawManager : MonoBehaviour
     {
         if (!isEditing)
         {
-            if (q.GetUpperBound(1) >= frameN)
+            if (allQ.GetUpperBound(1) >= frameN)
             {
-                qf = MathFunc.MatrixGetColumnD(q, firstFrame + frameN);
+                qf = MathFunc.MatrixGetColumnD(allQ, firstFrame + frameN);
                 if (playMode == MainParameters.Instance.languages.Used.animatorPlayModeGesticulation)
                     for (int i = 0; i < MainParameters.Instance.joints.lagrangianModel.q1.Length; i++)
                         qf[MainParameters.Instance.joints.lagrangianModel.q1[i] - 1] = 0;
@@ -1196,7 +1194,7 @@ public class DrawManager : MonoBehaviour
 
     public void InitPoseAvatar()
     {
-        qf = MathFunc.MatrixGetColumnD(q, 1);
+        qf = MathFunc.MatrixGetColumnD(allQ, 1);
         SetAllDof(qf);
     }
 
@@ -1240,6 +1238,7 @@ public class DrawManager : MonoBehaviour
 
     public void ControlThigh(float _value)
     {
+        //ActivateEditorMode();
         SetQfThigh(_value);
         SetThigh(qf);
     }
@@ -1321,23 +1320,6 @@ public class DrawManager : MonoBehaviour
     {
         SetQfLeftArmFlexion(_value);
         SetLeftArm(qf);
-    }
-
-    public void ControlOneFrame()
-    {
-        if (frameN > numberFrames-1) SetFrameN(numberFrames-1);
-
-        q1 = MakeSimulation();
-        qf = MathFunc.MatrixGetColumnD(q1, frameN);
-
-        SetAllDof(qf);
-        if (IsSimulationMode)
-        {
-            girl1Hip.transform.position = new Vector3((float)qf[6], (float)qf[8], (float)qf[7]);
-            girl1Hip.transform.localRotation = Quaternion.AngleAxis((float)qf[9] * Mathf.Rad2Deg, Vector3.right) *
-                                                Quaternion.AngleAxis((float)qf[10] * Mathf.Rad2Deg, Vector3.forward) *
-                                                Quaternion.AngleAxis((float)qf[11] * Mathf.Rad2Deg, Vector3.up);
-        }
     }
 
     public bool PauseAvatar()
