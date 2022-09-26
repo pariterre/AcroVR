@@ -375,13 +375,6 @@ public class DrawManager : MonoBehaviour
 
     public void CenterAvatar(GameObject avatar, GameObject _hip)
     {
-        // TODO: CHECK IF THE NEXT TWO LINES ARE RELEVANT
-        //avatar.transform.rotation = Quaternion.identity;
-        //avatar.transform.position = Vector3.zero;
-        // TODO: FIX WHEN AXIAL ROTATION > PI (AND IN GENERAL FOR GIMBAL LOCKS)
-        // TODO: MAKE COMPUTATION AS SOON AS THE NUMBER ARE CHANGED SO THE SLIDER WORKS IMMEDIATELY
-
-
         Vector3 _scaling = avatar.transform.localScale;
         var _hipTranslations = Double.IsNaN(InitialFeetHeight) ? new Vector3(0f, 0f, 0f) : new Vector3(0f, -InitialFeetHeight * _scaling.y, 0f);
         var _hipRotations = new Vector3(10f, 0f, 0f);

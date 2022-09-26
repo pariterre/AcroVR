@@ -1,0 +1,53 @@
+Onglet 3
+	- Retirer "Type visualisation" (3 derniers sont dépendant de la rotation faite au modèle de toute façon)
+		- Que faire avec 1POV si pas de lunettes? Déplacer le bouton sous Menu à droite?
+	- Déplacer "Vue de perspective" dans Mouvement? C'est là où on l'utilise vraiment en fait
+	- "Vitesse d'animation" devrait être un bouton avec le play (ailleur)?
+	- Temps de simulation devrait aller dans décollage ou dans Résultat (Changer le nom de l'onglet)?
+	- Démarrer est redondant avec play
+	- Supprimer l'onglet 3
+	
+Onglet 2
+	- Passer en mode gesticulation dès qu'on édite le mouvement? 
+		- Sinon, calculer dès bouge la personne (risque d'être mêlant)?
+		- Si oui, que faire concernant l'édition par la souris? Bloquer si pas dans onglet 2?
+		- Dans les deux cas, que faire avec la barre de défilement (défile la gesticulation ou le mouvement)
+
+Onglet 1
+	- À quoi sert "Condition", ça ne semble que changer la hauteur initiale?
+	- Que faire avec les mouvements de caméras si quelque chose change (si bouger, implique de calculer dès qu'on change un truc)?
+	- Que faire avec les mouvements sous les pieds (Le sol n'est pas affiché)? 
+		- Si on bloque, que faire avec la barre de temps quand on est plus loin que la simulation? (Comment changer un mouvement > temps simulation?)
+		- Si on laisse libre, que faire avec les résultats? (Calculer/Afficher > pieds traversent 0?)
+	
+
+
+
+
+TODO: 
+	- Décollage : 
+		- Déplacer le temps dans mouvement
+	- Bouton play : 
+		- Mettre les vitesse aussi
+	- Caméra : 
+		- Bouton en haut à droite 1ere personne activé ou non
+		- Amemer la caméra proche dès qu'on clique sur gesticulation
+		- Au moment de faire play, bouger la cam avant de commencer le mouvement
+	- Gesticulation : 
+		Si onglet 2, sinon simulation & ÉDITION UNIQUEMENT DANS L'onglet 2
+	- Mission : 
+		- Recommencer si objectif échoué
+		- Passer au prochain objectif si réussi
+		- Retirer les bouton Enregistrer/Charger/Comparer
+	- Menu : 
+		- S'assurer qu'il ne freake pas 
+	- Sol : 
+		- Ajouter un sol 
+		- Checkbox pour activer ou non le sol?
+	- Bouton Enregistrer/Charger/Comparer : 
+		- Retirer si en mission
+	- Redressir le modèle
+	- Si possible
+		- Bouton Comparer : Je suis à peu près sûr que c'est complètement cassé, réparer?
+		- Utilisation du modèle masculin : Cassé, réparer?
+	- Ajouter une étoile si la mission est réussie (Sauvegarder à travers les sessions)
