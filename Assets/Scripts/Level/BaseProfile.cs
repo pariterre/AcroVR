@@ -62,6 +62,15 @@ public class BaseProfile : LevelBase
     {
     }
 
+    public void ToggleCameraFirstOrThird(){
+        if (camView != CameraView.FirstPOV){
+            FirstPOVCamera();
+        } else {
+            FrontCameraPOV(drawManager.CheckPositionAvatar());
+        }
+
+    }
+
     public void SwitchCameraView()
     {
         if (drawManager.girl1 == null)

@@ -349,7 +349,6 @@ public class TrainingTooltip : MonoBehaviour
             PerspectiveView.text = languages.french.PerspectiveView;
             PointOfView.text = languages.french.PointOfView;
             AnimationSpeed.text = languages.french.AnimationSpeed;
-            StartButton.text = languages.french.StartButton;
 
             SimulationTime.text = languages.french.SimulationTime;
             Duration.text = languages.french.Duration;
