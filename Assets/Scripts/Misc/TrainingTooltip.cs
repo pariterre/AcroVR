@@ -347,7 +347,6 @@ public class TrainingTooltip : MonoBehaviour
 //            compareButton.text = languages.french.compareButton;
             textBack.text = languages.french.Back;
             PerspectiveView.text = languages.french.PerspectiveView;
-            PointOfView.text = languages.french.PointOfView;
             AnimationSpeed.text = languages.french.AnimationSpeed;
 
             SimulationTime.text = languages.french.SimulationTime;

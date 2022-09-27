@@ -25,12 +25,7 @@ Onglet 1
 
 
 TODO: 
-	- Décollage : 
-		- Déplacer le temps dans mouvement
-	- Bouton play : 
-		- Mettre les vitesse aussi
 	- Caméra : 
-		- Bouton en haut à droite 1ere personne activé ou non
 		- Amemer la caméra proche dès qu'on clique sur gesticulation
 		- Au moment de faire play, bouger la cam avant de commencer le mouvement
 	- Gesticulation : 
