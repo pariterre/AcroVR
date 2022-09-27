@@ -100,7 +100,7 @@ public class DrawManager : MonoBehaviour
     public bool isPaused { get; protected set; } = true;
     public void Pause() { isPaused = true; secondPaused = false; }
     public void Resume(){ isPaused = false; secondPaused = false; }
-    public bool isEditing { get; protected set; } = false;
+    public bool IsEditing { get; protected set; } = false;
 
     float pauseStart = 0;
     float pauseTime = 0;
@@ -1118,7 +1118,7 @@ public class DrawManager : MonoBehaviour
     {
         MainParameters.StrucJoints joints = MainParameters.Instance.joints;
 
-        if (!isEditing)
+        if (!IsEditing)
             if (q_girl2.GetUpperBound(1) >= secondFrameN)
             {
                 qf_girl2 = MathFunc.MatrixGetColumnD(q_girl2, firstFrame + secondFrameN);
@@ -1171,7 +1171,7 @@ public class DrawManager : MonoBehaviour
 
     public void PlayOneFrame()
     {
-        if (!isEditing)
+        if (!IsEditing)
         {
             if (allQ.GetUpperBound(1) >= frameN)
             {
@@ -1194,7 +1194,7 @@ public class DrawManager : MonoBehaviour
 
     public void StartEditing()
     {
-        isEditing = true;
+        IsEditing = true;
         canResumeAnimation = false;
         if (sliderAnimation) sliderAnimation.DisableSlider();
     }
@@ -1203,7 +1203,7 @@ public class DrawManager : MonoBehaviour
     {
         statManager.ResetTemporaries();
         UpdateFullKinematics(false);
-        isEditing = false;
+        IsEditing = false;
         Pause();
         if (sliderAnimation) sliderAnimation.EnableSlider();
         UpdateGraphInNFrames = 2;  // Delay the graph update so the other indications on screen are updated

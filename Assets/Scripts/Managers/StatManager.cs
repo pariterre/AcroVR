@@ -62,6 +62,7 @@ public class StatManager : MonoBehaviour
     GameManager gameManager;
     DrawManager drawManager;
     LevelManager levelManager;
+    UIManager uiManager;
     GameObject error;
     BaseProfile _baseProfileInternal;
     BaseProfile baseProfile { get {
@@ -76,6 +77,7 @@ public class StatManager : MonoBehaviour
         gameManager = transform.parent.GetComponentInChildren<GameManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
         levelManager = transform.parent.GetComponentInChildren<LevelManager>();
+        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
         error = GameObject.Find("Training");
 
         colorBlue = Color.blue;
@@ -156,7 +158,7 @@ public class StatManager : MonoBehaviour
                 drawManager.girl1.transform.Rotate(Vector3.up * -mouseDistance.x / 5f);
                 initPosition = newPosition;
             }
-            if (drawManager.girl1 != null && !drawManager.isEditing && !isRotating && hasHit)
+            if (drawManager.girl1 != null && !drawManager.IsEditing && !isRotating && hasHit)
             {
                 initPosition = Input.mousePosition;
                 isRotating = true;
@@ -175,7 +177,7 @@ public class StatManager : MonoBehaviour
     }
 
     public void ResetTemporaries(){
-        if (!drawManager.isEditing) return;
+        if (!drawManager.IsEditing) return;
 
         if (currentControlSegment)
             currentControlSegment.DestroyCircle();
@@ -185,6 +187,11 @@ public class StatManager : MonoBehaviour
     }
 
     void HandleJointClick() {
+        if (!uiManager.IsInEditingTab){
+            // Prevent from changing avantar position if not in modification tab
+            return;
+        }
+        
         var _previousTp = selectedJoint;
         var _nextJointSubIdx = currentJointSubIdx + 1;  // Assume for now same joint
         ResetTemporaries();

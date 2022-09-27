@@ -773,8 +773,6 @@ public class BaseProfile : LevelBase
 
     public void SetTab(int _num)
     {
-        gameManager.WriteToLogFile("SetTab() _num: " + _num.ToString());
-
         if (drawManager.girl1 == null)
         {
             if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")

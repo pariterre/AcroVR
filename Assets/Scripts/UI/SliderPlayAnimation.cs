@@ -56,7 +56,7 @@ public class SliderPlayAnimation : MonoBehaviour
 
     public void OnPlayAnimationSlider()
     {
-        if (drawManager.isEditing) return;
+        if (drawManager.IsEditing) return;
 
         slider.maxValue = (float)drawManager.numberFrames - 1;
         var currentFrame = (int)slider.value;

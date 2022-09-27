@@ -230,62 +230,6 @@ public class TrainingTooltip : MonoBehaviour
     {
         MainParameters.StrucMessageLists languagesUsed = MainParameters.Instance.languages.Used;
 
-        /*        if (MainParameters.Instance.joints.nodes != null)
-                {
-                    MovementF.Instance.DisplayDDL(-1, false);
-                    MovementF.Instance.InitDropdownDDLNames(-1);
-                    MovementF.Instance.InitDropdownInterpolation(-1);
-                    if (MainParameters.Instance.joints.nodes[GraphManager.Instance.ddlUsed].ddlOppositeSide >= 0)
-                    {
-                        MovementF.Instance.textCurveName1.text = languagesUsed.leftSide;
-                        MovementF.Instance.textCurveName2.text = languagesUsed.rightSide;
-                    }
-                }*/
-
-        /*        GraphSettings.Instance.textVerticalAxisTitle.text = languagesUsed.movementGraphSettingsVerticalTitle;
-                GraphSettings.Instance.textVerticalAxisLowerBound.text = languagesUsed.movementGraphSettingsLowerBound;
-                GraphSettings.Instance.textVerticalAxisUpperBound.text = languagesUsed.movementGraphSettingsUpperBound;
-                GraphSettings.Instance.textHorizontalAxisTitle.text = languagesUsed.movementGraphSettingsHorizontalTitle;
-                GraphSettings.Instance.textHorizontalAxisLowerBound.text = languagesUsed.movementGraphSettingsLowerBound;
-                GraphSettings.Instance.textHorizontalAxisUpperBound.text = languagesUsed.movementGraphSettingsUpperBound;
-                GraphSettings.Instance.toggleGraphSettingsUpdateSimulation.GetComponentInChildren<Text>().text = languagesUsed.movementGraphSettingsUpdateSimulation;
-                GraphSettings.Instance.buttonGraphSettingsDefaultValues.GetComponentInChildren<Text>().text = languagesUsed.movementGraphSettingsDefaultValuesButton;
-                GraphSettings.Instance.buttonGraphSettingsCancel.GetComponentInChildren<Text>().text = languagesUsed.movementGraphSettingsCancelButton;*/
-
-        //        textTakeOffTitle.text = languagesUsed.takeOffTitle;
-        //		textTakeOffSpeed.text = languagesUsed.takeOffTitleSpeed;
-
-
-        /*        List<string> dropDownOptions = new List<string>();
-                dropDownOptions.Add(languagesUsed.takeOffConditionNoGravity);
-                dropDownOptions.Add(languagesUsed.takeOffConditionTrampolining);
-                dropDownOptions.Add(languagesUsed.takeOffConditionTumbling);
-                dropDownOptions.Add(languagesUsed.takeOffConditionDiving1m);
-                dropDownOptions.Add(languagesUsed.takeOffConditionDiving3m);
-                dropDownOptions.Add(languagesUsed.takeOffConditionDiving5m);
-                dropDownOptions.Add(languagesUsed.takeOffConditionDiving10m);
-                dropDownOptions.Add(languagesUsed.takeOffConditionHighBar);
-                dropDownOptions.Add(languagesUsed.takeOffConditionUnevenBars);
-                dropDownOptions.Add(languagesUsed.takeOffConditionVault);
-                dropDownTakeOffCondition.ClearOptions();
-                dropDownTakeOffCondition.AddOptions(dropDownOptions);
-                textTakeOffInitialPosture.text = languagesUsed.takeOffInitialPosture*/
-
-
-        //        textTakeOffSomersaultPosition.text = languagesUsed.takeOffSomersaultPosition;
-        //        textTakeOffTilt.text = languagesUsed.takeOffTilt;
-        //        textTakeOffHorizontalSpeed.text = languagesUsed.takeOffHorizontal;
-        //        textTakeOffVerticalSpeed.text = languagesUsed.takeOffVertical;
-        //        textTakeOffSomersaultSpeed.text = languagesUsed.takeOffSomersaultSpeed;
-        //        textTakeOffTwistSpeed.text = languagesUsed.takeOffTwist;
-
-        /*        if (AnimationF.Instance.lineStickFigure != null)
-                {
-                    AnimationF.Instance.textCurveName1.text = languagesUsed.leftSide;
-                    AnimationF.Instance.textCurveName2.text = languagesUsed.rightSide;
-                }*/
-        
-
         List<string> dropDownOptions = new List<string>();
         dropDownOptions.Add(languagesUsed.animatorPlaySpeedFast);
         dropDownOptions.Add(languagesUsed.animatorPlaySpeedNormal);
@@ -294,10 +238,6 @@ public class TrainingTooltip : MonoBehaviour
         dropDownOptions.Add(languagesUsed.animatorPlaySpeedSlow3);
         dropDownAnimationSpeed.ClearOptions();
         dropDownAnimationSpeed.AddOptions(dropDownOptions);
-
-
-        //        AnimationF.Instance.dropDownPlaySpeed.ClearOptions();
-        //        AnimationF.Instance.dropDownPlaySpeed.AddOptions(dropDownOptions);
 
 
         if (languagesUsed.toolTipButtonQuit == "Quit")
@@ -339,15 +279,9 @@ public class TrainingTooltip : MonoBehaviour
 
             Tab1Title.text = languages.french.Tab1Title;
             Tab2Title.text = languages.french.Tab2Title;
-            Tab3Title.text = languages.french.Tab3Title;
             Tab4Title.text = languages.french.Tab4Title;
-            LoadSimulationFiles.text = languages.french.LoadSimulationFiles;
-//            loadButton.text = languages.french.loadButton;
-//            saveButton.text = languages.french.saveButton;
-//            compareButton.text = languages.french.compareButton;
             textBack.text = languages.french.Back;
             PerspectiveView.text = languages.french.PerspectiveView;
-            AnimationSpeed.text = languages.french.AnimationSpeed;
 
             SimulationTime.text = languages.french.SimulationTime;
             Duration.text = languages.french.Duration;
@@ -361,7 +295,6 @@ public class TrainingTooltip : MonoBehaviour
             uiManager.ShowToolTip(1, textTakeOffHorizontal.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffHorizontal);
             uiManager.ShowToolTip(2, textTakeOffVertical.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffVertical);
             uiManager.ShowToolTip(3, textTakeOffSomersault.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffSomersaultPosition);
-//            uiManager.ShowToolTip(4, textTakeOffInitialPosture.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffInitialPosture);
             uiManager.ShowToolTip(5, textTakeOffSomersault.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffSomersaultSpeed);
             uiManager.ShowToolTip(6, textTakeOffTilt.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffTilt);
             uiManager.ShowToolTip(7, textTakeOffTwist.gameObject, MainParameters.Instance.languages.Used.toolTipTakeOffTwist);

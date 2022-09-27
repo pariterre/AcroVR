@@ -102,7 +102,7 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
         if (!isInitialized) return;
         if (statManager.currentJointSubIdx != jointSubIndex) return;
 
-        if(drawManager.isEditing)
+        if(drawManager.IsEditing)
         {
             initAngle = CurrentAngle;
             lastPosition = Input.mousePosition;
@@ -116,7 +116,7 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
         if (!isInitialized) return;
         if (statManager.currentJointSubIdx != jointSubIndex) return;
 
-        if (drawManager.isEditing)
+        if (drawManager.IsEditing)
         {
             Vector3 newPosition = Input.mousePosition;
             mouseDistance += newPosition - lastPosition;
@@ -131,7 +131,7 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
         if (!isInitialized) return;
         if (statManager.currentJointSubIdx != jointSubIndex) return;
 
-        if (drawManager.isEditing)
+        if (drawManager.IsEditing)
         {
             mouseDistance = Vector3.zero;
             lastPosition = Vector3.zero;

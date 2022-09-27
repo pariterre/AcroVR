@@ -9,26 +9,7 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    /*    [SerializeField]
-        private GameObject uiGO;
-
-
-        void Start()
-        {
-            FindGameObjectsWithTag();
-
-
-        }
-
-        public void FindGameObjectsWithTag()
-        {
-            if (uiGO == null)
-            {
-                uiGO = GameObject.FindGameObjectWithTag("UI");
-
-            }
-
-        }*/
+    DrawManager drawManager;
 
     public GameObject panelToolTip;
     GameObject panelToolTipPrefab;
@@ -37,6 +18,11 @@ public class UIManager : MonoBehaviour
     int displayToolTipNum = 0;
 
     public bool tooltipOn = false;
+
+    void Start()
+    {
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+    }
 
     public void SetTooltip()
     {
@@ -53,8 +39,15 @@ public class UIManager : MonoBehaviour
 
     public void SetCurrentTab(int _num)
     {
+        // To not allow changing tab if the model is currently being changed
+        if (drawManager.IsEditing) return;  
+        // TODO: Move all the stuff done when changing tab in the GUI Here so decision can be made not to change tab
         currentTab = _num;
     }
+
+    public bool IsInParameterTab => currentTab == 1;
+    public bool IsInEditingTab => currentTab == 2;
+    public bool IsInResultTab => currentTab == 4;
 
     public int GetCurrentTab()
     {

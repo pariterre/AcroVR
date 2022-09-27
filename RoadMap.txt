@@ -28,8 +28,6 @@ TODO:
 	- Caméra : 
 		- Amemer la caméra proche dès qu'on clique sur gesticulation
 		- Au moment de faire play, bouger la cam avant de commencer le mouvement
-	- Gesticulation : 
-		Si onglet 2, sinon simulation & ÉDITION UNIQUEMENT DANS L'onglet 2
 	- Mission : 
 		- Recommencer si objectif échoué
 		- Passer au prochain objectif si réussi
