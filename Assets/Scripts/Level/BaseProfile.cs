@@ -23,6 +23,7 @@ public class BaseProfile : LevelBase
     public GameObject ErrorObject;
     public GameObject TutorialObject;
     public GameObject NodeNameObject;
+    protected GameObject CurrentTabContent;
 
     public Text endFrameText;
 
@@ -771,22 +772,25 @@ public class BaseProfile : LevelBase
         }
     }
 
-    public void SetTab(int _num)
+    public void SetTab(TabProperties _properties)
     {
-        if (drawManager.girl1 == null)
+        if (CurrentTabContent != null)
+            CurrentTabContent.SetActive(false);
+        CurrentTabContent = _properties.Content;
+        CurrentTabContent.SetActive(true);
+        _properties.BackgroundImage.sprite = _properties.BackgroundSprite;
+        if (_properties.IsAGestureMode)
         {
-            if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
-            {
-                ErrorMessage("Please load files first");
-            }
-            else
-            {
-                ErrorMessage("SVP charger d'abord les fichiers");
-            }
-//            return;
+            SetGestureMode();
         }
-
-        uiManager.SetCurrentTab(_num);
+        else
+        {
+            SetSimulationMode();
+        }
+        uiManager.SetCurrentTab(_properties.TabIndex);
+        drawManager.PlayOneFrame();
+        if (_properties.HasTutorial)
+            TutorialMessage();
     }
 
     public void SetFrench()
