@@ -120,6 +120,7 @@ public class DrawManager : MonoBehaviour
     public float takeOffParamVerticalPosition = 0;
     public float takeOffParamTiltSpeed = 0;
     public bool takeOffParamGravity = false;
+    public bool StopOnGround = true;
 
     public AvatarSimulation secondParameters = new AvatarSimulation();
 

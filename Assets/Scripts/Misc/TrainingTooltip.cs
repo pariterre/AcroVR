@@ -32,6 +32,7 @@ public class TrainingTooltip : MonoBehaviour
         public string TakeOffVertical;
 
         public string Gravity;
+        public string StopOnGround;
     }
 
     public StrucLanguages languages;
@@ -57,11 +58,16 @@ public class TrainingTooltip : MonoBehaviour
 
     public Dropdown dropDownTakeOffCondition;
     public Dropdown dropDownAnimationSpeed;
-    public Toggle checkGravity;
-
+    
     public Text ConditionPreset;
     public Text ConditionName;
-    public Text Gravity;
+
+    public Toggle ToggleGravity;
+    public Text TextGravity;
+
+    public Toggle IsStopAtGround;
+    public Text TextIsStopAtGround;
+
 
     public BaseProfile bp;
 
@@ -128,6 +134,8 @@ public class TrainingTooltip : MonoBehaviour
 
         languages.french.Gravity = "Gravité";
         languages.english.Gravity = "Gravity";
+        languages.french.StopOnGround = "Arrêt au sol";
+        languages.english.StopOnGround = "Stop on ground";
 
         ChangedLanguage();
         uiManager.SetTooltip();
@@ -178,16 +186,17 @@ public class TrainingTooltip : MonoBehaviour
 
     public void UpdateGravity()
     {
-        checkGravity.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].Gravity;
+        ToggleGravity.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].Gravity;
         ChangedGravity();
     }
 
     public void ChangedGravity()
     {
-        if (checkGravity.isOn)
+        if (ToggleGravity.isOn)
         {
             MainParameters.Instance.joints.condition = dropDownTakeOffCondition.value;
-            if (MainParameters.Instance.joints.condition == 0) MainParameters.Instance.joints.condition = 1;
+            if (MainParameters.Instance.joints.condition == 0) 
+                MainParameters.Instance.joints.condition = 1;
             drawManager.takeOffParamGravity = true;
         }
         else
@@ -195,6 +204,11 @@ public class TrainingTooltip : MonoBehaviour
             MainParameters.Instance.joints.condition = 0;
             drawManager.takeOffParamGravity = false;
         }
+    }
+
+    public void ToggleStopAtGround()
+    {
+        drawManager.StopOnGround = IsStopAtGround.isOn;
     }
 
     public void UpdatePositions()
@@ -228,7 +242,8 @@ public class TrainingTooltip : MonoBehaviour
             textTakeOffHorizontal.text = languages.english.TakeOffHorizontal;
             textTakeOffVertical.text = languages.english.TakeOffVertical;
             ConditionPreset.text = languages.english.ConditionPreset;
-            Gravity.text = languages.english.Gravity;
+            TextGravity.text = languages.english.Gravity;
+            TextIsStopAtGround.text = languages.english.StopOnGround;
 
             Tab1Title.text = languages.english.Tab1Title;
             Tab2Title.text = languages.english.Tab2Title;
@@ -249,7 +264,8 @@ public class TrainingTooltip : MonoBehaviour
             textTakeOffHorizontal.text = languages.french.TakeOffHorizontal;
             textTakeOffVertical.text = languages.french.TakeOffVertical;
             ConditionPreset.text = languages.french.ConditionPreset;
-            Gravity.text = languages.french.Gravity;
+            TextGravity.text = languages.french.Gravity;
+            TextIsStopAtGround.text = languages.french.StopOnGround;
 
             Tab1Title.text = languages.french.Tab1Title;
             Tab2Title.text = languages.french.Tab2Title;
