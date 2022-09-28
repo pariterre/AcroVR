@@ -49,8 +49,6 @@ public class BaseProfile : LevelBase
     {
         FirstPOV,
         FrontPOV,
-        SidePOV,
-        ThreeQuarterPOV
     }
 
     public CameraView camView;
@@ -87,21 +85,10 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        switch (camView)
-        {
-            case CameraView.FirstPOV:
-                FirstPOVCamera();
-                break;
-            case CameraView.FrontPOV:
-                FrontCameraPOV(drawManager.CheckPositionAvatar());
-                break;
-            case CameraView.SidePOV:
-                SideCameraPOV(drawManager.CheckPositionAvatar());
-                break;
-            case CameraView.ThreeQuarterPOV:
-                ThreeQuarterCameraPOV(drawManager.CheckPositionAvatar());
-                break;
-        }
+        if (camView == CameraView.FirstPOV)
+            FirstPOVCamera();
+        else
+            FrontCameraPOV(drawManager.CheckPositionAvatar());
     }
 
     public void FrontCameraPOV(float _v)
@@ -109,9 +96,7 @@ public class BaseProfile : LevelBase
         if (cameraList == null) return;
 
         if(cameraList[15] == null)
-        {
             cameraList[15] = drawManager.GetFirstViewTransform();
-        }
 
         for (int i = 0; i < cameraList.Length; i++)
         {
@@ -126,121 +111,17 @@ public class BaseProfile : LevelBase
 
 
         if(_v >= 0 && _v < 2)
-        {
             cameraList[0].gameObject.SetActive(true);
-        }
         else if(_v >= 2 && _v < 4)
-        {
             cameraList[1].gameObject.SetActive(true);
-        }
         else if(_v >= 4 && _v < 6)
-        {
             cameraList[2].gameObject.SetActive(true);
-        }
         else if (_v >= 6 && _v < 8)
-        {
             cameraList[3].gameObject.SetActive(true);
-        }
         else
-        {
             cameraList[4].gameObject.SetActive(true);
-        }
 
         camView = CameraView.FrontPOV;
-
-        /*        if(h != 0)
-                {
-                    cameraList[(int)cam].gameObject.transform.position = new Vector3(0, 1, 3 + h);
-                }
-
-                cameraList[(int)cam].gameObject.SetActive(true);*/
-    }
-
-    public void SideCameraPOV(float _v)
-    {
-        for (int i = 0; i < cameraList.Length; i++)
-        {
-            cameraList[i].gameObject.SetActive(false);
-
-            if (cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt == null)
-            {
-                if (drawManager.girl1 != null)
-                    cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt = drawManager.girl1.transform.Find("Petra.002/hips").gameObject.transform;
-            }
-        }
-
-        if (_v >= 0 && _v < 2)
-        {
-            cameraList[5].gameObject.SetActive(true);
-        }
-        else if (_v >= 2 && _v < 4)
-        {
-            cameraList[6].gameObject.SetActive(true);
-        }
-        else if (_v >= 4 && _v < 6)
-        {
-            cameraList[7].gameObject.SetActive(true);
-        }
-        else if (_v >= 6 && _v < 8)
-        {
-            cameraList[8].gameObject.SetActive(true);
-        }
-        else
-        {
-            cameraList[9].gameObject.SetActive(true);
-        }
-
-        camView = CameraView.SidePOV;
-
-        /*        if(h != 0)
-                {
-                    cameraList[(int)cam].gameObject.transform.position = new Vector3(0, 1, 3 + h);
-                }
-
-                cameraList[(int)cam].gameObject.SetActive(true);*/
-    }
-
-    public void ThreeQuarterCameraPOV(float _v)
-    {
-        for (int i = 0; i < cameraList.Length; i++)
-        {
-            cameraList[i].gameObject.SetActive(false);
-
-            if (cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt == null)
-            {
-                if (drawManager.girl1 != null)
-                    cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt = drawManager.girl1.transform.Find("Petra.002/hips").gameObject.transform;
-            }
-        }
-
-        if (_v >= 0 && _v < 2)
-        {
-            cameraList[10].gameObject.SetActive(true);
-        }
-        else if (_v >= 2 && _v < 4)
-        {
-            cameraList[11].gameObject.SetActive(true);
-        }
-        else if (_v >= 4 && _v < 6)
-        {
-            cameraList[12].gameObject.SetActive(true);
-        }
-        else if (_v >= 6 && _v < 8)
-        {
-            cameraList[13].gameObject.SetActive(true);
-        }
-        else
-        {
-            cameraList[14].gameObject.SetActive(true);
-        }
-
-        camView = CameraView.ThreeQuarterPOV;
-        /*        if(h != 0)
-                {
-                    cameraList[(int)cam].gameObject.transform.position = new Vector3(0, 1, 3 + h);
-                }
-
-                cameraList[(int)cam].gameObject.SetActive(true);*/
     }
 
     public void FirstPOVCamera()
@@ -592,24 +473,6 @@ public class BaseProfile : LevelBase
         DisplayDDL(value, true);
     }
 
-/*    public void FirstPOVCamera()
-    {
-        if (drawManager.girl1 == null)
-        {
-            if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
-            {
-                ErrorMessage("Please load files first");
-            }
-            else
-            {
-                ErrorMessage("SVP charger d'abord les fichiers");
-            }
-            return;
-        }
-
-        AvatarCamera.transform.position = drawManager.GetFirstViewTransform().transform.position;
-        AvatarCamera.transform.rotation = drawManager.GetFirstViewTransform().transform.rotation;
-    }*/
 
     public void ThirdPOVCamera()
     {
@@ -627,79 +490,6 @@ public class BaseProfile : LevelBase
         }
 
         FrontCameraPOV(drawManager.CheckPositionAvatar());
-
-        /*        if (drawManager.CheckPositionAvatar())
-                {
-                    CameraPOV(POV.LongFrontView);
-        //            LongDistanceCamera();
-                }
-                else
-                {
-                    CameraPOV(POV.FrontView);
-        //            AvatarCamera.transform.position = anchorThirdPOV.transform.position;
-        //            AvatarCamera.transform.rotation = anchorThirdPOV.transform.rotation;
-                }*/
-    }
-
-    public void SidePOVCamera()
-    {
-        if (drawManager.girl1 == null)
-        {
-            if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
-            {
-                ErrorMessage("Please load files first");
-            }
-            else
-            {
-                ErrorMessage("SVP charger d'abord les fichiers");
-            }
-            return;
-        }
-
-
-        SideCameraPOV(drawManager.CheckPositionAvatar());
-
-/*        if(drawManager.CheckPositionAvatar())
-        {
-            gameManager.WriteToLogFile("CheckPositionAvatar()");
-
-            CameraPOV(POV.LongSideView);
-//            AvatarCamera.transform.position = new Vector3(-15, 3, 7f);
-//            AvatarCamera.transform.rotation = anchorSidePOV.transform.rotation;
-        }
-        else
-        {
-            CameraPOV(POV.SideView);
-
-            //            AvatarCamera.transform.position = anchorSidePOV.transform.position;
-            //            AvatarCamera.transform.rotation = anchorSidePOV.transform.rotation;
-        }*/
-    }
-
-    public void ThreeQuarterPOVCamera()
-    {
-        if (drawManager.girl1 == null)
-        {
-            if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
-            {
-                ErrorMessage("Please load files first");
-            }
-            else
-            {
-                ErrorMessage("SVP charger d'abord les fichiers");
-            }
-            return;
-        }
-
-        ThreeQuarterCameraPOV(drawManager.CheckPositionAvatar());
-    }
-
-    public void LongDistanceCamera()
-    {
-        gameManager.WriteToLogFile("LongDistanceCamera()");
-
-//        AvatarCamera.transform.position = new Vector3(0, 3, 17f);
-//        AvatarCamera.transform.rotation = anchorThirdPOV.transform.rotation;
     }
 
     public void PlayAvatar()
