@@ -85,21 +85,14 @@ public class GameMode : MonoBehaviour
         ManageInputField(btn.Duration, PanelDuration.GetComponent<InputField>());
     }
 
-    public void GetTakeOffParameters()
+    public void CheckMissionResult()
     {
-        if (numberOfMissions > 0)
-        {
-            TwistSpeed = float.Parse(PanelTwistSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
-            HorizontalSpeed = float.Parse(PanelHorizontalSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
-            VerticalSpeed = float.Parse(PanelVerticalSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
-            Duration = float.Parse(PanelDuration.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
+        if (numberOfMissions == 0) return;
+        TwistSpeed = float.Parse(PanelTwistSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
+        HorizontalSpeed = float.Parse(PanelHorizontalSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
+        VerticalSpeed = float.Parse(PanelVerticalSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
+        Duration = float.Parse(PanelDuration.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
 
-            CheckGameResult();
-        }
-    }
-
-    void CheckGameResult()
-    {
         MissionInfo mission = gameManager.listMission.missions[currentMission];
 
         if(HorizontalSpeed != 0)
