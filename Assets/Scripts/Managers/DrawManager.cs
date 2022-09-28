@@ -105,8 +105,6 @@ public class DrawManager : MonoBehaviour
     float pauseStart = 0;
     float pauseTime = 0;
 
-    // TODO: add a IsEditing that behaves like GestureMode up when the play button is pressed, then act
-    // as previously selected one
     protected int CurrentVizualisationMode = 0;
     public bool IsSimulationMode { get { return CurrentVizualisationMode == 0; } }
     public void ActivateSimulationMode() { CurrentVizualisationMode = 0; }
@@ -174,7 +172,7 @@ public class DrawManager : MonoBehaviour
             if(!isPaused)
                 timeElapsed = Time.time - (timeStarted + pauseTime);
 
-            if (frameN < numberFrames-1)
+            if (ShouldContinuePlaying())
                 PlayOneFrame();
             else
                 PlayEnd();
@@ -197,6 +195,15 @@ public class DrawManager : MonoBehaviour
             resultGraphics.UpdateResults();
         if (UpdateGraphInNFrames >= 0)
             UpdateGraphInNFrames -= 1;
+    }
+
+    public bool ShouldContinuePlaying()
+    {
+        if (frameN >= numberFrames - 1) return false;
+
+        if (frameN != 0 && StopOnGround && !IsGestureMode && FeetHeight(qf) < InitialFeetHeight) return false;
+        
+        return true;
     }
 
     public void UpdateFullKinematics(bool restartToZero)
@@ -771,12 +778,16 @@ public class DrawManager : MonoBehaviour
         for (int i = 0; i<q.Length; ++i)
             qDouble[i] = q[i];
 
+        return (float)FeetHeight(qDouble);
+    }
+    protected double FeetHeight(double[] q)
+    {
         float[] tagX;
         float[] tagY;
         float[] tagZ;
-        EvaluateTags_s(qDouble, out tagX, out tagY, out tagZ);
+        EvaluateTags_s(q, out tagX, out tagY, out tagZ);
         return Math.Min(
-            tagZ[MainParameters.Instance.joints.lagrangianModel.feet[0] - 1], 
+            tagZ[MainParameters.Instance.joints.lagrangianModel.feet[0] - 1],
             tagZ[MainParameters.Instance.joints.lagrangianModel.feet[1] - 1]
         );
     }

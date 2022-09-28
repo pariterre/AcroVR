@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Globalization;
 
@@ -53,11 +53,11 @@ public class SliderPlayAnimation : MonoBehaviour
         playButton.gameObject.SetActive(false);
         pauseButton.gameObject.SetActive(true);
     }
-
+    
     public void OnPlayAnimationSlider()
     {
         if (drawManager.IsEditing) return;
-
+        
         slider.maxValue = (float)drawManager.numberFrames - 1;
         var currentFrame = (int)slider.value;
         drawManager.SetFrameN(currentFrame);
@@ -71,16 +71,17 @@ public class SliderPlayAnimation : MonoBehaviour
             drawManager.SetSecondFrameN(secondCurrentFrame);
         }
 
-        if ((int)slider.value == 0 || (int)slider.value == (int)slider.maxValue)
+        if (!drawManager.isPaused && ((int)slider.value == 0 || (int)slider.value == (int)slider.maxValue || !drawManager.ShouldContinuePlaying()) )
         {
             drawManager.SetCanResumeAnimation(false);
             ShowPlayButton();
         }
 
-        if (Input.GetMouseButton(0) && uiManager.IsOnGameObject(slider.gameObject))
+        if (Input.GetMouseButton(0))
         {
             ShowPlayButton();
             drawManager.Pause();
+            drawManager.PlayOneFrame();
 
             if (drawManager.cntAvatar > 1)
                 drawManager.secondPaused = true;

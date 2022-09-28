@@ -188,11 +188,6 @@ public class BaseProfile : LevelBase
         }
     }
 
-//    public void ShowResultGraph()
-//    {
-//        aniGraphManager.ResultGraphOn();
-//    }
-
     public void ToBaseLevel1()
     {
         levelManager.GotoScreen("BaseLevel1");
