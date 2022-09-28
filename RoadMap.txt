@@ -25,9 +25,6 @@ Onglet 1
 
 
 TODO: 
-	- Caméra : 
-		- Amemer la caméra proche dès qu'on clique sur gesticulation
-		- Au moment de faire play, bouger la cam avant de commencer le mouvement
 	- Mission : 
 		- Recommencer si objectif échoué
 		- Passer au prochain objectif si réussi

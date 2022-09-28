@@ -50,27 +50,22 @@ public class TakeOffParamF_s : MonoBehaviour
         if (panel.name == "PanelSomersaultPosition")
         {
             MainParameters.Instance.joints.takeOffParam.rotation = value;
-            ApplyAvatar();
         }
         else if (panel.name == "PanelTiltPosition")
         {
             MainParameters.Instance.joints.takeOffParam.tilt = value;
-            ApplyAvatar();
         }
         else if (panel.name == "PanelTwistPosition")
         {
             drawManager.takeOffParamTwistPosition = value;
-            ApplyAvatar();
         }
         else if (panel.name == "PanelHorizontalPosition")
         {
             drawManager.takeOffParamHorizontalPosition = value;
-            ApplyAvatar();
         }
         else if (panel.name == "PanelVerticalPosition")
         {
             drawManager.takeOffParamVerticalPosition = value;
-            ApplyAvatar();
         }
         else if (panel.name == "PanelHorizontalSpeed")
         {
@@ -96,6 +91,7 @@ public class TakeOffParamF_s : MonoBehaviour
         {
             MainParameters.Instance.joints.duration = value;
         }
+        ApplyAvatar();
     }
 
     private void ApplyAvatar()
