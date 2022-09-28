@@ -594,9 +594,6 @@ public class DrawManager : MonoBehaviour
             InitialFeetHeight = FeetHeight(q0);
         }
 
-        //        float[] q0dotdot = new float[joints.lagrangianModel.nDDL];
-        //        Trajectory_s(joints.lagrangianModel, 0, joints.lagrangianModel.q2, out q0, out q0dot, out q0dotdot);
-
         for (int i = 0; i < MainParameters.Instance.joints.nodes.Length; i++)
         {
             MainParameters.StrucNodes nodes = MainParameters.Instance.joints.nodes[i];
@@ -604,8 +601,6 @@ public class DrawManager : MonoBehaviour
         }
 
         // Beginning Pose
-        // q0[12], q0dot[12], q0dotdot[12]
-
         int[] rotation = new int[3] { joints.lagrangianModel.root_somersault, joints.lagrangianModel.root_tilt, joints.lagrangianModel.root_twist };
         int[] rotationSign = MathFunc.Sign(rotation);
         for (int i = 0; i < rotation.Length; i++) rotation[i] = Math.Abs(rotation[i]);
@@ -625,36 +620,30 @@ public class DrawManager : MonoBehaviour
         // q0[12]
         // q0[9] = somersault
         // q0[10] = tilt
-        q0[Math.Abs(joints.lagrangianModel.root_tilt) - 1] = tilt * (float)Math.PI / 180;                                        // en radians
-        q0[Math.Abs(joints.lagrangianModel.root_somersault) - 1] = rotRadians;                                         // en radians
+        q0[Math.Abs(joints.lagrangianModel.root_tilt) - 1] = tilt * (float)Math.PI / 180; 
+        q0[Math.Abs(joints.lagrangianModel.root_somersault) - 1] = rotRadians; 
 
         //q0dot[12]
         //q0dot[7] = AnteroposteriorSpeed
         //q0dot[8] = verticalSpeed
         //q0dot[9] = somersaultSpeed
         //q0dot[11] = twistSpeed
-        q0dot[Math.Abs(joints.lagrangianModel.root_foreward) - 1] = joints.takeOffParam.anteroposteriorSpeed;                       // en m/s
-        q0dot[Math.Abs(joints.lagrangianModel.root_upward) - 1] = joints.takeOffParam.verticalSpeed;                                // en m/s
-        q0dot[Math.Abs(joints.lagrangianModel.root_somersault) - 1] = joints.takeOffParam.somersaultSpeed * 2 * (float)Math.PI;     // en radians/s
-        q0dot[Math.Abs(joints.lagrangianModel.root_twist) - 1] = joints.takeOffParam.twistSpeed * 2 * (float)Math.PI;               // en radians/s
+        q0dot[Math.Abs(joints.lagrangianModel.root_foreward) - 1] = joints.takeOffParam.anteroposteriorSpeed;                       // m/s
+        q0dot[Math.Abs(joints.lagrangianModel.root_upward) - 1] = joints.takeOffParam.verticalSpeed;                                // m/s
+        q0dot[Math.Abs(joints.lagrangianModel.root_somersault) - 1] = joints.takeOffParam.somersaultSpeed * 2 * (float)Math.PI;     // radians/s
+        q0dot[Math.Abs(joints.lagrangianModel.root_twist) - 1] = joints.takeOffParam.twistSpeed * 2 * (float)Math.PI;               // radians/s
 
 
-        //////////////////////////////////////////
-        // by choi
         // q0[11] = twist
-        q0[Math.Abs(joints.lagrangianModel.root_twist) - 1] = takeOffParamTwistPosition * (float)Math.PI / 180;
         // q0dot[10] = tiltSpeed
+        q0[Math.Abs(joints.lagrangianModel.root_twist) - 1] = takeOffParamTwistPosition * (float)Math.PI / 180;
         q0dot[Math.Abs(joints.lagrangianModel.root_tilt) - 1] = takeOffParamTiltSpeed * 2 * (float)Math.PI;
-        //////////////////////////////////////////
 
 
         double[] Q = new double[joints.lagrangianModel.nDDL];
         for (int i = 0; i < joints.lagrangianModel.nDDL; i++)
             Q[i] = q0[i];
-        float[] tagX;
-        float[] tagY;
-        float[] tagZ;
-        EvaluateTags_s(Q, out tagX, out tagY, out tagZ);
+        EvaluateTags_s(Q, out float[] tagX, out float[] tagY, out float[] tagZ);
 
         // Q[12]
         // tagX[26], tagY[26], tagZ[26]
@@ -726,12 +715,13 @@ public class DrawManager : MonoBehaviour
             for (int j = 0; j < joints.lagrangianModel.nDDL; j++)
                 qq[j] = q[j, i];
             EvaluateTags_s(qq, out tagX, out tagY, out tagZ);
-            // Cut the trial when the feet crosses 0
-            // if (joints.condition > 0 && tagZ.Min() < -0.05f)
-            // {
-            //     MainParameters.Instance.joints.tc = (float)t[i];
-            //     break;
-            // }
+
+            // Cut the trial when the feet crosses the ground (vertical axis = 0)
+            //if (joints.condition > 0 && tagZ.Min() < -0.05f)
+            //{
+            //    MainParameters.Instance.joints.tc = (float)t[i];
+            //    break;
+            //}
         }
 
         MainParameters.Instance.joints.t = new float[tIndex];

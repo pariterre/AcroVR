@@ -15,18 +15,13 @@ public class TrainingTooltip : MonoBehaviour
     {
         public string Tab1Title;
         public string Tab2Title;
-        public string Tab3Title;
         public string Tab4Title;
-        public string LoadSimulationFiles;
         public string loadButton;
         public string saveButton;
         public string compareButton;
         public string Back;
         public string PerspectiveView;
-        public string PointOfView;
-        public string AnimationSpeed;
-        public string StartButton;
-        public string Condition;
+        public string ConditionPreset;
         public string SimulationTime;
         public string Duration;
 
@@ -35,16 +30,15 @@ public class TrainingTooltip : MonoBehaviour
         public string TakeOffTwist;
         public string TakeOffHorizontal;
         public string TakeOffVertical;
+
+        public string Gravity;
     }
 
     public StrucLanguages languages;
 
     public Text Tab1Title;
     public Text Tab2Title;
-    public Text Tab3Title;
     public Text Tab4Title;
-
-    public Text LoadSimulationFiles;
 
     public Text loadButton;
     public Text saveButton;
@@ -52,28 +46,22 @@ public class TrainingTooltip : MonoBehaviour
 
     public Text textBack;
     public Text PerspectiveView;
-    public Text PointOfView;
-    public Text AnimationSpeed;
     public Text SimulationTime;
     public Text Duration;
 
-    public Text textTakeOffTitle;
     public Text textTakeOffSomersault;
     public Text textTakeOffTilt;
     public Text textTakeOffTwist;
     public Text textTakeOffHorizontal;
     public Text textTakeOffVertical;
 
-    public Text textTakeOffSetupTitle;
-//    public Text textTakeOffInitialPosture;
-
-    public Text StartButton;
-
     public Dropdown dropDownTakeOffCondition;
     public Dropdown dropDownAnimationSpeed;
     public Toggle checkGravity;
 
+    public Text ConditionPreset;
     public Text ConditionName;
+    public Text Gravity;
 
     public BaseProfile bp;
 
@@ -104,13 +92,9 @@ public class TrainingTooltip : MonoBehaviour
         languages.english.Tab1Title = "1. Take Off";
         languages.french.Tab2Title = "2. Mouvement";
         languages.english.Tab2Title = "2. Movement";
-        languages.french.Tab3Title = "3. Simulation";
-        languages.english.Tab3Title = "3. Simulation";
         languages.french.Tab4Title = "4. Résultat";
         languages.english.Tab4Title = "4. Result";
 
-        languages.french.LoadSimulationFiles = "Charger des fichiers de simulation";
-        languages.english.LoadSimulationFiles = "Load Simulation files";
         languages.french.loadButton = "Charger";
         languages.english.loadButton = "Load";
         languages.french.saveButton = "Enregistrer";
@@ -122,16 +106,6 @@ public class TrainingTooltip : MonoBehaviour
         languages.english.Back = "Back to menu";
         languages.french.PerspectiveView = "Vue de perspective";
         languages.english.PerspectiveView = "Perspective View";
-        languages.french.PointOfView = "Type de visualisation";
-        languages.english.PointOfView = "Point of View";
-        languages.french.AnimationSpeed = "La vitesse d'animation";
-        languages.english.AnimationSpeed = "Animation Speed";
-
-        languages.english.StartButton = "Start";
-        languages.french.StartButton = "Démarrer";
-
-        languages.english.Condition = "Condition of Take-off";
-        languages.french.Condition = "Condition de décollage";
 
         languages.english.SimulationTime = "Simulation Time";
         languages.french.SimulationTime = "Temps de Simulation";
@@ -148,6 +122,12 @@ public class TrainingTooltip : MonoBehaviour
         languages.french.TakeOffHorizontal = "Horizontale";
         languages.english.TakeOffVertical = "Vertical";
         languages.french.TakeOffVertical = "Verticale";
+
+        languages.english.ConditionPreset = "Condition preset";
+        languages.french.ConditionPreset = "Condition préréglage";
+
+        languages.french.Gravity = "Gravité";
+        languages.english.Gravity = "Gravity";
 
         ChangedLanguage();
         uiManager.SetTooltip();
@@ -242,40 +222,34 @@ public class TrainingTooltip : MonoBehaviour
 
         if (languagesUsed.toolTipButtonQuit == "Quit")
         {
-            textTakeOffTitle.text = languages.english.Condition;
-
             textTakeOffSomersault.text = languages.english.TakeOffSomersault;
             textTakeOffTilt.text = languages.english.TakeOffTilt;
             textTakeOffTwist.text = languages.english.TakeOffTwist;
             textTakeOffHorizontal.text = languages.english.TakeOffHorizontal;
             textTakeOffVertical.text = languages.english.TakeOffVertical;
+            ConditionPreset.text = languages.english.ConditionPreset;
+            Gravity.text = languages.english.Gravity;
 
             Tab1Title.text = languages.english.Tab1Title;
             Tab2Title.text = languages.english.Tab2Title;
-            Tab3Title.text = languages.english.Tab3Title;
             Tab4Title.text = languages.english.Tab4Title;
-            LoadSimulationFiles.text = languages.english.LoadSimulationFiles;
             loadButton.text = languages.english.loadButton;
             saveButton.text = languages.english.saveButton;
             compareButton.text = languages.english.compareButton;
             textBack.text = languages.english.Back;
             PerspectiveView.text = languages.english.PerspectiveView;
-            PointOfView.text = languages.english.PointOfView;
-            AnimationSpeed.text = languages.english.AnimationSpeed;
-            StartButton.text = languages.english.StartButton;
 
             SimulationTime.text = languages.english.SimulationTime;
             Duration.text = languages.english.Duration;
         }
         else
         {
-            textTakeOffTitle.text = languages.french.Condition;
-
-            textTakeOffSomersault.text = languages.french.TakeOffSomersault;
             textTakeOffTilt.text = languages.french.TakeOffTilt;
             textTakeOffTwist.text = languages.french.TakeOffTwist;
             textTakeOffHorizontal.text = languages.french.TakeOffHorizontal;
             textTakeOffVertical.text = languages.french.TakeOffVertical;
+            ConditionPreset.text = languages.french.ConditionPreset;
+            Gravity.text = languages.french.Gravity;
 
             Tab1Title.text = languages.french.Tab1Title;
             Tab2Title.text = languages.french.Tab2Title;

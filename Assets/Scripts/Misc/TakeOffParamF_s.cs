@@ -48,65 +48,35 @@ public class TakeOffParamF_s : MonoBehaviour
         float value = float.Parse(panel.GetComponentInChildren<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
 
         if (panel.name == "PanelSomersaultPosition")
-        {
             MainParameters.Instance.joints.takeOffParam.rotation = value;
-        }
         else if (panel.name == "PanelTiltPosition")
-        {
             MainParameters.Instance.joints.takeOffParam.tilt = value;
-        }
         else if (panel.name == "PanelTwistPosition")
-        {
             drawManager.takeOffParamTwistPosition = value;
-        }
         else if (panel.name == "PanelHorizontalPosition")
-        {
             drawManager.takeOffParamHorizontalPosition = value;
-        }
         else if (panel.name == "PanelVerticalPosition")
-        {
             drawManager.takeOffParamVerticalPosition = value;
-        }
         else if (panel.name == "PanelHorizontalSpeed")
-        {
             MainParameters.Instance.joints.takeOffParam.anteroposteriorSpeed = value;
-        }
         else if (panel.name == "PanelVerticalSpeed")
-        {
             MainParameters.Instance.joints.takeOffParam.verticalSpeed = value;
-        }
         else if (panel.name == "PanelSomersaultSpeed")
-        {
             MainParameters.Instance.joints.takeOffParam.somersaultSpeed = value;
-        }
         else if (panel.name == "PanelTwistSpeed")
-        {
             MainParameters.Instance.joints.takeOffParam.twistSpeed = value;
-        }
         else if (panel.name == "PanelTiltSpeed")
-        {
             drawManager.takeOffParamTiltSpeed = value;
-        }
         else if(panel.name == "PanelTimeDuration")
-        {
             MainParameters.Instance.joints.duration = value;
-        }
+
         ApplyAvatar();
     }
 
     private void ApplyAvatar()
     {
-//        drawManager.GestureMode();
         drawManager.ShowAvatar();
         drawManager.InitPoseAvatar();
-
-        //        drawManager.PlayAvatar();
-
-        /*        if (drawManager.CheckPositionAvatar())
-                    bp.CameraPOV(BaseProfile.POV.LongFrontView);
-                else
-                    bp.CameraPOV(BaseProfile.POV.FrontView);*/
-
         bp.FrontCameraPOV(drawManager.CheckPositionAvatar());
     }
 }
