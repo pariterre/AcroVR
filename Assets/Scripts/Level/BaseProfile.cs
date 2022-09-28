@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -774,21 +774,22 @@ public class BaseProfile : LevelBase
 
     public void SetTab(TabProperties _properties)
     {
+        uiManager.SetCurrentTab(_properties.TabIndex);
+        
         if (CurrentTabContent != null)
             CurrentTabContent.SetActive(false);
         CurrentTabContent = _properties.Content;
         CurrentTabContent.SetActive(true);
+        
         _properties.BackgroundImage.sprite = _properties.BackgroundSprite;
         if (_properties.IsAGestureMode)
-        {
             SetGestureMode();
-        }
         else
-        {
             SetSimulationMode();
-        }
-        uiManager.SetCurrentTab(_properties.TabIndex);
+        
         drawManager.PlayOneFrame();
+        SwitchCameraView();
+
         if (_properties.HasTutorial)
             TutorialMessage();
     }

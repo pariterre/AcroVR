@@ -108,12 +108,10 @@ public class DrawManager : MonoBehaviour
     // TODO: add a IsEditing that behaves like GestureMode up when the play button is pressed, then act
     // as previously selected one
     protected int CurrentVizualisationMode = 0;
-    protected bool IsSimulationMode { get { return CurrentVizualisationMode == 0; } }
+    public bool IsSimulationMode { get { return CurrentVizualisationMode == 0; } }
     public void ActivateSimulationMode() { CurrentVizualisationMode = 0; }
-    protected bool IsGestureMode { get { return CurrentVizualisationMode == 1; } }
+    public bool IsGestureMode { get { return CurrentVizualisationMode == 1; } }
     public void ActivateGestureMode() { CurrentVizualisationMode = 1; }
-    protected bool IsEditorMode { get { return CurrentVizualisationMode == 2; } }
-    public void ActivateEditorMode() { CurrentVizualisationMode = 2; }
 
     public AvatarMode setAvatar = AvatarMode.SingleFemale;
 
@@ -1139,13 +1137,12 @@ public class DrawManager : MonoBehaviour
 
     public float CheckPositionAvatar()
     {
-        /*        qf = MathFunc.MatrixGetColumnD(allQ, 1);
-                if ((float)qf[8] > 3.0f) return true;
-                qf = MathFunc.MatrixGetColumnD(allQ, numberFrames -1);
-                if ((float)qf[8] > 3.0f) return true;
-                return false;*/
+        if (IsGestureMode)
+        {
+            return 0;
+        }
 
-        if(allQ == null) return 0;
+        if (allQ == null) return 0;
         if (allQ.GetUpperBound(1) == 0) return 0;
 
         float vertical = Mathf.Max((float)MathFunc.MatrixGetColumnD(allQ, 1)[8], (float)MathFunc.MatrixGetColumnD(allQ, numberFrames - 1)[8]);
@@ -1231,7 +1228,6 @@ public class DrawManager : MonoBehaviour
 
     public void ControlThigh(float _value)
     {
-        //ActivateEditorMode();
         SetQfThigh(_value);
         SetThigh(qf);
     }
