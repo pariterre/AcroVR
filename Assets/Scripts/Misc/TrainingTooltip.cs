@@ -204,11 +204,13 @@ public class TrainingTooltip : MonoBehaviour
             MainParameters.Instance.joints.condition = 0;
             drawManager.takeOffParamGravity = false;
         }
+        drawManager.ForceFullUpdate();
     }
 
     public void ToggleStopAtGround()
     {
         drawManager.StopOnGround = IsStopAtGround.isOn;
+        drawManager.ForceFullUpdate();
     }
 
     public void UpdatePositions()

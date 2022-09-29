@@ -571,12 +571,13 @@ public class BaseProfile : LevelBase
             SetGestureMode();
         else
             SetSimulationMode();
-        
-        drawManager.PlayOneFrame();
+
+        drawManager.ForceFullUpdate();
         SwitchCameraView();
 
         if (_properties.HasTutorial)
             TutorialMessage();
+
     }
 
     public void SetFrench()

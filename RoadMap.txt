@@ -33,7 +33,6 @@ TODO:
 		- S'assurer qu'il ne freake pas 
 	- Sol : 
 		- Ajouter un sol 
-		- Checkbox pour activer ou non le sol?
 	- Bouton Enregistrer/Charger/Comparer : 
 		- Retirer si en mission
 	- Redressir le modèle

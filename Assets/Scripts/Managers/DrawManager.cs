@@ -387,6 +387,14 @@ public class DrawManager : MonoBehaviour
         _hip.transform.localEulerAngles = _hipRotations;
     }
 
+    public void ForceFullUpdate()
+    {
+        var _currentFrame = frameN;
+        ShowAvatar();
+        PlayOneFrame();
+        SetFrameN(_currentFrame);
+    }
+
     public void ShowAvatar()
     {
         MakeSimulationFrame();
@@ -514,45 +522,11 @@ public class DrawManager : MonoBehaviour
 
         int n = qi.Length;
 
-/*        MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
-
-        jointsTemp.nodes = new MainParameters.StrucNodes[MainParameters.Instance.joints.nodes.Length];
-
-        for (int i = 0; i < MainParameters.Instance.joints.nodes.Length; i++)
-        {
-            if(i==2)
-            {
-                jointsTemp.nodes[i].T = MainParameters.Instance.joints.nodes[4].T;
-                jointsTemp.nodes[i].Q = MainParameters.Instance.joints.nodes[4].Q;
-            }
-            else if (i == 3)
-            {
-                jointsTemp.nodes[i].T = MainParameters.Instance.joints.nodes[5].T;
-                jointsTemp.nodes[i].Q = MainParameters.Instance.joints.nodes[5].Q;
-            }
-            else if (i == 4)
-            {
-                jointsTemp.nodes[i].T = MainParameters.Instance.joints.nodes[2].T;
-                jointsTemp.nodes[i].Q = MainParameters.Instance.joints.nodes[2].Q;
-            }
-            else if (i == 5)
-            {
-                jointsTemp.nodes[i].T = MainParameters.Instance.joints.nodes[3].T;
-                jointsTemp.nodes[i].Q = MainParameters.Instance.joints.nodes[3].Q;
-            }
-            else
-            {
-                jointsTemp.nodes[i].T = MainParameters.Instance.joints.nodes[i].T;
-                jointsTemp.nodes[i].Q = MainParameters.Instance.joints.nodes[i].Q;
-            }
-        }*/
-
         // n=6, 6Node (HipFlexion, KneeFlexion ...)
         for (int i = 0; i < MainParameters.Instance.joints.nodes.Length; i++)
         {
             int ii = qi[i] - lagrangianModel.q2[0];
             MainParameters.StrucNodes nodes = MainParameters.Instance.joints.nodes[ii];
-//            MainParameters.StrucNodes nodes = jointsTemp.nodes[ii];
 
             int j = 1;
             while (j < nodes.T.Length - 1 && t > nodes.T[j]) j++;
@@ -719,11 +693,11 @@ public class DrawManager : MonoBehaviour
             EvaluateTags_s(qq, out tagX, out tagY, out tagZ);
 
             // Cut the trial when the feet crosses the ground (vertical axis = 0)
-            //if (joints.condition > 0 && tagZ.Min() < -0.05f)
-            //{
-            //    MainParameters.Instance.joints.tc = (float)t[i];
-            //    break;
-            //}
+            if (!IsGestureMode && i > 0 && StopOnGround && joints.condition > 0 && tagZ.Min() < InitialFeetHeight)
+            {
+                MainParameters.Instance.joints.tc = (float)t[i];
+                break;
+            }
         }
 
         MainParameters.Instance.joints.t = new float[tIndex];
