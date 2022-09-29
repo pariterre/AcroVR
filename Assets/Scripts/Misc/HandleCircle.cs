@@ -70,16 +70,11 @@ public class HandleCircle : MonoBehaviour
             {
                 HandleDof(3, mouseDistance.x);
                 ToolBox.GetInstance().GetManager<StatManager>().dofName = "LeftArmAbduction";
-
-                //                transform.rotation = Quaternion.Euler(0, -mouseDistance.x, 0);
-                //                dof[3] = mouseDistance.x / 30;
             }
             else if (directionRotate == 2)
             {
                 HandleDof(2, mouseDistance.y);
                 ToolBox.GetInstance().GetManager<StatManager>().dofName = "LeftArmFlexion";
-                //                transform.rotation = Quaternion.Euler(-mouseDistance.y, 0, 0);
-                //                dof[2] = mouseDistance.y / 30;
             }
         }
         else if (target.name == "upper_arm.R")
@@ -93,15 +88,11 @@ public class HandleCircle : MonoBehaviour
             {
                 HandleDof(5, mouseDistance.x);
                 ToolBox.GetInstance().GetManager<StatManager>().dofName = "RightArmAbduction";
-                //                transform.rotation = Quaternion.Euler(0, -mouseDistance.x, 0);
-                //                dof[5] = -mouseDistance.x / 30;
             }
             else if (directionRotate == 2)
             {
                 HandleDof(4, mouseDistance.y);
                 ToolBox.GetInstance().GetManager<StatManager>().dofName = "RightArmFlexion";
-                //                transform.rotation = Quaternion.Euler(-mouseDistance.y, 0, 0);
-                //                dof[4] = mouseDistance.y / 30;
             }
         }
 
@@ -110,8 +101,6 @@ public class HandleCircle : MonoBehaviour
 
     void OnMouseUp()
     {
-//        rot = Vector2.zero;
-//        trackMouse = false;
         mouseDistance = Vector3.zero;
         directionRotate = 0;
     }
