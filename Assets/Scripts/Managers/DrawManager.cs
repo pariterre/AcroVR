@@ -116,8 +116,21 @@ public class DrawManager : MonoBehaviour
     public float takeOffParamHorizontalPosition = 0;
     public float takeOffParamVerticalPosition = 0;
     public float takeOffParamTiltSpeed = 0;
-    public bool takeOffParamGravity = false;
-    public bool StopOnGround = true;
+    public bool takeOffParamGravity { get; protected set; } = false;
+    public void SetTakeOffParamGravity(bool value) { 
+        takeOffParamGravity = value; 
+        ForceFullUpdate();
+    }
+
+    GameObject Ground;
+    public void SetGround(GameObject _floor) { Ground = _floor; }
+    public bool StopOnGround { get; protected set; } = true;
+    public void SetStopOnGround(bool value) { 
+        StopOnGround = value;
+        ForceFullUpdate();
+        if (Ground != null)
+            Ground.SetActive(StopOnGround);
+    }
 
     public AvatarSimulation secondParameters = new AvatarSimulation();
 

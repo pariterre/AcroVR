@@ -197,20 +197,19 @@ public class TrainingTooltip : MonoBehaviour
             MainParameters.Instance.joints.condition = dropDownTakeOffCondition.value;
             if (MainParameters.Instance.joints.condition == 0) 
                 MainParameters.Instance.joints.condition = 1;
-            drawManager.takeOffParamGravity = true;
+            
         }
         else
         {
             MainParameters.Instance.joints.condition = 0;
-            drawManager.takeOffParamGravity = false;
         }
+        drawManager.SetTakeOffParamGravity(ToggleGravity.isOn);
         drawManager.ForceFullUpdate();
     }
 
     public void ToggleStopAtGround()
     {
-        drawManager.StopOnGround = IsStopAtGround.isOn;
-        drawManager.ForceFullUpdate();
+        drawManager.SetStopOnGround(IsStopAtGround.isOn);
     }
 
     public void UpdatePositions()

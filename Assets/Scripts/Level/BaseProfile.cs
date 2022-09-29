@@ -43,6 +43,8 @@ public class BaseProfile : LevelBase
     public InputField simulationDuration;
     public SliderPlayAnimation sliderPlay;
 
+    public GameObject Floor;
+
     public Text fileName;
 
     public enum CameraView
@@ -691,6 +693,9 @@ public class BaseProfile : LevelBase
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
         aniGraphManager = ToolBox.GetInstance().GetManager<AniGraphManager>();
         uiManager = ToolBox.GetInstance().GetManager<UIManager>();
+
+        // Give some handler to relevant scripts
+        drawManager.SetGround(Floor);
     }
 
     private void Update()
