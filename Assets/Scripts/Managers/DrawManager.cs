@@ -26,7 +26,6 @@ public class DrawManager : MonoBehaviour
     protected StatManager statManager;
     protected SliderPlayAnimation sliderAnimation;
     protected DisplayResultGraphicS resultGraphics;
-    protected int UpdateGraphInNFrames = -1;
 
     public GameObject avatarSpawnpoint;
     public Vector3 avatarVector3;
@@ -190,11 +189,6 @@ public class DrawManager : MonoBehaviour
             else
                 secondPaused = true;
         }
-
-        if (resultGraphics && UpdateGraphInNFrames == 0) 
-            resultGraphics.UpdateResults();
-        if (UpdateGraphInNFrames >= 0)
-            UpdateGraphInNFrames -= 1;
     }
 
     public bool ShouldContinuePlaying()
@@ -1204,8 +1198,8 @@ public class DrawManager : MonoBehaviour
         UpdateFullKinematics(false);
         IsEditing = false;
         Pause();
-        if (sliderAnimation) sliderAnimation.EnableSlider();
-        UpdateGraphInNFrames = 2;  // Delay the graph update so the other indications on screen are updated
+        if (sliderAnimation) 
+            sliderAnimation.EnableSlider();
     }
 
     public void SetAllDof(double[] _qf){
