@@ -77,6 +77,7 @@ public class TakeOffParamF_s : MonoBehaviour
     {
         drawManager.ShowAvatar();
         drawManager.InitPoseAvatar();
+        gameManager.InterpolationDDL();
         bp.FrontCameraPOV(drawManager.CheckPositionAvatar());
     }
 }

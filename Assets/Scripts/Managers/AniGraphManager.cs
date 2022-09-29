@@ -447,6 +447,11 @@ public class AniGraphManager : MonoBehaviour
                 }
             }
         }
+        if (Mathf.Abs(dataMin) < 1e-10 && Mathf.Abs(dataMax) < 1e-10)
+        {
+            dataMin = -0.5f;
+            dataMax = 0.5f;
+        }
 
         graphCurves.DataSource.HorizontalViewOrigin = tMin;
         graphCurves.DataSource.HorizontalViewSize = tMax - tMin;

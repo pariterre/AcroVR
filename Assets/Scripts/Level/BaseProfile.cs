@@ -228,7 +228,7 @@ public class BaseProfile : LevelBase
 
         if (ret < 0)
         {
-            if(ret == -1)
+            if (ret == -1)
             {
                 if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
                 {
@@ -286,7 +286,7 @@ public class BaseProfile : LevelBase
         TutorialMessage();
         aniGraphManager.cntAvatar = 0;
 
-        float t = (drawManager.numberFrames-1) * 0.02f;
+        float t = (drawManager.numberFrames - 1) * 0.02f;
         endFrameText.text = t + " sec";
 
         if (t < MainParameters.Instance.joints.duration) MainParameters.Instance.joints.duration = t;
