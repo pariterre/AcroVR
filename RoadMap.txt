@@ -33,7 +33,6 @@ TODO:
 		- S'assurer qu'il ne freake pas
 	- Bouton Enregistrer/Charger/Comparer : 
 		- Retirer si en mission
-	- Redressir le modèle
 	- Si possible
 		- Bouton Comparer : Je suis à peu près sûr que c'est complètement cassé, réparer?
 		- Utilisation du modèle masculin : Cassé, réparer?
