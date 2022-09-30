@@ -17,11 +17,12 @@ public class UIManager : MonoBehaviour
     Text textToolTip;
     int displayToolTipNum = 0;
 
-    public bool tooltipOn = false;
+    public bool tooltipOn;  // TODO: Tooltips seem to be broken
 
     void Start()
     {
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        SetTooltip(PlayerPrefs.GetInt("WithToolTip", 0) == 1);
     }
 
     public void SetTooltip()
@@ -106,5 +107,6 @@ public class UIManager : MonoBehaviour
     public void SetTooltip(bool _flag)
     {
         tooltipOn = _flag;
+        PlayerPrefs.SetInt("WithToolTip", tooltipOn ? 1 : 0);
     }
 }
