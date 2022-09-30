@@ -69,7 +69,7 @@ public class ChangeLanguage : MonoBehaviour
     public Text SettingTitle;
     public Text SettingClose;
     public Text hSettingClose;
-    public Text Language;
+    public Text CurrentLanguage;
     public Text hLanguage;
     public Text Tooltip;
     public Text hTooltip;
@@ -168,10 +168,10 @@ public class ChangeLanguage : MonoBehaviour
 
         ChangedLanguage();
     }
+
     public void ChangedLanguage()
     {
-        MainParameters.StrucMessageLists languagesUsed = MainParameters.Instance.languages.Used;
-        if (languagesUsed.toolTipButtonQuit == "Quit")
+        if (MainParameters.Instance.languages.current == Language.English)
         {
             Training.text = languages.english.Training;
             hTraining.text = languages.english.Training;
@@ -193,7 +193,7 @@ public class ChangeLanguage : MonoBehaviour
             SettingTitle.text = languages.english.SettingTitle;
             SettingClose.text = languages.english.Close;
             hSettingClose.text = languages.english.Close;
-            Language.text = languages.english.Language;
+            CurrentLanguage.text = languages.english.Language;
             hLanguage.text = languages.english.Language;
             Tooltip.text = languages.english.Tooltip;
             hTooltip.text = languages.english.Tooltip;
@@ -250,7 +250,7 @@ public class ChangeLanguage : MonoBehaviour
             SettingTitle.text = languages.french.SettingTitle;
             SettingClose.text = languages.french.Close;
             hSettingClose.text = languages.french.Close;
-            Language.text = languages.french.Language;
+            CurrentLanguage.text = languages.french.Language;
             hLanguage.text = languages.french.Language;
             Tooltip.text = languages.french.Tooltip;
             hTooltip.text = languages.french.Tooltip;

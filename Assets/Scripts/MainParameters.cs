@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+public enum Language{
+	French = 0, 
+	English = 1,
+}
+
 // =================================================================================================================================================================
 /// <summary>
 /// Cette classe contient les paramètres généraux et globaux utilisés dans le logiciel.
@@ -255,6 +260,7 @@ public class MainParameters
 	/// <summary> Description de la structure contenant la liste des messages utilisés en français et en anglais. </summary>
 	public struct StrucLanguages
 	{
+		public Language current;
 		public StrucMessageLists Used;
 		public StrucMessageLists french;
 		public StrucMessageLists english;
@@ -582,7 +588,8 @@ public class MainParameters
 		languages.french.toolTipButtonGraph = "Afficher les graphiques résultats";
 		languages.english.toolTipButtonGraph = "Display result graphics";
 
-		languages.Used = languages.french;
+		SetLanguage((Language)PlayerPrefs.GetInt("Language", (int)Language.French));
+
 	}
 
 	// =================================================================================================================================================================
@@ -596,4 +603,14 @@ public class MainParameters
 		}
 	}
 	#endregion
+
+	public void SetLanguage(Language _language){
+		if (_language == Language.English)
+			languages.Used = languages.english;
+		else
+			languages.Used = languages.french;
+		
+		languages.current = _language;
+		PlayerPrefs.SetInt("Language", (int)languages.current);
+	}
 }

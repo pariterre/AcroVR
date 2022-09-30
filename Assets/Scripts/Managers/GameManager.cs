@@ -174,20 +174,11 @@ public class GameManager : MonoBehaviour
 
     public int MissionLoad()
     {
-        //        InitAnimationInfo();
-        //        ReadDataFromJSON(fileName);
-        //        missionName.text = mission.Name;
-
-//          ReadAniFromJSON("walk.json");
-
         ExtensionFilter[] extensions = new[]
         {
-//            new ExtensionFilter(MainParameters.Instance.languages.Used.movementLoadDataFileTxtFile, "json"),
-//            new ExtensionFilter(MainParameters.Instance.languages.Used.movementLoadDataFileTxtFile, "*"),
             new ExtensionFilter(MainParameters.Instance.languages.Used.movementLoadDataFileAllFiles, "*" ),
         };
 
-        //string dirSimulationFiles = Environment.ExpandEnvironmentVariables(@"\SimulationJson");
 		string dirSimulationFiles = string.Format(@"{0}/SimulationJson", pathDataFiles);
 
 		string fileName = FileBrowser.OpenSingleFile(MainParameters.Instance.languages.Used.movementLoadDataFileTitle, dirSimulationFiles, extensions);
@@ -197,16 +188,7 @@ public class GameManager : MonoBehaviour
             return -1;
         }
 
-        //        string e = fileName.Substring(fileName.Length - 3);
-        //        if(e == "txt") ReadDataFiles_s(fileName);
-        //        else ReadAniFromJSON(fileName);
-
         WriteToLogFile(fileName);
-
-        //               WriteToLogFile(System.Threading.Thread.CurrentThread.CurrentCulture.ToString());
-
-        //                WriteToLogFile(CultureInfo.CurrentCulture.Name);
-//        CultureInfo.CurrentCulture = new CultureInfo("fr-FR", false);
         WriteToLogFile("CultureInfo.CurrentCulture.Name: " + CultureInfo.CurrentCulture.Name);
 
         string extension = GetSimpleExtension(fileName);
@@ -232,7 +214,6 @@ public class GameManager : MonoBehaviour
             new ExtensionFilter(MainParameters.Instance.languages.Used.movementLoadDataFileAllFiles, "*" ),
         };
 
-		//string dirSimulationFiles = Environment.ExpandEnvironmentVariables(@"\SimulationJson");
 		string dirSimulationFiles = string.Format(@"{0}\SimulationJson", pathDataFiles);
 
 		string fileName = FileBrowser.OpenSingleFile(MainParameters.Instance.languages.Used.movementLoadDataFileTitle, dirSimulationFiles, extensions);

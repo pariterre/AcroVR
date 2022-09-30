@@ -118,12 +118,12 @@ public class SoftwareAccessManager : MonoBehaviour
 	{
 		if (textButtonChangeLanguage.text == "Fr")
 		{
-			languages.Used = languages.french;
+			MainParameters.Instance.SetLanguage(Language.French);
 			textButtonChangeLanguage.text = "En";
 		}
 		else
 		{
-			languages.Used = languages.english;
+        	MainParameters.Instance.SetLanguage(Language.English);
 			textButtonChangeLanguage.text = "Fr";
 		}
 

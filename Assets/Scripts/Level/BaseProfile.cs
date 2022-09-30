@@ -76,7 +76,7 @@ public class BaseProfile : LevelBase
     {
         if (drawManager.girl1 == null)
         {
-            if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
+            if (MainParameters.Instance.languages.current == Language.English)
             {
                 ErrorMessage("Please load files first");
             }
@@ -228,7 +228,7 @@ public class BaseProfile : LevelBase
         {
             if (ret == -1)
             {
-                if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
+                if (MainParameters.Instance.languages.current == Language.English)
                 {
                     ErrorMessage("Please load files first");
                 }
@@ -239,7 +239,7 @@ public class BaseProfile : LevelBase
             }
             else
             {
-                if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
+                if (MainParameters.Instance.languages.current == Language.English)
                 {
                     ErrorMessage("Loaded incorrect Simulation files:  " + ret.ToString());
                 }
@@ -293,7 +293,7 @@ public class BaseProfile : LevelBase
         {
             if (ret == -1)
             {
-                if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
+                if (MainParameters.Instance.languages.current == Language.English)
                 {
                     ErrorMessage("Please load files first");
                 }
@@ -304,7 +304,7 @@ public class BaseProfile : LevelBase
             }
             else
             {
-                if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
+                if (MainParameters.Instance.languages.current == Language.English)
                 {
                     ErrorMessage("Loaded incorrect Simulation files:  " + ret.ToString());
                 }
@@ -324,7 +324,7 @@ public class BaseProfile : LevelBase
         {
             if (!drawManager.LoadAvatar(DrawManager.AvatarMode.DoubleFemale))
             {
-                if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
+                if (MainParameters.Instance.languages.current == Language.English)
                 {
                     ErrorMessage("Failed to load files for the second avatar");
                 }
@@ -340,7 +340,7 @@ public class BaseProfile : LevelBase
         {
             if (!drawManager.LoadAvatar(DrawManager.AvatarMode.DoubleMale))
             {
-                if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
+                if (MainParameters.Instance.languages.current == Language.English)
                 {
                     ErrorMessage("Failed to load files for the second avatar");
                 }
@@ -392,7 +392,7 @@ public class BaseProfile : LevelBase
 
         if (drawManager.girl1 == null)
         {
-            if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
+            if (MainParameters.Instance.languages.current == Language.English)
             {
                 ErrorMessage("Please load files first");
             }
@@ -447,7 +447,7 @@ public class BaseProfile : LevelBase
     {
         if (drawManager.girl1 == null)
         {
-            if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
+            if (MainParameters.Instance.languages.current == Language.English)
             {
                 ErrorMessage("Please load files first");
             }
@@ -467,7 +467,7 @@ public class BaseProfile : LevelBase
 
         if (drawManager.girl1 == null)
         {
-            if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
+            if (MainParameters.Instance.languages.current == Language.English)
             {
                 ErrorMessage("Please load files first");
             }
@@ -557,15 +557,15 @@ public class BaseProfile : LevelBase
     public void SetFrench()
     {
         gameManager.WriteToLogFile("SetFrench()");
-
-        MainParameters.Instance.languages.Used = MainParameters.Instance.languages.french;
+        MainParameters.Instance.SetLanguage(Language.French);
+        
     }
 
     public void SetEnglish()
     {
         gameManager.WriteToLogFile("SetEnglish()");
 
-        MainParameters.Instance.languages.Used = MainParameters.Instance.languages.english;
+        MainParameters.Instance.SetLanguage(Language.English);
     }
 
     public void SetTooltip(bool _flag)
@@ -641,7 +641,7 @@ public class BaseProfile : LevelBase
             aniGraphManager.isTutorial++;
             TutorialObject.GetComponent<Animator>().Play("Panel In");
 
-            if (MainParameters.Instance.languages.Used.toolTipButtonQuit == "Quit")
+            if (MainParameters.Instance.languages.current == Language.English)
             {
                 TutorialObject.GetComponentInChildren<Text>().text = "1. Mouse Right Button: On/Off Rotation Modifier\n" +
                     "2. Each shoulder can be clicked twice(x and y)\n" +
