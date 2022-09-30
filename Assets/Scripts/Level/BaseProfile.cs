@@ -220,10 +220,6 @@ public class BaseProfile : LevelBase
     public void MissionLoad()
     {
         gameManager.WriteToLogFile("Load Button Click");
-
-        //        AvatarCamera.transform.position = anchorThirdPOV.transform.position;
-        //        AvatarCamera.transform.rotation = anchorThirdPOV.transform.rotation;
-
         int ret = gameManager.MissionLoad();
 
         gameManager.WriteToLogFile("Load return value: " + ret.ToString());
@@ -272,18 +268,6 @@ public class BaseProfile : LevelBase
         drawManager.StopEditing();
 
         FrontCameraPOV(drawManager.CheckPositionAvatar());
-
-        /*        if (drawManager.CheckPositionAvatar())
-                {
-                    CameraPOV(POV.LongFrontView);
-        //            LongDistanceCamera();
-                }
-                else
-                {
-                    CameraPOV(POV.FrontView);
-        //            AvatarCamera.transform.position = anchorThirdPOV.transform.position;
-        //            AvatarCamera.transform.rotation = anchorThirdPOV.transform.rotation;
-                }*/
 
         TutorialMessage();
         aniGraphManager.cntAvatar = 0;
@@ -375,18 +359,6 @@ public class BaseProfile : LevelBase
         InitDropdownDDLNames(0);
 
         drawManager.StopEditing();
-
-        /*        if (drawManager.CheckPositionAvatar())
-                {
-                    CameraPOV(POV.LongFrontView);
-        //            LongDistanceCamera();
-                }
-                else
-                {
-                    CameraPOV(POV.FrontView);
-        //            AvatarCamera.transform.position = anchorThirdPOV.transform.position;
-        //            AvatarCamera.transform.rotation = anchorThirdPOV.transform.rotation;
-                }*/
 
         TutorialMessage();
 

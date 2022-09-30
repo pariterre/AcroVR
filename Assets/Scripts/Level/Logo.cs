@@ -31,7 +31,6 @@ public class Logo : MonoBehaviour
         if (Input.anyKeyDown)
         {
             animatorComponent.Play("Curaphic Splash Fade-out");
-            //            mainCanvas.SetActive(true);
             CancelInvoke();
             Invoke("ToMainMenu", 0.5f);
         }
