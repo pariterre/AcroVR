@@ -87,10 +87,10 @@ public class TrainingTooltip : MonoBehaviour
         uiManager = ToolBox.GetInstance().GetManager<UIManager>();
         aniGraphManager = ToolBox.GetInstance().GetManager<AniGraphManager>();
 
-        if (drawManager.setAvatar == DrawManager.AvatarMode.SingleFemale)
-            drawManager.InitAvatar(DrawManager.AvatarMode.SingleFemale);
+        if (drawManager.CurrentAvatar == DrawManager.AvatarModel.SingleFemale)
+            drawManager.InitAvatar(DrawManager.AvatarModel.SingleFemale);
         else
-            drawManager.InitAvatar(DrawManager.AvatarMode.SingleMale);
+            drawManager.InitAvatar(DrawManager.AvatarModel.SingleMale);
 
         gameManager.InitAnimationInfo();
 

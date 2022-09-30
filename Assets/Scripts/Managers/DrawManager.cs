@@ -8,12 +8,12 @@ using System.Collections.Generic;
 
 public class DrawManager : MonoBehaviour
 {
-    public enum AvatarMode
+    public enum AvatarModel
     {
-        SingleFemale,
-        DoubleFemale,
-        SingleMale,
-        DoubleMale
+        SingleFemale = 0,
+        DoubleFemale = 1,
+        SingleMale = 2,
+        DoubleMale = 3,
     }
 
     const string dllpath = "biorbd_c.dll";
@@ -110,7 +110,11 @@ public class DrawManager : MonoBehaviour
     public bool IsGestureMode { get { return CurrentVizualisationMode == 1; } }
     public void ActivateGestureMode() { CurrentVizualisationMode = 1; }
 
-    public AvatarMode setAvatar = AvatarMode.SingleFemale;
+    public AvatarModel CurrentAvatar { get; protected set; }
+    public void SetAvatar(AvatarModel _avatar){
+        CurrentAvatar = _avatar;
+        PlayerPrefs.SetInt("AvatarModel", (int)CurrentAvatar);
+    }
 
     public float takeOffParamTwistPosition = 0;
     public float takeOffParamHorizontalPosition = 0;
@@ -145,7 +149,10 @@ public class DrawManager : MonoBehaviour
     void Start()
     {
         statManager = ToolBox.GetInstance().GetManager<StatManager>();
+        SetAvatar((AvatarModel)PlayerPrefs.GetInt("AvatarModel", (int)AvatarModel.SingleFemale));
     }
+
+
 
     public void RegisterResultShow(DisplayResultGraphicS _newResultGraphics)
     {
@@ -230,7 +237,7 @@ public class DrawManager : MonoBehaviour
         }
     }
 
-    public void InitAvatar(AvatarMode mode)
+    public void InitAvatar(AvatarModel mode)
     {
         Pause();
         canResumeAnimation = false;
@@ -238,11 +245,11 @@ public class DrawManager : MonoBehaviour
         string namePrefab1 = "";
         switch (mode)
         {
-            case AvatarMode.SingleFemale:
+            case AvatarModel.SingleFemale:
                 cntAvatar = 1;
                 namePrefab1 = "girl1_control";
                 break;
-            case AvatarMode.SingleMale:
+            case AvatarModel.SingleMale:
                 namePrefab1 = "man1_control";
                 break;
         }
@@ -316,7 +323,7 @@ public class DrawManager : MonoBehaviour
         rightArmFlex = avatar.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R/ControlRightArm").GetComponent<ControlRightArmFlexion>();
     }
 
-    public bool LoadAvatar(AvatarMode mode)
+    public bool LoadAvatar(AvatarModel mode)
     {
         Pause();
 
@@ -324,26 +331,26 @@ public class DrawManager : MonoBehaviour
         string namePrefab2 = "";
         switch (mode)
         {
-            case AvatarMode.SingleFemale:
+            case AvatarModel.SingleFemale:
                 cntAvatar = 1;
                 namePrefab1 = "girl1_control";
                 if (girl1) girl1.SetActive(true);
                 if (girl2) girl2.SetActive(false);
                 break;
-            case AvatarMode.DoubleFemale:
+            case AvatarModel.DoubleFemale:
                 cntAvatar = 2;
                 namePrefab1 = "girl1_control";
                 namePrefab2 = "girl2";
                 if (girl1) girl1.SetActive(true);
                 if (girl2) girl2.SetActive(true);
                 break;
-            case AvatarMode.SingleMale:
+            case AvatarModel.SingleMale:
                 cntAvatar = 1;
                 namePrefab1 = "man1_control";
                 if (girl1) girl1.SetActive(true);
                 if (girl2) girl2.SetActive(false);
                 break;
-            case AvatarMode.DoubleMale:
+            case AvatarModel.DoubleMale:
                 cntAvatar = 2;
                 namePrefab1 = "man1_control";
                 namePrefab2 = "man2";

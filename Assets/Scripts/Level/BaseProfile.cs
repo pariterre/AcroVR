@@ -255,10 +255,10 @@ public class BaseProfile : LevelBase
 
         fileName.text = Path.GetFileName(MainParameters.Instance.joints.fileName);
 
-        if (drawManager.setAvatar == DrawManager.AvatarMode.SingleFemale)
-            drawManager.LoadAvatar(DrawManager.AvatarMode.SingleFemale);
+        if (drawManager.CurrentAvatar == DrawManager.AvatarModel.SingleFemale)
+            drawManager.LoadAvatar(DrawManager.AvatarModel.SingleFemale);
         else
-            drawManager.LoadAvatar(DrawManager.AvatarMode.SingleMale);
+            drawManager.LoadAvatar(DrawManager.AvatarModel.SingleMale);
 
         TakeOffOn();
         InitDropdownDDLNames(0);
@@ -320,9 +320,9 @@ public class BaseProfile : LevelBase
 
         ShowTakeOff();
 
-        if (drawManager.setAvatar == DrawManager.AvatarMode.SingleFemale)
+        if (drawManager.CurrentAvatar == DrawManager.AvatarModel.SingleFemale)
         {
-            if (!drawManager.LoadAvatar(DrawManager.AvatarMode.DoubleFemale))
+            if (!drawManager.LoadAvatar(DrawManager.AvatarModel.DoubleFemale))
             {
                 if (MainParameters.Instance.languages.current == Language.English)
                 {
@@ -338,7 +338,7 @@ public class BaseProfile : LevelBase
         }
         else
         {
-            if (!drawManager.LoadAvatar(DrawManager.AvatarMode.DoubleMale))
+            if (!drawManager.LoadAvatar(DrawManager.AvatarModel.DoubleMale))
             {
                 if (MainParameters.Instance.languages.current == Language.English)
                 {
@@ -579,14 +579,14 @@ public class BaseProfile : LevelBase
     {
         gameManager.WriteToLogFile("SetMaleAvatar()");
 
-        drawManager.setAvatar = DrawManager.AvatarMode.SingleMale;
+        drawManager.SetAvatar(DrawManager.AvatarModel.SingleMale);
     }
 
     public void SetFemaleAvatar()
     {
         gameManager.WriteToLogFile("SetFemaleAvatar()");
 
-        drawManager.setAvatar = DrawManager.AvatarMode.SingleFemale;
+        drawManager.SetAvatar(DrawManager.AvatarModel.SingleFemale);
     }
 
     public void SetSimulationMode()
