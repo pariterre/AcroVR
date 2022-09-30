@@ -669,8 +669,8 @@ public class BaseProfile : LevelBase
 
         // Give some handler to relevant scripts
         drawManager.SetGround(Floor);
-        // SaveLoadCompareMenu.SetActive(gameManager.numMission == 0);
-        
+        if (SaveLoadCompareMenu != null)
+            SaveLoadCompareMenu.SetActive(gameManager.numMission == 0);
     }
 
     private void Update()

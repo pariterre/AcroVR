@@ -8,9 +8,7 @@ TODO:
 	- Mission : 
 		- Recommencer si objectif échoué
 		- Passer au prochain objectif si réussi
-		- Retirer les bouton Enregistrer/Charger/Comparer
 		- Ajouter une étoile si la mission est réussie (Sauvegarder à travers les sessions)
-		- Bouton Enregistrer/Charger/Comparer : Retirer si en mission
 	- Si possible
 		- Bouton Comparer : Je suis à peu près sûr que c'est complètement cassé, réparer?
 		- Utilisation du modèle masculin : Cassé, réparer?
