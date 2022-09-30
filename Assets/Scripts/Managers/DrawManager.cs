@@ -120,9 +120,9 @@ public class DrawManager : MonoBehaviour
     public float takeOffParamHorizontalPosition = 0;
     public float takeOffParamVerticalPosition = 0;
     public float takeOffParamTiltSpeed = 0;
-    public bool takeOffParamGravity { get; protected set; } = false;
-    public void SetTakeOffParamGravity(bool value) { 
-        takeOffParamGravity = value; 
+    public bool UseGravity { get; protected set; } = false;
+    public void SetGravity(bool value) { 
+        UseGravity = value; 
         ForceFullUpdate();
     }
 
@@ -713,7 +713,7 @@ public class DrawManager : MonoBehaviour
             EvaluateTags_s(qq, out tagX, out tagY, out tagZ);
 
             // Cut the trial when the feet crosses the ground (vertical axis = 0)
-            if (!IsGestureMode && i > 0 && StopOnGround && joints.condition > 0 && tagZ.Min() < InitialFeetHeight)
+            if (!IsGestureMode && i > 0 && StopOnGround && UseGravity && tagZ.Min() < InitialFeetHeight)
             {
                 MainParameters.Instance.joints.tc = (float)t[i];
                 break;
@@ -849,7 +849,7 @@ public class DrawManager : MonoBehaviour
         float hFeet = Math.Min(tagZ[joints.lagrangianModel.feet[0] - 1], tagZ[joints.lagrangianModel.feet[1] - 1]);
         float hHand = Math.Min(tagZ[joints.lagrangianModel.hand[0] - 1], tagZ[joints.lagrangianModel.hand[1] - 1]);
 
-        if (joints.condition < 8 && Math.Cos(rotRadians) > 0)
+        if (Math.Cos(rotRadians) > 0)
             q0[Math.Abs(joints.lagrangianModel.root_upward) - 1] += joints.lagrangianModel.hauteurs[joints.condition] - hFeet;
         else                                                            // bars, vault and tumbling from hands
             q0[Math.Abs(joints.lagrangianModel.root_upward) - 1] += joints.lagrangianModel.hauteurs[joints.condition] - hHand;
@@ -891,7 +891,7 @@ public class DrawManager : MonoBehaviour
             for (int j = 0; j < joints.lagrangianModel.nDDL; j++)
                 qq[j] = q[j, i];
             EvaluateTags_s(qq, out tagX, out tagY, out tagZ);
-            if (joints.condition > 0 && tagZ.Min() < -0.05f)
+            if (UseGravity && tagZ.Min() < -0.05f)
             {
                 secondParameters.joints.tc = (float)t[i];
                 break;
@@ -985,7 +985,7 @@ public class DrawManager : MonoBehaviour
         NLEffects1Simple nlEffects1Simple = new NLEffects1Simple();
         n1 = nlEffects1Simple.NLEffects1(q, qdot);
 
-        if (MainParameters.Instance.joints.condition <= 0)
+        if (!UseGravity)
         {
             double[] n1zero;
             n1zero = nlEffects1Simple.NLEffects1(q, new double[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
@@ -1054,7 +1054,7 @@ public class DrawManager : MonoBehaviour
         m12 = inertia12Simple.Inertia12(q);
         NLEffects1Simple nlEffects1Simple = new NLEffects1Simple();
         n1 = nlEffects1Simple.NLEffects1(q, qdot);
-        if (secondParameters.joints.condition <= 0)
+        if (!UseGravity)
         {
             double[] n1zero;
             n1zero = nlEffects1Simple.NLEffects1(q, new double[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });

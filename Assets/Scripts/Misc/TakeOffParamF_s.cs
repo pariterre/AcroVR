@@ -26,9 +26,7 @@ public class TakeOffParamF_s : MonoBehaviour
 
     public void UpdatePositions(int value)
     {
-        if (!gameManager.listCondition.conditions[value].Gravity)
-            MainParameters.Instance.joints.condition = 0;
-
+        drawManager.SetGravity(gameManager.listCondition.conditions[value].Gravity);
         MainParameters.Instance.joints.takeOffParam.rotation = gameManager.listCondition.conditions[value].SomersaultPosition;
         drawManager.takeOffParamTwistPosition = gameManager.listCondition.conditions[value].TwistPosition;
         MainParameters.Instance.joints.takeOffParam.tilt = gameManager.listCondition.conditions[value].TiltPosition;
@@ -37,11 +35,6 @@ public class TakeOffParamF_s : MonoBehaviour
 
         ApplyAvatar();
     }
-
-    public void CheckTakeOffParamCondition(Dropdown dropDown)
-    {
-        MainParameters.Instance.joints.condition = dropDown.value;
-    }   
 
     public void CheckTakeOffParam(GameObject panel)
     {

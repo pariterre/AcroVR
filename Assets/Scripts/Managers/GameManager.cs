@@ -416,7 +416,7 @@ public class GameManager : MonoBehaviour
     {
         ConditionInfo n = new ConditionInfo();
         n.name = name;
-        n.Gravity = transform.parent.GetComponentInChildren<DrawManager>().takeOffParamGravity;
+        n.Gravity = transform.parent.GetComponentInChildren<DrawManager>().UseGravity;
         n.HorizontalPosition = transform.parent.GetComponentInChildren<DrawManager>().takeOffParamHorizontalPosition;
         n.VerticalPosition = transform.parent.GetComponentInChildren<DrawManager>().takeOffParamVerticalPosition;
         n.SomersaultPosition = MainParameters.Instance.joints.takeOffParam.rotation;

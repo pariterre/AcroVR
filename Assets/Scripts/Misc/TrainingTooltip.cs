@@ -142,7 +142,20 @@ public class TrainingTooltip : MonoBehaviour
 
         bp.FrontCameraPOV(0);
 
+        SetDropDownPresetCondition(PlayerPrefs.GetInt("PresetConditions", 0));
         UpdateDropDown();
+    }
+
+    public void SelectPresetCondition(){
+        SetDropDownPresetCondition(dropDownTakeOffCondition.value);
+        ToggleGravity.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].Gravity;
+        UpdateGravity();
+        UpdatePositions();
+    }
+
+    public void SetDropDownPresetCondition(int value){
+        dropDownTakeOffCondition.value = value;
+        PlayerPrefs.SetInt("PresetConditions", dropDownTakeOffCondition.value);
     }
 
     public void AddCondition(Text name)
@@ -177,33 +190,14 @@ public class TrainingTooltip : MonoBehaviour
             });
         }
 
-        dropDownTakeOffCondition.value = 1;
-        dropDownTakeOffCondition.value = 0;
-
+        ToggleGravity.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].Gravity;
         UpdateGravity();
         UpdatePositions();
     }
 
     public void UpdateGravity()
     {
-        ToggleGravity.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].Gravity;
-        ChangedGravity();
-    }
-
-    public void ChangedGravity()
-    {
-        if (ToggleGravity.isOn)
-        {
-            MainParameters.Instance.joints.condition = dropDownTakeOffCondition.value;
-            if (MainParameters.Instance.joints.condition == 0) 
-                MainParameters.Instance.joints.condition = 1;
-            
-        }
-        else
-        {
-            MainParameters.Instance.joints.condition = 0;
-        }
-        drawManager.SetTakeOffParamGravity(ToggleGravity.isOn);
+        drawManager.SetGravity(ToggleGravity.isOn);
         drawManager.ForceFullUpdate();
     }
 
