@@ -123,6 +123,7 @@ public class ConditionInfo
 {
     public string name;
     public bool Gravity;
+    public bool HasFloor;
     public float SomersaultPosition;
     public float TiltPosition;
     public float TwistPosition;
@@ -417,6 +418,7 @@ public class GameManager : MonoBehaviour
         ConditionInfo n = new ConditionInfo();
         n.name = name;
         n.Gravity = transform.parent.GetComponentInChildren<DrawManager>().UseGravity;
+        n.HasFloor = transform.parent.GetComponentInChildren<DrawManager>().StopOnGround;
         n.HorizontalPosition = transform.parent.GetComponentInChildren<DrawManager>().takeOffParamHorizontalPosition;
         n.VerticalPosition = transform.parent.GetComponentInChildren<DrawManager>().takeOffParamVerticalPosition;
         n.SomersaultPosition = MainParameters.Instance.joints.takeOffParam.rotation;
@@ -450,7 +452,6 @@ public class GameManager : MonoBehaviour
         }
 
         listCondition = JsonUtility.FromJson<ConditionList>(dataAsJson);
-
         return true;
     }
 

@@ -143,14 +143,12 @@ public class TrainingTooltip : MonoBehaviour
         bp.FrontCameraPOV(0);
 
         SetDropDownPresetCondition(PlayerPrefs.GetInt("PresetConditions", 0));
-        UpdateDropDown();
+        UpdateAllPropertiesFromDropdown();
     }
 
     public void SelectPresetCondition(){
         SetDropDownPresetCondition(dropDownTakeOffCondition.value);
-        ToggleGravity.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].Gravity;
-        UpdateGravity();
-        UpdatePositions();
+        UpdateAllPropertiesFromDropdown();
     }
 
     public void SetDropDownPresetCondition(int value){
@@ -163,14 +161,14 @@ public class TrainingTooltip : MonoBehaviour
         if (name.text != "")
         {
             gameManager.SaveCondition(dropDownTakeOffCondition.value, name.text);
-            UpdateDropDown();
+            UpdateDropDownNames();
         }
     }
 
     public void DeleteCondition()
     {
         gameManager.RemoveCondition(dropDownTakeOffCondition.value);
-        UpdateDropDown();
+        UpdateDropDownNames();
     }
 
     public void NameCondition()
@@ -178,7 +176,7 @@ public class TrainingTooltip : MonoBehaviour
         ConditionName.text = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].name;
     }
 
-    public void UpdateDropDown()
+    public void UpdateDropDownNames()
     {
         dropDownTakeOffCondition.options.Clear();
 
@@ -190,8 +188,16 @@ public class TrainingTooltip : MonoBehaviour
             });
         }
 
+        UpdateAllPropertiesFromDropdown();
+    }
+    
+    public void UpdateAllPropertiesFromDropdown(){
         ToggleGravity.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].Gravity;
         UpdateGravity();
+        
+        IsStopAtGround.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].HasFloor;
+        ToggleStopAtGround();
+        
         UpdatePositions();
     }
 

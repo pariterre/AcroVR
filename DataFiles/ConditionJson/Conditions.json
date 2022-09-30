@@ -4,6 +4,7 @@
         {
             "name": "Sans condition",
             "Gravity": false,
+            "HasFloor": true,
             "SomersaultPosition": 0.0,
             "TiltPosition": 0.0,
             "TwistPosition": 0.0,
@@ -13,6 +14,7 @@
         {
             "name": "Trampoline",
             "Gravity": true,
+            "HasFloor": true,
             "SomersaultPosition": 0.0,
             "TiltPosition": 0.0,
             "TwistPosition": 0.0,
@@ -22,6 +24,7 @@
         {
             "name": "Chute",
             "Gravity": true,
+            "HasFloor": true,
             "SomersaultPosition": 0.0,
             "TiltPosition": 0.0,
             "TwistPosition": 0.0,
@@ -31,6 +34,7 @@
         {
             "name": "Plongeon 1 m",
             "Gravity": true,
+            "HasFloor": true,
             "SomersaultPosition": 0.0,
             "TiltPosition": 0.0,
             "TwistPosition": 0.0,
@@ -40,6 +44,7 @@
         {
             "name": "Plongeon 3 m",
             "Gravity": true,
+            "HasFloor": true,
             "SomersaultPosition": 0.0,
             "TiltPosition": 0.0,
             "TwistPosition": 0.0,
@@ -49,6 +54,7 @@
         {
             "name": "Plongeon 5 m",
             "Gravity": true,
+            "HasFloor": true,
             "SomersaultPosition": 0.0,
             "TiltPosition": 0.0,
             "TwistPosition": 0.0,
@@ -58,6 +64,7 @@
         {
             "name": "Plongeon 10 m",
             "Gravity": true,
+            "HasFloor": true,
             "SomersaultPosition": 0.0,
             "TiltPosition": 0.0,
             "TwistPosition": 0.0,
@@ -67,6 +74,7 @@
         {
             "name": "Barre fixe",
             "Gravity": true,
+            "HasFloor": true,
             "SomersaultPosition": 0.0,
             "TiltPosition": 0.0,
             "TwistPosition": 0.0,
@@ -76,6 +84,7 @@
         {
             "name": "Barres asymétriques",
             "Gravity": true,
+            "HasFloor": true,
             "SomersaultPosition": 0.0,
             "TiltPosition": 0.0,
             "TwistPosition": 0.0,
@@ -85,6 +94,7 @@
         {
             "name": "Saut à la perche",
             "Gravity": true,
+            "HasFloor": true,
             "SomersaultPosition": 0.0,
             "TiltPosition": 0.0,
             "TwistPosition": 0.0,
