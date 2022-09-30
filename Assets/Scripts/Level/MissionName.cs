@@ -37,6 +37,6 @@ public class MissionName : MonoBehaviour
 
     public void SetMission(int num)
     {
-        ToolBox.GetInstance().GetManager<GameManager>().numMission = num;
+        ToolBox.GetInstance().GetManager<GameManager>().SetNumberOfMissions(num);
     }
 }

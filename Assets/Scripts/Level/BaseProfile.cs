@@ -14,6 +14,7 @@ public class BaseProfile : LevelBase
     protected UIManager uiManager;
 
 
+    public GameObject SaveLoadCompareMenu;
     public Dropdown dropDownCondition;
     public Dropdown dropDownDDLNames;
     public Camera AvatarCamera;
@@ -154,7 +155,7 @@ public class BaseProfile : LevelBase
         drawManager.Pause();
         drawManager.ResetFrame();
         aniGraphManager.isTutorial = 0;
-        gameManager.numMission = 0;
+        gameManager.SetNumberOfMissions(0);
 
         levelManager.GotoScreen("MainMenu");
     }
@@ -668,6 +669,8 @@ public class BaseProfile : LevelBase
 
         // Give some handler to relevant scripts
         drawManager.SetGround(Floor);
+        // SaveLoadCompareMenu.SetActive(gameManager.numMission == 0);
+        
     }
 
     private void Update()

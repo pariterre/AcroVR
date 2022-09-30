@@ -152,7 +152,7 @@ public class GameMode : MonoBehaviour
         {
             if (Input.anyKeyDown)
             {
-                gameManager.numMission = 0;
+                gameManager.SetNumberOfMissions(0);
                 MissionName.GetComponent<Animator>().Play("Panel Out");
             }
         }
@@ -167,7 +167,7 @@ public class GameMode : MonoBehaviour
                 {
                     MissionName.GetComponentInChildren<Text>().text = "Succès";
                     resultValue = 0;
-                    gameManager.numMission = numberOfMissions + 1;
+                    gameManager.SetNumberOfMissions(numberOfMissions + 1);
                     StartCoroutine(WaitThenShowCurrentMission(3));
                 }
                 else
