@@ -76,9 +76,9 @@ public class BaseProfile : LevelBase
 
         // Give some handler to relevant scripts
         drawManager.SetGround(Floor);
-        if (SaveLoadCompareMenu != null)
-            SaveLoadCompareMenu.SetActive(gameManager.numMission == 0);
         PrepareMissionManager();
+        if (SaveLoadCompareMenu != null)
+            SaveLoadCompareMenu.SetActive(!missionManager.HasActiveMission);
     }
 
     protected void PrepareMissionManager()
@@ -90,7 +90,7 @@ public class BaseProfile : LevelBase
             simulationDuration
         );
         if (TutorialObject != null)
-            missionManager.ShowCurrentMission();
+            missionManager.SetAndShowCurrentMission();
     }
 
     public void CheckMissionResult()
@@ -201,7 +201,7 @@ public class BaseProfile : LevelBase
         drawManager.Pause();
         drawManager.ResetFrame();
         aniGraphManager.isTutorial = 0;
-        gameManager.SetNumberOfMissions(0);
+        missionManager.UnloadMission();
 
         levelManager.GotoScreen("MainMenu");
     }

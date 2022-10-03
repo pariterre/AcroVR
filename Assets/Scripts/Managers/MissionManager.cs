@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Globalization;
+﻿using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +11,7 @@ public enum Result
 
 public class MissionManager : MonoBehaviour
 {
+    public bool IsBandShown { get; protected set; } = false;
     protected Animator InformationBandAnimator;
     protected Text InformationBandText;
     public void SetInformationBand(GameObject _tutorial)
@@ -21,6 +21,9 @@ public class MissionManager : MonoBehaviour
         InformationBandAnimator = _tutorial.GetComponent<Animator>();
         InformationBandText = _tutorial.GetComponentInChildren<Text>();
     }
+
+    public MissionList AllMissions { get; protected set; }
+    public void SetMissions(MissionList _missions) { AllMissions = _missions; }
 
     protected InputField InputFieldSomersaultPosition;
     protected InputField InputFieldTiltPosition;
@@ -53,40 +56,59 @@ public class MissionManager : MonoBehaviour
 
     private GameManager gameManager;
 
-    float TwistSpeed = 0;
-    float HorizontalSpeed = 0;
-    float VerticalSpeed = 0;
-    float Duration = 0;
 
-    private int currentMission = 0;
+    public int Level { get; protected set; } = -1;
+    public void SetLevel(int _level) { Level = _level; }
+    public int SubLevel { get; protected set; } = -1;
+    public void SetSubLevel(int _subLevel) { SubLevel = _subLevel; }
+    protected int CurrentMissionIndex = -1;
+    public bool HasActiveMission { get { return CurrentMissionIndex >= 0; } }
     public Result MissionResult { get; protected set; } = Result.NOT_APPLICABLE;
+
 
     void Start()
     {
         gameManager = ToolBox.GetInstance().GetManager<GameManager>();
     }
 
+    public void UnloadMission()
+    {
+        Level = -1;
+        SubLevel = -1;
+        CurrentMissionIndex = -1;
+    }
 
-    public void ShowCurrentMission() {
+    public void SetAndShowCurrentMission()
+    {
+        SetCurrentMission();
+        ShowCurrentMission();
+    }
 
-        if (gameManager.numMission > 0)
+    public void SetCurrentMission()
+    {
+        if (Level < 0 || SubLevel < 0) return;
+
+        for (int i = 0; i < AllMissions.count; i++)
         {
-            InformationBandAnimator.Play("Panel In");
-
-            for (int i = 0; i < gameManager.listMission.count; i++)
+            if (AllMissions.missions[i].Level == Level)
             {
-                if (gameManager.listMission.missions[i].Level == gameManager.numLevel)
-                {
-                    currentMission = i + gameManager.numMission - 1;
-                    InformationBandText.text = gameManager.listMission.missions[currentMission].Name;
-                    CheckParameterOnOff(currentMission);
-                    break;
-                }
+                CurrentMissionIndex = i + SubLevel - 1;  // 1-indexed!
+                InformationBandText.text = AllMissions.missions[CurrentMissionIndex].Name;
+                CheckParameterOnOff();
+                break;
             }
         }
     }
 
-    void CheckParameterOnOff(int _n)
+    public void ShowCurrentMission() {
+        if (HasActiveMission)
+        {
+            InformationBandAnimator.Play("Panel In");
+            IsBandShown = true;
+        }
+    }
+
+    void CheckParameterOnOff()
     {
         void ManageInputField(bool keepEnabled, InputField field)
         {
@@ -96,7 +118,7 @@ public class MissionManager : MonoBehaviour
             field.image.color = Color.blue;
         }
 
-        Buttons btn = gameManager.listMission.missions[_n].disableButton;
+        Buttons btn = AllMissions.missions[CurrentMissionIndex].disableButton;
 
         ManageInputField(btn.Salto, InputFieldSomersaultPosition);
         ManageInputField(btn.SaltoVelocity, InputFieldSomersaultSpeed);
@@ -113,12 +135,13 @@ public class MissionManager : MonoBehaviour
 
     public void CheckMissionResult()
     {
-        TwistSpeed = float.Parse(InputFieldTwistSpeed.text, NumberStyles.Number, CultureInfo.InvariantCulture);
-        HorizontalSpeed = float.Parse(InputFieldHorizontalSpeed.text, NumberStyles.Number, CultureInfo.InvariantCulture);
-        VerticalSpeed = float.Parse(InputFieldVerticalSpeed.text, NumberStyles.Number, CultureInfo.InvariantCulture);
-        Duration = float.Parse(InputFieldDuration.text, NumberStyles.Number, CultureInfo.InvariantCulture);
 
-        MissionInfo mission = gameManager.listMission.missions[currentMission];
+
+        if (CurrentMissionIndex < 0) return;
+
+        var HorizontalSpeed = float.Parse(InputFieldHorizontalSpeed.text, NumberStyles.Number, CultureInfo.InvariantCulture);
+
+        MissionInfo mission = AllMissions.missions[CurrentMissionIndex];
 
         var _minAcceptedDistance = mission.goal.Distance[0];
         var _maxAcceptedDistance = mission.goal.Distance[1];
@@ -142,37 +165,37 @@ public class MissionManager : MonoBehaviour
 
     void Update()
     {
-        if (gameManager.numMission > 0)
+        if (IsBandShown)
         {
             if (Input.anyKeyDown)
             {
-                gameManager.SetNumberOfMissions(0);
                 InformationBandAnimator.Play("Panel Out");
+                IsBandShown = false;
+                MissionResult = Result.NOT_APPLICABLE;
             }
         }
 
         if (MissionResult != Result.NOT_APPLICABLE)
         {
-                InformationBandAnimator.Play("Panel In");
+            InformationBandAnimator.Play("Panel In");
+            IsBandShown = true;
 
-                if (MissionResult == Result.SUCCESS)
-                {
-                    InformationBandText.text = "Succès";
-                    MissionResult = Result.NOT_APPLICABLE;
-                    gameManager.SetNumberOfMissions(gameManager.numMission + 1);
-                    // TODO: Launch next mission if requested
-                }
-                else
-                {
-                    string txt = "Désolé, vous n’avez pas atteint l’objectif avec une précision suffisante.\n";
-                    string hints = null;
+            if (MissionResult == Result.SUCCESS)
+            {
+                InformationBandText.text = "Succès";
+                MissionResult = Result.NOT_APPLICABLE;
+                // TODO: Launch next mission if requested
+            }
+            else
+            {
+                string txt = "Désolé, vous n’avez pas atteint l’objectif avec une précision suffisante.\n";
+                string hints = null;
 
-                    if (gameManager.listMission.missions[currentMission].Hint != null)
-                        hints = gameManager.listMission.missions[currentMission].Hint;
+                if (AllMissions.missions[CurrentMissionIndex].Hint != null)
+                    hints = AllMissions.missions[CurrentMissionIndex].Hint;
 
-                    InformationBandText.text = txt + hints;
-                }
-
+                InformationBandText.text = txt + hints;
+            }
         }
     }
 }

@@ -10,18 +10,25 @@ public class MissionName : MonoBehaviour
 
     public GameObject[] MissionMenu;
 
+    protected MissionManager missionManager;
+
+    void Start()
+    {
+        missionManager = ToolBox.GetInstance().GetManager<MissionManager>();
+    }
+
     public void SetMissionName(int _level)
     {
         int n = 0;
         for (int i = 0; i < 6; i++)
             MissionMenu[i].SetActive(true);
 
-        for (int i =0; i < ToolBox.GetInstance().GetManager<GameManager>().listMission.count; i++)
+        for (int i =0; i < missionManager.AllMissions.count; i++)
         {
-            if (ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[i].Level == _level)
+            if (missionManager.AllMissions.missions[i].Level == _level)
             {
-                nMission[n].text = ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[i].Name;
-                hMission[n].text = ToolBox.GetInstance().GetManager<GameManager>().listMission.missions[i].Name;
+                nMission[n].text = missionManager.AllMissions.missions[i].Name;
+                hMission[n].text = missionManager.AllMissions.missions[i].Name;
                 n++;
             }
         }
@@ -32,11 +39,11 @@ public class MissionName : MonoBehaviour
             MissionMenu[i + n].SetActive(false);
         }
 
-        ToolBox.GetInstance().GetManager<GameManager>().numLevel = _level;
+        missionManager.SetLevel(_level);
     }
 
     public void SetMission(int num)
     {
-        ToolBox.GetInstance().GetManager<GameManager>().SetNumberOfMissions(num);
+        missionManager.SetSubLevel(num);
     }
 }

@@ -1,12 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using Crosstales.FB;
 using System.Globalization;
-using System.Threading;
 
 
 [System.Serializable]
@@ -133,23 +130,21 @@ public class ConditionInfo
 
 public class GameManager : MonoBehaviour
 {
+    protected MissionManager missionManager;
     public MissionInfo mission;
 
 	public string pathDataFiles;
 	public string pathUserDocumentsFiles;
 	public string pathUserSystemFiles;
 
-	public ConditionList listCondition;
-    public MissionList listMission;
-
-    public int numMission { get; protected set; } = 0;
-    public void SetNumberOfMissions(int _value) { numMission = _value; }
-    public int numLevel = 0;
+    public ConditionList listCondition;
 
 	string conditionJsonFileName;				// Répertoire et nom du fichier des conditions
 
 	private void Start()
     {
+        missionManager = ToolBox.GetInstance().GetManager<MissionManager>();
+
         System.Globalization.NumberFormatInfo nfi = new System.Globalization.NumberFormatInfo();
         nfi.NumberDecimalSeparator = ".";
         System.Globalization.CultureInfo ci = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
@@ -466,7 +461,7 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
-        listMission = JsonUtility.FromJson<MissionList>(dataAsJson);
+        missionManager.SetMissions(JsonUtility.FromJson<MissionList>(dataAsJson));
 
         return true;
     }
