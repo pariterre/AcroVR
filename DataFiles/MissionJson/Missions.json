@@ -7,21 +7,21 @@
 			"goal": {
 				"Distance": [1.8, 2.2]
 			},
-			"solution": {
-				"HorizontalVelocity": [2.0]
+			"constraints": {
+				"HorizontalSpeed": [2.0]
 			},
 			"maxActions": 1,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": false,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": false,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": true,
+				"HorizontalSpeed": true,
 				"VerticalPosition": false,
-				"VerticalVelocity": false,
+				"VerticalSpeed": false,
 				"Duration": false
 			},
 			"Condition": 0
@@ -32,21 +32,21 @@
 			"goal": {
 				"Distance": [4.5, 5.5]
 			},
-			"solution": {
-				"HorizontalVelocity": [4.5 , 5.5] 
+			"constraints": {
+				"HorizontalSpeed": [4.5 , 5.5] 
 			},
 			"maxActions": 1,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": false,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": false,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": true,
+				"HorizontalSpeed": true,
 				"VerticalPosition": false,
-				"VerticalVelocity": false,
+				"VerticalSpeed": false,
 				"Duration": false
 			},
 			"Condition": 0,
@@ -58,22 +58,22 @@
 			"goal": {
 				"Distance": [5.4, 6.6]
 			},
-			"solution": {
-				"HorizontalVelocity": [4.0],
+			"constraints": {
+				"HorizontalSpeed": [4.0],
 				"Duration": [1.35 , 1.65]
 			},
 			"maxActions": 2,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": false,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": false,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": true,
+				"HorizontalSpeed": true,
 				"VerticalPosition": false,
-				"VerticalVelocity": false,
+				"VerticalSpeed": false,
 				"Duration": false
 			},
 			"Condition": 0,
@@ -85,21 +85,21 @@
 			"goal": {
 				"Duration": [0.9, 1.1]
 			},
-			"solution": {
-				"VerticalVelocity": [5.0]
+			"constraints": {
+				"VerticalSpeed": [5.0]
 			},
 			"maxActions": 1,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": false,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": false,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": false,
+				"HorizontalSpeed": false,
 				"VerticalPosition": false,
-				"VerticalVelocity": true,
+				"VerticalSpeed": true,
 				"Duration": false
 			},
 			"Condition": 1,
@@ -111,21 +111,21 @@
 			"goal": {
 				"Duration": [2.7, 3.3]
 			},
-			"solution": {
-				"VerticalVelocity": [13.2 , 16.2]
+			"constraints": {
+				"VerticalSpeed": [13.2 , 16.2]
 			},
 			"maxActions": 1,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": false,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": false,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": false,
+				"HorizontalSpeed": false,
 				"VerticalPosition": false,
-				"VerticalVelocity": true,
+				"VerticalSpeed": true,
 				"Duration": false
 			},
 			"Condition": 1,
@@ -137,21 +137,21 @@
 			"goal": {
 				"Distance": [2.7, 3.3]
 			},
-			"solution": {
-				"VerticalVelocity": [7.3 , 8.0]
+			"constraints": {
+				"VerticalSpeed": [7.3 , 8.0]
 			},
 			"maxActions": 1,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": false,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": false,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": false,
+				"HorizontalSpeed": false,
 				"VerticalPosition": false,
-				"VerticalVelocity": true,
+				"VerticalSpeed": true,
 				"Duration": false
 			},
 			"Condition": 1,
@@ -164,22 +164,22 @@
 				"Distance": [4.5, 5.5],
 				"Duration": [0.9, 1.1]
 			},
-			"solution": {
-				"VerticalVelocity": [5.0],
-				"HorizontalVelocity": [5.0]
+			"constraints": {
+				"VerticalSpeed": [5.0],
+				"HorizontalSpeed": [5.0]
 			},
 			"maxActions": 2,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": false,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": false,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": true,
+				"HorizontalSpeed": true,
 				"VerticalPosition": false,
-				"VerticalVelocity": true,
+				"VerticalSpeed": true,
 				"Duration": false
 			},
 			"Condition": 1
@@ -191,22 +191,22 @@
 				"Distance": [9.0, 11.0],
 				"Duration": [1.8, 2.2]
 			},
-			"solution": {
-				"HorizontalVelocity": [4.1 , 6.1],
-				"VerticalVelocity": [8.8 , 10.8]
+			"constraints": {
+				"HorizontalSpeed": [4.1 , 6.1],
+				"VerticalSpeed": [8.8 , 10.8]
 			},
 			"maxActions": 2,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": false,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": false,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": true,
+				"HorizontalSpeed": true,
 				"VerticalPosition": false,
-				"VerticalVelocity": true,
+				"VerticalSpeed": true,
 				"Duration": false
 			},
 			"Condition": 1,
@@ -219,22 +219,22 @@
 				"Distance": [4.5, 5.5],
 				"Duration": [1.8, 2.2]
 			},
-			"solution": {
-				"HorizontalVelocity": [2.0 , 3.1],
-				"VerticalVelocity": [8.8 , 10.8]
+			"constraints": {
+				"HorizontalSpeed": [2.0 , 3.1],
+				"VerticalSpeed": [8.8 , 10.8]
 			},
 			"maxActions": 2,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": false,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": false,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": true,
+				"HorizontalSpeed": true,
 				"VerticalPosition": false,
-				"VerticalVelocity": true,
+				"VerticalSpeed": true,
 				"Duration": false
 			},
 			"Condition": 1,
@@ -247,22 +247,22 @@
 				"Distance": [4.5, 5.5],
 				"Duration": [0.9, 1.1]
 			},
-			"solution": {
-				"HorizontalVelocity": [4.1 , 6.1],
-				"VerticalVelocity": [4.4 , 5.4]
+			"constraints": {
+				"HorizontalSpeed": [4.1 , 6.1],
+				"VerticalSpeed": [4.4 , 5.4]
 			},
 			"maxActions": 2,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": false,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": false,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": true,
+				"HorizontalSpeed": true,
 				"VerticalPosition": false,
-				"VerticalVelocity": true,
+				"VerticalSpeed": true,
 				"Duration": false
 			},
 			"Condition": 1,
@@ -275,22 +275,22 @@
 				"Distance": [3.6, 4.4],
 				"VerticalDistance": [2.7, 3.3]
 			},
-			"solution": {
-				"HorizontalVelocity": [2.4, 2.7],
-				"VerticalVelocity": [7.3, 8.0]
+			"constraints": {
+				"HorizontalSpeed": [2.4, 2.7],
+				"VerticalSpeed": [7.3, 8.0]
 			},
 			"maxActions": 2,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": false,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": false,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": true,
+				"HorizontalSpeed": true,
 				"VerticalPosition": false,
-				"VerticalVelocity": true,
+				"VerticalSpeed": true,
 				"Duration": false
 			},
 			"Condition": 1,
@@ -300,24 +300,24 @@
 			"Level": 4,
 			"Name": "4.1 Dans la case vrille/seconde, entrez 1, puis entrez 5 s comme temps de simulation. Lancez et observez.",
 			"goal": {
-				"Vrille" : [4.5, 5.5]
+				"Twist" : [4.5, 5.5]
 			},
-			"solution": {
-				"VrilleVelocity": [1.0],
+			"constraints": {
+				"TwistSpeed": [1.0],
 				"Duration": [5.0]
 			},
 			"maxActions": 2,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": false,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": true,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": false,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": true,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": false,
+				"HorizontalSpeed": false,
 				"VerticalPosition": false,
-				"VerticalVelocity": false,
+				"VerticalSpeed": false,
 				"Duration": true
 			},
 			"Condition": 0
@@ -326,24 +326,24 @@
 			"Level": 4,
 			"Name": "4.2 Dans la case salto/seconde, entrez 1, puis entrez 5 s comme temps de simulation. Lancez et observez.",
 			"goal": {
-				"Salto" : [4.5, 5.5]
+				"Somersault" : [4.5, 5.5]
 			},
-			"solution": {
-				"SaltoVelocity": [1.0],
+			"constraints": {
+				"SomersaultSpeed": [1.0],
 				"Duration": [5.0]
 			},
 			"maxActions": 2,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": true,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": true,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": false,
+				"HorizontalSpeed": false,
 				"VerticalPosition": false,
-				"VerticalVelocity": false,
+				"VerticalSpeed": false,
 				"Duration": true
 			},
 			"Condition": 0
@@ -352,24 +352,24 @@
 			"Level": 4,
 			"Name": "4.3 Entrez la vitesse de vrille nécessaire pour réaliser 10 vrilles en 5 s.",
 			"goal": {
-				"Salto" : [4.5, 5.5]
+				"Somersault" : [4.5, 5.5]
 			},
-			"solution": {
-				"SaltoVelocity": [1.0],
+			"constraints": {
+				"SomersaultSpeed": [1.0],
 				"Duration": [5.0]
 			},
 			"maxActions": 2,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": true,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": true,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": false,
+				"HorizontalSpeed": false,
 				"VerticalPosition": false,
-				"VerticalVelocity": false,
+				"VerticalSpeed": false,
 				"Duration": true
 			},
 			"Condition": 0
@@ -378,24 +378,24 @@
 			"Level": 4,
 			"Name": "4.4 Entrez le paramètre permettant de réaliser 10 saltos avec une vitesse de 1 salto/seconde.",
 			"goal": {
-				"Salto" : [9, 11]
+				"Somersault" : [9, 11]
 			},
-			"solution": {
-				"SaltoVelocity": [1.0],
+			"constraints": {
+				"SomersaultSpeed": [1.0],
 				"Duration": [9, 11]
 			},
 			"maxActions": 2,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": true,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": true,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": false,
+				"HorizontalSpeed": false,
 				"VerticalPosition": false,
-				"VerticalVelocity": false,
+				"VerticalSpeed": false,
 				"Duration": true
 			},
 			"Condition": 0,
@@ -405,10 +405,10 @@
 			"Level": 5,
 			"Name": "5.1 Entrez 1 salto/seconde. Ensuite, dans le graphique « Hanche_Flexion », déplacez le 2e noeud (à 1s) jusqu’à 130°. Vous devriez avoir une courbe qui monte progressivement de 0 à 130° en 1 s. Lancez la simulation et observez l’effet sur le nombre de saltos.",
 			"goal": {
-				"Salto" : [1, 1.7]
+				"Somersault" : [1, 1.7]
 			},
-			"solution": {
-				"SaltoVelocity": [1.0],
+			"constraints": {
+				"SomersaultSpeed": [1.0],
 				"HancheFlexion": {
 					"Name": "Hip_Flexion",
 					"T": [0,1],
@@ -416,17 +416,17 @@
 				}
 			},
 			"maxActions": 2,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": true,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": true,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": false,
+				"HorizontalSpeed": false,
 				"VerticalPosition": false,
-				"VerticalVelocity": false,
+				"VerticalSpeed": false,
 				"Duration": false
 			},
 			"Condition": 0,
@@ -440,10 +440,10 @@
 			"Level": 5,
 			"Name": "5.2 L’effet observé en 5.1 est causé par le fait que le moment d’inertie sur l’axe médio-latéral diminue alors que le moment angulaire reste le même. La vitesse angulaire augmente donc. Déplacez maintenant le premier nœud (à 0 s) jusqu’à 90°. Déplacez ensuite le deuxième nœud (à 1 s) afin d’obtenir un nombre de salto inférieur à 1 en gardant une vitesse de salto initiale de 1 salto/seconde.",
 			"goal": {
-				"Salto" : [0, 1]
+				"Somersault" : [0, 1]
 			},
-			"solution": {
-				"SaltoVelocity": [1.0],
+			"constraints": {
+				"SomersaultSpeed": [1.0],
 				"HancheFlexion": {
 					"Name": "Hip_Flexion",
 					"T": [0,1],
@@ -451,17 +451,17 @@
 				}
 			},
 			"maxActions": 2,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": true,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": true,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": false,
+				"HorizontalSpeed": false,
 				"VerticalPosition": false,
-				"VerticalVelocity": false,
+				"VerticalSpeed": false,
 				"Duration": false
 			},
 			"Condition": 0,
@@ -476,10 +476,10 @@
 			"Level": 5,
 			"Name": "5.3 Placez les deux nœuds de façon à obtenir 1 salto à la fin de la simulation, en gardant la vitesse de salto initiale à 1 salto/seconde.",
 			"goal": {
-				"Salto" : [0.9 , 1.1]
+				"Somersault" : [0.9 , 1.1]
 			},
-			"solution": {
-				"SaltoVelocity": [1.0],
+			"constraints": {
+				"SomersaultSpeed": [1.0],
 				"HancheFlexion": {
 					"Name": "Hip_Flexion",
 					"T": [0,1],
@@ -487,17 +487,17 @@
 				}
 			},
 			"maxActions": 2,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": true,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": false,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": true,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": false,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": false,
+				"HorizontalSpeed": false,
 				"VerticalPosition": false,
-				"VerticalVelocity": false,
+				"VerticalSpeed": false,
 				"Duration": false
 			},
 			"Condition": 0,
@@ -512,10 +512,10 @@
 			"Level": 5,
 			"Name": "5.4   Les mêmes principes s’appliquent pour les vrilles. Entrez 1 vrille/seconde. Ensuite, dans le graphique « Bras_Gauche_Abduction », déplacez les nœuds de façon à faire plus d’une vrille durant la simulation. Attention : après avoir déplacé les nœuds, pesez sur le bouton « SYM » afin de copier le mouvement sur le bras droit (vous allez produire des mouvements asymétriques plus loin).",
 			"goal": {
-				"Vrille" : [1 , 2]
+				"Twist" : [1 , 2]
 			},
-			"solution": {
-				"VrilleVelocity": [1.0],
+			"constraints": {
+				"TwistSpeed": [1.0],
 				"BrasGaucheAbduction": {
 					"Name": "Left_Arm_Abduction",
 					"T": [0,1],
@@ -528,17 +528,17 @@
 				}
 			},
 			"maxActions": 3,
-			"disableButton":{	
-				"Salto": false,
-				"SaltoVelocity": false,
-				"Inclinaison": false,
-				"InclinaisonVelocity": false,
-				"Vrille": false,
-				"VrilleVelocity": true,
+			"enabledInputs":{	
+				"Somersault": false,
+				"SomersaultSpeed": false,
+				"Tilt": false,
+				"TiltSpeed": false,
+				"Twist": false,
+				"TwistSpeed": true,
 				"HorizontalPosition": false,
-				"HorizontalVelocity": false,
+				"HorizontalSpeed": false,
 				"VerticalPosition": false,
-				"VerticalVelocity": false,
+				"VerticalSpeed": false,
 				"Duration": false
 			},
 			"Condition": 0,

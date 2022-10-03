@@ -118,19 +118,19 @@ public class MissionManager : MonoBehaviour
             field.image.color = Color.blue;
         }
 
-        Buttons btn = AllMissions.missions[CurrentMissionIndex].disableButton;
+        Buttons inputs = AllMissions.missions[CurrentMissionIndex].enabledInputs;
 
-        ManageInputField(btn.Salto, InputFieldSomersaultPosition);
-        ManageInputField(btn.SaltoVelocity, InputFieldSomersaultSpeed);
-        ManageInputField(btn.Inclinaison, InputFieldTiltPosition);
-        ManageInputField(btn.InclinaisonVelocity, InputFieldTiltSpeed);
-        ManageInputField(btn.Vrille, InputFieldTwistPosition);
-        ManageInputField(btn.VrilleVelocity, InputFieldTwistSpeed);
-        ManageInputField(btn.HorizontalPosition, InputFieldHorizontalPosition);
-        ManageInputField(btn.HorizontalVelocity, InputFieldHorizontalSpeed);
-        ManageInputField(btn.VerticalPosition, InputFieldVerticalPosition);
-        ManageInputField(btn.VerticalVelocity, InputFieldVerticalSpeed);
-        ManageInputField(btn.Duration, InputFieldDuration);
+        ManageInputField(inputs.Somersault, InputFieldSomersaultPosition);
+        ManageInputField(inputs.SomersaultSpeed, InputFieldSomersaultSpeed);
+        ManageInputField(inputs.Tilt, InputFieldTiltPosition);
+        ManageInputField(inputs.TiltSpeed, InputFieldTiltSpeed);
+        ManageInputField(inputs.Twist, InputFieldTwistPosition);
+        ManageInputField(inputs.TwistSpeed, InputFieldTwistSpeed);
+        ManageInputField(inputs.HorizontalPosition, InputFieldHorizontalPosition);
+        ManageInputField(inputs.HorizontalSpeed, InputFieldHorizontalSpeed);
+        ManageInputField(inputs.VerticalPosition, InputFieldVerticalPosition);
+        ManageInputField(inputs.VerticalSpeed, InputFieldVerticalSpeed);
+        ManageInputField(inputs.Duration, InputFieldDuration);
     }
 
     public void CheckMissionResult()
@@ -147,8 +147,8 @@ public class MissionManager : MonoBehaviour
         var _maxAcceptedDistance = mission.goal.Distance[1];
         var _resultHorizontalDistance = CheckMinMax(HorizontalSpeed, _minAcceptedDistance, _maxAcceptedDistance) ? Result.SUCCESS : Result.FAIL;
 
-        var _minAcceptedSpeed = mission.solution.HorizontalVelocity[0];
-        var _maxAcceptedSpeed = mission.solution.HorizontalVelocity.Length > 1 ? mission.solution.HorizontalVelocity[1] : 999;
+        var _minAcceptedSpeed = mission.constraints.HorizontalSpeed[0];
+        var _maxAcceptedSpeed = mission.constraints.HorizontalSpeed.Length > 1 ? mission.constraints.HorizontalSpeed[1] : 999;
         var _resultHorizontalSpeed = CheckMinMax(HorizontalSpeed, _minAcceptedSpeed, _maxAcceptedSpeed) ? Result.SUCCESS : Result.FAIL;
 
         MissionResult = 
@@ -194,7 +194,7 @@ public class MissionManager : MonoBehaviour
                 if (AllMissions.missions[CurrentMissionIndex].Hint != null)
                     hints = AllMissions.missions[CurrentMissionIndex].Hint;
 
-                InformationBandText.text = txt + hints;
+                InformationBandText.text = txt + hints + "" + "Veuillez réessayer";
             }
         }
     }

@@ -17,31 +17,43 @@ public struct Goal
 }
 
 [System.Serializable]
-public struct Solution
+public struct SolutionConstraints
 {
-    public float[] HorizontalVelocity;
-    public float[] VerticalVelocity;
-    public float[] VrilleVelocity;
+    public float[] SomersaultPosition;
+    public float[] SomersaultSpeed;
+    public float[] TwistPosition;
+    public float[] TwistSpeed;
+    public float[] TiltPosition;
+    public float[] TiltSpeed;
+
+    public float[] HorizontalPosition;
+    public float[] HorizontalSpeed;
+    public float[] VerticalPosition;
+    public float[] VerticalSpeed;
+
     public float[] Duration;
 
-    public MissionNodes HancheFlexion;
-    public MissionNodes BrasGaucheAbduction;
-    public MissionNodes BrasDroitAbduction;
+    public MissionNodes HipFlexion;
+    public MissionNodes KneeFlexion;
+    public MissionNodes RightArmFlexion;
+    public MissionNodes RightArmAbduction;
+    public MissionNodes LeftArmFlexion;
+    public MissionNodes LeftArmAbduction;
 }
 
 [System.Serializable]
 public struct Buttons
 {
-    public bool Salto;
-    public bool SaltoVelocity;
-    public bool Inclinaison;
-    public bool InclinaisonVelocity;
-    public bool Vrille;
-    public bool VrilleVelocity;
+    public bool Somersault;
+    public bool SomersaultSpeed;
+    public bool Tilt;
+    public bool TiltSpeed;
+    public bool Twist;
+    public bool TwistSpeed;
     public bool HorizontalPosition;
-    public bool HorizontalVelocity;
+    public bool HorizontalSpeed;
     public bool VerticalPosition;
-    public bool VerticalVelocity;
+    public bool VerticalSpeed;
     public bool Duration;
 }
 
@@ -51,9 +63,9 @@ public struct MissionInfo
     public int Level;
     public string Name;
     public Goal goal;
-    public Solution solution;
+    public SolutionConstraints constraints;
     public int maxActions;
-    public Buttons disableButton;
+    public Buttons enabledInputs;
     public int Condition;
     public string Hint;
 
