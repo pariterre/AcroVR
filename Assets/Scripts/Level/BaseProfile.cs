@@ -12,6 +12,7 @@ public class BaseProfile : LevelBase
     protected DrawManager drawManager;
     protected AniGraphManager aniGraphManager;
     protected UIManager uiManager;
+    protected MissionManager missionManager;
 
 
     public GameObject SaveLoadCompareMenu;
@@ -62,6 +63,51 @@ public class BaseProfile : LevelBase
 
     public override void CreateLevel()
     {
+    }
+
+    void Start()
+    {
+        levelManager = ToolBox.GetInstance().GetManager<LevelManager>();
+        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        aniGraphManager = ToolBox.GetInstance().GetManager<AniGraphManager>();
+        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
+        missionManager = ToolBox.GetInstance().GetManager<MissionManager>();
+
+        // Give some handler to relevant scripts
+        drawManager.SetGround(Floor);
+        if (SaveLoadCompareMenu != null)
+            SaveLoadCompareMenu.SetActive(gameManager.numMission == 0);
+        PrepareMissionManager();
+    }
+
+    protected void PrepareMissionManager()
+    {
+        missionManager.SetInformationBand(TutorialObject);
+        missionManager.SetAllInputField(
+            somersaultPosition, tiltPosition, twistPosition, horizontalPosition, verticalPosition,
+            somersaultSpeed, tiltSpeed, twistSpeed, horizontalSpeed, verticalSpeed,
+            simulationDuration
+        );
+        if (TutorialObject != null)
+            missionManager.ShowCurrentMission();
+    }
+
+    public void CheckMissionResult()
+    {
+        missionManager.CheckMissionResult();
+    }
+
+    private void Update()
+    {
+        if (aniGraphManager.isTutorial == 1)
+        {
+            if (Input.anyKeyDown)
+            {
+                aniGraphManager.isTutorial++;
+                TutorialObject.GetComponent<Animator>().Play("Panel Out");
+            }
+        }
     }
 
     public void ToggleCameraFirstOrThird(){
@@ -655,32 +701,6 @@ public class BaseProfile : LevelBase
                     "2. Chaque épaule peut être cliquée deux fois (x et y)\n" +
                     "3. Shift + Bouton gauche de la souris: faire pivoter l'avatar 3D\n" +
                     "4. Glisser la souris: modifier la valeur du noeud";
-            }
-        }
-    }
-
-    void Start()
-    {
-        levelManager = ToolBox.GetInstance().GetManager<LevelManager>();
-        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
-        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
-        aniGraphManager = ToolBox.GetInstance().GetManager<AniGraphManager>();
-        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
-
-        // Give some handler to relevant scripts
-        drawManager.SetGround(Floor);
-        if (SaveLoadCompareMenu != null)
-            SaveLoadCompareMenu.SetActive(gameManager.numMission == 0);
-    }
-
-    private void Update()
-    {
-        if(aniGraphManager.isTutorial == 1)
-        {
-            if(Input.anyKeyDown)
-            {
-                aniGraphManager.isTutorial++;
-                TutorialObject.GetComponent<Animator>().Play("Panel Out");
             }
         }
     }

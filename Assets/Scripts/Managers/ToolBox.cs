@@ -48,7 +48,7 @@ public class ToolBox : MonoBehaviour {
         CreateManager<DrawManager>();
         CreateManager<LevelManager>();
         CreateManager<UIManager>();
-        //        CreateManager<LoadSceneManager>();
+        CreateManager<MissionManager>();
     }
 
     /// Create GameObject. Add new Managers in CreateAllManagers()

@@ -12,23 +12,46 @@ public enum Result
 
 public class MissionManager : MonoBehaviour
 {
-    public GameObject MissionName;
+    protected Animator InformationBandAnimator;
+    protected Text InformationBandText;
+    public void SetInformationBand(GameObject _tutorial)
+    {
+        if (_tutorial == null) return;
 
-    public GameObject PanelSomersaultPosition;
-    public GameObject PanelTiltPosition;
-    public GameObject PanelTwistPosition;
-    public GameObject PanelHorizontalPosition;
-    public GameObject PanelVerticalPosition;
-    public GameObject PanelSomersaultSpeed;
-    public GameObject PanelTiltSpeed;
-    public GameObject PanelTwistSpeed;
-    public GameObject PanelHorizontalSpeed;
-    public GameObject PanelVerticalSpeed;
-    public GameObject PanelDuration;
+        InformationBandAnimator = _tutorial.GetComponent<Animator>();
+        InformationBandText = _tutorial.GetComponentInChildren<Text>();
+    }
+
+    protected InputField InputFieldSomersaultPosition;
+    protected InputField InputFieldTiltPosition;
+    protected InputField InputFieldTwistPosition;
+    protected InputField InputFieldHorizontalPosition;
+    protected InputField InputFieldVerticalPosition;
+    protected InputField InputFieldSomersaultSpeed;
+    protected InputField InputFieldTiltSpeed;
+    protected InputField InputFieldTwistSpeed;
+    protected InputField InputFieldHorizontalSpeed;
+    protected InputField InputFieldVerticalSpeed;
+    protected InputField InputFieldDuration;
+    public void SetAllInputField(
+        InputField _somersaultPosition, InputField _tiltPosition, InputField _twistPosition, InputField _horizontalPosition, InputField _verticalPosition,
+        InputField _somersaultSpeed, InputField _tiltSpeed, InputField _twistSpeed, InputField _horizontalSpeed, InputField _verticalSpeed, InputField _duration
+    )
+    {
+        InputFieldSomersaultPosition = _somersaultPosition;
+        InputFieldTiltPosition = _tiltPosition;
+        InputFieldTwistPosition = _twistPosition;
+        InputFieldHorizontalPosition = _horizontalPosition;
+        InputFieldVerticalPosition = _verticalPosition;
+        InputFieldSomersaultSpeed = _somersaultSpeed;
+        InputFieldTiltSpeed = _tiltSpeed;
+        InputFieldTwistSpeed = _twistSpeed;
+        InputFieldHorizontalSpeed = _horizontalSpeed;
+        InputFieldVerticalSpeed = _verticalSpeed;
+        InputFieldDuration = _duration;
+    }
 
     private GameManager gameManager;
-
-    public Slider slider;
 
     float TwistSpeed = 0;
     float HorizontalSpeed = 0;
@@ -36,29 +59,26 @@ public class MissionManager : MonoBehaviour
     float Duration = 0;
 
     private int currentMission = 0;
-    private int numberOfMissions = 0;
     public Result MissionResult { get; protected set; } = Result.NOT_APPLICABLE;
 
     void Start()
     {
         gameManager = ToolBox.GetInstance().GetManager<GameManager>();
-
-        numberOfMissions = gameManager.numMission;
-        ShowCurrentMission();
     }
 
-    void ShowCurrentMission() {
 
-        if (numberOfMissions > 0)
+    public void ShowCurrentMission() {
+
+        if (gameManager.numMission > 0)
         {
-            MissionName.GetComponent<Animator>().Play("Panel In");
+            InformationBandAnimator.Play("Panel In");
 
             for (int i = 0; i < gameManager.listMission.count; i++)
             {
                 if (gameManager.listMission.missions[i].Level == gameManager.numLevel)
                 {
-                    currentMission = i + numberOfMissions - 1;
-                    MissionName.GetComponentInChildren<Text>().text = gameManager.listMission.missions[currentMission].Name;
+                    currentMission = i + gameManager.numMission - 1;
+                    InformationBandText.text = gameManager.listMission.missions[currentMission].Name;
                     CheckParameterOnOff(currentMission);
                     break;
                 }
@@ -78,27 +98,25 @@ public class MissionManager : MonoBehaviour
 
         Buttons btn = gameManager.listMission.missions[_n].disableButton;
 
-        ManageInputField(btn.Salto, PanelSomersaultPosition.GetComponent<InputField>());
-        ManageInputField(btn.SaltoVelocity, PanelSomersaultSpeed.GetComponent<InputField>());
-        ManageInputField(btn.Inclinaison, PanelTiltPosition.GetComponent<InputField>());
-        ManageInputField(btn.InclinaisonVelocity, PanelTiltSpeed.GetComponent<InputField>());
-        ManageInputField(btn.Vrille, PanelTwistPosition.GetComponent<InputField>());
-        ManageInputField(btn.VrilleVelocity, PanelTwistSpeed.GetComponent<InputField>());
-        ManageInputField(btn.HorizontalPosition, PanelHorizontalPosition.GetComponent<InputField>());
-        ManageInputField(btn.HorizontalVelocity, PanelHorizontalSpeed.GetComponent<InputField>());
-        ManageInputField(btn.VerticalPosition, PanelVerticalPosition.GetComponent<InputField>());
-        ManageInputField(btn.VerticalVelocity, PanelVerticalSpeed.GetComponent<InputField>());
-        ManageInputField(btn.Duration, PanelDuration.GetComponent<InputField>());
+        ManageInputField(btn.Salto, InputFieldSomersaultPosition);
+        ManageInputField(btn.SaltoVelocity, InputFieldSomersaultSpeed);
+        ManageInputField(btn.Inclinaison, InputFieldTiltPosition);
+        ManageInputField(btn.InclinaisonVelocity, InputFieldTiltSpeed);
+        ManageInputField(btn.Vrille, InputFieldTwistPosition);
+        ManageInputField(btn.VrilleVelocity, InputFieldTwistSpeed);
+        ManageInputField(btn.HorizontalPosition, InputFieldHorizontalPosition);
+        ManageInputField(btn.HorizontalVelocity, InputFieldHorizontalSpeed);
+        ManageInputField(btn.VerticalPosition, InputFieldVerticalPosition);
+        ManageInputField(btn.VerticalVelocity, InputFieldVerticalSpeed);
+        ManageInputField(btn.Duration, InputFieldDuration);
     }
 
     public void CheckMissionResult()
     {
-        if (numberOfMissions == 0) return;
-
-        TwistSpeed = float.Parse(PanelTwistSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
-        HorizontalSpeed = float.Parse(PanelHorizontalSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
-        VerticalSpeed = float.Parse(PanelVerticalSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
-        Duration = float.Parse(PanelDuration.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
+        TwistSpeed = float.Parse(InputFieldTwistSpeed.text, NumberStyles.Number, CultureInfo.InvariantCulture);
+        HorizontalSpeed = float.Parse(InputFieldHorizontalSpeed.text, NumberStyles.Number, CultureInfo.InvariantCulture);
+        VerticalSpeed = float.Parse(InputFieldVerticalSpeed.text, NumberStyles.Number, CultureInfo.InvariantCulture);
+        Duration = float.Parse(InputFieldDuration.text, NumberStyles.Number, CultureInfo.InvariantCulture);
 
         MissionInfo mission = gameManager.listMission.missions[currentMission];
 
@@ -122,12 +140,6 @@ public class MissionManager : MonoBehaviour
         return (input >= min && input <= max);
     }
 
-    IEnumerator WaitThenShowCurrentMission(int time)
-    {
-        yield return new WaitForSeconds(time);
-        ShowCurrentMission();
-    }
-
     void Update()
     {
         if (gameManager.numMission > 0)
@@ -135,22 +147,20 @@ public class MissionManager : MonoBehaviour
             if (Input.anyKeyDown)
             {
                 gameManager.SetNumberOfMissions(0);
-                MissionName.GetComponent<Animator>().Play("Panel Out");
+                InformationBandAnimator.Play("Panel Out");
             }
         }
 
         if (MissionResult != Result.NOT_APPLICABLE)
         {
-            if(slider.value >= ToolBox.GetInstance().GetManager<DrawManager>().numberFrames - 1)
-            {
-                MissionName.GetComponent<Animator>().Play("Panel In");
+                InformationBandAnimator.Play("Panel In");
 
                 if (MissionResult == Result.SUCCESS)
                 {
-                    MissionName.GetComponentInChildren<Text>().text = "Succès";
+                    InformationBandText.text = "Succès";
                     MissionResult = Result.NOT_APPLICABLE;
-                    gameManager.SetNumberOfMissions(numberOfMissions + 1);
-                    StartCoroutine(WaitThenShowCurrentMission(3));
+                    gameManager.SetNumberOfMissions(gameManager.numMission + 1);
+                    // TODO: Launch next mission if requested
                 }
                 else
                 {
@@ -160,10 +170,9 @@ public class MissionManager : MonoBehaviour
                     if (gameManager.listMission.missions[currentMission].Hint != null)
                         hints = gameManager.listMission.missions[currentMission].Hint;
 
-                    MissionName.GetComponentInChildren<Text>().text = txt + hints;
+                    InformationBandText.text = txt + hints;
                 }
 
-            }
         }
     }
 }
