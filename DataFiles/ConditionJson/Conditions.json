@@ -4,7 +4,7 @@
         {
             "name": "Sans condition",
             "Gravity": false,
-            "HasFloor": true,
+            "HasFloor": false,
             "SomersaultPosition": 0.0,
             "TiltPosition": 0.0,
             "TwistPosition": 0.0,

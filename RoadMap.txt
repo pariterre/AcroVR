@@ -1,5 +1,5 @@
 Known bugs:
-    - The stopping conditions using Tags is pretty random	
+    - The floor stopping conditions using Tags is pretty random	
 
 
 

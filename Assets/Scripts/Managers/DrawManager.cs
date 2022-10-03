@@ -397,7 +397,7 @@ public class DrawManager : MonoBehaviour
     {
         Vector3 _scaling = avatar.transform.localScale;
         var _hipTranslations = Double.IsNaN(InitialFeetHeight) ? new Vector3(0f, 0f, 0f) : new Vector3(0f, -InitialFeetHeight * _scaling.y, 0f);
-        var _hipRotations = new Vector3(10f, 0f, 0f);
+        var _hipRotations = new Vector3(0f, 0f, 0f);
         if (IsSimulationMode && qf != null)
         {
             _hipTranslations += new Vector3((float)qf[6] * _scaling.x, (float)qf[8] * _scaling.y, (float)qf[7] * _scaling.z);
