@@ -1,10 +1,16 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameMode : MonoBehaviour
+public enum Result
+{
+    NOT_APPLICABLE,
+    SUCCESS,
+    FAIL,
+}
+
+public class MissionManager : MonoBehaviour
 {
     public GameObject MissionName;
 
@@ -31,7 +37,7 @@ public class GameMode : MonoBehaviour
 
     private int currentMission = 0;
     private int numberOfMissions = 0;
-    private int resultValue = 0;
+    public Result MissionResult { get; protected set; } = Result.NOT_APPLICABLE;
 
     void Start()
     {
@@ -88,6 +94,7 @@ public class GameMode : MonoBehaviour
     public void CheckMissionResult()
     {
         if (numberOfMissions == 0) return;
+
         TwistSpeed = float.Parse(PanelTwistSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
         HorizontalSpeed = float.Parse(PanelHorizontalSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
         VerticalSpeed = float.Parse(PanelVerticalSpeed.GetComponent<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
@@ -95,44 +102,19 @@ public class GameMode : MonoBehaviour
 
         MissionInfo mission = gameManager.listMission.missions[currentMission];
 
-        if(HorizontalSpeed != 0)
-        {
-            float min = 0;
-            float max = 999;
+        var _minAcceptedDistance = mission.goal.Distance[0];
+        var _maxAcceptedDistance = mission.goal.Distance[1];
+        var _resultHorizontalDistance = CheckMinMax(HorizontalSpeed, _minAcceptedDistance, _maxAcceptedDistance) ? Result.SUCCESS : Result.FAIL;
 
-            // Check Input value
-            if (mission.solution.HorizontalVelocity.Length == 1) min = mission.solution.HorizontalVelocity[0];
-            else
-            {
-                min = mission.solution.HorizontalVelocity[0];
-                max = mission.solution.HorizontalVelocity[1];
-            }
+        var _minAcceptedSpeed = mission.solution.HorizontalVelocity[0];
+        var _maxAcceptedSpeed = mission.solution.HorizontalVelocity.Length > 1 ? mission.solution.HorizontalVelocity[1] : 999;
+        var _resultHorizontalSpeed = CheckMinMax(HorizontalSpeed, _minAcceptedSpeed, _maxAcceptedSpeed) ? Result.SUCCESS : Result.FAIL;
 
-            if (CheckMinMax(HorizontalSpeed, min, max))
-            {
-                //Success
-                resultValue = 1;
-            }
-            else
-            {
-                //Fail
-                resultValue = 2;
-            }
-
-            // Check Result distance
-            if(resultValue == 1)
-            {
-                float distance = ToolBox.GetInstance().GetManager<DrawManager>().resultDistance;
-
-                min = mission.goal.Distance[0];
-                max = mission.goal.Distance[1];
-                if (!CheckMinMax(distance, min, max))
-                {
-                    //Fail
-                    resultValue = 2;
-                }
-            }
-        }
+        MissionResult = 
+            _resultHorizontalDistance == Result.SUCCESS 
+                && _resultHorizontalSpeed == Result.SUCCESS 
+            ? Result.SUCCESS 
+            : Result.FAIL;
     }
 
     bool CheckMinMax(float input, float min, float max)
@@ -157,16 +139,16 @@ public class GameMode : MonoBehaviour
             }
         }
 
-        if (resultValue > 0)
+        if (MissionResult != Result.NOT_APPLICABLE)
         {
             if(slider.value >= ToolBox.GetInstance().GetManager<DrawManager>().numberFrames - 1)
             {
                 MissionName.GetComponent<Animator>().Play("Panel In");
 
-                if (resultValue == 1)
+                if (MissionResult == Result.SUCCESS)
                 {
                     MissionName.GetComponentInChildren<Text>().text = "Succès";
-                    resultValue = 0;
+                    MissionResult = Result.NOT_APPLICABLE;
                     gameManager.SetNumberOfMissions(numberOfMissions + 1);
                     StartCoroutine(WaitThenShowCurrentMission(3));
                 }

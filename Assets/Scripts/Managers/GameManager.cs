@@ -142,7 +142,7 @@ public class GameManager : MonoBehaviour
 	public ConditionList listCondition;
     public MissionList listMission;
 
-    public int numMission { get; protected set; }= 0;
+    public int numMission { get; protected set; } = 0;
     public void SetNumberOfMissions(int _value) { numMission = _value; }
     public int numLevel = 0;
 
