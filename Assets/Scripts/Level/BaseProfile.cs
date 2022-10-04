@@ -24,6 +24,7 @@ public class BaseProfile : LevelBase
 
     public GameObject ErrorObject;
     public GameObject TutorialObject;
+    public GameObject MissionBanner;
     public GameObject NodeNameObject;
     protected GameObject CurrentTabContent;
 
@@ -85,15 +86,14 @@ public class BaseProfile : LevelBase
 
     protected void PrepareMissionManager()
     {
-        missionManager.SetInformationBand(TutorialObject);
         missionManager.SetAllInputField(
             somersaultPosition, tiltPosition, twistPosition, horizontalPosition, verticalPosition,
             somersaultSpeed, tiltSpeed, twistSpeed, horizontalSpeed, verticalSpeed,
             simulationDuration
         );
         missionManager.SetupFireworks(fireworks);
-        if (TutorialObject != null)
-            missionManager.SetAndShowCurrentMission();
+        missionManager.SetInformationBanner(MissionBanner);
+        missionManager.SetAndShowCurrentMission();
     }
 
     public void CheckMissionResult()

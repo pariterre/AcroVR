@@ -13,15 +13,15 @@ public enum Result
 
 public class MissionManager : MonoBehaviour
 {
-    public bool IsBandShown { get; protected set; } = false;
-    protected Animator InformationBandAnimator;
-    protected Text InformationBandText;
-    public void SetInformationBand(GameObject _tutorial)
+    public bool IsBannerShown { get; protected set; } = false;
+    protected Animator InformationBannerAnimator;
+    protected Text InformationBannerText;
+    public void SetInformationBanner(GameObject _banner)
     {
-        if (_tutorial == null) return;
+        if (_banner == null) return;
 
-        InformationBandAnimator = _tutorial.GetComponent<Animator>();
-        InformationBandText = _tutorial.GetComponentInChildren<Text>();
+        InformationBannerAnimator = _banner.GetComponent<Animator>();
+        InformationBannerText = _banner.GetComponentInChildren<Text>();
     }
 
     public MissionList AllMissions { get; protected set; }
@@ -84,6 +84,8 @@ public class MissionManager : MonoBehaviour
 
     public void SetAndShowCurrentMission()
     {
+        if (InformationBannerText == null || InformationBannerAnimator == null) return;
+
         SetCurrentMission();
         ShowCurrentMission();
     }
@@ -97,7 +99,7 @@ public class MissionManager : MonoBehaviour
             if (AllMissions.missions[i].Level == Level)
             {
                 CurrentMissionIndex = i + SubLevel - 1;  // 1-indexed!
-                InformationBandText.text = AllMissions.missions[CurrentMissionIndex].Name;
+                InformationBannerText.text = AllMissions.missions[CurrentMissionIndex].Name;
                 CheckParameterOnOff();
                 break;
             }
@@ -107,9 +109,9 @@ public class MissionManager : MonoBehaviour
     public void ShowCurrentMission() {
         if (HasActiveMission)
         {
-            InformationBandAnimator.Play("Panel In");
-            IsBandShown = true;
-            StartCoroutine(WaitClickToCloseBand());
+            InformationBannerAnimator.Play("Panel In");
+            IsBannerShown = true;
+            StartCoroutine(WaitClickToCloseBanner());
         }
     }
 
@@ -160,7 +162,7 @@ public class MissionManager : MonoBehaviour
             ? Result.SUCCESS 
             : Result.FAIL;
         
-        ShowBandResult();
+        ShowBannerResult();
     }
 
     bool CheckMinMax(float input, float min, float max)
@@ -168,13 +170,13 @@ public class MissionManager : MonoBehaviour
         return (input >= min && input <= max);
     }
 
-    void ShowBandResult(){
-        InformationBandAnimator.Play("Panel In");
-        IsBandShown = true;
+    void ShowBannerResult(){
+        InformationBannerAnimator.Play("Panel In");
+        IsBannerShown = true;
 
         if (MissionResult == Result.SUCCESS)
         {
-            InformationBandText.text = "Succès";
+            InformationBannerText.text = "Succès";
             MissionResult = Result.NOT_APPLICABLE;
             if (fireworks != null)
                 fireworks.StartFireworks();
@@ -188,17 +190,17 @@ public class MissionManager : MonoBehaviour
             if (AllMissions.missions[CurrentMissionIndex].Hint != null)
                 hints = AllMissions.missions[CurrentMissionIndex].Hint;
 
-            InformationBandText.text = txt + hints + "" + "Veuillez réessayer";
+            InformationBannerText.text = txt + hints + "" + "Veuillez réessayer";
         }
-        StartCoroutine(WaitClickToCloseBand());
+        StartCoroutine(WaitClickToCloseBanner());
     }
 
-    IEnumerator WaitClickToCloseBand(){
+    IEnumerator WaitClickToCloseBanner(){
         while (true){
             if (Input.anyKeyDown)
             {
-                InformationBandAnimator.Play("Panel Out");
-                IsBandShown = false;
+                InformationBannerAnimator.Play("Panel Out");
+                IsBannerShown = false;
                 MissionResult = Result.NOT_APPLICABLE;
                 if (fireworks != null)
                     fireworks.EndFireworks();
