@@ -4,14 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public delegate void ClosedMissionBannerCallback();
+public delegate void ClosedMissionBannerCallback(bool _toNext);
 
 public class MissionBanner : MonoBehaviour
 {
     protected Animator animator; 
     protected Text text;
     protected Button continueButton;
-    public bool IsShown { get; protected set; } = false;
+    protected Button redoButton;
+    protected Vector3 redoButtonOriginalPosition;
 
     public ClosedMissionBannerCallback closedCallback;
 
@@ -22,29 +23,60 @@ public class MissionBanner : MonoBehaviour
         text = GetComponentInChildren<Text>();
         var allButtons = GetComponentsInChildren<Button>();
         continueButton = allButtons[0];
+        redoButton = allButtons[1];
+        redoButtonOriginalPosition = redoButton.transform.localPosition;
     }
 
     public void SetText(string _newText){
         text.text = _newText;
     }
 
-    public void Show(ClosedMissionBannerCallback _closedCallback = null){
+    public void Show(
+        bool _withContinueButton,
+        bool _withRedoButton, 
+        ClosedMissionBannerCallback _closedCallback = null
+    ){
+        continueButton.gameObject.SetActive(_withContinueButton);
+        redoButton.gameObject.SetActive(_withRedoButton);
+        if (_withContinueButton && _withContinueButton)
+            redoButton.transform.localPosition = redoButtonOriginalPosition;
+        else
+            redoButton.transform.localPosition = continueButton.transform.localPosition;
+
         animator.Play("Panel In");
-        IsShown = true;
         closedCallback = _closedCallback;
+
+        if (!_withContinueButton && !_withRedoButton)
+            StartCoroutine(WaitAndHide(5));
     }
 
     public void Hide(){
         animator.Play("Panel Out");
-        IsShown = false;
-        if (closedCallback != null)
-            closedCallback();
+    }
 
+    IEnumerator WaitAndHide(float _waitingTime){
+        var _startingTime = Time.time;
+        while (Time.time - _startingTime < _waitingTime){
+            if (Input.anyKeyDown){
+                break;
+            }
+            yield return 0;
+        }
+        Hide();
+        
+        if (closedCallback != null)
+            closedCallback(false);
     }
 
     public void ClickedContinue(){
-        Debug.Log("Coucou");
-        if (!IsShown) return;
         Hide();
+        if (closedCallback != null)
+            closedCallback(true);
+    }
+
+    public void ClickedRedo(){
+        Hide();
+        if (closedCallback != null)
+            closedCallback(false);
     }
 }

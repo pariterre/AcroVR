@@ -80,7 +80,7 @@ public class MissionManager : MonoBehaviour
 
         SetCurrentMission();
         if (HasActiveMission)
-            ShowMissionBanner();
+            ShowMissionBanner(false);
     }
 
     public void SetCurrentMission()
@@ -172,17 +172,24 @@ public class MissionManager : MonoBehaviour
         }
 
         MissionResult = Result.NOT_APPLICABLE;
-        ShowMissionBanner();
+        ShowMissionBanner(true);
     }
 
 
-    public void ShowMissionBanner() {
-        missionBanner.Show(ProcessEndOfMission);
+    protected void ShowMissionBanner(bool _withCallback) {
+        if (_withCallback)
+            missionBanner.Show(true, true, ProcessEndOfMission);
+        else
+            missionBanner.Show(false, false);
     }
 
-    void ProcessEndOfMission(){
+    void ProcessEndOfMission(bool _processToNextMission){
         MissionResult = Result.NOT_APPLICABLE;
         if (fireworks != null)
             fireworks.EndFireworks();
+
+        if (_processToNextMission)
+            SubLevel += 1;
+        SetAndShowCurrentMission();
     }
 }
