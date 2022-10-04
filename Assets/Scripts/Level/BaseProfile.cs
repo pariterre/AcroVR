@@ -45,6 +45,8 @@ public class BaseProfile : LevelBase
     public InputField simulationDuration;
     public SliderPlayAnimation sliderPlay;
 
+    public Fireworks fireworks;
+
     public GameObject Floor;
 
     public Text fileName;
@@ -89,6 +91,7 @@ public class BaseProfile : LevelBase
             somersaultSpeed, tiltSpeed, twistSpeed, horizontalSpeed, verticalSpeed,
             simulationDuration
         );
+        missionManager.SetupFireworks(fireworks);
         if (TutorialObject != null)
             missionManager.SetAndShowCurrentMission();
     }

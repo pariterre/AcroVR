@@ -55,6 +55,8 @@ public class MissionManager : MonoBehaviour
     }
 
     private GameManager gameManager;
+    protected Fireworks fireworks;
+    public void SetupFireworks(Fireworks _fireworks){ Debug.Log(_fireworks); fireworks = _fireworks; }
 
 
     public int Level { get; protected set; } = -1;
@@ -172,6 +174,8 @@ public class MissionManager : MonoBehaviour
                 InformationBandAnimator.Play("Panel Out");
                 IsBandShown = false;
                 MissionResult = Result.NOT_APPLICABLE;
+                if (fireworks != null)
+                    fireworks.EndFireworks();
             }
         }
 
@@ -184,6 +188,8 @@ public class MissionManager : MonoBehaviour
             {
                 InformationBandText.text = "Succès";
                 MissionResult = Result.NOT_APPLICABLE;
+                if (fireworks != null)
+                    fireworks.StartFireworks();
                 // TODO: Launch next mission if requested
             }
             else
