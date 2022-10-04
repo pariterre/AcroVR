@@ -13,16 +13,8 @@ public enum Result
 
 public class MissionManager : MonoBehaviour
 {
-    public bool IsBannerShown { get; protected set; } = false;
-    protected Animator InformationBannerAnimator;
-    protected Text InformationBannerText;
-    public void SetInformationBanner(GameObject _banner)
-    {
-        if (_banner == null) return;
-
-        InformationBannerAnimator = _banner.GetComponent<Animator>();
-        InformationBannerText = _banner.GetComponentInChildren<Text>();
-    }
+    protected MissionBanner missionBanner;
+    public void SetInformationBanner(MissionBanner _banner){ missionBanner = _banner; }
 
     public MissionList AllMissions { get; protected set; }
     public void SetMissions(MissionList _missions) { AllMissions = _missions; }
@@ -84,10 +76,11 @@ public class MissionManager : MonoBehaviour
 
     public void SetAndShowCurrentMission()
     {
-        if (InformationBannerText == null || InformationBannerAnimator == null) return;
+        if (missionBanner == null) return;
 
         SetCurrentMission();
-        ShowCurrentMission();
+        if (HasActiveMission)
+            ShowMissionBanner();
     }
 
     public void SetCurrentMission()
@@ -99,19 +92,10 @@ public class MissionManager : MonoBehaviour
             if (AllMissions.missions[i].Level == Level)
             {
                 CurrentMissionIndex = i + SubLevel - 1;  // 1-indexed!
-                InformationBannerText.text = AllMissions.missions[CurrentMissionIndex].Name;
+                missionBanner.SetText(AllMissions.missions[CurrentMissionIndex].Name);
                 CheckParameterOnOff();
                 break;
             }
-        }
-    }
-
-    public void ShowCurrentMission() {
-        if (HasActiveMission)
-        {
-            InformationBannerAnimator.Play("Panel In");
-            IsBannerShown = true;
-            StartCoroutine(WaitClickToCloseBanner());
         }
     }
 
@@ -162,7 +146,7 @@ public class MissionManager : MonoBehaviour
             ? Result.SUCCESS 
             : Result.FAIL;
         
-        ShowBannerResult();
+        ProcessResult();
     }
 
     bool CheckMinMax(float input, float min, float max)
@@ -170,14 +154,10 @@ public class MissionManager : MonoBehaviour
         return (input >= min && input <= max);
     }
 
-    void ShowBannerResult(){
-        InformationBannerAnimator.Play("Panel In");
-        IsBannerShown = true;
-
+    void ProcessResult(){
         if (MissionResult == Result.SUCCESS)
         {
-            InformationBannerText.text = "Succès";
-            MissionResult = Result.NOT_APPLICABLE;
+            missionBanner.SetText("Succès");
             if (fireworks != null)
                 fireworks.StartFireworks();
             // TODO: Launch next mission if requested
@@ -185,29 +165,24 @@ public class MissionManager : MonoBehaviour
         else
         {
             string txt = "Désolé, vous n’avez pas atteint l’objectif avec une précision suffisante.\n";
-            string hints = null;
-
-            if (AllMissions.missions[CurrentMissionIndex].Hint != null)
-                hints = AllMissions.missions[CurrentMissionIndex].Hint;
-
-            InformationBannerText.text = txt + hints + "" + "Veuillez réessayer";
+            string hints = AllMissions.missions[CurrentMissionIndex].Hint != null 
+                        ? hints = AllMissions.missions[CurrentMissionIndex].Hint
+                        : null;
+            missionBanner.SetText(txt + hints + "Veuillez réessayer");
         }
-        StartCoroutine(WaitClickToCloseBanner());
+
+        MissionResult = Result.NOT_APPLICABLE;
+        ShowMissionBanner();
     }
 
-    IEnumerator WaitClickToCloseBanner(){
-        while (true){
-            if (Input.anyKeyDown)
-            {
-                InformationBannerAnimator.Play("Panel Out");
-                IsBannerShown = false;
-                MissionResult = Result.NOT_APPLICABLE;
-                if (fireworks != null)
-                    fireworks.EndFireworks();
-                break;
-            }
-            yield return null;
-        }
+
+    public void ShowMissionBanner() {
+        missionBanner.Show(ProcessEndOfMission);
     }
 
+    void ProcessEndOfMission(){
+        MissionResult = Result.NOT_APPLICABLE;
+        if (fireworks != null)
+            fireworks.EndFireworks();
+    }
 }

@@ -24,7 +24,7 @@ public class BaseProfile : LevelBase
 
     public GameObject ErrorObject;
     public GameObject TutorialObject;
-    public GameObject MissionBanner;
+    public MissionBanner missionBanner;
     public GameObject NodeNameObject;
     protected GameObject CurrentTabContent;
 
@@ -92,7 +92,7 @@ public class BaseProfile : LevelBase
             simulationDuration
         );
         missionManager.SetupFireworks(fireworks);
-        missionManager.SetInformationBanner(MissionBanner);
+        missionManager.SetInformationBanner(missionBanner);
         missionManager.SetAndShowCurrentMission();
     }
 
