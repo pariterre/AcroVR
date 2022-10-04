@@ -6,8 +6,6 @@ Known bugs:
 
 TODO: 
 	- Mission : 
-		- Recommencer si objectif échoué
-		- Passer au prochain objectif si réussi
 		- Ajouter une étoile si la mission est réussie (Sauvegarder à travers les sessions)
 	- Si possible
 		- Bouton Comparer : Je suis à peu près sûr que c'est complètement cassé, réparer?

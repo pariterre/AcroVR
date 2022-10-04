@@ -255,6 +255,10 @@ public class MainParameters
 		public string toolTipGraphSettingsDefaultValues;
 		public string toolTipGraphSettingsCancel;
 		public string toolTipGraphSettingsOK;
+
+		public string missionSuccess;
+		public string missionFailed;
+		public string missionTryAgain;
 	}
 
 	/// <summary> Description de la structure contenant la liste des messages utilisés en français et en anglais. </summary>
@@ -587,6 +591,13 @@ public class MainParameters
 		languages.english.toolTipButtonStop = "Stop animation";
 		languages.french.toolTipButtonGraph = "Afficher les graphiques résultats";
 		languages.english.toolTipButtonGraph = "Display result graphics";
+
+		languages.french.missionSuccess = "Mission réussie, capitaine!";
+		languages.english.missionSuccess = "Mission completed, captain!";
+		languages.french.missionFailed = "Malheureusement, la mission n'a pas été complétée avec une précision suffisante.";
+		languages.english.missionFailed = "Unfortunately, the mission was not completed with a sufficient precision.";
+		languages.french.missionTryAgain = "Essayez de nouveau, ou revenez-y plus tard...";
+		languages.english.missionTryAgain = "Try again, or have another try later...";
 
 		SetLanguage((Language)PlayerPrefs.GetInt("Language", (int)Language.French));
 

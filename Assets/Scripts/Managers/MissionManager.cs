@@ -157,18 +157,17 @@ public class MissionManager : MonoBehaviour
     void ProcessResult(){
         if (MissionResult == Result.SUCCESS)
         {
-            missionBanner.SetText("Succès");
+            missionBanner.SetText(MainParameters.Instance.languages.Used.missionSuccess);
             if (fireworks != null)
                 fireworks.StartFireworks();
-            // TODO: Launch next mission if requested
         }
         else
         {
-            string txt = "Désolé, vous n’avez pas atteint l’objectif avec une précision suffisante.\n";
+            string txt = MainParameters.Instance.languages.Used.missionFailed;
             string hints = AllMissions.missions[CurrentMissionIndex].Hint != null 
                         ? hints = AllMissions.missions[CurrentMissionIndex].Hint
                         : null;
-            missionBanner.SetText(txt + hints + "Veuillez réessayer");
+            missionBanner.SetText(txt + "\n" + hints + "\n" + MainParameters.Instance.languages.Used.missionTryAgain);
         }
 
         MissionResult = Result.NOT_APPLICABLE;
@@ -190,6 +189,7 @@ public class MissionManager : MonoBehaviour
 
         if (_processToNextMission)
             SubLevel += 1;
+ 
         SetAndShowCurrentMission();
     }
 }

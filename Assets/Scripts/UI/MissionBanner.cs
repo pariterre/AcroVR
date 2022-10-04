@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -36,25 +36,39 @@ public class MissionBanner : MonoBehaviour
         bool _withRedoButton, 
         ClosedMissionBannerCallback _closedCallback = null
     ){
+        StartCoroutine(WaitThenShow(_withContinueButton, _withRedoButton, _closedCallback));
+    }
+
+    IEnumerator WaitThenShow(
+        bool _withContinueButton,
+        bool _withRedoButton, 
+        ClosedMissionBannerCallback _closedCallback = null
+    ){
+        // We have to delay one frame to make sure the current frame did not setup a hiding process
+        // otherwise the former overrides the Show process
+        yield return null;
+
+        // Prepare button
         continueButton.gameObject.SetActive(_withContinueButton);
         redoButton.gameObject.SetActive(_withRedoButton);
-        if (_withContinueButton && _withContinueButton)
-            redoButton.transform.localPosition = redoButtonOriginalPosition;
-        else
-            redoButton.transform.localPosition = continueButton.transform.localPosition;
+        redoButton.transform.localPosition = _withContinueButton && _withContinueButton 
+            ? redoButtonOriginalPosition
+            : continueButton.transform.localPosition;
 
-        animator.Play("Panel In");
         closedCallback = _closedCallback;
 
+        animator.Play("Panel In");
         if (!_withContinueButton && !_withRedoButton)
-            StartCoroutine(WaitAndHide(5));
+            StartCoroutine(WaitThenHide(5));
     }
-
+ 
     public void Hide(){
         animator.Play("Panel Out");
+        if (closedCallback != null)
+            closedCallback(false);
     }
-
-    IEnumerator WaitAndHide(float _waitingTime){
+    
+    IEnumerator WaitThenHide(float _waitingTime){
         var _startingTime = Time.time;
         while (Time.time - _startingTime < _waitingTime){
             if (Input.anyKeyDown){
@@ -63,9 +77,6 @@ public class MissionBanner : MonoBehaviour
             yield return 0;
         }
         Hide();
-        
-        if (closedCallback != null)
-            closedCallback(false);
     }
 
     public void ClickedContinue(){
