@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -56,7 +58,7 @@ public class MissionManager : MonoBehaviour
 
     private GameManager gameManager;
     protected Fireworks fireworks;
-    public void SetupFireworks(Fireworks _fireworks){ Debug.Log(_fireworks); fireworks = _fireworks; }
+    public void SetupFireworks(Fireworks _fireworks){ fireworks = _fireworks; }
 
 
     public int Level { get; protected set; } = -1;
@@ -107,6 +109,7 @@ public class MissionManager : MonoBehaviour
         {
             InformationBandAnimator.Play("Panel In");
             IsBandShown = true;
+            StartCoroutine(WaitClickToCloseBand());
         }
     }
 
@@ -137,8 +140,6 @@ public class MissionManager : MonoBehaviour
 
     public void CheckMissionResult()
     {
-
-
         if (CurrentMissionIndex < 0) return;
 
         var HorizontalSpeed = float.Parse(InputFieldHorizontalSpeed.text, NumberStyles.Number, CultureInfo.InvariantCulture);
@@ -158,6 +159,8 @@ public class MissionManager : MonoBehaviour
                 && _resultHorizontalSpeed == Result.SUCCESS 
             ? Result.SUCCESS 
             : Result.FAIL;
+        
+        ShowBandResult();
     }
 
     bool CheckMinMax(float input, float min, float max)
@@ -165,10 +168,33 @@ public class MissionManager : MonoBehaviour
         return (input >= min && input <= max);
     }
 
-    void Update()
-    {
-        if (IsBandShown)
+    void ShowBandResult(){
+        InformationBandAnimator.Play("Panel In");
+        IsBandShown = true;
+
+        if (MissionResult == Result.SUCCESS)
         {
+            InformationBandText.text = "Succès";
+            MissionResult = Result.NOT_APPLICABLE;
+            if (fireworks != null)
+                fireworks.StartFireworks();
+            // TODO: Launch next mission if requested
+        }
+        else
+        {
+            string txt = "Désolé, vous n’avez pas atteint l’objectif avec une précision suffisante.\n";
+            string hints = null;
+
+            if (AllMissions.missions[CurrentMissionIndex].Hint != null)
+                hints = AllMissions.missions[CurrentMissionIndex].Hint;
+
+            InformationBandText.text = txt + hints + "" + "Veuillez réessayer";
+        }
+        StartCoroutine(WaitClickToCloseBand());
+    }
+
+    IEnumerator WaitClickToCloseBand(){
+        while (true){
             if (Input.anyKeyDown)
             {
                 InformationBandAnimator.Play("Panel Out");
@@ -176,32 +202,10 @@ public class MissionManager : MonoBehaviour
                 MissionResult = Result.NOT_APPLICABLE;
                 if (fireworks != null)
                     fireworks.EndFireworks();
+                break;
             }
-        }
-
-        if (MissionResult != Result.NOT_APPLICABLE)
-        {
-            InformationBandAnimator.Play("Panel In");
-            IsBandShown = true;
-
-            if (MissionResult == Result.SUCCESS)
-            {
-                InformationBandText.text = "Succès";
-                MissionResult = Result.NOT_APPLICABLE;
-                if (fireworks != null)
-                    fireworks.StartFireworks();
-                // TODO: Launch next mission if requested
-            }
-            else
-            {
-                string txt = "Désolé, vous n’avez pas atteint l’objectif avec une précision suffisante.\n";
-                string hints = null;
-
-                if (AllMissions.missions[CurrentMissionIndex].Hint != null)
-                    hints = AllMissions.missions[CurrentMissionIndex].Hint;
-
-                InformationBandText.text = txt + hints + "" + "Veuillez réessayer";
-            }
+            yield return null;
         }
     }
+
 }

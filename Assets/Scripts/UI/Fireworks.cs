@@ -47,9 +47,11 @@ public class Fireworks : MonoBehaviour
     
         // Select characterics of the fireball
         _newBall.transform.localPosition = new Vector3(Random.Range(-3f, 3f), Random.Range(-1.5f, 1.5f), 0);
-        _newBallParticle.startDelay = Random.Range(0f, 2f);
-        _newBallParticle.startLifetime = Random.Range(1.75f, 3f);
-        _newBallParticle.startSpeed = Random.Range(75f, 300f);
+        var _main = _newBallParticle.main;
+        _main.startDelay = Random.Range(0f, 2f);
+        _main.startDelay = Random.Range(0f, 2f);
+        _main.startLifetime = Random.Range(1.75f, 3f);
+        _main.startSpeed = Random.Range(75f, 300f);
         
         // Show the ball and destroy it afterward
         _newBall.gameObject.SetActive(true);
