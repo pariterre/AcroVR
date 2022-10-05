@@ -477,7 +477,7 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
-        missionManager.SetMissions(JsonUtility.FromJson<MissionList>(dataAsJson));
+        missionManager.SetMissions(dataAsJson);
 
         return true;
     }

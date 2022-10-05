@@ -17,13 +17,15 @@ public class MissionManager : MonoBehaviour
     public void SetInformationBanner(MissionBanner _banner){ missionBanner = _banner; }
 
     public MissionList AllMissions { get; protected set; }
-    public List<bool> AreCompleted { get; protected set; } = new List<bool>();
-    public void SetMissions(MissionList _missions) { 
-        AllMissions = _missions; 
+    protected List<bool> MissionsCompleted = new List<bool>();
+    public bool MissionCompleted(int _index) { return MissionsCompleted[_index]; }
+    public bool LevelCompleted(int _index) {return true;}
+    public void SetMissions(string _dataAsJson) { 
+        AllMissions = JsonUtility.FromJson<MissionList>(_dataAsJson);
 
-        AreCompleted.Clear();
-        foreach (var mission in AllMissions.missions){
-            AreCompleted.Add(PlayerPrefs.GetInt(mission.ToHash(), 0) == 1);
+        MissionsCompleted.Clear();
+        foreach (var _mission in AllMissions.missions){
+            MissionsCompleted.Add(PlayerPrefs.GetInt(_mission.ToHash(), 0) != 0);
         }
     }
 
@@ -68,7 +70,6 @@ public class MissionManager : MonoBehaviour
     protected int CurrentMissionIndex = -1;
     public bool HasActiveMission { get { return CurrentMissionIndex >= 0; } }
     public Result MissionResult { get; protected set; } = Result.NOT_APPLICABLE;
-
 
     void Start()
     {
@@ -163,10 +164,13 @@ public class MissionManager : MonoBehaviour
     }
 
     void ProcessResult(){
+        var _currentMission = AllMissions.missions[CurrentMissionIndex];
         if (MissionResult == Result.SUCCESS)
         {
             missionBanner.SetText(MainParameters.Instance.languages.Used.missionSuccess);
-            PlayerPrefs.SetInt(AllMissions.missions[CurrentMissionIndex].ToHash(), 1);
+            PlayerPrefs.SetInt(_currentMission.ToHash(), 1);
+            MissionsCompleted[CurrentMissionIndex] = true;
+            
             if (fireworks != null)
                 fireworks.StartFireworks();
                 missionBanner.Show(false, false, ProcessEndOfMission);
@@ -174,9 +178,7 @@ public class MissionManager : MonoBehaviour
         else
         {
             string txt = MainParameters.Instance.languages.Used.missionFailed;
-            string hints = AllMissions.missions[CurrentMissionIndex].Hint != null 
-                        ? hints = AllMissions.missions[CurrentMissionIndex].Hint
-                        : null;
+            string hints = _currentMission.Hint != null ? _currentMission.Hint : null;
             missionBanner.SetText(txt + "\n" + hints + "\n" + MainParameters.Instance.languages.Used.missionTryAgain);
             missionBanner.Show(true, true, ProcessEndOfMission);
         }

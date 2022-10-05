@@ -9,8 +9,10 @@ public class MissionName : MonoBehaviour
     public Text[] hMission;
 
     public GameObject[] MissionMenu;
+    public Image[] SuccessStar;
 
     protected MissionManager missionManager;
+    
 
     void Start()
     {
@@ -20,24 +22,25 @@ public class MissionName : MonoBehaviour
     public void SetMissionName(int _level)
     {
         int n = 0;
-        for (int i = 0; i < 6; i++)
-            MissionMenu[i].SetActive(true);
+        for (int i = 0; i < 6; i++){
+            nMission[i].text = "";
+            MissionMenu[i].SetActive(false);
+        }
 
-        for (int i =0; i < missionManager.AllMissions.count; i++)
+        for (int i=0; i < missionManager.AllMissions.count; i++)
         {
-            if (missionManager.AllMissions.missions[i].Level == _level)
+            var _mission = missionManager.AllMissions.missions[i];
+            var _isCompleted = missionManager.MissionCompleted(i);
+            if (_mission.Level == _level)
             {
-                nMission[n].text = missionManager.AllMissions.missions[i].Name;
-                hMission[n].text = missionManager.AllMissions.missions[i].Name;
+                nMission[n].text = _mission.Name;
+                hMission[n].text = _mission.Name;
+                MissionMenu[n].SetActive(true);
+                SuccessStar[n].gameObject.SetActive(_isCompleted);
                 n++;
             }
         }
 
-        for(int i = 0; i < 6-n; i++)
-        {
-            nMission[i + n].text = "";
-            MissionMenu[i + n].SetActive(false);
-        }
 
         missionManager.SetLevel(_level);
     }
