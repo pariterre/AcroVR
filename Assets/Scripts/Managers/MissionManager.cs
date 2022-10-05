@@ -173,13 +173,13 @@ public class MissionManager : MonoBehaviour
         }
     }
 
-    void ProcessEndOfMission(bool _processToNextMission){
-        MissionResult = Result.NOT_APPLICABLE;
+    void ProcessEndOfMission(bool _clickedContinue){
         if (fireworks != null)
             fireworks.EndFireworks();
-
-        if (_processToNextMission)
+        
+        if (MissionResult == Result.SUCCESS || _clickedContinue)
             SubLevel += 1;
+        MissionResult = Result.NOT_APPLICABLE;
  
         SetAndShowCurrentMission();
     }

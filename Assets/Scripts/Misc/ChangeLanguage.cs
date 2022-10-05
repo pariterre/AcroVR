@@ -55,7 +55,11 @@ public class ChangeLanguage : MonoBehaviour
     public Text Mission;
     public Text MissionSub;
     public Text hMission;
+    public Text MissionClose;
+    public Text hMissionClose;
     public Text hMissionSub;
+    public Text MissionSubClose;
+    public Text hMissionSubClose;
     public Text Setting;
     public Text SettingSub;
     public Text hSetting;
@@ -179,8 +183,12 @@ public class ChangeLanguage : MonoBehaviour
             hTrainingSub.text = languages.english.TrainingSub;
             Mission.text = languages.english.Mission;
             hMission.text = languages.english.Mission;
+            MissionClose.text = languages.english.Close;
+            hMissionClose.text = languages.english.Close;
             MissionSub.text = languages.english.MissionSub;
             hMissionSub.text = languages.english.MissionSub;
+            MissionSubClose.text = languages.english.Close;
+            hMissionSubClose.text = languages.english.Close;
             Setting.text = languages.english.Setting;
             hSetting.text = languages.english.Setting;
             SettingSub.text = languages.english.SettingSub;
@@ -236,8 +244,12 @@ public class ChangeLanguage : MonoBehaviour
             hTrainingSub.text = languages.french.TrainingSub;
             Mission.text = languages.french.Mission;
             hMission.text = languages.french.Mission;
+            MissionClose.text = languages.french.Close;
+            hMissionClose.text = languages.french.Close;
             MissionSub.text = languages.french.MissionSub;
             hMissionSub.text = languages.french.MissionSub;
+            MissionSubClose.text = languages.french.Close;
+            hMissionSubClose.text = languages.french.Close;
             Setting.text = languages.french.Setting;
             hSetting.text = languages.french.Setting;
             SettingSub.text = languages.french.SettingSub;
