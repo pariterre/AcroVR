@@ -30,7 +30,7 @@ public class MissionName : MonoBehaviour
         for (int i=0; i < missionManager.AllMissions.count; i++)
         {
             var _mission = missionManager.AllMissions.missions[i];
-            var _isCompleted = missionManager.MissionCompleted(i);
+            var _isCompleted = missionManager.IsMissionCompleted(i);
             if (_mission.Level == _level)
             {
                 nMission[n].text = _mission.Name;

@@ -18,8 +18,18 @@ public class MissionManager : MonoBehaviour
 
     public MissionList AllMissions { get; protected set; }
     protected List<bool> MissionsCompleted = new List<bool>();
-    public bool MissionCompleted(int _index) { return MissionsCompleted[_index]; }
-    public bool LevelCompleted(int _index) {return true;}
+    public bool IsMissionCompleted(int _index) { return MissionsCompleted[_index]; }
+    public bool IsLevelCompleted(int _index) { 
+        bool _hasAtLeastOne = false; 
+        for (int i=0; i<AllMissions.count; ++i){
+            var _trueIndex = _index + 1;  // One-based
+            if (AllMissions.missions[i].Level == _trueIndex){
+                _hasAtLeastOne = true;
+                if (!MissionsCompleted[i]) return false;
+            }
+        }
+        return _hasAtLeastOne;
+    }
     public void SetMissions(string _dataAsJson) { 
         AllMissions = JsonUtility.FromJson<MissionList>(_dataAsJson);
 
