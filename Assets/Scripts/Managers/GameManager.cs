@@ -72,6 +72,10 @@ public struct MissionInfo
     public MissionNodes HancheFlexion;
     public MissionNodes BrasGaucheAbduction;
     public MissionNodes BrasDroitAbduction;
+
+    public string ToHash(){
+        return Hash128.Compute(Name).ToString();
+    }
 }
 
 [System.Serializable]
@@ -977,14 +981,11 @@ public class GameManager : MonoBehaviour
 
     public void SaveFile()
     {
-        //string dirSimulationFiles = Environment.ExpandEnvironmentVariables(@"\SimulationJson");
-
 		string fileName = FileBrowser.SaveFile(MainParameters.Instance.languages.Used.movementSaveDataFileTitle, pathUserDocumentsFiles, "DefaultFile", "json");
         if (fileName.Length <= 0)
             return;
 
         WriteDataToJSON(fileName);
-        //        WriteDataFiles_s(fileName);
     }
 
     private float[] ExtractDataTQ(string values)
@@ -1001,9 +1002,6 @@ public class GameManager : MonoBehaviour
         int n = (int)(MainParameters.Instance.joints.duration / MainParameters.Instance.joints.lagrangianModel.dt)+1;
         float[] t0 = new float[n];
         float[,] q0 = new float[MainParameters.Instance.joints.lagrangianModel.nDDL, n];
-
-        //        GenerateQ0 generateQ0 = new GenerateQ0(MainParameters.Instance.joints.lagrangianModel, MainParameters.Instance.joints.duration, 0, out t0, out q0);
-        //        generateQ0.ToString();
 
         GenerateQ0_s(MainParameters.Instance.joints.lagrangianModel, MainParameters.Instance.joints.duration, 0, out t0, out q0);
 

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
@@ -17,7 +17,15 @@ public class MissionManager : MonoBehaviour
     public void SetInformationBanner(MissionBanner _banner){ missionBanner = _banner; }
 
     public MissionList AllMissions { get; protected set; }
-    public void SetMissions(MissionList _missions) { AllMissions = _missions; }
+    public List<bool> AreCompleted { get; protected set; } = new List<bool>();
+    public void SetMissions(MissionList _missions) { 
+        AllMissions = _missions; 
+
+        AreCompleted.Clear();
+        foreach (var mission in AllMissions.missions){
+            AreCompleted.Add(PlayerPrefs.GetInt(mission.ToHash(), 0) == 1);
+        }
+    }
 
     protected InputField InputFieldSomersaultPosition;
     protected InputField InputFieldTiltPosition;
@@ -158,6 +166,7 @@ public class MissionManager : MonoBehaviour
         if (MissionResult == Result.SUCCESS)
         {
             missionBanner.SetText(MainParameters.Instance.languages.Used.missionSuccess);
+            PlayerPrefs.SetInt(AllMissions.missions[CurrentMissionIndex].ToHash(), 1);
             if (fireworks != null)
                 fireworks.StartFireworks();
                 missionBanner.Show(false, false, ProcessEndOfMission);
