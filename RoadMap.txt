@@ -1,14 +1,15 @@
 Known bugs:
     - The floor stopping conditions using Tags is pretty random	
-
+    - Tooltips "on" (Look in UIManager.cs) seem to do nothing
 
 
 
 TODO: 
 	- Mission : 
-        - Not all the fields are properly set (Duration)
         - Fix all the solutions
 	- Si possible
 		- Bouton Comparer : Je suis à peu près sûr que c'est complètement cassé, réparer?
 		- Utilisation du modèle masculin : Cassé, réparer?
+	- Add music so it is less boring
+	- Add Success music when mission is acheived
 

@@ -17,7 +17,7 @@ public class UIManager : MonoBehaviour
     Text textToolTip;
     int displayToolTipNum = 0;
 
-    public bool tooltipOn;  // TODO: Tooltips seem to be broken
+    public bool tooltipOn;
 
     void Start()
     {
@@ -40,9 +40,8 @@ public class UIManager : MonoBehaviour
 
     public void SetCurrentTab(int _num)
     {
-        // To not allow changing tab if the model is currently being changed
+        // Do not allow changing tab if the model is currently being changed
         if (drawManager.IsEditing) return;  
-        // TODO: Move all the stuff done when changing tab in the GUI Here so decision can be made not to change tab
         currentTab = _num;
     }
 

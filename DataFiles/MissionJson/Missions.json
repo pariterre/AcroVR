@@ -74,7 +74,7 @@
 				"HorizontalSpeed": true,
 				"VerticalPosition": false,
 				"VerticalSpeed": false,
-				"Duration": false
+				"Duration": true
 			},
 			"Condition": 0,
 			"Hint": "On peut diviser une distance par une vitesse pour obtenir le temps de parcours."

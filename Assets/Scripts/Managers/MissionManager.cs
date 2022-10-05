@@ -153,6 +153,7 @@ public class MissionManager : MonoBehaviour
 
         var _minAcceptedDistance = mission.goal.Distance[0];
         var _maxAcceptedDistance = mission.goal.Distance[1];
+        // TODO Fix the distance
         var _resultHorizontalDistance = CheckMinMax(HorizontalSpeed, _minAcceptedDistance, _maxAcceptedDistance) ? Result.SUCCESS : Result.FAIL;
 
         var _minAcceptedSpeed = mission.constraints.HorizontalSpeed[0];
