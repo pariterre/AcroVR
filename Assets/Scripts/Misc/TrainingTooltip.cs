@@ -160,7 +160,7 @@ public class TrainingTooltip : MonoBehaviour
     {
         if (name.text != "")
         {
-            gameManager.SaveCondition(dropDownTakeOffCondition.value, name.text);
+            gameManager.SaveCondition(name.text);
             UpdateDropDownNames();
         }
     }
@@ -192,10 +192,10 @@ public class TrainingTooltip : MonoBehaviour
     }
     
     public void UpdateAllPropertiesFromDropdown(){
-        ToggleGravity.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].Gravity;
+        ToggleGravity.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].userInputsValues.Gravity;
         UpdateGravity();
         
-        IsStopAtGround.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].HasFloor;
+        IsStopAtGround.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].userInputsValues.StopOnGround;
         ToggleStopAtGround();
         
         UpdatePositions();
@@ -214,11 +214,7 @@ public class TrainingTooltip : MonoBehaviour
 
     public void UpdatePositions()
     {
-        bp.somersaultPosition.text = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].SomersaultPosition.ToString();
-        bp.twistPosition.text = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].TwistPosition.ToString();
-        bp.tiltPosition.text = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].TiltPosition.ToString();
-        bp.horizontalPosition.text = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].HorizontalPosition.ToString();
-        bp.verticalPosition.text = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].VerticalPosition.ToString();
+        uiManager.userInputs.SetPositions(gameManager.listCondition.conditions[dropDownTakeOffCondition.value].userInputsValues);
     }
 
     private void ChangedLanguage()

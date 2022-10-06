@@ -13,6 +13,7 @@ public enum Result
 
 public class MissionManager : MonoBehaviour
 {
+    protected UIManager uiManager;
     protected MissionBanner missionBanner;
     public void SetInformationBanner(MissionBanner _banner){ missionBanner = _banner; }
 
@@ -39,35 +40,6 @@ public class MissionManager : MonoBehaviour
         }
     }
 
-    protected InputField InputFieldSomersaultPosition;
-    protected InputField InputFieldTiltPosition;
-    protected InputField InputFieldTwistPosition;
-    protected InputField InputFieldHorizontalPosition;
-    protected InputField InputFieldVerticalPosition;
-    protected InputField InputFieldSomersaultSpeed;
-    protected InputField InputFieldTiltSpeed;
-    protected InputField InputFieldTwistSpeed;
-    protected InputField InputFieldHorizontalSpeed;
-    protected InputField InputFieldVerticalSpeed;
-    protected InputField InputFieldDuration;
-    public void SetAllInputField(
-        InputField _somersaultPosition, InputField _tiltPosition, InputField _twistPosition, InputField _horizontalPosition, InputField _verticalPosition,
-        InputField _somersaultSpeed, InputField _tiltSpeed, InputField _twistSpeed, InputField _horizontalSpeed, InputField _verticalSpeed, InputField _duration
-    )
-    {
-        InputFieldSomersaultPosition = _somersaultPosition;
-        InputFieldTiltPosition = _tiltPosition;
-        InputFieldTwistPosition = _twistPosition;
-        InputFieldHorizontalPosition = _horizontalPosition;
-        InputFieldVerticalPosition = _verticalPosition;
-        InputFieldSomersaultSpeed = _somersaultSpeed;
-        InputFieldTiltSpeed = _tiltSpeed;
-        InputFieldTwistSpeed = _twistSpeed;
-        InputFieldHorizontalSpeed = _horizontalSpeed;
-        InputFieldVerticalSpeed = _verticalSpeed;
-        InputFieldDuration = _duration;
-    }
-
     private GameManager gameManager;
     protected Fireworks fireworks;
     public void SetupFireworks(Fireworks _fireworks){ fireworks = _fireworks; }
@@ -84,6 +56,7 @@ public class MissionManager : MonoBehaviour
     void Start()
     {
         gameManager = ToolBox.GetInstance().GetManager<GameManager>();
+        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
     }
 
     public void UnloadMission()
@@ -112,41 +85,25 @@ public class MissionManager : MonoBehaviour
             {
                 CurrentMissionIndex = i + SubLevel - 1;  // 1-indexed!
                 missionBanner.SetText(AllMissions.missions[CurrentMissionIndex].Name);
-                CheckParameterOnOff();
+                ManageInputFields();
                 break;
             }
         }
     }
 
-    void CheckParameterOnOff()
+    void ManageInputFields()
     {
-        void ManageInputField(bool _activate, InputField _field, float _default)
-        {
-            _field.enabled = _activate;
-            _field.image.color = _activate ? Color.white : Color.blue;
-            _field.text = _default.ToString(); 
-        }
+        UserUIInputsIsActive _status = AllMissions.missions[CurrentMissionIndex].enabledInputs;
 
-        Buttons inputs = AllMissions.missions[CurrentMissionIndex].enabledInputs;
+        
 
-        ManageInputField(inputs.Somersault, InputFieldSomersaultPosition, 0f);
-        ManageInputField(inputs.SomersaultSpeed, InputFieldSomersaultSpeed, 0f);
-        ManageInputField(inputs.Tilt, InputFieldTiltPosition, 0f);
-        ManageInputField(inputs.TiltSpeed, InputFieldTiltSpeed, 0f);
-        ManageInputField(inputs.Twist, InputFieldTwistPosition, 0f);
-        ManageInputField(inputs.TwistSpeed, InputFieldTwistSpeed, 0f);
-        ManageInputField(inputs.HorizontalPosition, InputFieldHorizontalPosition, 0f);
-        ManageInputField(inputs.HorizontalSpeed, InputFieldHorizontalSpeed, 0f);
-        ManageInputField(inputs.VerticalPosition, InputFieldVerticalPosition, 0f);
-        ManageInputField(inputs.VerticalSpeed, InputFieldVerticalSpeed, 0f);
-        ManageInputField(inputs.Duration, InputFieldDuration, 1f);
     }
 
     public void CheckMissionResult()
     {
         if (CurrentMissionIndex < 0) return;
 
-        var HorizontalSpeed = float.Parse(InputFieldHorizontalSpeed.text, NumberStyles.Number, CultureInfo.InvariantCulture);
+        var HorizontalSpeed = Utils.ToFloat(uiManager.userInputs.HorizontalSpeed.text);
 
         MissionInfo mission = AllMissions.missions[CurrentMissionIndex];
 

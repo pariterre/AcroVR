@@ -26,19 +26,19 @@ public class TakeOffParamF_s : MonoBehaviour
 
     public void UpdatePositions(int value)
     {
-        drawManager.SetGravity(gameManager.listCondition.conditions[value].Gravity);
-        MainParameters.Instance.joints.takeOffParam.rotation = gameManager.listCondition.conditions[value].SomersaultPosition;
-        drawManager.takeOffParamTwistPosition = gameManager.listCondition.conditions[value].TwistPosition;
-        MainParameters.Instance.joints.takeOffParam.tilt = gameManager.listCondition.conditions[value].TiltPosition;
-        drawManager.takeOffParamHorizontalPosition = gameManager.listCondition.conditions[value].HorizontalPosition;
-        drawManager.takeOffParamVerticalPosition = gameManager.listCondition.conditions[value].VerticalPosition;
+        drawManager.SetGravity(gameManager.listCondition.conditions[value].userInputsValues.Gravity);
+        MainParameters.Instance.joints.takeOffParam.rotation = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.Somersault);
+        MainParameters.Instance.joints.takeOffParam.tilt = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.Tilt);
+        drawManager.takeOffParamTwistPosition = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.Twist);
+        drawManager.takeOffParamHorizontalPosition = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.HorizontalPosition);
+        drawManager.takeOffParamVerticalPosition = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.VerticalPosition);
 
         ApplyAvatar();
     }
 
     public void CheckTakeOffParam(GameObject panel)
     {
-        float value = float.Parse(panel.GetComponentInChildren<InputField>().text, NumberStyles.Number, CultureInfo.InvariantCulture);
+        float value = Utils.ToFloat(panel.GetComponentInChildren<InputField>().text);
 
         if (panel.name == "PanelSomersaultPosition")
             MainParameters.Instance.joints.takeOffParam.rotation = value;

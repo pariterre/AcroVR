@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cinemachine;
 
+
 public class BaseProfile : LevelBase
 {
     protected LevelManager levelManager;
@@ -28,22 +29,13 @@ public class BaseProfile : LevelBase
     public GameObject NodeNameObject;
     protected GameObject CurrentTabContent;
 
+    public UserUIInputs userUiInputs;
+    protected UserUIInputsValues userUiInputsDefaultValues = new UserUIInputsValues();
+
     public Text endFrameText;
 
     public GameObject[] cameraList;
 
-    public InputField somersaultPosition;
-    public InputField tiltPosition;
-    public InputField twistPosition;
-    public InputField horizontalPosition;
-    public InputField verticalPosition;
-    public InputField somersaultSpeed;
-    public InputField tiltSpeed;
-    public InputField twistSpeed;
-    public InputField horizontalSpeed;
-    public InputField verticalSpeed;
-
-    public InputField simulationDuration;
     public SliderPlayAnimation sliderPlay;
 
     public Fireworks fireworks;
@@ -77,6 +69,9 @@ public class BaseProfile : LevelBase
         uiManager = ToolBox.GetInstance().GetManager<UIManager>();
         missionManager = ToolBox.GetInstance().GetManager<MissionManager>();
 
+        // Fill some important informations
+        userUiInputsDefaultValues.SetAll(userUiInputs);
+
         // Give some handler to relevant scripts
         drawManager.SetGround(Floor);
         PrepareMissionManager();
@@ -86,11 +81,7 @@ public class BaseProfile : LevelBase
 
     protected void PrepareMissionManager()
     {
-        missionManager.SetAllInputField(
-            somersaultPosition, tiltPosition, twistPosition, horizontalPosition, verticalPosition,
-            somersaultSpeed, tiltSpeed, twistSpeed, horizontalSpeed, verticalSpeed,
-            simulationDuration
-        );
+        uiManager.SetUserInputs(userUiInputs, userUiInputsDefaultValues);
         missionManager.SetupFireworks(fireworks);
         missionManager.SetInformationBanner(missionBanner);
         missionManager.SetAndShowCurrentMission();
@@ -245,28 +236,6 @@ public class BaseProfile : LevelBase
         levelManager.GotoScreen("BaseLevel1");
     }
 
-    private void ShowTakeOff()
-    {
-        somersaultPosition.text = MainParameters.Instance.joints.takeOffParam.rotation.ToString();
-        tiltPosition.text = MainParameters.Instance.joints.takeOffParam.tilt.ToString();
-
-
-        ///////////////////////////
-        twistPosition.text = drawManager.takeOffParamTwistPosition.ToString();
-        horizontalPosition.text = drawManager.takeOffParamHorizontalPosition.ToString();
-        verticalPosition.text = drawManager.takeOffParamVerticalPosition.ToString();
-        tiltSpeed.text = drawManager.takeOffParamTiltSpeed.ToString();
-        ///////////////////////////
-
-
-        somersaultSpeed.text = MainParameters.Instance.joints.takeOffParam.somersaultSpeed.ToString();
-        twistSpeed.text = MainParameters.Instance.joints.takeOffParam.twistSpeed.ToString();
-        horizontalSpeed.text = MainParameters.Instance.joints.takeOffParam.anteroposteriorSpeed.ToString();
-        verticalSpeed.text = MainParameters.Instance.joints.takeOffParam.verticalSpeed.ToString();
-
-        simulationDuration.text = MainParameters.Instance.joints.duration.ToString();
-    }
-
     public void MissionLoad()
     {
         gameManager.WriteToLogFile("Load Button Click");
@@ -330,7 +299,6 @@ public class BaseProfile : LevelBase
         gameManager.InterpolationDDL();
         gameManager.DisplayDDL(0, true);
 
-        ShowTakeOff();
     }
 
     public void MissionLoad2()
@@ -367,8 +335,6 @@ public class BaseProfile : LevelBase
         }
 
         gameManager.WriteToLogFile("Success to load one");
-
-        ShowTakeOff();
 
         if (drawManager.CurrentAvatar == DrawManager.AvatarModel.SingleFemale)
         {

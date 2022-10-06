@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.IO;
 using System.Text.RegularExpressions;
 using Crosstales.FB;
@@ -41,8 +42,132 @@ public struct SolutionConstraints
     public MissionNodes LeftArmAbduction;
 }
 
+
 [System.Serializable]
-public struct Buttons
+public class UserUIInputs
+{
+    public InputField Duration;
+
+    public InputField Somersault;
+    public InputField Tilt;
+    public InputField Twist;
+    public InputField HorizontalPosition;
+    public InputField VerticalPosition;
+    public InputField SomersaultSpeed;
+    public InputField TiltSpeed;
+    public InputField TwistSpeed;
+    public InputField HorizontalSpeed;
+    public InputField VerticalSpeed;
+
+    public Dropdown PresetConditions;
+    public Toggle Gravity;
+    public Toggle StopOnGround;
+
+    public void SetPositions(UserUIInputsValues _values)
+    {
+        SetInput(Somersault, true, _values.Somersault);
+        SetInput(Tilt, true, _values.Tilt);
+        SetInput(Twist, true, _values.Twist);
+        SetInput(HorizontalPosition, true, _values.HorizontalPosition);
+        SetInput(VerticalPosition, true, _values.VerticalPosition);
+    }
+
+    public void SetAll(UserUIInputsValues _values)
+    {
+        SetInput(Duration, true, _values.Somersault);
+
+        SetInput(Somersault, true, _values.Somersault);
+        SetInput(Tilt, true, _values.Tilt);
+        SetInput(Twist, true, _values.Twist);
+        SetInput(HorizontalPosition, true, _values.HorizontalPosition);
+        SetInput(VerticalPosition, true, _values.VerticalPosition);
+        SetInput(SomersaultSpeed, true, _values.SomersaultSpeed);
+        SetInput(TiltSpeed, true, _values.TiltSpeed);
+        SetInput(TwistSpeed, true, _values.TwistSpeed);
+        SetInput(HorizontalSpeed, true, _values.HorizontalSpeed);
+        SetInput(VerticalSpeed, true, _values.VerticalSpeed);
+    }
+
+    public void SetAll(UserUIInputsIsActive _statuses, UserUIInputsValues _values)
+    {
+
+        SetInput(Duration, _statuses.Duration, _values.Somersault);
+
+        SetInput(Somersault, _statuses.Somersault, _values.Somersault);
+        SetInput(Tilt, _statuses.Tilt, _values.Tilt);
+        SetInput(Twist, _statuses.Twist, _values.Twist);
+        SetInput(HorizontalPosition, _statuses.HorizontalPosition, _values.HorizontalPosition);
+        SetInput(VerticalPosition, _statuses.VerticalPosition, _values.VerticalPosition);
+        SetInput(SomersaultSpeed, _statuses.SomersaultSpeed, _values.SomersaultSpeed);
+        SetInput(TiltSpeed, _statuses.TiltSpeed, _values.TiltSpeed);
+        SetInput(TwistSpeed, _statuses.TwistSpeed, _values.TwistSpeed);
+        SetInput(HorizontalSpeed, _statuses.HorizontalSpeed, _values.HorizontalSpeed);
+        SetInput(VerticalSpeed, _statuses.VerticalSpeed, _values.VerticalSpeed);
+    }
+
+    public void SetInput(InputField _field, bool _activate, string _value = "0.0")
+    {
+        _field.enabled = _activate;
+        _field.image.color = _activate ? Color.white : Color.blue;
+        _field.text = _value;
+    }
+
+    public void SetInput(Toggle _field, bool _activate, bool _value = false)
+    {
+        _field.enabled = _activate;
+        _field.image.color = _activate ? Color.white : Color.blue;
+        _field.isOn = _value;
+    }
+    public void SetInput(Dropdown _field, bool _activate, int _value = 0)
+    {
+        _field.enabled = _activate;
+        _field.image.color = _activate ? Color.white : Color.blue;
+        _field.value = _value;
+    }
+}
+
+public class UserUIInputsValues
+{
+    public string Duration;
+
+    public string Somersault;
+    public string Tilt;
+    public string Twist;
+    public string HorizontalPosition;
+    public string VerticalPosition;
+    public string SomersaultSpeed;
+    public string TiltSpeed;
+    public string TwistSpeed;
+    public string HorizontalSpeed;
+    public string VerticalSpeed;
+
+    public int PresetConditions;
+    public bool Gravity;
+    public bool StopOnGround;
+
+    public void SetAll(UserUIInputs _inputs)
+    {
+        Duration = _inputs.Duration != null ? _inputs.Duration.text : "1.0";
+
+        Somersault = _inputs.Somersault != null ? _inputs.Somersault.text : "0.0";
+        Tilt = _inputs.Tilt != null ? _inputs.Tilt.text : "0.0";
+        Twist = _inputs.Twist != null ? _inputs.Twist.text : "0.0";
+        HorizontalPosition = _inputs.HorizontalPosition != null ? _inputs.HorizontalPosition.text : "0.0";
+        VerticalPosition = _inputs.VerticalPosition != null ? _inputs.VerticalPosition.text : "0.0";
+        SomersaultSpeed = _inputs.SomersaultSpeed != null ? _inputs.SomersaultSpeed.text : "0.0";
+        TiltSpeed = _inputs.TiltSpeed != null ? _inputs.TiltSpeed.text : "0.0";
+        TwistSpeed = _inputs.TwistSpeed != null ? _inputs.TwistSpeed.text : "0.0";
+        HorizontalSpeed = _inputs.HorizontalSpeed != null ? _inputs.HorizontalSpeed.text : "0.0";
+        VerticalSpeed = _inputs.VerticalSpeed != null ? _inputs.VerticalSpeed.text : "0.0";
+
+        PresetConditions = _inputs.PresetConditions != null ? _inputs.PresetConditions.value : 0;
+        Gravity = _inputs.Gravity != null ? _inputs.Gravity.isOn : true;
+        StopOnGround = _inputs.StopOnGround != null ? _inputs.StopOnGround.isOn : false;
+    }
+}
+
+[System.Serializable]
+public struct UserUIInputsIsActive
 {
     public bool Somersault;
     public bool SomersaultSpeed;
@@ -65,7 +190,7 @@ public struct MissionInfo
     public Goal goal;
     public SolutionConstraints constraints;
     public int maxActions;
-    public Buttons enabledInputs;
+    public UserUIInputsIsActive enabledInputs;
     public int Condition;
     public string Hint;
 
@@ -135,18 +260,15 @@ public class ConditionList
 public class ConditionInfo
 {
     public string name;
-    public bool Gravity;
-    public bool HasFloor;
-    public float SomersaultPosition;
-    public float TiltPosition;
-    public float TwistPosition;
-    public float HorizontalPosition;
-    public float VerticalPosition;
+    public UserUIInputsValues userInputsValues = new UserUIInputsValues();
 }
 
 public class GameManager : MonoBehaviour
 {
+    protected BaseProfile profile;
+    protected DrawManager drawManager;
     protected MissionManager missionManager;
+    protected UIManager uiManager;
     public MissionInfo mission;
 
 	public string pathDataFiles;
@@ -160,6 +282,8 @@ public class GameManager : MonoBehaviour
 	private void Start()
     {
         missionManager = ToolBox.GetInstance().GetManager<MissionManager>();
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
 
         System.Globalization.NumberFormatInfo nfi = new System.Globalization.NumberFormatInfo();
         nfi.NumberDecimalSeparator = ".";
@@ -339,10 +463,10 @@ public class GameManager : MonoBehaviour
 
 
         ////////////////
-        transform.parent.GetComponentInChildren<DrawManager>().takeOffParamTwistPosition = info.TwistPosition;
-        transform.parent.GetComponentInChildren<DrawManager>().takeOffParamHorizontalPosition = info.HorizontalPosition;
-        transform.parent.GetComponentInChildren<DrawManager>().takeOffParamVerticalPosition = info.VerticalPosition;
-        transform.parent.GetComponentInChildren<DrawManager>().takeOffParamTiltSpeed = info.TiltSpeed;
+        drawManager.takeOffParamTwistPosition = info.TwistPosition;
+        drawManager.takeOffParamHorizontalPosition = info.HorizontalPosition;
+        drawManager.takeOffParamVerticalPosition = info.VerticalPosition;
+        drawManager.takeOffParamTiltSpeed = info.TiltSpeed;
         ////////////////////
 
 
@@ -396,10 +520,10 @@ public class GameManager : MonoBehaviour
 
 
         ////////////////
-        transform.parent.GetComponentInChildren<DrawManager>().takeOffParamTwistPosition = info.TwistPosition;
-        transform.parent.GetComponentInChildren<DrawManager>().takeOffParamHorizontalPosition = info.HorizontalPosition;
-        transform.parent.GetComponentInChildren<DrawManager>().takeOffParamVerticalPosition = info.VerticalPosition;
-        transform.parent.GetComponentInChildren<DrawManager>().takeOffParamTiltSpeed = info.TiltSpeed;
+        drawManager.takeOffParamTwistPosition = info.TwistPosition;
+        drawManager.takeOffParamHorizontalPosition = info.HorizontalPosition;
+        drawManager.takeOffParamVerticalPosition = info.VerticalPosition;
+        drawManager.takeOffParamTiltSpeed = info.TiltSpeed;
         ////////////////////
 
 
@@ -411,31 +535,25 @@ public class GameManager : MonoBehaviour
         {
             jointsTemp.nodes[i].ddl = i + 1;
             jointsTemp.nodes[i].name = info.nodes[i].Name;
-            jointsTemp.nodes[i].interpolation = transform.parent.GetComponentInChildren<DrawManager>().secondParameters.interpolationDefault;
+            jointsTemp.nodes[i].interpolation = drawManager.secondParameters.interpolationDefault;
             jointsTemp.nodes[i].T = info.nodes[i].T;
             jointsTemp.nodes[i].Q = info.nodes[i].Q;
             jointsTemp.nodes[i].ddlOppositeSide = -1;
         }
 
-        transform.parent.GetComponentInChildren<DrawManager>().secondParameters.joints = jointsTemp;
+        drawManager.secondParameters.joints = jointsTemp;
 
         LagrangianModelSimple lagrangianModelSimple = new LagrangianModelSimple();
-        transform.parent.GetComponentInChildren<DrawManager>().secondParameters.joints.lagrangianModel = lagrangianModelSimple.GetParameters;
+        drawManager.secondParameters.joints.lagrangianModel = lagrangianModelSimple.GetParameters;
 
         return true;
     }
 
-    public void SaveCondition(int index, string name)
+    public void SaveCondition(string name)
     {
         ConditionInfo n = new ConditionInfo();
         n.name = name;
-        n.Gravity = transform.parent.GetComponentInChildren<DrawManager>().UseGravity;
-        n.HasFloor = transform.parent.GetComponentInChildren<DrawManager>().StopOnGround;
-        n.HorizontalPosition = transform.parent.GetComponentInChildren<DrawManager>().takeOffParamHorizontalPosition;
-        n.VerticalPosition = transform.parent.GetComponentInChildren<DrawManager>().takeOffParamVerticalPosition;
-        n.SomersaultPosition = MainParameters.Instance.joints.takeOffParam.rotation;
-        n.TiltPosition = MainParameters.Instance.joints.takeOffParam.tilt;
-        n.TwistPosition = transform.parent.GetComponentInChildren<DrawManager>().takeOffParamTwistPosition;
+        n.userInputsValues.SetAll(uiManager.userInputs);
 
         listCondition.conditions.Add(n);
         listCondition.count++;
@@ -498,10 +616,10 @@ public class GameManager : MonoBehaviour
 
 
         ////////////////
-        info.TwistPosition = transform.parent.GetComponentInChildren<DrawManager>().takeOffParamTwistPosition;
-        info.HorizontalPosition = transform.parent.GetComponentInChildren<DrawManager>().takeOffParamHorizontalPosition;
-        info.VerticalPosition = transform.parent.GetComponentInChildren<DrawManager>().takeOffParamVerticalPosition;
-        info.TiltSpeed = transform.parent.GetComponentInChildren<DrawManager>().takeOffParamTiltSpeed;
+        info.TwistPosition = drawManager.takeOffParamTwistPosition;
+        info.HorizontalPosition = drawManager.takeOffParamHorizontalPosition;
+        info.VerticalPosition = drawManager.takeOffParamVerticalPosition;
+        info.TiltSpeed = drawManager.takeOffParamTiltSpeed;
         ////////////////////
 
 
@@ -596,7 +714,7 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In Duration");
 
-                jointsTemp.duration = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
+                jointsTemp.duration = Utils.ToFloat(values[1]);
                 if (jointsTemp.duration == -999)
                     jointsTemp.duration = MainParameters.Instance.durationDefault;
 
@@ -616,7 +734,7 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In VerticalSpeed");
 
-                jointsTemp.takeOffParam.verticalSpeed = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
+                jointsTemp.takeOffParam.verticalSpeed = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.verticalSpeed == -999)
                     jointsTemp.takeOffParam.verticalSpeed = MainParameters.Instance.takeOffParamDefault.verticalSpeed;
 
@@ -626,7 +744,7 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In AnteroposteriorSpeed");
 
-                jointsTemp.takeOffParam.anteroposteriorSpeed = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
+                jointsTemp.takeOffParam.anteroposteriorSpeed = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.anteroposteriorSpeed == -999)
                     jointsTemp.takeOffParam.anteroposteriorSpeed = MainParameters.Instance.takeOffParamDefault.anteroposteriorSpeed;
 
@@ -636,7 +754,7 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In SomersaultSpeed");
 
-                jointsTemp.takeOffParam.somersaultSpeed = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
+                jointsTemp.takeOffParam.somersaultSpeed = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.somersaultSpeed == -999)
                     jointsTemp.takeOffParam.somersaultSpeed = MainParameters.Instance.takeOffParamDefault.somersaultSpeed;
 
@@ -646,7 +764,7 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In TwistSpeed");
 
-                jointsTemp.takeOffParam.twistSpeed = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
+                jointsTemp.takeOffParam.twistSpeed = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.twistSpeed == -999)
                     jointsTemp.takeOffParam.twistSpeed = MainParameters.Instance.takeOffParamDefault.twistSpeed;
 
@@ -656,7 +774,7 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In Tilt");
 
-                jointsTemp.takeOffParam.tilt = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
+                jointsTemp.takeOffParam.tilt = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.tilt == -999)
                     jointsTemp.takeOffParam.tilt = MainParameters.Instance.takeOffParamDefault.tilt;
 
@@ -666,7 +784,7 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In Rotation");
 
-                jointsTemp.takeOffParam.rotation = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
+                jointsTemp.takeOffParam.rotation = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.rotation == -999)
                     jointsTemp.takeOffParam.rotation = MainParameters.Instance.takeOffParamDefault.rotation;
 
@@ -714,8 +832,8 @@ public class GameManager : MonoBehaviour
                     else
                         jointsTemp.nodes[ddlNum].interpolation.type = MainParameters.InterpolationType.Quintic;
                     jointsTemp.nodes[ddlNum].interpolation.numIntervals = int.Parse(subValues[1], CultureInfo.InvariantCulture);
-                    jointsTemp.nodes[ddlNum].interpolation.slope[0] = float.Parse(subValues[2], NumberStyles.Number, CultureInfo.InvariantCulture);
-                    jointsTemp.nodes[ddlNum].interpolation.slope[1] = float.Parse(subValues[3], NumberStyles.Number, CultureInfo.InvariantCulture);
+                    jointsTemp.nodes[ddlNum].interpolation.slope[0] = Utils.ToFloat(subValues[2]);
+                    jointsTemp.nodes[ddlNum].interpolation.slope[1] = Utils.ToFloat(subValues[3]);
                     indexTQ++;
                 }
                 jointsTemp.nodes[ddlNum].T = ExtractDataTQ(values[indexTQ]);
@@ -855,7 +973,7 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In Duration");
 
-                jointsTemp.duration = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
+                jointsTemp.duration = Utils.ToFloat(values[1]);
                 if (jointsTemp.duration == -999)
                     jointsTemp.duration = MainParameters.Instance.durationDefault;
 
@@ -875,7 +993,7 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In VerticalSpeed");
 
-                jointsTemp.takeOffParam.verticalSpeed = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
+                jointsTemp.takeOffParam.verticalSpeed = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.verticalSpeed == -999)
                     jointsTemp.takeOffParam.verticalSpeed = MainParameters.Instance.takeOffParamDefault.verticalSpeed;
 
@@ -885,7 +1003,7 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In AnteroposteriorSpeed");
 
-                jointsTemp.takeOffParam.anteroposteriorSpeed = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
+                jointsTemp.takeOffParam.anteroposteriorSpeed = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.anteroposteriorSpeed == -999)
                     jointsTemp.takeOffParam.anteroposteriorSpeed = MainParameters.Instance.takeOffParamDefault.anteroposteriorSpeed;
 
@@ -895,7 +1013,7 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In SomersaultSpeed");
 
-                jointsTemp.takeOffParam.somersaultSpeed = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
+                jointsTemp.takeOffParam.somersaultSpeed = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.somersaultSpeed == -999)
                     jointsTemp.takeOffParam.somersaultSpeed = MainParameters.Instance.takeOffParamDefault.somersaultSpeed;
 
@@ -905,7 +1023,7 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In TwistSpeed");
 
-                jointsTemp.takeOffParam.twistSpeed = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
+                jointsTemp.takeOffParam.twistSpeed = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.twistSpeed == -999)
                     jointsTemp.takeOffParam.twistSpeed = MainParameters.Instance.takeOffParamDefault.twistSpeed;
 
@@ -915,7 +1033,7 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In Tilt");
 
-                jointsTemp.takeOffParam.tilt = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
+                jointsTemp.takeOffParam.tilt = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.tilt == -999)
                     jointsTemp.takeOffParam.tilt = MainParameters.Instance.takeOffParamDefault.tilt;
 
@@ -925,7 +1043,7 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In Rotation");
 
-                jointsTemp.takeOffParam.rotation = float.Parse(values[1], NumberStyles.Number, CultureInfo.InvariantCulture);
+                jointsTemp.takeOffParam.rotation = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.rotation == -999)
                     jointsTemp.takeOffParam.rotation = MainParameters.Instance.takeOffParamDefault.rotation;
 
@@ -954,7 +1072,7 @@ public class GameManager : MonoBehaviour
 
                 WriteToLogFile("jointsTemp.nodes[ddlNum].name: " + jointsTemp.nodes[ddlNum].name);
 
-                jointsTemp.nodes[ddlNum].interpolation = transform.parent.GetComponentInChildren<DrawManager>().secondParameters.interpolationDefault;
+                jointsTemp.nodes[ddlNum].interpolation = drawManager.secondParameters.interpolationDefault;
 
                 WriteToLogFile("jointsTemp.nodes[ddlNum].interpolation: " + jointsTemp.nodes[ddlNum].interpolation.type.ToString());
 
@@ -969,12 +1087,12 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        transform.parent.GetComponentInChildren<DrawManager>().secondParameters.joints = jointsTemp;
+        drawManager.secondParameters.joints = jointsTemp;
 
         WriteToLogFile("Assigned MainParameters.Instance.joints");
 
         LagrangianModelSimple lagrangianModelSimple = new LagrangianModelSimple();
-        transform.parent.GetComponentInChildren<DrawManager>().secondParameters.joints.lagrangianModel = lagrangianModelSimple.GetParameters;
+        drawManager.secondParameters.joints.lagrangianModel = lagrangianModelSimple.GetParameters;
 
         return true;
     }
@@ -993,7 +1111,7 @@ public class GameManager : MonoBehaviour
         string[] subValues = Regex.Split(values, ",");
         float[] data = new float[subValues.Length];
         for (int i = 0; i < subValues.Length; i++)
-            data[i] = float.Parse(subValues[i], NumberStyles.Number, CultureInfo.InvariantCulture);
+            data[i] = Utils.ToFloat(subValues[i]);
         return data;
     }
 
@@ -1041,7 +1159,7 @@ public class GameManager : MonoBehaviour
     {
         float[] qdotd;
         float[] qddotd;
-        transform.parent.GetComponentInChildren<DrawManager>().Trajectory_s(lagrangianModel, t, qi, out qd, out qdotd, out qddotd);
+        drawManager.Trajectory_s(lagrangianModel, t, qi, out qd, out qdotd, out qddotd);
     }
 
     public void DisplayDDL(int ddl, bool axisRange)

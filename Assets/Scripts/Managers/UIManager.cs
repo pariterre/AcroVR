@@ -19,6 +19,15 @@ public class UIManager : MonoBehaviour
 
     public bool tooltipOn;
 
+
+    public UserUIInputs userInputs { get; protected set; }
+    protected UserUIInputsValues userInputsDefaultValues;
+    public void SetUserInputs(UserUIInputs _userUIInputs, UserUIInputsValues _default)
+    {
+        userInputs = _userUIInputs;
+        userInputsDefaultValues = _default;
+    }
+
     void Start()
     {
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
