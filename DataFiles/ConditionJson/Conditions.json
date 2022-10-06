@@ -1,105 +1,24 @@
 {
-    "count": 10,
-    "conditions": [
-        {
-            "name": "Sans condition",
-            "Gravity": false,
-            "HasFloor": false,
-            "SomersaultPosition": 0.0,
-            "TiltPosition": 0.0,
-            "TwistPosition": 0.0,
-            "HorizontalPosition": 0.0,
-            "VerticalPosition": 0.0
-        },
-        {
-            "name": "Trampoline",
-            "Gravity": true,
-            "HasFloor": true,
-            "SomersaultPosition": 0.0,
-            "TiltPosition": 0.0,
-            "TwistPosition": 0.0,
-            "HorizontalPosition": 0.0,
-            "VerticalPosition": 0.0
-        },
-        {
-            "name": "Chute",
-            "Gravity": true,
-            "HasFloor": true,
-            "SomersaultPosition": 0.0,
-            "TiltPosition": 0.0,
-            "TwistPosition": 0.0,
-            "HorizontalPosition": 0.0,
-            "VerticalPosition": 0.0
-        },
-        {
-            "name": "Plongeon 1 m",
-            "Gravity": true,
-            "HasFloor": true,
-            "SomersaultPosition": 0.0,
-            "TiltPosition": 0.0,
-            "TwistPosition": 0.0,
-            "HorizontalPosition": 0.0,
-            "VerticalPosition": 1.0
-        },
-        {
-            "name": "Plongeon 3 m",
-            "Gravity": true,
-            "HasFloor": true,
-            "SomersaultPosition": 0.0,
-            "TiltPosition": 0.0,
-            "TwistPosition": 0.0,
-            "HorizontalPosition": 0.0,
-            "VerticalPosition": 3.0
-        },
-        {
-            "name": "Plongeon 5 m",
-            "Gravity": true,
-            "HasFloor": true,
-            "SomersaultPosition": 0.0,
-            "TiltPosition": 0.0,
-            "TwistPosition": 0.0,
-            "HorizontalPosition": 0.0,
-            "VerticalPosition": 5.0
-        },
-        {
-            "name": "Plongeon 10 m",
-            "Gravity": true,
-            "HasFloor": true,
-            "SomersaultPosition": 0.0,
-            "TiltPosition": 0.0,
-            "TwistPosition": 0.0,
-            "HorizontalPosition": 0.0,
-            "VerticalPosition": 10.0
-        },
-        {
-            "name": "Barre fixe",
-            "Gravity": true,
-            "HasFloor": true,
-            "SomersaultPosition": 0.0,
-            "TiltPosition": 0.0,
-            "TwistPosition": 0.0,
-            "HorizontalPosition": 0.0,
-            "VerticalPosition": 2.5
-        },
-        {
-            "name": "Barres asymétriques",
-            "Gravity": true,
-            "HasFloor": true,
-            "SomersaultPosition": 0.0,
-            "TiltPosition": 0.0,
-            "TwistPosition": 0.0,
-            "HorizontalPosition": 0.0,
-            "VerticalPosition": 2.200000047683716
-        },
-        {
-            "name": "Saut à la perche",
-            "Gravity": true,
-            "HasFloor": true,
-            "SomersaultPosition": 0.0,
-            "TiltPosition": 0.0,
-            "TwistPosition": 0.0,
-            "HorizontalPosition": 0.0,
-            "VerticalPosition": 1.0499999523162842
-        }
-    ]
+  "count": 10,
+  "conditions": [
+    {
+      "name": "Sans condition",
+      "userInputsValues": {
+        "Duration": 1.0,
+        "Somersault": 0.0,
+        "Tilt": 0.0,
+        "Twist": 0.0,
+        "HorizontalPosition": 0.0,
+        "VerticalPosition": 0.0,
+        "SomersaultSpeed": 0.0,
+        "TiltSpeed": 0.0,
+        "TwistSpeed": 0.0,
+        "HorizontalSpeed": 0.0,
+        "VerticalSpeed": 0.0,
+        "PresetConditions": 0,
+        "Gravity": true, 
+        "StopOnGround": false
+      }
+    }
+  ]
 }
