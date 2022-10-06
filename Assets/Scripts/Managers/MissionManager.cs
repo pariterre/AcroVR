@@ -120,27 +120,26 @@ public class MissionManager : MonoBehaviour
 
     void CheckParameterOnOff()
     {
-        void ManageInputField(bool keepEnabled, InputField field)
+        void ManageInputField(bool _activate, InputField _field, float _default)
         {
-            if (keepEnabled) return;
-
-            field.enabled = false;
-            field.image.color = Color.blue;
+            _field.enabled = _activate;
+            _field.image.color = _activate ? Color.white : Color.blue;
+            _field.text = _default.ToString(); 
         }
 
         Buttons inputs = AllMissions.missions[CurrentMissionIndex].enabledInputs;
 
-        ManageInputField(inputs.Somersault, InputFieldSomersaultPosition);
-        ManageInputField(inputs.SomersaultSpeed, InputFieldSomersaultSpeed);
-        ManageInputField(inputs.Tilt, InputFieldTiltPosition);
-        ManageInputField(inputs.TiltSpeed, InputFieldTiltSpeed);
-        ManageInputField(inputs.Twist, InputFieldTwistPosition);
-        ManageInputField(inputs.TwistSpeed, InputFieldTwistSpeed);
-        ManageInputField(inputs.HorizontalPosition, InputFieldHorizontalPosition);
-        ManageInputField(inputs.HorizontalSpeed, InputFieldHorizontalSpeed);
-        ManageInputField(inputs.VerticalPosition, InputFieldVerticalPosition);
-        ManageInputField(inputs.VerticalSpeed, InputFieldVerticalSpeed);
-        ManageInputField(inputs.Duration, InputFieldDuration);
+        ManageInputField(inputs.Somersault, InputFieldSomersaultPosition, 0f);
+        ManageInputField(inputs.SomersaultSpeed, InputFieldSomersaultSpeed, 0f);
+        ManageInputField(inputs.Tilt, InputFieldTiltPosition, 0f);
+        ManageInputField(inputs.TiltSpeed, InputFieldTiltSpeed, 0f);
+        ManageInputField(inputs.Twist, InputFieldTwistPosition, 0f);
+        ManageInputField(inputs.TwistSpeed, InputFieldTwistSpeed, 0f);
+        ManageInputField(inputs.HorizontalPosition, InputFieldHorizontalPosition, 0f);
+        ManageInputField(inputs.HorizontalSpeed, InputFieldHorizontalSpeed, 0f);
+        ManageInputField(inputs.VerticalPosition, InputFieldVerticalPosition, 0f);
+        ManageInputField(inputs.VerticalSpeed, InputFieldVerticalSpeed, 0f);
+        ManageInputField(inputs.Duration, InputFieldDuration, 1f);
     }
 
     public void CheckMissionResult()
