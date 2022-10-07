@@ -99,21 +99,35 @@ public class MissionManager : MonoBehaviour
 
     public void CheckMissionResult()
     {
+        Result IsSuccess(float _value, float[] _contraint){
+            if (_contraint == null) return Result.SUCCESS;  // If no constraint was applied
+            
+            var _minAccepted = _contraint[0];
+            var _maxAccepted = _contraint.Length > 1 ? _contraint[1] : 999;
+            return CheckMinMax(_value, _minAccepted, _maxAccepted) ? Result.SUCCESS : Result.FAIL;
+        }
+
         if (CurrentMissionIndex < 0) return;
-
-        var HorizontalSpeed = Utils.ToFloat(uiManager.userInputs.HorizontalSpeed.text);
-
         MissionInfo mission = AllMissions.missions[CurrentMissionIndex];
 
-        var _minAcceptedDistance = mission.goal.Distance[0];
-        var _maxAcceptedDistance = mission.goal.Distance[1];
-        // TODO Fix the distance
-        var _resultHorizontalDistance = CheckMinMax(HorizontalSpeed, _minAcceptedDistance, _maxAcceptedDistance) ? Result.SUCCESS : Result.FAIL;
+        // Get the input results from the UI
+        var Somersault = Utils.ToFloat(uiManager.userInputs.Somersault.text);
+        var Tilt = Utils.ToFloat(uiManager.userInputs.Tilt.text);
+        var Twist = Utils.ToFloat(uiManager.userInputs.Twist.text);
+        var HorizontalPosition = Utils.ToFloat(uiManager.userInputs.HorizontalPosition.text);
+        var VerticalPosition = Utils.ToFloat(uiManager.userInputs.VerticalPosition.text);
+        var SomersaultSpeed = Utils.ToFloat(uiManager.userInputs.SomersaultSpeed.text);
+        var TiltSpeed = Utils.ToFloat(uiManager.userInputs.TiltSpeed.text);
+        var TwistSpeed = Utils.ToFloat(uiManager.userInputs.TwistSpeed.text);
+        var HorizontalSpeed = Utils.ToFloat(uiManager.userInputs.HorizontalSpeed.text);
+        var VerticalSpeed = Utils.ToFloat(uiManager.userInputs.VerticalSpeed.text);
 
-        var _minAcceptedSpeed = mission.constraints.HorizontalSpeed[0];
-        var _maxAcceptedSpeed = mission.constraints.HorizontalSpeed.Length > 1 ? mission.constraints.HorizontalSpeed[1] : 999;
-        var _resultHorizontalSpeed = CheckMinMax(HorizontalSpeed, _minAcceptedSpeed, _maxAcceptedSpeed) ? Result.SUCCESS : Result.FAIL;
+        // Compare to accepted results
+        var _resultHorizontalSpeed = IsSuccess(HorizontalSpeed, mission.constraints.HorizontalSpeed);
 
+        // TODO Fix the distance by computing
+        var _resultHorizontalDistance = IsSuccess(HorizontalSpeed, mission.goal.Distance);
+        
         MissionResult = 
             _resultHorizontalDistance == Result.SUCCESS 
                 && _resultHorizontalSpeed == Result.SUCCESS 

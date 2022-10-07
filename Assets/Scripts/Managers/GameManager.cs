@@ -20,19 +20,20 @@ public struct Goal
 [System.Serializable]
 public struct SolutionConstraints
 {
-    public float[] SomersaultPosition;
-    public float[] SomersaultSpeed;
-    public float[] TwistPosition;
-    public float[] TwistSpeed;
-    public float[] TiltPosition;
-    public float[] TiltSpeed;
-
-    public float[] HorizontalPosition;
-    public float[] HorizontalSpeed;
-    public float[] VerticalPosition;
-    public float[] VerticalSpeed;
-
     public float[] Duration;
+    public bool[] UseGravity;
+    public bool[] StopOnGround;
+
+    public float[] Somersault;
+    public float[] Tilt;
+    public float[] Twist;
+    public float[] HorizontalPosition;
+    public float[] VerticalPosition;
+    public float[] SomersaultSpeed;
+    public float[] TiltSpeed;
+    public float[] TwistSpeed;
+    public float[] HorizontalSpeed;
+    public float[] VerticalSpeed;
 
     public MissionNodes HipFlexion;
     public MissionNodes KneeFlexion;
