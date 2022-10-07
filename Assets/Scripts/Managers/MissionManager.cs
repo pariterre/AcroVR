@@ -94,9 +94,6 @@ public class MissionManager : MonoBehaviour
     void ManageInputFields()
     {
         UserUIInputsIsActive _status = AllMissions.missions[CurrentMissionIndex].enabledInputs;
-
-        
-
     }
 
     public void CheckMissionResult()

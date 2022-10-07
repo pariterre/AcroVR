@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,11 +10,6 @@ using UnityEngine.UI;
 [System.Serializable]
 public class UserUIInputs
 {
-    //DrawManager drawManager;
-    public UserUIInputs(){
-        //drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
-    }
-
     public InputField Duration;
     public void SetDuration(float _value, bool _activateField = true) {
         SetInput(Somersault, _value, _activateField);
@@ -101,6 +96,8 @@ public class UserUIInputs
     public void SetStopOnGround(bool _value, bool _activateField = true) {
         SetInput(StopOnGround, _value, _activateField);
         MainParameters.Instance.joints.StopOnGround = _value;
+        if (StopOnGround != null)
+            ToolBox.GetInstance().GetManager<DrawManager>().ForceFullUpdate();
     }
 
     public void SetParameters(UserUIInputsValues _values){
@@ -166,13 +163,27 @@ public class UserUIInputs
         if (_setPositions) SetPositions(_values, _isActives);
         if (_setSpeeds) SetSpeeds(_values, _isActives);
     }
+    public void SetAllFromUI(
+        bool _setParameters = true, 
+        bool _setPositions = true, 
+        bool _setSpeeds = true
+    ){
+        var joints = MainParameters.Instance.joints;
+        UserUIInputsValues _values = new UserUIInputsValues();
+        _values.SetAll(ToolBox.GetInstance().GetManager<UIManager>().userInputs);
+
+        UserUIInputsIsActive _isActives = new UserUIInputsIsActive();
+        _isActives.Initialize();
+        
+        SetAll(_values, _isActives, _setParameters, _setPositions, _setSpeeds);
+    }
 
     public void SetInput(InputField _field, float _value = 0, bool _activate = true)
     {
-        //if (_field == null) return;
+        if (_field == null) return;
         _field.enabled = _activate;
         _field.image.color = _activate ? Color.white : Color.blue;
-        _field.text = _value.ToString("0.0");
+        _field.text = Utils.ToString(_value);
     }
 
     public void SetInput(Toggle _field, bool _value = false, bool _activate = true)
