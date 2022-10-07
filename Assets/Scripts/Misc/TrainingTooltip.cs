@@ -143,7 +143,7 @@ public class TrainingTooltip : MonoBehaviour
         bp.FrontCameraPOV(0);
 
         SetDropDownPresetCondition(PlayerPrefs.GetInt("PresetConditions", 0));
-        UpdateAllPropertiesFromDropdown();
+        UpdateAllPropertiesFromDropdown(false);
     }
 
     public void SelectPresetCondition(){
@@ -191,14 +191,17 @@ public class TrainingTooltip : MonoBehaviour
         UpdateAllPropertiesFromDropdown();
     }
     
-    public void UpdateAllPropertiesFromDropdown(){
+    public void UpdateAllPropertiesFromDropdown(bool _skipSpeedColumn = true){
         ToggleGravity.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].userInputsValues.Gravity;
         UpdateGravity();
         
         IsStopAtGround.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].userInputsValues.StopOnGround;
         ToggleStopAtGround();
         
-        UpdatePositions();
+        if (_skipSpeedColumn)
+            UpdatePositions();
+        else
+            UpdateAll();
     }
 
     public void UpdateGravity()
@@ -210,6 +213,11 @@ public class TrainingTooltip : MonoBehaviour
     public void ToggleStopAtGround()
     {
         drawManager.SetStopOnGround(IsStopAtGround.isOn);
+    }
+
+    public void UpdateAll()
+    {
+        uiManager.userInputs.SetAll(gameManager.listCondition.conditions[dropDownTakeOffCondition.value].userInputsValues);
     }
 
     public void UpdatePositions()
