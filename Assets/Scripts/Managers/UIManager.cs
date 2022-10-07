@@ -273,10 +273,17 @@ public class UIManager : MonoBehaviour
     protected DrawManager drawManager;
     protected GameManager gameManager;
 
-    public GameObject panelToolTip;
-    GameObject panelToolTipPrefab;
-    RectTransform rectTransformBackground;
+    public GameObject panelToolTip { get; protected set; }
+    RectTransform rectTransformBackgroundToolTip;
     Text textToolTip;
+    public void SetPanelToolTip(GameObject _panel){
+        panelToolTip = _panel.transform.Find("PanelToolTip").gameObject;
+        rectTransformBackgroundToolTip = panelToolTip.transform.Find("background").GetComponent<RectTransform>();
+        textToolTip = panelToolTip.transform.Find("text").GetComponent<Text>();
+
+        panelToolTip.SetActive(false);
+    }
+
     int displayToolTipNum = 0;
 
     public bool tooltipOn;
@@ -288,6 +295,8 @@ public class UIManager : MonoBehaviour
         userInputs = _userUIInputs;
         userInputsDefaultValues = _default;
 
+        SetTooltip(PlayerPrefs.GetInt("WithToolTip", 0) == 1);        
+        SetDropDownPresetCondition(PlayerPrefs.GetInt("PresetConditions", 0));
         UpdateAllPropertiesFromDropdown();
     }
 
@@ -295,13 +304,10 @@ public class UIManager : MonoBehaviour
     {
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
         gameManager = ToolBox.GetInstance().GetManager<GameManager>();
-
-        SetTooltip(PlayerPrefs.GetInt("WithToolTip", 0) == 1);
-        
-        SetDropDownPresetCondition(PlayerPrefs.GetInt("PresetConditions", 0));
     }
 
     public void SetDropDownPresetCondition(int value){
+
         userInputs.SetPresetConditions(value);
     }
 
@@ -335,7 +341,7 @@ public class UIManager : MonoBehaviour
                 textToolTip.text = stringToolTip;
                 float paddingSize = 4;
                 Vector2 backgroundSize = new Vector2(textToolTip.preferredWidth + paddingSize * 2, textToolTip.preferredHeight + paddingSize * 2);
-                rectTransformBackground.sizeDelta = backgroundSize;
+                rectTransformBackgroundToolTip.sizeDelta = backgroundSize;
 
                 Vector2 localPoint = Input.mousePosition;
                 panelToolTip.transform.position = localPoint;
@@ -378,18 +384,6 @@ public class UIManager : MonoBehaviour
         PlayerPrefs.SetInt("WithToolTip", tooltipOn ? 1 : 0);
     }
 
-    public void SetTooltip()
-    {
-        // TODO: This should be in TrainingTooltip.cs
-        panelToolTipPrefab = (GameObject)Resources.Load("ToolTipCanvas", typeof(GameObject));
-        panelToolTipPrefab = Instantiate(panelToolTipPrefab);
-        panelToolTip = panelToolTipPrefab.transform.Find("PanelToolTip").gameObject;
-        rectTransformBackground = panelToolTip.transform.Find("background").GetComponent<RectTransform>();
-        textToolTip = panelToolTip.transform.Find("text").GetComponent<Text>();
-
-        panelToolTip.SetActive(false);
-    }
-
     public void UpdateAllPropertiesFromDropdown(bool _skipSpeedColumn = false){
         if (userInputs == null || userInputs.PresetConditions == null) return;
         var values = gameManager.listCondition.conditions[userInputs.PresetConditions.value].userInputsValues;
@@ -402,7 +396,6 @@ public class UIManager : MonoBehaviour
 
     public void ToggleStopOnGround()
     {
-        // TODO: This should be done in BaseProfile
         userInputs.SetStopOnGround(userInputs.StopOnGround.isOn);
     }
 }

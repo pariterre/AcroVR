@@ -55,10 +55,9 @@ public class TrainingTooltip : MonoBehaviour
     public Text textTakeOffTwist;
     public Text textTakeOffHorizontal;
     public Text textTakeOffVertical;
-
-    public Dropdown dropDownTakeOffCondition;
+ 
     public Dropdown dropDownAnimationSpeed;
-    
+   
     public Text ConditionPreset;
     public Text ConditionName;
 
@@ -69,6 +68,7 @@ public class TrainingTooltip : MonoBehaviour
 
     private double mousePosX;
     private double mousePosY;
+    protected GameObject panelToolTipPrefab;
     public GameObject panelAddRemoveNode;
 
     protected GameManager gameManager;
@@ -82,11 +82,6 @@ public class TrainingTooltip : MonoBehaviour
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
         uiManager = ToolBox.GetInstance().GetManager<UIManager>();
         aniGraphManager = ToolBox.GetInstance().GetManager<AniGraphManager>();
-
-        if (drawManager.CurrentAvatar == DrawManager.AvatarModel.SingleFemale)
-            drawManager.InitAvatar(DrawManager.AvatarModel.SingleFemale);
-        else
-            drawManager.InitAvatar(DrawManager.AvatarModel.SingleMale);
 
         gameManager.InitAnimationInfo();
 
@@ -134,15 +129,7 @@ public class TrainingTooltip : MonoBehaviour
         languages.english.StopOnGround = "Stop on ground";
 
         ChangedLanguage();
-        uiManager.SetTooltip();
-
-        bp.FrontCameraPOV(0);
-    }
-
-    public void SelectPresetCondition(){
-        // TODO: This should be in BaseProfile
-        uiManager.SetDropDownPresetCondition(dropDownTakeOffCondition.value);
-        uiManager.UpdateAllPropertiesFromDropdown();
+        SetTooltip();
     }
 
     public void AddCondition(Text name)
@@ -156,34 +143,28 @@ public class TrainingTooltip : MonoBehaviour
 
     public void DeleteCondition()
     {
-        gameManager.RemoveCondition(dropDownTakeOffCondition.value);
+        gameManager.RemoveCondition(uiManager.userInputs.PresetConditions.value);
         UpdateDropDownNames();
     }
 
     public void NameCondition()
     {
-        ConditionName.text = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].name;
+        ConditionName.text = gameManager.listCondition.conditions[uiManager.userInputs.PresetConditions.value].name;
     }
 
     public void UpdateDropDownNames()
     {
-        dropDownTakeOffCondition.options.Clear();
+        uiManager.userInputs.PresetConditions.options.Clear();
 
         for (int i = 0; i < gameManager.listCondition.count; i++)
         {
-            dropDownTakeOffCondition.options.Add(new Dropdown.OptionData()
+            uiManager.userInputs.PresetConditions.options.Add(new Dropdown.OptionData()
             {
                 text = gameManager.listCondition.conditions[i].name
             });
         }
 
         uiManager.UpdateAllPropertiesFromDropdown();
-    }
-
-    public void ToggleStopAtGround()
-    {
-        // TODO: This should be done in BaseProfile
-        uiManager.ToggleStopOnGround();
     }
 
     private void ChangedLanguage()
@@ -280,6 +261,13 @@ public class TrainingTooltip : MonoBehaviour
                 DisplayContextMenu(panelAddRemoveNode);
             }
         }
+    }
+
+    public void SetTooltip()
+    {
+        panelToolTipPrefab = (GameObject)Resources.Load("ToolTipCanvas", typeof(GameObject));
+        panelToolTipPrefab = Instantiate(panelToolTipPrefab);
+        uiManager.SetPanelToolTip(panelToolTipPrefab);
     }
 
     void DisplayContextMenu(GameObject panel)

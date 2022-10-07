@@ -36,7 +36,6 @@ public class TakeOffParamF_s : MonoBehaviour
     public void CheckTakeOffParam(GameObject panel)
     {
         float value = Utils.ToFloat(panel.GetComponentInChildren<InputField>().text);
-
         // TODO: Just update everything from the InputFields...
         if(panel.name == "PanelTimeDuration")
             MainParameters.Instance.joints.Duration = value;

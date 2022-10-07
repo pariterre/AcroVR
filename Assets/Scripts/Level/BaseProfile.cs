@@ -70,13 +70,21 @@ public class BaseProfile : LevelBase
         missionManager = ToolBox.GetInstance().GetManager<MissionManager>();
 
         // Fill some important informations
-        userUiInputsDefaultValues.SetAll(userUiInputs);
+        if (cameraList.Length != 0){  // cameraList.Length is 0 if we are in the menu
+            userUiInputsDefaultValues.SetAll(userUiInputs);
 
-        // Give some handler to relevant scripts
-        drawManager.SetGround(Floor);
-        PrepareMissionManager();
-        if (SaveLoadCompareMenu != null)
-            SaveLoadCompareMenu.SetActive(!missionManager.HasActiveMission);
+            // Give some handler to relevant scripts
+            drawManager.SetGround(Floor);
+            PrepareMissionManager();
+            if (SaveLoadCompareMenu != null)
+                SaveLoadCompareMenu.SetActive(!missionManager.HasActiveMission);
+            
+            if (drawManager.CurrentAvatar == DrawManager.AvatarModel.SingleFemale)
+                drawManager.InitAvatar(DrawManager.AvatarModel.SingleFemale);
+            else
+                drawManager.InitAvatar(DrawManager.AvatarModel.SingleMale);
+            FrontCameraPOV(0);
+        }
     }
 
     protected void PrepareMissionManager()
@@ -136,7 +144,7 @@ public class BaseProfile : LevelBase
 
     public void FrontCameraPOV(float _v)
     {
-        if (cameraList == null) return;
+        if (cameraList == null || cameraList.Length < 16) return;
 
         if(cameraList[15] == null)
             cameraList[15] = drawManager.GetFirstViewTransform();
@@ -682,5 +690,10 @@ public class BaseProfile : LevelBase
     public void ToggleStopAtGround()
     {
         uiManager.ToggleStopOnGround();
+    }
+
+    public void SelectPresetCondition(){
+        uiManager.SetDropDownPresetCondition(uiManager.userInputs.PresetConditions.value);
+        uiManager.UpdateAllPropertiesFromDropdown();
     }
 }
