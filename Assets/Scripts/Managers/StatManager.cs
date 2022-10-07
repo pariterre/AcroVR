@@ -109,7 +109,10 @@ public class StatManager : MonoBehaviour
         replayInfo.player = info;
 
         replayInfo.replay.Objective = "default";
-        replayInfo.replay.Duration = MainParameters.Instance.joints.duration;
+        replayInfo.replay.Duration = MainParameters.Instance.joints.Duration;
+        replayInfo.replay.UseGravity = MainParameters.Instance.joints.UseGravity;
+        replayInfo.replay.StopOnGround = MainParameters.Instance.joints.StopOnGround;
+
         replayInfo.replay.Somersault = MainParameters.Instance.joints.takeOffParam.Somersault;
         replayInfo.replay.Tilt = MainParameters.Instance.joints.takeOffParam.Tilt;
         replayInfo.replay.Twist = MainParameters.Instance.joints.takeOffParam.Twist;

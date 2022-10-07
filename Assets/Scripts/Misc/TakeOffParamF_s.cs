@@ -37,8 +37,9 @@ public class TakeOffParamF_s : MonoBehaviour
     {
         float value = Utils.ToFloat(panel.GetComponentInChildren<InputField>().text);
 
+        // TODO: Just update everything from the InputFields...
         if(panel.name == "PanelTimeDuration")
-            MainParameters.Instance.joints.duration = value;
+            MainParameters.Instance.joints.Duration = value;
         else if (panel.name == "PanelSomersaultPosition")
             MainParameters.Instance.joints.takeOffParam.Somersault = value;
         else if (panel.name == "PanelTiltPosition")

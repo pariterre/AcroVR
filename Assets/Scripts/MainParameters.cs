@@ -82,7 +82,11 @@ public class MainParameters
 		/// <summary> Liste de tous les angles interpolés pour chacune des articulations. [m,n]: m = DDL, n = Frames. </summary>
 		public float[,] q0;
 		/// <summary> Durée de la figure (en secondes). </summary>
-		public float duration;
+		public float Duration;
+		/// <summary> If Gravity should be applied or ignored. </summary>
+		public bool UseGravity;
+		/// <summary> If the Ground should be considered the end of the movement. </summary>
+		public bool StopOnGround;
 		/// <summary> Structure contenant les données relatifs aux paramètres initiaux d'envol. </summary>
 		public StrucTakeOffParam takeOffParam;
 		/// <summary>
@@ -110,7 +114,13 @@ public class MainParameters
 	public StrucJoints joints;
 
     /// <summary> Valeur de défaut pour la durée de la figure. </summary>
-    public float durationDefault;
+    public float DurationDefault;
+
+    /// <summary> Default value for Use Gravity. </summary>
+	public bool UseGravityDefault; 
+
+    /// <summary> Default value for Stop on ground variable. </summary>
+	public bool StopOnGroundDefault; 
 
     /// <summary> Valeur de défaut pour la condition utilisée pour exécuter la figure. </summary>
     public int conditionDefault;
@@ -304,7 +314,9 @@ public class MainParameters
         takeOffParamDefault.TwistSpeed = 0;
         takeOffParamDefault.HorizontalSpeed = 0;
 		takeOffParamDefault.VerticalSpeed = 0;
-		durationDefault = 0;
+		DurationDefault = 0;
+		UseGravityDefault = false;
+		StopOnGroundDefault = true;
 		conditionDefault = 0;
 
 		// Initialisation des paramètres reliés aux données des angles des articulations.
@@ -313,7 +325,9 @@ public class MainParameters
 		joints.nodes = null;
 		joints.t0 = null;
 		joints.q0 = null;
-		joints.duration = durationDefault;
+		joints.Duration = DurationDefault;
+		joints.UseGravity = UseGravityDefault;
+		joints.StopOnGround = StopOnGroundDefault;
 		joints.takeOffParam = takeOffParamDefault;
 		joints.condition = conditionDefault;
 		joints.dataType = DataType.Simulation;

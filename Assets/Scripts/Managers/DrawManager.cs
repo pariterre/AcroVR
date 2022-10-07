@@ -116,24 +116,18 @@ public class DrawManager : MonoBehaviour
         PlayerPrefs.SetInt("AvatarModel", (int)CurrentAvatar);
     }
 
-    public float takeOffParamTwistPosition { get; protected set;} = 0;
-    public float takeOffParamHorizontalPosition = 0;
-    public float takeOffParamVerticalPosition = 0;
-    public float takeOffParamTiltSpeed = 0;
-    public bool UseGravity { get; protected set; } = false;
     public void SetGravity(bool value) { 
-        UseGravity = value; 
+        MainParameters.Instance.joints.UseGravity = value; 
         ForceFullUpdate();
     }
 
     GameObject Ground;
     public void SetGround(GameObject _floor) { Ground = _floor; }
-    public bool StopOnGround { get; protected set; } = true;
     public void SetStopOnGround(bool value) { 
-        StopOnGround = value;
+        MainParameters.Instance.joints.StopOnGround = value;
         ForceFullUpdate();
         if (Ground != null)
-            Ground.SetActive(StopOnGround);
+            Ground.SetActive(MainParameters.Instance.joints.StopOnGround);
     }
 
     public AvatarSimulation secondParameters = new AvatarSimulation();
@@ -215,7 +209,13 @@ public class DrawManager : MonoBehaviour
     {
         if (frameN >= numberFrames - 1) return false;
 
-        if (frameN != 0 && StopOnGround && !IsGestureMode && FeetHeight(qf) < InitialFeetHeight) return false;
+        if (
+            frameN != 0 
+            && MainParameters.Instance.joints.StopOnGround && 
+            !IsGestureMode && 
+            FeetHeight(qf) < InitialFeetHeight
+        ) 
+            return false;
         
         return true;
     }
@@ -498,7 +498,7 @@ public class DrawManager : MonoBehaviour
             if (joints.tc > 0)                          // Il y a eu contact avec le sol, alors seulement une partie des données sont utilisé
                 timeFrame = joints.tc / (numberFrames - 1);
             else                                        // Aucun contact avec le sol, alors toutes les données sont utilisé
-                timeFrame = joints.duration / (numberFrames - 1);
+                timeFrame = joints.Duration / (numberFrames - 1);
         }
         else
             timeFrame = 0;
@@ -632,8 +632,8 @@ public class DrawManager : MonoBehaviour
 
         // q0[11] = twist
         // q0dot[10] = tiltSpeed
-        q0[Math.Abs(joints.lagrangianModel.root_twist) - 1] = takeOffParamTwistPosition * (float)Math.PI / 180;
-        q0dot[Math.Abs(joints.lagrangianModel.root_tilt) - 1] = takeOffParamTiltSpeed * 2 * (float)Math.PI;
+        q0[Math.Abs(joints.lagrangianModel.root_twist) - 1] = joints.takeOffParam.Twist * (float)Math.PI / 180;
+        q0dot[Math.Abs(joints.lagrangianModel.root_tilt) - 1] = joints.takeOffParam.TiltSpeed * 2 * (float)Math.PI;
 
 
         double[] Q = new double[joints.lagrangianModel.nDDL];
@@ -665,8 +665,8 @@ public class DrawManager : MonoBehaviour
             q0dot[translation[i] - 1] = q0dot[translation[i] - 1] * translationS[i];
         }
 
-        q0[Math.Abs(joints.lagrangianModel.root_foreward) - 1] += takeOffParamHorizontalPosition;
-        q0[Math.Abs(joints.lagrangianModel.root_upward) - 1] += takeOffParamVerticalPosition;
+        q0[Math.Abs(joints.lagrangianModel.root_foreward) - 1] += joints.takeOffParam.HorizontalPosition;
+        q0[Math.Abs(joints.lagrangianModel.root_upward) - 1] += joints.takeOffParam.VerticalPosition;
 
         double[] x0 = new double[joints.lagrangianModel.nDDL * 2];
         for (int i = 0; i < joints.lagrangianModel.nDDL; i++)
@@ -679,9 +679,9 @@ public class DrawManager : MonoBehaviour
 
         Options options = new Options();
         options.InitialStep = joints.lagrangianModel.dt;
-        var sol = Ode.RK547M(0, joints.duration + joints.lagrangianModel.dt, new Vector(x0), ShortDynamics_s, options);
+        var sol = Ode.RK547M(0, joints.Duration + joints.lagrangianModel.dt, new Vector(x0), ShortDynamics_s, options);
 
-        var points = sol.SolveFromToStep(0, joints.duration + joints.lagrangianModel.dt, joints.lagrangianModel.dt).ToArray();
+        var points = sol.SolveFromToStep(0, joints.Duration + joints.lagrangianModel.dt, joints.lagrangianModel.dt).ToArray();
 
         // test0 = point[51]
         // test1 = point[251]
@@ -713,7 +713,12 @@ public class DrawManager : MonoBehaviour
             EvaluateTags_s(qq, out tagX, out tagY, out tagZ);
 
             // Cut the trial when the feet crosses the ground (vertical axis = 0)
-            if (!IsGestureMode && i > 0 && StopOnGround && UseGravity && tagZ.Min() < InitialFeetHeight)
+            if (
+                  !IsGestureMode && i > 0 
+                  && MainParameters.Instance.joints.StopOnGround 
+                  && MainParameters.Instance.joints.UseGravity 
+                  && tagZ.Min() < InitialFeetHeight
+            )
             {
                 MainParameters.Instance.joints.tc = (float)t[i];
                 break;
@@ -864,8 +869,8 @@ public class DrawManager : MonoBehaviour
         Options options = new Options();
         options.InitialStep = joints.lagrangianModel.dt;
 
-        var sol = Ode.RK547M(0, joints.duration + joints.lagrangianModel.dt, new Vector(x0), ShortDynamicsSecond, options);
-        var points = sol.SolveFromToStep(0, joints.duration + joints.lagrangianModel.dt, joints.lagrangianModel.dt).ToArray();
+        var sol = Ode.RK547M(0, joints.Duration + joints.lagrangianModel.dt, new Vector(x0), ShortDynamicsSecond, options);
+        var points = sol.SolveFromToStep(0, joints.Duration + joints.lagrangianModel.dt, joints.lagrangianModel.dt).ToArray();
 
         double[] t = new double[points.GetUpperBound(0) + 1];
         double[,] q = new double[joints.lagrangianModel.nDDL, points.GetUpperBound(0) + 1];
@@ -891,7 +896,7 @@ public class DrawManager : MonoBehaviour
             for (int j = 0; j < joints.lagrangianModel.nDDL; j++)
                 qq[j] = q[j, i];
             EvaluateTags_s(qq, out tagX, out tagY, out tagZ);
-            if (UseGravity && tagZ.Min() < -0.05f)
+            if (MainParameters.Instance.joints.UseGravity && tagZ.Min() < -0.05f)
             {
                 secondParameters.joints.tc = (float)t[i];
                 break;
@@ -985,7 +990,7 @@ public class DrawManager : MonoBehaviour
         NLEffects1Simple nlEffects1Simple = new NLEffects1Simple();
         n1 = nlEffects1Simple.NLEffects1(q, qdot);
 
-        if (!UseGravity)
+        if (!MainParameters.Instance.joints.UseGravity)
         {
             double[] n1zero;
             n1zero = nlEffects1Simple.NLEffects1(q, new double[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
@@ -1054,7 +1059,7 @@ public class DrawManager : MonoBehaviour
         m12 = inertia12Simple.Inertia12(q);
         NLEffects1Simple nlEffects1Simple = new NLEffects1Simple();
         n1 = nlEffects1Simple.NLEffects1(q, qdot);
-        if (!UseGravity)
+        if (!MainParameters.Instance.joints.UseGravity)
         {
             double[] n1zero;
             n1zero = nlEffects1Simple.NLEffects1(q, new double[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });

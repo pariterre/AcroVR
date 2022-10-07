@@ -91,6 +91,8 @@ public class AnimationInfo
 {
     public string Objective;
     public float Duration;
+    public bool UseGravity;
+    public bool StopOnGround;
     public float Somersault;
     public float Tilt;
     public float Twist;
@@ -255,7 +257,9 @@ public class GameManager : MonoBehaviour
         MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
         jointsTemp.fileName = null;
         jointsTemp.nodes = null;
-        jointsTemp.duration = 1;
+        jointsTemp.Duration = 1;
+        jointsTemp.UseGravity = false;
+        jointsTemp.StopOnGround = true;
         jointsTemp.condition = 0;
         jointsTemp.takeOffParam.Somersault = 0;
         jointsTemp.takeOffParam.Tilt = 0;
@@ -314,7 +318,9 @@ public class GameManager : MonoBehaviour
         MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
         jointsTemp.fileName = fileName;
         jointsTemp.nodes = null;
-        jointsTemp.duration = info.Duration;
+        jointsTemp.Duration = info.Duration;
+        jointsTemp.UseGravity = info.UseGravity;
+        jointsTemp.StopOnGround = info.StopOnGround;
         jointsTemp.condition = info.Condition;
         jointsTemp.takeOffParam.Somersault = info.Somersault;
         jointsTemp.takeOffParam.Tilt = info.Tilt;
@@ -326,14 +332,6 @@ public class GameManager : MonoBehaviour
         jointsTemp.takeOffParam.TwistSpeed = info.TwistSpeed;
         jointsTemp.takeOffParam.HorizontalSpeed = info.HorizontalSpeed;
         jointsTemp.takeOffParam.VerticalSpeed = info.VerticalSpeed;
-
-
-        ////////////////
-        drawManager.takeOffParamHorizontalPosition = info.HorizontalPosition;
-        drawManager.takeOffParamVerticalPosition = info.VerticalPosition;
-        drawManager.takeOffParamTiltSpeed = info.TiltSpeed;
-        ////////////////////
-
 
         jointsTemp.nodes = new MainParameters.StrucNodes[info.nodes.Count];
 
@@ -374,7 +372,9 @@ public class GameManager : MonoBehaviour
         AvatarSimulation.StrucJoints jointsTemp = new AvatarSimulation.StrucJoints();
         jointsTemp.fileName = fileName;
         jointsTemp.nodes = null;
-        jointsTemp.duration = info.Duration;
+        jointsTemp.Duration = info.Duration;
+        jointsTemp.UseGravity = info.UseGravity;
+        jointsTemp.StopOnGround = info.StopOnGround;
         jointsTemp.condition = info.Condition;
         jointsTemp.takeOffParam.Somersault = info.Somersault;
         jointsTemp.takeOffParam.Twist = info.Twist;
@@ -386,14 +386,6 @@ public class GameManager : MonoBehaviour
         jointsTemp.takeOffParam.TiltSpeed = info.TiltSpeed;
         jointsTemp.takeOffParam.HorizontalSpeed = info.HorizontalSpeed;
         jointsTemp.takeOffParam.VerticalSpeed = info.VerticalSpeed;
-
-
-        ////////////////
-        drawManager.takeOffParamHorizontalPosition = info.HorizontalPosition;
-        drawManager.takeOffParamVerticalPosition = info.VerticalPosition;
-        drawManager.takeOffParamTiltSpeed = info.TiltSpeed;
-        ////////////////////
-
 
         jointsTemp.nodes = new AvatarSimulation.StrucNodes[info.nodes.Count];
 
@@ -472,8 +464,10 @@ public class GameManager : MonoBehaviour
     {
         AnimationInfo info = new AnimationInfo();
 
-        info.Objective = "defalut";
-        info.Duration = MainParameters.Instance.joints.duration;
+        info.Objective = "default";
+        info.Duration = MainParameters.Instance.joints.Duration;
+        info.UseGravity = MainParameters.Instance.joints.UseGravity;
+        info.StopOnGround = MainParameters.Instance.joints.StopOnGround;
         info.Condition = MainParameters.Instance.joints.condition;
         info.Somersault = MainParameters.Instance.joints.takeOffParam.Somersault;
         info.Tilt = MainParameters.Instance.joints.takeOffParam.Tilt;
@@ -485,14 +479,6 @@ public class GameManager : MonoBehaviour
         info.TwistSpeed = MainParameters.Instance.joints.takeOffParam.TwistSpeed;
         info.HorizontalSpeed = MainParameters.Instance.joints.takeOffParam.HorizontalSpeed;
         info.VerticalSpeed = MainParameters.Instance.joints.takeOffParam.VerticalSpeed;
-
-
-        ////////////////
-        info.HorizontalPosition = drawManager.takeOffParamHorizontalPosition;
-        info.VerticalPosition = drawManager.takeOffParamVerticalPosition;
-        info.TiltSpeed = drawManager.takeOffParamTiltSpeed;
-        ////////////////////
-
 
         for (int i = 0; i < MainParameters.Instance.joints.nodes.Length; i++)
         {
@@ -512,7 +498,7 @@ public class GameManager : MonoBehaviour
     {
         string fileLines = string.Format(
             "Duration: {0}{1}Condition: {2}{3}VerticalSpeed: {4:0.000}{5}AnteroposteriorSpeed: {6:0.000}{7}SomersaultSpeed: {8:0.000}{9}TwistSpeed: {10:0.000}{11}Tilt: {12:0.000}{13}Rotation: {14:0.000}{15}{16}",
-            MainParameters.Instance.joints.duration, System.Environment.NewLine,
+            MainParameters.Instance.joints.Duration, System.Environment.NewLine,
             MainParameters.Instance.joints.condition, System.Environment.NewLine,
             MainParameters.Instance.joints.takeOffParam.Somersault, System.Environment.NewLine,
             MainParameters.Instance.joints.takeOffParam.Tilt, System.Environment.NewLine,
@@ -566,7 +552,9 @@ public class GameManager : MonoBehaviour
         MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
         jointsTemp.fileName = fileName;
         jointsTemp.nodes = null;
-        jointsTemp.duration = 0;
+        jointsTemp.Duration = 0;
+        jointsTemp.UseGravity = false;
+        jointsTemp.StopOnGround = true;
         jointsTemp.condition = 0;
         jointsTemp.takeOffParam.Somersault = 0;
         jointsTemp.takeOffParam.Tilt = 0;
@@ -594,11 +582,23 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In Duration");
 
-                jointsTemp.duration = Utils.ToFloat(values[1]);
-                if (jointsTemp.duration == -999)
-                    jointsTemp.duration = MainParameters.Instance.durationDefault;
+                jointsTemp.Duration = Utils.ToFloat(values[1]);
+                if (jointsTemp.Duration == -999)
+                    jointsTemp.Duration = MainParameters.Instance.DurationDefault;
 
-                WriteToLogFile("jointsTemp.duration: " + jointsTemp.duration.ToString());
+                WriteToLogFile("jointsTemp.Duration: " + jointsTemp.Duration.ToString());
+            }
+            else if (values[0].Contains("UseGravity"))
+            {
+                WriteToLogFile("In UseGravity");
+                jointsTemp.UseGravity = Utils.ToBool(values[1]);
+                WriteToLogFile("jointsTemp.UseGravity " + jointsTemp.UseGravity.ToString());
+            }
+            else if (values[0].Contains("StopOnGround"))
+            {
+                WriteToLogFile("In StopOnGround");
+                jointsTemp.StopOnGround = Utils.ToBool(values[1]);
+                WriteToLogFile("jointsTemp.StopOnGround " + jointsTemp.StopOnGround.ToString());
             }
             else if (values[0].Contains("Condition"))
             {
@@ -780,7 +780,7 @@ public class GameManager : MonoBehaviour
             {
                 nodes[nDDL].ddl = i;
                 nodes[nDDL].name = joints.lagrangianModel.ddlName[i - 1];
-                nodes[nDDL].T = new float[3] { joints.duration * 0.25f, joints.duration * 0.5f, joints.duration * 0.75f };
+                nodes[nDDL].T = new float[3] { joints.Duration * 0.25f, joints.Duration * 0.5f, joints.Duration * 0.75f };
                 nodes[nDDL].Q = new float[3] { 0, 0, 0 };
                 nodes[nDDL].interpolation = interpolation;
                 nodes[nDDL].ddlOppositeSide = -1;
@@ -829,7 +829,9 @@ public class GameManager : MonoBehaviour
         AvatarSimulation.StrucJoints jointsTemp = new AvatarSimulation.StrucJoints();
         jointsTemp.fileName = fileName;
         jointsTemp.nodes = null;
-        jointsTemp.duration = 0;
+        jointsTemp.Duration = 0;
+        jointsTemp.UseGravity = false;
+        jointsTemp.StopOnGround = true;
         jointsTemp.condition = 0;
         jointsTemp.takeOffParam.Somersault = 0;
         jointsTemp.takeOffParam.Tilt = 0;
@@ -857,11 +859,25 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In Duration");
 
-                jointsTemp.duration = Utils.ToFloat(values[1]);
-                if (jointsTemp.duration == -999)
-                    jointsTemp.duration = MainParameters.Instance.durationDefault;
+                jointsTemp.Duration = Utils.ToFloat(values[1]);
+                if (jointsTemp.Duration == -999)
+                    jointsTemp.Duration = MainParameters.Instance.DurationDefault;
 
-                WriteToLogFile("jointsTemp.duration: " + jointsTemp.duration.ToString());
+                WriteToLogFile("jointsTemp.Duration: " + jointsTemp.Duration.ToString());
+            }
+            else if (values[0].Contains("UseGravity"))
+            {
+                WriteToLogFile("In UseGravity");
+
+                jointsTemp.UseGravity = Utils.ToBool(values[1]);
+                WriteToLogFile("jointsTemp.UseGravity: " + jointsTemp.UseGravity.ToString());
+            }
+            else if (values[0].Contains("StopOnGround"))
+            {
+                WriteToLogFile("In StopOnGround");
+
+                jointsTemp.StopOnGround = Utils.ToBool(values[1]);
+                WriteToLogFile("jointsTemp.StopOnGround: " + jointsTemp.StopOnGround.ToString());
             }
             else if (values[0].Contains("Condition"))
             {
@@ -1001,11 +1017,11 @@ public class GameManager : MonoBehaviour
 
     public void InterpolationDDL()
     {
-        int n = (int)(MainParameters.Instance.joints.duration / MainParameters.Instance.joints.lagrangianModel.dt)+1;
+        int n = (int)(MainParameters.Instance.joints.Duration / MainParameters.Instance.joints.lagrangianModel.dt)+1;
         float[] t0 = new float[n];
         float[,] q0 = new float[MainParameters.Instance.joints.lagrangianModel.nDDL, n];
 
-        GenerateQ0_s(MainParameters.Instance.joints.lagrangianModel, MainParameters.Instance.joints.duration, 0, out t0, out q0);
+        GenerateQ0_s(MainParameters.Instance.joints.lagrangianModel, MainParameters.Instance.joints.Duration, 0, out t0, out q0);
 
         MainParameters.Instance.joints.t0 = MathFunc.MatrixCopy(t0);
         MainParameters.Instance.joints.q0 = MathFunc.MatrixCopy(q0);

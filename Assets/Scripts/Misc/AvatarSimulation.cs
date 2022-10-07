@@ -45,7 +45,9 @@ public class AvatarSimulation
         public StrucNodes[] nodes;
         public float[] t0;
         public float[,] q0;
-        public float duration;
+        public float Duration;
+        public bool UseGravity;
+        public bool StopOnGround;
         public StrucTakeOffParam takeOffParam;
         public int condition;
         public DataType dataType;
@@ -60,7 +62,9 @@ public class AvatarSimulation
     public StrucJoints joints;
     public StrucInterpolation interpolationDefault;
     public StrucTakeOffParam takeOffParamDefault;
-    public float durationDefault;
+    public float DurationDefault;
+    public bool UseGravityDefault;
+    public bool StopOnGroundDefault;
     public int conditionDefault;
 
     public AvatarSimulation()
@@ -78,14 +82,18 @@ public class AvatarSimulation
         takeOffParamDefault.TwistSpeed = 0;
         takeOffParamDefault.VerticalSpeed = 0;
         takeOffParamDefault.HorizontalSpeed = 0;
-        durationDefault = 0;
+        DurationDefault = 0;
+        UseGravityDefault = false;
+        StopOnGroundDefault = true;
         conditionDefault = 0;
 
         joints.fileName = "";
         joints.nodes = null;
         joints.t0 = null;
         joints.q0 = null;
-        joints.duration = durationDefault;
+        joints.Duration = DurationDefault;
+        joints.UseGravity = UseGravityDefault;
+        joints.StopOnGround = StopOnGroundDefault;
         joints.takeOffParam = takeOffParamDefault;
         joints.condition = conditionDefault;
         joints.dataType = DataType.Simulation;
