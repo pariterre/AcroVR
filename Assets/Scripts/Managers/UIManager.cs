@@ -12,7 +12,7 @@ public class UserUIInputs
 {
     public InputField Duration;
     public void SetDuration(float _value, bool _activateField = true) {
-        SetInput(Somersault, _value, _activateField);
+        SetInput(Duration, _value, _activateField);
         MainParameters.Instance.joints.Duration = _value;
     }
 
@@ -164,18 +164,25 @@ public class UserUIInputs
         if (_setSpeeds) SetSpeeds(_values, _isActives);
     }
     public void SetAllFromUI(
+        UserUIInputsIsActive _isActives,
         bool _setParameters = true, 
         bool _setPositions = true, 
         bool _setSpeeds = true
     ){
-        var joints = MainParameters.Instance.joints;
         UserUIInputsValues _values = new UserUIInputsValues();
         _values.SetAll(ToolBox.GetInstance().GetManager<UIManager>().userInputs);
-
+        
+        SetAll(_values, _isActives, _setParameters, _setPositions, _setSpeeds);
+    }
+    public void SetAllFromUI(
+        bool _setParameters = true, 
+        bool _setPositions = true, 
+        bool _setSpeeds = true
+    ){
         UserUIInputsIsActive _isActives = new UserUIInputsIsActive();
         _isActives.Initialize();
         
-        SetAll(_values, _isActives, _setParameters, _setPositions, _setSpeeds);
+        SetAllFromUI(_isActives, _setParameters, _setPositions, _setSpeeds);
     }
 
     public void SetInput(InputField _field, float _value = 0, bool _activate = true)
@@ -263,19 +270,22 @@ public struct UserUIInputsIsActive
     public bool StopOnGround;
 
     public void Initialize(){
-        Duration = true;
-        Somersault = true;
-        Tilt = true;
-        Twist = true;
-        HorizontalPosition = true;
-        VerticalPosition = true;
-        SomersaultSpeed = true;
-        TiltSpeed = true;
-        TwistSpeed = true;
-        HorizontalSpeed = true;
-        VerticalSpeed = true;
-        UseGravity = true;
-        StopOnGround = true;
+        // Initialise to current UI value
+        var userInputs = ToolBox.GetInstance().GetManager<UIManager>().userInputs;
+
+        Duration = userInputs.Duration.enabled;
+        Somersault = userInputs.Somersault.enabled;
+        Tilt = userInputs.Tilt.enabled;
+        Twist = userInputs.Twist.enabled;
+        HorizontalPosition = userInputs.HorizontalPosition.enabled;
+        VerticalPosition = userInputs.VerticalPosition.enabled;
+        SomersaultSpeed = userInputs.SomersaultSpeed.enabled;
+        TiltSpeed = userInputs.TiltSpeed.enabled;
+        TwistSpeed = userInputs.TwistSpeed.enabled;
+        HorizontalSpeed = userInputs.HorizontalSpeed.enabled;
+        VerticalSpeed = userInputs.VerticalSpeed.enabled;
+        UseGravity = userInputs.UseGravity.enabled;
+        StopOnGround = userInputs.StopOnGround.enabled;
     }
 }
 

@@ -138,10 +138,8 @@ public class DrawManager : MonoBehaviour
 
         SetAvatar((AvatarModel)PlayerPrefs.GetInt("AvatarModel", (int)AvatarModel.SingleFemale));
 
-        uiManager.UpdateAllPropertiesFromDropdown(false);
+        uiManager.UpdateAllPropertiesFromDropdown();
     }
-
-
 
     public void RegisterResultShow(DisplayResultGraphicS _newResultGraphics)
     {

@@ -69,7 +69,7 @@ public class MissionManager : MonoBehaviour
     public void SetAndShowCurrentMission()
     {
         if (missionBanner == null) return;
-
+        
         SetCurrentMission();
         if (HasActiveMission)
             missionBanner.Show(false, false);
@@ -94,6 +94,7 @@ public class MissionManager : MonoBehaviour
     void ManageInputFields()
     {
         UserUIInputsIsActive _status = AllMissions.missions[CurrentMissionIndex].enabledInputs;
+        uiManager.userInputs.SetAllFromUI(_status);
     }
 
     public void CheckMissionResult()
