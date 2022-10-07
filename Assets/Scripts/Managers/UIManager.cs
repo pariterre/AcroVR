@@ -34,6 +34,13 @@ public class UserUIInputs
         SetInput(Twist, true, _values.Twist);
         SetInput(HorizontalPosition, true, _values.HorizontalPosition);
         SetInput(VerticalPosition, true, _values.VerticalPosition);
+
+        // drawManager.SetGravity(gameManager.listCondition.conditions[value].userInputsValues.Gravity);
+        // MainParameters.Instance.joints.takeOffParam.rotation = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.Somersault);
+        // MainParameters.Instance.joints.takeOffParam.tilt = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.Tilt);
+        // drawManager.takeOffParamTwistPosition = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.Twist);
+        // drawManager.takeOffParamHorizontalPosition = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.HorizontalPosition);
+        // drawManager.takeOffParamVerticalPosition = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.VerticalPosition);
     }
 
     public void SetAll(UserUIInputsValues _values)

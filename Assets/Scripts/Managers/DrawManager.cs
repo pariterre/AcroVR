@@ -116,7 +116,7 @@ public class DrawManager : MonoBehaviour
         PlayerPrefs.SetInt("AvatarModel", (int)CurrentAvatar);
     }
 
-    public float takeOffParamTwistPosition = 0;
+    public float takeOffParamTwistPosition { get; protected set;} = 0;
     public float takeOffParamHorizontalPosition = 0;
     public float takeOffParamVerticalPosition = 0;
     public float takeOffParamTiltSpeed = 0;
@@ -605,9 +605,9 @@ public class DrawManager : MonoBehaviour
         int[] translationS = MathFunc.Sign(translation);
         for (int i = 0; i < translation.Length; i++) translation[i] = Math.Abs(translation[i]);
 
-        float rotRadians = joints.takeOffParam.rotation * (float)Math.PI / 180;
+        float rotRadians = joints.takeOffParam.Somersault * (float)Math.PI / 180;
 
-        float tilt = joints.takeOffParam.tilt;
+        float tilt = joints.takeOffParam.Tilt;
         if (tilt == 90)
             tilt = 90.001f;
         else if (tilt == -90)
@@ -624,10 +624,10 @@ public class DrawManager : MonoBehaviour
         //q0dot[8] = verticalSpeed
         //q0dot[9] = somersaultSpeed
         //q0dot[11] = twistSpeed
-        q0dot[Math.Abs(joints.lagrangianModel.root_foreward) - 1] = joints.takeOffParam.anteroposteriorSpeed;                       // m/s
-        q0dot[Math.Abs(joints.lagrangianModel.root_upward) - 1] = joints.takeOffParam.verticalSpeed;                                // m/s
-        q0dot[Math.Abs(joints.lagrangianModel.root_somersault) - 1] = joints.takeOffParam.somersaultSpeed * 2 * (float)Math.PI;     // radians/s
-        q0dot[Math.Abs(joints.lagrangianModel.root_twist) - 1] = joints.takeOffParam.twistSpeed * 2 * (float)Math.PI;               // radians/s
+        q0dot[Math.Abs(joints.lagrangianModel.root_foreward) - 1] = joints.takeOffParam.HorizontalSpeed;                       // m/s
+        q0dot[Math.Abs(joints.lagrangianModel.root_upward) - 1] = joints.takeOffParam.VerticalSpeed;                                // m/s
+        q0dot[Math.Abs(joints.lagrangianModel.root_somersault) - 1] = joints.takeOffParam.SomersaultSpeed * 2 * (float)Math.PI;     // radians/s
+        q0dot[Math.Abs(joints.lagrangianModel.root_twist) - 1] = joints.takeOffParam.TwistSpeed * 2 * (float)Math.PI;               // radians/s
 
 
         // q0[11] = twist
@@ -750,7 +750,7 @@ public class DrawManager : MonoBehaviour
             }
         }
 
-        float numSomersault = MathFunc.MatrixGetColumn(rotAbs, 0).Max() + MainParameters.Instance.joints.takeOffParam.rotation / 360;
+        float numSomersault = MathFunc.MatrixGetColumn(rotAbs, 0).Max() + MainParameters.Instance.joints.takeOffParam.Somersault / 360;
         DisplayNewMessage(true, true, string.Format(" {0} = {1:0.00}", MainParameters.Instance.languages.Used.displayMsgNumberSomersaults, numSomersault));
         DisplayNewMessage(false, true, string.Format(" {0} = {1:0.00}", MainParameters.Instance.languages.Used.displayMsgNumberTwists, MathFunc.MatrixGetColumn(rotAbs, 2).Max()));
         DisplayNewMessage(false, true, string.Format(" {0} = {1:0.00}", MainParameters.Instance.languages.Used.displayMsgFinalTwist, MainParameters.Instance.joints.rot[tIndex - 1, 2]));
@@ -802,9 +802,9 @@ public class DrawManager : MonoBehaviour
         int[] translationS = MathFunc.Sign(translation);
         for (int i = 0; i < translation.Length; i++) translation[i] = Math.Abs(translation[i]);
 
-        float rotRadians = joints.takeOffParam.rotation * (float)Math.PI / 180;
+        float rotRadians = joints.takeOffParam.Somersault * (float)Math.PI / 180;
 
-        float tilt = joints.takeOffParam.tilt;
+        float tilt = joints.takeOffParam.Tilt;
         if (tilt == 90)
             tilt = 90.001f;
         else if (tilt == -90)
@@ -813,10 +813,10 @@ public class DrawManager : MonoBehaviour
         q0[Math.Abs(joints.lagrangianModel.root_tilt) - 1] = tilt * (float)Math.PI / 180;                                        // en radians
         q0[Math.Abs(joints.lagrangianModel.root_somersault) - 1] = rotRadians;                                         // en radians
 
-        q0dot[Math.Abs(joints.lagrangianModel.root_foreward) - 1] = joints.takeOffParam.anteroposteriorSpeed;                       // en m/s
-        q0dot[Math.Abs(joints.lagrangianModel.root_upward) - 1] = joints.takeOffParam.verticalSpeed;                                // en m/s
-        q0dot[Math.Abs(joints.lagrangianModel.root_somersault) - 1] = joints.takeOffParam.somersaultSpeed * 2 * (float)Math.PI;     // en radians/s
-        q0dot[Math.Abs(joints.lagrangianModel.root_twist) - 1] = joints.takeOffParam.twistSpeed * 2 * (float)Math.PI;               // en radians/s
+        q0dot[Math.Abs(joints.lagrangianModel.root_foreward) - 1] = joints.takeOffParam.HorizontalSpeed;                       // en m/s
+        q0dot[Math.Abs(joints.lagrangianModel.root_upward) - 1] = joints.takeOffParam.VerticalSpeed;                                // en m/s
+        q0dot[Math.Abs(joints.lagrangianModel.root_somersault) - 1] = joints.takeOffParam.SomersaultSpeed * 2 * (float)Math.PI;     // en radians/s
+        q0dot[Math.Abs(joints.lagrangianModel.root_twist) - 1] = joints.takeOffParam.TwistSpeed * 2 * (float)Math.PI;               // en radians/s
 
         double[] Q = new double[joints.lagrangianModel.nDDL];
         for (int i = 0; i < joints.lagrangianModel.nDDL; i++)
@@ -928,7 +928,7 @@ public class DrawManager : MonoBehaviour
             }
         }
 
-        float numSomersault = MathFunc.MatrixGetColumn(rotAbs, 0).Max() + secondParameters.joints.takeOffParam.rotation / 360;
+        float numSomersault = MathFunc.MatrixGetColumn(rotAbs, 0).Max() + secondParameters.joints.takeOffParam.Somersault / 360;
         AddsecondMessage(true, true, string.Format(" {0} = {1:0.00}", MainParameters.Instance.languages.Used.displayMsgNumberSomersaults, numSomersault));
         AddsecondMessage(false, true, string.Format(" {0} = {1:0.00}", MainParameters.Instance.languages.Used.displayMsgNumberTwists, MathFunc.MatrixGetColumn(rotAbs, 2).Max()));
         AddsecondMessage(false, true, string.Format(" {0} = {1:0.00}", MainParameters.Instance.languages.Used.displayMsgFinalTwist, secondParameters.joints.rot[tIndex - 1, 2]));

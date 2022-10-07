@@ -50,12 +50,16 @@ public class MainParameters
 	/// <summary> Description de la structure contenant les paramètres de décollage. </summary>
 	public struct StrucTakeOffParam
 	{
-		public float verticalSpeed;					// en m/s
-		public float anteroposteriorSpeed;			// en m/s
-		public float somersaultSpeed;				// en rév/s
-		public float twistSpeed;					// en rév/s
-		public float tilt;							// en degrés
-		public float rotation;						// en degrés
+		public float Somersault;
+		public float Tilt;
+		public float Twist;
+		public float HorizontalPosition;
+		public float VerticalPosition;
+		public float SomersaultSpeed;
+		public float TiltSpeed;
+		public float TwistSpeed;
+		public float HorizontalSpeed;
+		public float VerticalSpeed;
 	}
 
     /// <summary> Structure contenant les valeurs de défaut pour les paramètres de décollage. </summary>
@@ -290,12 +294,16 @@ public class MainParameters
 		interpolationDefault.type = InterpolationType.Quintic;
 		interpolationDefault.numIntervals = 0;
 		interpolationDefault.slope = new float[] { 0, 0 };
-		takeOffParamDefault.verticalSpeed = 0;
-        takeOffParamDefault.anteroposteriorSpeed = 0;
-        takeOffParamDefault.somersaultSpeed = 0;
-        takeOffParamDefault.twistSpeed = 0;
-        takeOffParamDefault.tilt = 0;
-        takeOffParamDefault.rotation = 0;
+        takeOffParamDefault.Somersault = 0;
+        takeOffParamDefault.Tilt = 0;
+        takeOffParamDefault.Twist = 0;
+        takeOffParamDefault.HorizontalPosition = 0;
+		takeOffParamDefault.VerticalPosition = 0;
+        takeOffParamDefault.SomersaultSpeed = 0;
+        takeOffParamDefault.TiltSpeed = 0;
+        takeOffParamDefault.TwistSpeed = 0;
+        takeOffParamDefault.HorizontalSpeed = 0;
+		takeOffParamDefault.VerticalSpeed = 0;
 		durationDefault = 0;
 		conditionDefault = 0;
 

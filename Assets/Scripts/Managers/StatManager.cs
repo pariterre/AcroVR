@@ -108,14 +108,18 @@ public class StatManager : MonoBehaviour
 
         replayInfo.player = info;
 
-        replayInfo.replay.Objective = "defalut";
+        replayInfo.replay.Objective = "default";
         replayInfo.replay.Duration = MainParameters.Instance.joints.duration;
-        replayInfo.replay.VerticalSpeed = MainParameters.Instance.joints.takeOffParam.verticalSpeed;
-        replayInfo.replay.AnteroposteriorSpeed = MainParameters.Instance.joints.takeOffParam.anteroposteriorSpeed;
-        replayInfo.replay.SomersaultSpeed = MainParameters.Instance.joints.takeOffParam.somersaultSpeed;
-        replayInfo.replay.TwistSpeed = MainParameters.Instance.joints.takeOffParam.twistSpeed;
-        replayInfo.replay.Tilt = MainParameters.Instance.joints.takeOffParam.tilt;
-        replayInfo.replay.Rotation = MainParameters.Instance.joints.takeOffParam.rotation;
+        replayInfo.replay.Somersault = MainParameters.Instance.joints.takeOffParam.Somersault;
+        replayInfo.replay.Tilt = MainParameters.Instance.joints.takeOffParam.Tilt;
+        replayInfo.replay.Twist = MainParameters.Instance.joints.takeOffParam.Twist;
+        replayInfo.replay.HorizontalPosition = MainParameters.Instance.joints.takeOffParam.HorizontalPosition;
+        replayInfo.replay.VerticalPosition = MainParameters.Instance.joints.takeOffParam.VerticalPosition;
+        replayInfo.replay.SomersaultSpeed = MainParameters.Instance.joints.takeOffParam.SomersaultSpeed;
+        replayInfo.replay.TiltSpeed = MainParameters.Instance.joints.takeOffParam.TiltSpeed;
+        replayInfo.replay.TwistSpeed = MainParameters.Instance.joints.takeOffParam.TwistSpeed;
+        replayInfo.replay.HorizontalSpeed = MainParameters.Instance.joints.takeOffParam.HorizontalSpeed;
+        replayInfo.replay.VerticalSpeed = MainParameters.Instance.joints.takeOffParam.VerticalSpeed;
 
         for (int i = 0; i < MainParameters.Instance.joints.nodes.Length; i++)
         {

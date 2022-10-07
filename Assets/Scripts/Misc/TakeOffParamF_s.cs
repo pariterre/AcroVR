@@ -8,6 +8,7 @@ public class TakeOffParamF_s : MonoBehaviour
 {
     protected GameManager gameManager;
     protected DrawManager drawManager;
+    protected UIManager uiManager;
 
     public BaseProfile bp;
 
@@ -15,6 +16,7 @@ public class TakeOffParamF_s : MonoBehaviour
     {
         gameManager = ToolBox.GetInstance().GetManager<GameManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
     }
 
     public void DropDownDDLNamesOnValueChanged(int value)
@@ -26,12 +28,7 @@ public class TakeOffParamF_s : MonoBehaviour
 
     public void UpdatePositions(int value)
     {
-        drawManager.SetGravity(gameManager.listCondition.conditions[value].userInputsValues.Gravity);
-        MainParameters.Instance.joints.takeOffParam.rotation = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.Somersault);
-        MainParameters.Instance.joints.takeOffParam.tilt = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.Tilt);
-        drawManager.takeOffParamTwistPosition = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.Twist);
-        drawManager.takeOffParamHorizontalPosition = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.HorizontalPosition);
-        drawManager.takeOffParamVerticalPosition = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.VerticalPosition);
+        uiManager.userInputs.SetPositions(gameManager.listCondition.conditions[value].userInputsValues);
 
         ApplyAvatar();
     }
@@ -40,28 +37,28 @@ public class TakeOffParamF_s : MonoBehaviour
     {
         float value = Utils.ToFloat(panel.GetComponentInChildren<InputField>().text);
 
-        if (panel.name == "PanelSomersaultPosition")
-            MainParameters.Instance.joints.takeOffParam.rotation = value;
-        else if (panel.name == "PanelTiltPosition")
-            MainParameters.Instance.joints.takeOffParam.tilt = value;
-        else if (panel.name == "PanelTwistPosition")
-            drawManager.takeOffParamTwistPosition = value;
-        else if (panel.name == "PanelHorizontalPosition")
-            drawManager.takeOffParamHorizontalPosition = value;
-        else if (panel.name == "PanelVerticalPosition")
-            drawManager.takeOffParamVerticalPosition = value;
-        else if (panel.name == "PanelHorizontalSpeed")
-            MainParameters.Instance.joints.takeOffParam.anteroposteriorSpeed = value;
-        else if (panel.name == "PanelVerticalSpeed")
-            MainParameters.Instance.joints.takeOffParam.verticalSpeed = value;
-        else if (panel.name == "PanelSomersaultSpeed")
-            MainParameters.Instance.joints.takeOffParam.somersaultSpeed = value;
-        else if (panel.name == "PanelTwistSpeed")
-            MainParameters.Instance.joints.takeOffParam.twistSpeed = value;
-        else if (panel.name == "PanelTiltSpeed")
-            drawManager.takeOffParamTiltSpeed = value;
-        else if(panel.name == "PanelTimeDuration")
+        if(panel.name == "PanelTimeDuration")
             MainParameters.Instance.joints.duration = value;
+        else if (panel.name == "PanelSomersaultPosition")
+            MainParameters.Instance.joints.takeOffParam.Somersault = value;
+        else if (panel.name == "PanelTiltPosition")
+            MainParameters.Instance.joints.takeOffParam.Tilt = value;
+        else if (panel.name == "PanelTwistPosition")
+            MainParameters.Instance.joints.takeOffParam.Twist = value;
+        else if (panel.name == "PanelHorizontalPosition")
+            MainParameters.Instance.joints.takeOffParam.HorizontalPosition = value;
+        else if (panel.name == "PanelVerticalPosition")
+            MainParameters.Instance.joints.takeOffParam.VerticalPosition = value;
+        else if (panel.name == "PanelSomersaultSpeed")
+            MainParameters.Instance.joints.takeOffParam.SomersaultSpeed = value;
+        else if (panel.name == "PanelTiltSpeed")
+            MainParameters.Instance.joints.takeOffParam.TiltSpeed = value;
+        else if (panel.name == "PanelTwistSpeed")
+            MainParameters.Instance.joints.takeOffParam.TwistSpeed = value;
+        else if (panel.name == "PanelHorizontalSpeed")
+            MainParameters.Instance.joints.takeOffParam.HorizontalSpeed = value;
+        else if (panel.name == "PanelVerticalSpeed")
+            MainParameters.Instance.joints.takeOffParam.VerticalSpeed = value;
 
         ApplyAvatar();
     }

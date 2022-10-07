@@ -91,20 +91,18 @@ public class AnimationInfo
 {
     public string Objective;
     public float Duration;
-    public int Condition;
-    public float VerticalSpeed;
-    public float AnteroposteriorSpeed;
-    public float SomersaultSpeed;
-    public float TwistSpeed;
+    public float Somersault;
     public float Tilt;
-    public float Rotation;
-
-    /// New parameters
-    public float TwistPosition;
+    public float Twist;
     public float HorizontalPosition;
     public float VerticalPosition;
+    public float SomersaultSpeed;
     public float TiltSpeed;
-    ///////////////
+    public float TwistSpeed;
+    public float HorizontalSpeed;
+    public float VerticalSpeed;
+    public int Condition;
+
 
     public List<Nodes> nodes = new List<Nodes>();
 }
@@ -259,12 +257,16 @@ public class GameManager : MonoBehaviour
         jointsTemp.nodes = null;
         jointsTemp.duration = 1;
         jointsTemp.condition = 0;
-        jointsTemp.takeOffParam.verticalSpeed = 0;
-        jointsTemp.takeOffParam.anteroposteriorSpeed = 0;
-        jointsTemp.takeOffParam.somersaultSpeed = 0;
-        jointsTemp.takeOffParam.twistSpeed = 0;
-        jointsTemp.takeOffParam.tilt = 0;
-        jointsTemp.takeOffParam.rotation = 0;
+        jointsTemp.takeOffParam.Somersault = 0;
+        jointsTemp.takeOffParam.Tilt = 0;
+        jointsTemp.takeOffParam.Twist = 0;
+        jointsTemp.takeOffParam.HorizontalPosition = 0;
+        jointsTemp.takeOffParam.VerticalPosition = 0;
+        jointsTemp.takeOffParam.SomersaultSpeed = 0;
+        jointsTemp.takeOffParam.TiltSpeed = 0;
+        jointsTemp.takeOffParam.TwistSpeed = 0;
+        jointsTemp.takeOffParam.HorizontalSpeed = 0;
+        jointsTemp.takeOffParam.VerticalSpeed = 0;
 
         jointsTemp.nodes = new MainParameters.StrucNodes[6];
 
@@ -314,16 +316,19 @@ public class GameManager : MonoBehaviour
         jointsTemp.nodes = null;
         jointsTemp.duration = info.Duration;
         jointsTemp.condition = info.Condition;
-        jointsTemp.takeOffParam.verticalSpeed = info.VerticalSpeed;
-        jointsTemp.takeOffParam.anteroposteriorSpeed = info.AnteroposteriorSpeed;
-        jointsTemp.takeOffParam.somersaultSpeed = info.SomersaultSpeed;
-        jointsTemp.takeOffParam.twistSpeed = info.TwistSpeed;
-        jointsTemp.takeOffParam.tilt = info.Tilt;
-        jointsTemp.takeOffParam.rotation = info.Rotation;
+        jointsTemp.takeOffParam.Somersault = info.Somersault;
+        jointsTemp.takeOffParam.Tilt = info.Tilt;
+        jointsTemp.takeOffParam.Twist = info.Twist;
+        jointsTemp.takeOffParam.HorizontalPosition = info.HorizontalPosition;
+        jointsTemp.takeOffParam.VerticalPosition = info.VerticalPosition;
+        jointsTemp.takeOffParam.SomersaultSpeed = info.SomersaultSpeed;
+        jointsTemp.takeOffParam.TiltSpeed = info.TiltSpeed;
+        jointsTemp.takeOffParam.TwistSpeed = info.TwistSpeed;
+        jointsTemp.takeOffParam.HorizontalSpeed = info.HorizontalSpeed;
+        jointsTemp.takeOffParam.VerticalSpeed = info.VerticalSpeed;
 
 
         ////////////////
-        drawManager.takeOffParamTwistPosition = info.TwistPosition;
         drawManager.takeOffParamHorizontalPosition = info.HorizontalPosition;
         drawManager.takeOffParamVerticalPosition = info.VerticalPosition;
         drawManager.takeOffParamTiltSpeed = info.TiltSpeed;
@@ -371,16 +376,19 @@ public class GameManager : MonoBehaviour
         jointsTemp.nodes = null;
         jointsTemp.duration = info.Duration;
         jointsTemp.condition = info.Condition;
-        jointsTemp.takeOffParam.verticalSpeed = info.VerticalSpeed;
-        jointsTemp.takeOffParam.anteroposteriorSpeed = info.AnteroposteriorSpeed;
-        jointsTemp.takeOffParam.somersaultSpeed = info.SomersaultSpeed;
-        jointsTemp.takeOffParam.twistSpeed = info.TwistSpeed;
-        jointsTemp.takeOffParam.tilt = info.Tilt;
-        jointsTemp.takeOffParam.rotation = info.Rotation;
+        jointsTemp.takeOffParam.Somersault = info.Somersault;
+        jointsTemp.takeOffParam.Twist = info.Twist;
+        jointsTemp.takeOffParam.Tilt = info.Tilt;
+        jointsTemp.takeOffParam.HorizontalPosition = info.HorizontalPosition;
+        jointsTemp.takeOffParam.VerticalPosition = info.VerticalPosition;
+        jointsTemp.takeOffParam.SomersaultSpeed = info.SomersaultSpeed;
+        jointsTemp.takeOffParam.TwistSpeed = info.TwistSpeed;
+        jointsTemp.takeOffParam.TiltSpeed = info.TiltSpeed;
+        jointsTemp.takeOffParam.HorizontalSpeed = info.HorizontalSpeed;
+        jointsTemp.takeOffParam.VerticalSpeed = info.VerticalSpeed;
 
 
         ////////////////
-        drawManager.takeOffParamTwistPosition = info.TwistPosition;
         drawManager.takeOffParamHorizontalPosition = info.HorizontalPosition;
         drawManager.takeOffParamVerticalPosition = info.VerticalPosition;
         drawManager.takeOffParamTiltSpeed = info.TiltSpeed;
@@ -467,16 +475,19 @@ public class GameManager : MonoBehaviour
         info.Objective = "defalut";
         info.Duration = MainParameters.Instance.joints.duration;
         info.Condition = MainParameters.Instance.joints.condition;
-        info.VerticalSpeed = MainParameters.Instance.joints.takeOffParam.verticalSpeed;
-        info.AnteroposteriorSpeed = MainParameters.Instance.joints.takeOffParam.anteroposteriorSpeed;
-        info.SomersaultSpeed = MainParameters.Instance.joints.takeOffParam.somersaultSpeed;
-        info.TwistSpeed = MainParameters.Instance.joints.takeOffParam.twistSpeed;
-        info.Tilt = MainParameters.Instance.joints.takeOffParam.tilt;
-        info.Rotation = MainParameters.Instance.joints.takeOffParam.rotation;
+        info.Somersault = MainParameters.Instance.joints.takeOffParam.Somersault;
+        info.Tilt = MainParameters.Instance.joints.takeOffParam.Tilt;
+        info.Twist = MainParameters.Instance.joints.takeOffParam.Twist;
+        info.HorizontalPosition = MainParameters.Instance.joints.takeOffParam.HorizontalPosition;
+        info.VerticalPosition = MainParameters.Instance.joints.takeOffParam.VerticalPosition;
+        info.SomersaultSpeed = MainParameters.Instance.joints.takeOffParam.SomersaultSpeed;
+        info.TiltSpeed = MainParameters.Instance.joints.takeOffParam.TiltSpeed;
+        info.TwistSpeed = MainParameters.Instance.joints.takeOffParam.TwistSpeed;
+        info.HorizontalSpeed = MainParameters.Instance.joints.takeOffParam.HorizontalSpeed;
+        info.VerticalSpeed = MainParameters.Instance.joints.takeOffParam.VerticalSpeed;
 
 
         ////////////////
-        info.TwistPosition = drawManager.takeOffParamTwistPosition;
         info.HorizontalPosition = drawManager.takeOffParamHorizontalPosition;
         info.VerticalPosition = drawManager.takeOffParamVerticalPosition;
         info.TiltSpeed = drawManager.takeOffParamTiltSpeed;
@@ -503,12 +514,17 @@ public class GameManager : MonoBehaviour
             "Duration: {0}{1}Condition: {2}{3}VerticalSpeed: {4:0.000}{5}AnteroposteriorSpeed: {6:0.000}{7}SomersaultSpeed: {8:0.000}{9}TwistSpeed: {10:0.000}{11}Tilt: {12:0.000}{13}Rotation: {14:0.000}{15}{16}",
             MainParameters.Instance.joints.duration, System.Environment.NewLine,
             MainParameters.Instance.joints.condition, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.verticalSpeed, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.anteroposteriorSpeed, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.somersaultSpeed, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.twistSpeed, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.tilt, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.rotation, System.Environment.NewLine, System.Environment.NewLine);
+            MainParameters.Instance.joints.takeOffParam.Somersault, System.Environment.NewLine,
+            MainParameters.Instance.joints.takeOffParam.Tilt, System.Environment.NewLine,
+            MainParameters.Instance.joints.takeOffParam.Twist, System.Environment.NewLine,
+            MainParameters.Instance.joints.takeOffParam.HorizontalPosition, System.Environment.NewLine,
+            MainParameters.Instance.joints.takeOffParam.VerticalPosition, System.Environment.NewLine,
+            MainParameters.Instance.joints.takeOffParam.SomersaultSpeed, System.Environment.NewLine,
+            MainParameters.Instance.joints.takeOffParam.TiltSpeed, System.Environment.NewLine,
+            MainParameters.Instance.joints.takeOffParam.TwistSpeed, System.Environment.NewLine,
+            MainParameters.Instance.joints.takeOffParam.HorizontalSpeed, System.Environment.NewLine,
+            MainParameters.Instance.joints.takeOffParam.VerticalSpeed, System.Environment.NewLine
+        );
 
         fileLines = string.Format("{0}Nodes{1}DDL, name, interpolation (type, numIntervals, slopes), T, Q{2}", fileLines, System.Environment.NewLine, System.Environment.NewLine);
 
@@ -552,12 +568,16 @@ public class GameManager : MonoBehaviour
         jointsTemp.nodes = null;
         jointsTemp.duration = 0;
         jointsTemp.condition = 0;
-        jointsTemp.takeOffParam.verticalSpeed = 0;
-        jointsTemp.takeOffParam.anteroposteriorSpeed = 0;
-        jointsTemp.takeOffParam.somersaultSpeed = 0;
-        jointsTemp.takeOffParam.twistSpeed = 0;
-        jointsTemp.takeOffParam.tilt = 0;
-        jointsTemp.takeOffParam.rotation = 0;
+        jointsTemp.takeOffParam.Somersault = 0;
+        jointsTemp.takeOffParam.Tilt = 0;
+        jointsTemp.takeOffParam.Twist = 0;
+        jointsTemp.takeOffParam.HorizontalPosition = 0;
+        jointsTemp.takeOffParam.VerticalPosition = 0;
+        jointsTemp.takeOffParam.SomersaultSpeed = 0;
+        jointsTemp.takeOffParam.TiltSpeed = 0;
+        jointsTemp.takeOffParam.TwistSpeed = 0;
+        jointsTemp.takeOffParam.HorizontalSpeed = 0;
+        jointsTemp.takeOffParam.VerticalSpeed = 0;
 
         string[] values;
         int ddlNum = -1;
@@ -594,61 +614,61 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In VerticalSpeed");
 
-                jointsTemp.takeOffParam.verticalSpeed = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.verticalSpeed == -999)
-                    jointsTemp.takeOffParam.verticalSpeed = MainParameters.Instance.takeOffParamDefault.verticalSpeed;
+                jointsTemp.takeOffParam.VerticalSpeed = Utils.ToFloat(values[1]);
+                if (jointsTemp.takeOffParam.VerticalSpeed == -999)
+                    jointsTemp.takeOffParam.VerticalSpeed = MainParameters.Instance.takeOffParamDefault.VerticalSpeed;
 
-                WriteToLogFile("jointsTemp.takeOffParam.verticalSpeed: " + jointsTemp.takeOffParam.verticalSpeed.ToString());
+                WriteToLogFile("jointsTemp.takeOffParam.VerticalSpeed: " + jointsTemp.takeOffParam.VerticalSpeed.ToString());
             }
-            else if (values[0].Contains("AnteroposteriorSpeed"))
+            else if (values[0].Contains("HorizontalSpeed"))
             {
-                WriteToLogFile("In AnteroposteriorSpeed");
+                WriteToLogFile("In HorizontalSpeed");
 
-                jointsTemp.takeOffParam.anteroposteriorSpeed = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.anteroposteriorSpeed == -999)
-                    jointsTemp.takeOffParam.anteroposteriorSpeed = MainParameters.Instance.takeOffParamDefault.anteroposteriorSpeed;
+                jointsTemp.takeOffParam.HorizontalSpeed = Utils.ToFloat(values[1]);
+                if (jointsTemp.takeOffParam.HorizontalSpeed == -999)
+                    jointsTemp.takeOffParam.HorizontalSpeed = MainParameters.Instance.takeOffParamDefault.HorizontalSpeed;
 
-                WriteToLogFile("jointsTemp.takeOffParam.anteroposteriorSpeed: " + jointsTemp.takeOffParam.anteroposteriorSpeed.ToString());
+                WriteToLogFile("jointsTemp.takeOffParam.HorizontalSpeed: " + jointsTemp.takeOffParam.HorizontalSpeed.ToString());
             }
             else if (values[0].Contains("SomersaultSpeed"))
             {
                 WriteToLogFile("In SomersaultSpeed");
 
-                jointsTemp.takeOffParam.somersaultSpeed = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.somersaultSpeed == -999)
-                    jointsTemp.takeOffParam.somersaultSpeed = MainParameters.Instance.takeOffParamDefault.somersaultSpeed;
+                jointsTemp.takeOffParam.SomersaultSpeed = Utils.ToFloat(values[1]);
+                if (jointsTemp.takeOffParam.SomersaultSpeed == -999)
+                    jointsTemp.takeOffParam.SomersaultSpeed = MainParameters.Instance.takeOffParamDefault.SomersaultSpeed;
 
-                WriteToLogFile("jointsTemp.takeOffParam.somersaultSpeed: " + jointsTemp.takeOffParam.somersaultSpeed.ToString());
+                WriteToLogFile("jointsTemp.takeOffParam.SomersaultSpeed: " + jointsTemp.takeOffParam.SomersaultSpeed.ToString());
             }
             else if (values[0].Contains("TwistSpeed"))
             {
                 WriteToLogFile("In TwistSpeed");
 
-                jointsTemp.takeOffParam.twistSpeed = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.twistSpeed == -999)
-                    jointsTemp.takeOffParam.twistSpeed = MainParameters.Instance.takeOffParamDefault.twistSpeed;
+                jointsTemp.takeOffParam.TwistSpeed = Utils.ToFloat(values[1]);
+                if (jointsTemp.takeOffParam.TwistSpeed == -999)
+                    jointsTemp.takeOffParam.TwistSpeed = MainParameters.Instance.takeOffParamDefault.TwistSpeed;
 
-                WriteToLogFile("jointsTemp.takeOffParam.twistSpeed: " + jointsTemp.takeOffParam.twistSpeed.ToString());
+                WriteToLogFile("jointsTemp.takeOffParam.TwistSpeed: " + jointsTemp.takeOffParam.TwistSpeed.ToString());
             }
             else if (values[0].Contains("Tilt"))
             {
                 WriteToLogFile("In Tilt");
 
-                jointsTemp.takeOffParam.tilt = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.tilt == -999)
-                    jointsTemp.takeOffParam.tilt = MainParameters.Instance.takeOffParamDefault.tilt;
+                jointsTemp.takeOffParam.Tilt = Utils.ToFloat(values[1]);
+                if (jointsTemp.takeOffParam.Tilt == -999)
+                    jointsTemp.takeOffParam.Tilt = MainParameters.Instance.takeOffParamDefault.Tilt;
 
-                WriteToLogFile("jointsTemp.takeOffParam.tilt: " + jointsTemp.takeOffParam.tilt.ToString());
+                WriteToLogFile("jointsTemp.takeOffParam.Tilt: " + jointsTemp.takeOffParam.Tilt.ToString());
             }
-            else if (values[0].Contains("Rotation"))
+            else if (values[0].Contains("Somersault"))
             {
-                WriteToLogFile("In Rotation");
+                WriteToLogFile("In Somerssault");
 
-                jointsTemp.takeOffParam.rotation = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.rotation == -999)
-                    jointsTemp.takeOffParam.rotation = MainParameters.Instance.takeOffParamDefault.rotation;
+                jointsTemp.takeOffParam.Somersault = Utils.ToFloat(values[1]);
+                if (jointsTemp.takeOffParam.Somersault == -999)
+                    jointsTemp.takeOffParam.Somersault = MainParameters.Instance.takeOffParamDefault.Somersault;
 
-                WriteToLogFile("jointsTemp.takeOffParam.rotation: " + jointsTemp.takeOffParam.rotation.ToString());
+                WriteToLogFile("jointsTemp.takeOffParam.Somersault: " + jointsTemp.takeOffParam.Somersault.ToString());
             }
             else if (values[0].Contains("DDL"))
             {
@@ -811,12 +831,16 @@ public class GameManager : MonoBehaviour
         jointsTemp.nodes = null;
         jointsTemp.duration = 0;
         jointsTemp.condition = 0;
-        jointsTemp.takeOffParam.verticalSpeed = 0;
-        jointsTemp.takeOffParam.anteroposteriorSpeed = 0;
-        jointsTemp.takeOffParam.somersaultSpeed = 0;
-        jointsTemp.takeOffParam.twistSpeed = 0;
-        jointsTemp.takeOffParam.tilt = 0;
-        jointsTemp.takeOffParam.rotation = 0;
+        jointsTemp.takeOffParam.Somersault = 0;
+        jointsTemp.takeOffParam.Tilt = 0;
+        jointsTemp.takeOffParam.Twist = 0;
+        jointsTemp.takeOffParam.HorizontalPosition = 0;
+        jointsTemp.takeOffParam.VerticalPosition = 0;
+        jointsTemp.takeOffParam.SomersaultSpeed = 0;
+        jointsTemp.takeOffParam.TiltSpeed = 0;
+        jointsTemp.takeOffParam.TwistSpeed = 0;
+        jointsTemp.takeOffParam.HorizontalSpeed = 0;
+        jointsTemp.takeOffParam.VerticalSpeed = 0;
 
         string[] values;
         int ddlNum = -1;
@@ -853,61 +877,61 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In VerticalSpeed");
 
-                jointsTemp.takeOffParam.verticalSpeed = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.verticalSpeed == -999)
-                    jointsTemp.takeOffParam.verticalSpeed = MainParameters.Instance.takeOffParamDefault.verticalSpeed;
+                jointsTemp.takeOffParam.VerticalSpeed = Utils.ToFloat(values[1]);
+                if (jointsTemp.takeOffParam.VerticalSpeed == -999)
+                    jointsTemp.takeOffParam.VerticalSpeed = MainParameters.Instance.takeOffParamDefault.VerticalSpeed;
 
-                WriteToLogFile("jointsTemp.takeOffParam.verticalSpeed: " + jointsTemp.takeOffParam.verticalSpeed.ToString());
+                WriteToLogFile("jointsTemp.takeOffParam.VerticalSpeed: " + jointsTemp.takeOffParam.VerticalSpeed.ToString());
             }
-            else if (values[0].Contains("AnteroposteriorSpeed"))
+            else if (values[0].Contains("HorizontalSpeed"))
             {
-                WriteToLogFile("In AnteroposteriorSpeed");
+                WriteToLogFile("In HorizontalSpeed");
 
-                jointsTemp.takeOffParam.anteroposteriorSpeed = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.anteroposteriorSpeed == -999)
-                    jointsTemp.takeOffParam.anteroposteriorSpeed = MainParameters.Instance.takeOffParamDefault.anteroposteriorSpeed;
+                jointsTemp.takeOffParam.HorizontalSpeed = Utils.ToFloat(values[1]);
+                if (jointsTemp.takeOffParam.HorizontalSpeed == -999)
+                    jointsTemp.takeOffParam.HorizontalSpeed = MainParameters.Instance.takeOffParamDefault.HorizontalSpeed;
 
-                WriteToLogFile("jointsTemp.takeOffParam.anteroposteriorSpeed: " + jointsTemp.takeOffParam.anteroposteriorSpeed.ToString());
+                WriteToLogFile("jointsTemp.takeOffParam.HorizontalSpeed: " + jointsTemp.takeOffParam.HorizontalSpeed.ToString());
             }
             else if (values[0].Contains("SomersaultSpeed"))
             {
                 WriteToLogFile("In SomersaultSpeed");
 
-                jointsTemp.takeOffParam.somersaultSpeed = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.somersaultSpeed == -999)
-                    jointsTemp.takeOffParam.somersaultSpeed = MainParameters.Instance.takeOffParamDefault.somersaultSpeed;
+                jointsTemp.takeOffParam.SomersaultSpeed = Utils.ToFloat(values[1]);
+                if (jointsTemp.takeOffParam.SomersaultSpeed == -999)
+                    jointsTemp.takeOffParam.SomersaultSpeed = MainParameters.Instance.takeOffParamDefault.SomersaultSpeed;
 
-                WriteToLogFile("jointsTemp.takeOffParam.somersaultSpeed: " + jointsTemp.takeOffParam.somersaultSpeed.ToString());
+                WriteToLogFile("jointsTemp.takeOffParam.SomersaultSpeed: " + jointsTemp.takeOffParam.SomersaultSpeed.ToString());
             }
             else if (values[0].Contains("TwistSpeed"))
             {
                 WriteToLogFile("In TwistSpeed");
 
-                jointsTemp.takeOffParam.twistSpeed = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.twistSpeed == -999)
-                    jointsTemp.takeOffParam.twistSpeed = MainParameters.Instance.takeOffParamDefault.twistSpeed;
+                jointsTemp.takeOffParam.TwistSpeed = Utils.ToFloat(values[1]);
+                if (jointsTemp.takeOffParam.TwistSpeed == -999)
+                    jointsTemp.takeOffParam.TwistSpeed = MainParameters.Instance.takeOffParamDefault.TwistSpeed;
 
-                WriteToLogFile("jointsTemp.takeOffParam.twistSpeed: " + jointsTemp.takeOffParam.twistSpeed.ToString());
+                WriteToLogFile("jointsTemp.takeOffParam.TwistSpeed: " + jointsTemp.takeOffParam.TwistSpeed.ToString());
             }
             else if (values[0].Contains("Tilt"))
             {
                 WriteToLogFile("In Tilt");
 
-                jointsTemp.takeOffParam.tilt = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.tilt == -999)
-                    jointsTemp.takeOffParam.tilt = MainParameters.Instance.takeOffParamDefault.tilt;
+                jointsTemp.takeOffParam.Tilt = Utils.ToFloat(values[1]);
+                if (jointsTemp.takeOffParam.Tilt == -999)
+                    jointsTemp.takeOffParam.Tilt = MainParameters.Instance.takeOffParamDefault.Tilt;
 
-                WriteToLogFile("jointsTemp.takeOffParam.tilt: " + jointsTemp.takeOffParam.tilt.ToString());
+                WriteToLogFile("jointsTemp.takeOffParam.Tilt: " + jointsTemp.takeOffParam.Tilt.ToString());
             }
-            else if (values[0].Contains("Rotation"))
+            else if (values[0].Contains("Somersault"))
             {
-                WriteToLogFile("In Rotation");
+                WriteToLogFile("In Somersault");
 
-                jointsTemp.takeOffParam.rotation = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.rotation == -999)
-                    jointsTemp.takeOffParam.rotation = MainParameters.Instance.takeOffParamDefault.rotation;
+                jointsTemp.takeOffParam.Somersault = Utils.ToFloat(values[1]);
+                if (jointsTemp.takeOffParam.Somersault == -999)
+                    jointsTemp.takeOffParam.Somersault = MainParameters.Instance.takeOffParamDefault.Somersault;
 
-                WriteToLogFile("jointsTemp.takeOffParam.rotation: " + jointsTemp.takeOffParam.rotation.ToString());
+                WriteToLogFile("jointsTemp.takeOffParam.Somersault: " + jointsTemp.takeOffParam.Somersault.ToString());
             }
             else if (values[0].Contains("DDL"))
             {

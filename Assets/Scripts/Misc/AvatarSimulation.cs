@@ -24,12 +24,16 @@ public class AvatarSimulation
 
     public struct StrucTakeOffParam
     {
-        public float verticalSpeed;
-        public float anteroposteriorSpeed;
-        public float somersaultSpeed;
-        public float twistSpeed;
-        public float tilt;
-        public float rotation;
+        public float Somersault;
+        public float Tilt;
+        public float Twist;
+        public float HorizontalPosition;
+        public float VerticalPosition;
+        public float SomersaultSpeed;
+        public float TiltSpeed;
+        public float TwistSpeed;
+        public float HorizontalSpeed;
+        public float VerticalSpeed;
     }
 
     public enum DataType { Simulation };
@@ -64,12 +68,16 @@ public class AvatarSimulation
         interpolationDefault.type = InterpolationType.Quintic;
         interpolationDefault.numIntervals = 0;
         interpolationDefault.slope = new float[] { 0, 0 };
-        takeOffParamDefault.verticalSpeed = 0;
-        takeOffParamDefault.anteroposteriorSpeed = 0;
-        takeOffParamDefault.somersaultSpeed = 0;
-        takeOffParamDefault.twistSpeed = 0;
-        takeOffParamDefault.tilt = 0;
-        takeOffParamDefault.rotation = 0;
+        takeOffParamDefault.Somersault = 0;
+        takeOffParamDefault.Tilt = 0;
+        takeOffParamDefault.Twist = 0;
+        takeOffParamDefault.VerticalPosition = 0;
+        takeOffParamDefault.HorizontalPosition = 0;
+        takeOffParamDefault.SomersaultSpeed = 0;
+        takeOffParamDefault.TiltSpeed = 0;
+        takeOffParamDefault.TwistSpeed = 0;
+        takeOffParamDefault.VerticalSpeed = 0;
+        takeOffParamDefault.HorizontalSpeed = 0;
         durationDefault = 0;
         conditionDefault = 0;
 

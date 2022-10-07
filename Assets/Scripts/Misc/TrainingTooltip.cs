@@ -199,9 +199,9 @@ public class TrainingTooltip : MonoBehaviour
         ToggleStopAtGround();
         
         if (_skipSpeedColumn)
-            UpdatePositions();
+            uiManager.userInputs.SetPositions(gameManager.listCondition.conditions[dropDownTakeOffCondition.value].userInputsValues);
         else
-            UpdateAll();
+            uiManager.userInputs.SetAll(gameManager.listCondition.conditions[dropDownTakeOffCondition.value].userInputsValues);
     }
 
     public void UpdateGravity()
@@ -213,16 +213,6 @@ public class TrainingTooltip : MonoBehaviour
     public void ToggleStopAtGround()
     {
         drawManager.SetStopOnGround(IsStopAtGround.isOn);
-    }
-
-    public void UpdateAll()
-    {
-        uiManager.userInputs.SetAll(gameManager.listCondition.conditions[dropDownTakeOffCondition.value].userInputsValues);
-    }
-
-    public void UpdatePositions()
-    {
-        uiManager.userInputs.SetPositions(gameManager.listCondition.conditions[dropDownTakeOffCondition.value].userInputsValues);
     }
 
     private void ChangedLanguage()
