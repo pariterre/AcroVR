@@ -12,11 +12,13 @@ public class TakeOffParamF_s : MonoBehaviour
 
     public BaseProfile bp;
 
-    void OnEnable()
+    void Start()
     {
         gameManager = ToolBox.GetInstance().GetManager<GameManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
         uiManager = ToolBox.GetInstance().GetManager<UIManager>();
+
+        CheckTakeOffParam();
     }
 
     public void DropDownDDLNamesOnValueChanged(int value)
@@ -33,7 +35,7 @@ public class TakeOffParamF_s : MonoBehaviour
         ApplyAvatar();
     }
 
-    public void CheckTakeOffParam(GameObject panel)
+    public void CheckTakeOffParam()
     {
         uiManager.userInputs.SetAllFromUI();    
         ApplyAvatar();
