@@ -73,16 +73,17 @@ public class BaseProfile : LevelBase
         if (cameraList.Length != 0){  // cameraList.Length is 0 if we are in the menu
             userUiInputsDefaultValues.SetAll(userUiInputs);
 
+            if (drawManager.CurrentAvatar == DrawManager.AvatarModel.SingleFemale)
+                drawManager.InitAvatar(DrawManager.AvatarModel.SingleFemale);
+            else
+                drawManager.InitAvatar(DrawManager.AvatarModel.SingleMale);
+                
             // Give some handler to relevant scripts
             drawManager.SetGround(Floor);
             PrepareMissionManager();
             if (SaveLoadCompareMenu != null)
                 SaveLoadCompareMenu.SetActive(!missionManager.HasActiveMission);
             
-            if (drawManager.CurrentAvatar == DrawManager.AvatarModel.SingleFemale)
-                drawManager.InitAvatar(DrawManager.AvatarModel.SingleFemale);
-            else
-                drawManager.InitAvatar(DrawManager.AvatarModel.SingleMale);
             FrontCameraPOV(0);
         }
     }

@@ -255,9 +255,6 @@ public class TrainingTooltip : MonoBehaviour
                 aniGraphManager.mouseRightButtonON = true;
                 aniGraphManager.mousePosSaveX = (float)mousePosX;
                 aniGraphManager.mousePosSaveY = (float)mousePosY;
-                //            buttonAddNode.GetComponentInChildren<Text>().text = MainParameters.Instance.languages.Used.movementButtonAddNode;
-                //            buttonRemoveNode.GetComponentInChildren<Text>().text = MainParameters.Instance.languages.Used.movementButtonRemoveNode;
-                //            buttonCancelChanges1.GetComponentInChildren<Text>().text = MainParameters.Instance.languages.Used.movementButtonCancelChanges;
                 DisplayContextMenu(panelAddRemoveNode);
             }
         }
@@ -279,10 +276,7 @@ public class TrainingTooltip : MonoBehaviour
         panel.GetComponent<RectTransform>().GetWorldCorners(menuPos);
         aniGraphManager.graph.GetComponent<RectTransform>().GetWorldCorners(graphPos);
         float width = menuPos[2].x - menuPos[1].x;
-//        if (mousePosWorldSpace.x < graphPos[2].x - width)
-            panel.transform.position = mousePosWorldSpace + new Vector3(width / 2, 0, 0);
-//        else
-//            panel.transform.position = mousePosWorldSpace - new Vector3(width / 2, 0, 0);
+        panel.transform.position = mousePosWorldSpace + new Vector3(width / 2, 0, 0);
         panel.SetActive(true);
     }
 
@@ -298,9 +292,6 @@ public class TrainingTooltip : MonoBehaviour
     {
         int ddl = aniGraphManager.ddlUsed;
         int node = FindPreviousNode(ddl, aniGraphManager.mousePosSaveX);
-
-        //                int node = GraphManager.Instance.FindPreviousNode();
-        //        int ddl = GraphManager.Instance.ddlUsed;
 
         gameManager.InterpolationDDL();
         gameManager.DisplayDDL(ddl, true);
@@ -323,9 +314,6 @@ public class TrainingTooltip : MonoBehaviour
         MainParameters.Instance.joints.nodes[ddl].T = MathFunc.MatrixCopy(T);
         MainParameters.Instance.joints.nodes[ddl].Q = MathFunc.MatrixCopy(Q);
 
-//        int frame = (int)Mathf.Round(mousePosSaveX / MainParameters.Instance.joints.lagrangianModel.dt);
-        //        aniGraphManager.InterpolationAndDisplayDDL(ddl, ddl, frame, false);
-
         gameManager.InterpolationDDL();
         gameManager.DisplayDDL(ddl, false);
 
@@ -338,9 +326,6 @@ public class TrainingTooltip : MonoBehaviour
 
         if (MainParameters.Instance.joints.nodes[ddl].T.Length < 3 || MainParameters.Instance.joints.nodes[ddl].Q.Length < 3)
         {
-            //            GraphManager.Instance.panelMoveErrMsg.GetComponentInChildren<Text>().text = MainParameters.Instance.languages.Used.errorMsgNotEnoughNodes;
-            //            GraphManager.Instance.mouseTracking = false;
-            //            GraphManager.Instance.panelMoveErrMsg.SetActive(true);
             aniGraphManager.mouseLeftButtonON = false;
             aniGraphManager.mouseRightButtonON = false;
             return;
