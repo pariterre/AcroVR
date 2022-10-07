@@ -62,12 +62,8 @@ public class TrainingTooltip : MonoBehaviour
     public Text ConditionPreset;
     public Text ConditionName;
 
-    public Toggle ToggleGravity;
     public Text TextGravity;
-
-    public Toggle IsStopAtGround;
     public Text TextIsStopAtGround;
-
 
     public BaseProfile bp;
 
@@ -141,19 +137,12 @@ public class TrainingTooltip : MonoBehaviour
         uiManager.SetTooltip();
 
         bp.FrontCameraPOV(0);
-
-        SetDropDownPresetCondition(PlayerPrefs.GetInt("PresetConditions", 0));
-        UpdateAllPropertiesFromDropdown(false);
     }
 
     public void SelectPresetCondition(){
-        SetDropDownPresetCondition(dropDownTakeOffCondition.value);
-        UpdateAllPropertiesFromDropdown();
-    }
-
-    public void SetDropDownPresetCondition(int value){
-        dropDownTakeOffCondition.value = value;
-        PlayerPrefs.SetInt("PresetConditions", dropDownTakeOffCondition.value);
+        // TODO: This should be in BaseProfile
+        uiManager.SetDropDownPresetCondition(dropDownTakeOffCondition.value);
+        uiManager.UpdateAllPropertiesFromDropdown();
     }
 
     public void AddCondition(Text name)
@@ -188,31 +177,13 @@ public class TrainingTooltip : MonoBehaviour
             });
         }
 
-        UpdateAllPropertiesFromDropdown();
-    }
-    
-    public void UpdateAllPropertiesFromDropdown(bool _skipSpeedColumn = true){
-        ToggleGravity.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].userInputsValues.Gravity;
-        UpdateGravity();
-        
-        IsStopAtGround.isOn = gameManager.listCondition.conditions[dropDownTakeOffCondition.value].userInputsValues.StopOnGround;
-        ToggleStopAtGround();
-        
-        if (_skipSpeedColumn)
-            uiManager.userInputs.SetPositions(gameManager.listCondition.conditions[dropDownTakeOffCondition.value].userInputsValues);
-        else
-            uiManager.userInputs.SetAll(gameManager.listCondition.conditions[dropDownTakeOffCondition.value].userInputsValues);
-    }
-
-    public void UpdateGravity()
-    {
-        drawManager.SetGravity(ToggleGravity.isOn);
-        drawManager.ForceFullUpdate();
+        uiManager.UpdateAllPropertiesFromDropdown();
     }
 
     public void ToggleStopAtGround()
     {
-        drawManager.SetStopOnGround(IsStopAtGround.isOn);
+        // TODO: This should be done in BaseProfile
+        uiManager.ToggleStopOnGround();
     }
 
     private void ChangedLanguage()

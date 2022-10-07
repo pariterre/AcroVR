@@ -2,6 +2,11 @@
 
 public class Utils
 {
+    static public int ToInt(string text)
+    {
+        return int.Parse(text);
+    }
+
     static public float ToFloat(string text)
     {
         return float.Parse(text, NumberStyles.Number, CultureInfo.InvariantCulture);

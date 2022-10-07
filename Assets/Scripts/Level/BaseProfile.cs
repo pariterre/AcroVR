@@ -673,4 +673,14 @@ public class BaseProfile : LevelBase
             }
         }
     }
+
+    public void ToggleGravity()
+    {
+        uiManager.ToggleGravity();
+    }
+
+    public void ToggleStopAtGround()
+    {
+        uiManager.ToggleStopOnGround();
+    }
 }

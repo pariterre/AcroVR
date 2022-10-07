@@ -24,6 +24,8 @@ public class DrawManager : MonoBehaviour
     [DllImport(dllpath)] static extern void c_solveLinearSystem(IntPtr matA, int nbCol, int nbLigne, IntPtr matB, IntPtr solX);
 
     protected StatManager statManager;
+    protected UIManager uiManager;
+
     protected SliderPlayAnimation sliderAnimation;
     protected DisplayResultGraphicS resultGraphics;
 
@@ -116,19 +118,8 @@ public class DrawManager : MonoBehaviour
         PlayerPrefs.SetInt("AvatarModel", (int)CurrentAvatar);
     }
 
-    public void SetGravity(bool value) { 
-        MainParameters.Instance.joints.UseGravity = value; 
-        ForceFullUpdate();
-    }
-
     GameObject Ground;
     public void SetGround(GameObject _floor) { Ground = _floor; }
-    public void SetStopOnGround(bool value) { 
-        MainParameters.Instance.joints.StopOnGround = value;
-        ForceFullUpdate();
-        if (Ground != null)
-            Ground.SetActive(MainParameters.Instance.joints.StopOnGround);
-    }
 
     public AvatarSimulation secondParameters = new AvatarSimulation();
 
@@ -143,7 +134,11 @@ public class DrawManager : MonoBehaviour
     void Start()
     {
         statManager = ToolBox.GetInstance().GetManager<StatManager>();
+        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
+
         SetAvatar((AvatarModel)PlayerPrefs.GetInt("AvatarModel", (int)AvatarModel.SingleFemale));
+
+        uiManager.UpdateAllPropertiesFromDropdown(false);
     }
 
 
@@ -411,6 +406,7 @@ public class DrawManager : MonoBehaviour
     {
         var _currentFrame = frameN;
         ShowAvatar();
+        ShowGround();
         PlayOneFrame();
         SetFrameN(_currentFrame);
     }
@@ -431,6 +427,11 @@ public class DrawManager : MonoBehaviour
 
             secondNumberFrames = q1_girl2.GetUpperBound(1) + 1;
         }
+    }
+    
+    public void ShowGround(){
+        if (Ground != null)
+            Ground.SetActive(MainParameters.Instance.joints.StopOnGround);
     }
 
     public void SetAnimationSpeed(float speed)
@@ -1163,7 +1164,7 @@ public class DrawManager : MonoBehaviour
 
     public void PlayOneFrame()
     {
-        if (!IsEditing)
+        if (!IsEditing && allQ != null)
         {
             if (allQ.GetUpperBound(1) >= frameN)
             {

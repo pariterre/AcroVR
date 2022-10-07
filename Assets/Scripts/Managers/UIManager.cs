@@ -10,87 +10,181 @@ using UnityEngine.UI;
 [System.Serializable]
 public class UserUIInputs
 {
+    //DrawManager drawManager;
+    public UserUIInputs(){
+        //drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+    }
+
     public InputField Duration;
+    public void SetDuration(float _value, bool _activateField = true) {
+        SetInput(Somersault, _value, _activateField);
+        MainParameters.Instance.joints.Duration = _value;
+    }
 
     public InputField Somersault;
+    public void SetSomersault(float _value, bool _activateField = true) {
+        SetInput(Somersault, _value, _activateField);
+        MainParameters.Instance.joints.takeOffParam.Somersault = _value;
+    }
+
     public InputField Tilt;
+    public void SetTilt(float _value, bool _activateField = true) {
+        SetInput(Tilt, _value, _activateField);
+        MainParameters.Instance.joints.takeOffParam.Tilt = _value;
+    }
+
     public InputField Twist;
+    public void SetTwist(float _value, bool _activateField = true) {
+        SetInput(Twist, _value, _activateField);
+        MainParameters.Instance.joints.takeOffParam.Twist = _value;
+    }
+
     public InputField HorizontalPosition;
+    public void SetHorizontalPosition(float _value, bool _activateField = true) {
+        SetInput(HorizontalPosition, _value, _activateField);
+        MainParameters.Instance.joints.takeOffParam.HorizontalPosition = _value;
+    }
+
     public InputField VerticalPosition;
+    public void SetVerticalPosition(float _value, bool _activateField = true) {
+        SetInput(VerticalPosition, _value, _activateField);
+        MainParameters.Instance.joints.takeOffParam.VerticalPosition = _value;
+    }
+
     public InputField SomersaultSpeed;
+    public void SetSomersaultSpeed(float _value, bool _activateField = true) {
+        SetInput(SomersaultSpeed, _value, _activateField);
+        MainParameters.Instance.joints.takeOffParam.SomersaultSpeed = _value;
+    }
+
     public InputField TiltSpeed;
+    public void SetTiltSpeed(float _value, bool _activateField = true) {
+        SetInput(TiltSpeed, _value, _activateField);
+        MainParameters.Instance.joints.takeOffParam.TiltSpeed = _value;
+    }
+
     public InputField TwistSpeed;
+    public void SetTwistSpeed(float _value, bool _activateField = true) {
+        SetInput(TwistSpeed, _value, _activateField);
+        MainParameters.Instance.joints.takeOffParam.TwistSpeed = _value;
+    }
+
     public InputField HorizontalSpeed;
+    public void SetHorizontalSpeed(float _value, bool _activateField = true) {
+        SetInput(HorizontalSpeed, _value, _activateField);
+        MainParameters.Instance.joints.takeOffParam.HorizontalSpeed = _value;
+    }
+
     public InputField VerticalSpeed;
+    public void SetVerticalSpeed(float _value, bool _activateField = true) {
+        SetInput(VerticalSpeed, _value, _activateField);
+        MainParameters.Instance.joints.takeOffParam.VerticalSpeed = _value;
+    }
 
     public Dropdown PresetConditions;
-    public Toggle Gravity;
+    public void SetPresetConditions(int _value, bool _activateField = true) {
+        SetInput(PresetConditions, _value, _activateField);
+        MainParameters.Instance.joints.condition = _value;
+        if (PresetConditions != null)
+            PlayerPrefs.SetInt("PresetConditions", PresetConditions.value);
+    }
+
+    public Toggle UseGravity;
+    public void SetUseGravity(bool _value, bool _activateField = true) {
+        SetInput(UseGravity, _value, _activateField);
+        MainParameters.Instance.joints.UseGravity = _value;
+        if (UseGravity != null)
+            ToolBox.GetInstance().GetManager<DrawManager>().ForceFullUpdate();
+    }
+
     public Toggle StopOnGround;
-
-    public void SetPositions(UserUIInputsValues _values)
-    {
-        SetInput(Somersault, true, _values.Somersault);
-        SetInput(Tilt, true, _values.Tilt);
-        SetInput(Twist, true, _values.Twist);
-        SetInput(HorizontalPosition, true, _values.HorizontalPosition);
-        SetInput(VerticalPosition, true, _values.VerticalPosition);
-
-        // drawManager.SetGravity(gameManager.listCondition.conditions[value].userInputsValues.Gravity);
-        // MainParameters.Instance.joints.takeOffParam.rotation = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.Somersault);
-        // MainParameters.Instance.joints.takeOffParam.tilt = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.Tilt);
-        // drawManager.takeOffParamTwistPosition = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.Twist);
-        // drawManager.takeOffParamHorizontalPosition = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.HorizontalPosition);
-        // drawManager.takeOffParamVerticalPosition = Utils.ToFloat(gameManager.listCondition.conditions[value].userInputsValues.VerticalPosition);
+    public void SetStopOnGround(bool _value, bool _activateField = true) {
+        SetInput(StopOnGround, _value, _activateField);
+        MainParameters.Instance.joints.StopOnGround = _value;
     }
 
-    public void SetAll(UserUIInputsValues _values)
-    {
-        SetInput(Duration, true, _values.Duration);
-
-        SetInput(Somersault, true, _values.Somersault);
-        SetInput(Tilt, true, _values.Tilt);
-        SetInput(Twist, true, _values.Twist);
-        SetInput(HorizontalPosition, true, _values.HorizontalPosition);
-        SetInput(VerticalPosition, true, _values.VerticalPosition);
-        SetInput(SomersaultSpeed, true, _values.SomersaultSpeed);
-        SetInput(TiltSpeed, true, _values.TiltSpeed);
-        SetInput(TwistSpeed, true, _values.TwistSpeed);
-        SetInput(HorizontalSpeed, true, _values.HorizontalSpeed);
-        SetInput(VerticalSpeed, true, _values.VerticalSpeed);
+    public void SetParameters(UserUIInputsValues _values){
+        var _isActives = new UserUIInputsIsActive();
+        _isActives.Initialize();
+        SetParameters(_values, _isActives);
     }
 
-    public void SetAll(UserUIInputsIsActive _statuses, UserUIInputsValues _values)
+    public void SetParameters(UserUIInputsValues _values, UserUIInputsIsActive _isActives)
     {
-
-        SetInput(Duration, _statuses.Duration, _values.Duration);
-
-        SetInput(Somersault, _statuses.Somersault, _values.Somersault);
-        SetInput(Tilt, _statuses.Tilt, _values.Tilt);
-        SetInput(Twist, _statuses.Twist, _values.Twist);
-        SetInput(HorizontalPosition, _statuses.HorizontalPosition, _values.HorizontalPosition);
-        SetInput(VerticalPosition, _statuses.VerticalPosition, _values.VerticalPosition);
-        SetInput(SomersaultSpeed, _statuses.SomersaultSpeed, _values.SomersaultSpeed);
-        SetInput(TiltSpeed, _statuses.TiltSpeed, _values.TiltSpeed);
-        SetInput(TwistSpeed, _statuses.TwistSpeed, _values.TwistSpeed);
-        SetInput(HorizontalSpeed, _statuses.HorizontalSpeed, _values.HorizontalSpeed);
-        SetInput(VerticalSpeed, _statuses.VerticalSpeed, _values.VerticalSpeed);
+        SetDuration(_values.Duration, _isActives.Duration);
+        SetUseGravity(_values.UseGravity, _isActives.UseGravity);
+        SetStopOnGround(_values.StopOnGround, _isActives.StopOnGround);
     }
 
-    public void SetInput(InputField _field, bool _activate, string _value = "0.0")
+    public void SetPositions(UserUIInputsValues _values){
+        var _isActives = new UserUIInputsIsActive();
+        _isActives.Initialize();
+        SetPositions(_values, _isActives);
+    }
+
+    public void SetPositions(UserUIInputsValues _values, UserUIInputsIsActive _isActives)
     {
+        SetSomersault(_values.Somersault, _isActives.Somersault);
+        SetTilt(_values.Tilt, _isActives.Tilt);
+        SetTwist(_values.Twist, _isActives.Twist);
+        SetHorizontalPosition(_values.HorizontalPosition, _isActives.HorizontalPosition);
+        SetVerticalPosition(_values.VerticalPosition, _isActives.VerticalPosition);        
+    }
+
+    public void SetSpeeds(UserUIInputsValues _values){
+        var _isActives = new UserUIInputsIsActive();
+        _isActives.Initialize();
+        SetSpeeds(_values, _isActives);
+    }
+    public void SetSpeeds(UserUIInputsValues _values, UserUIInputsIsActive _isActives)
+    {
+        SetSomersaultSpeed(_values.SomersaultSpeed, _isActives.SomersaultSpeed);
+        SetTiltSpeed(_values.TiltSpeed, _isActives.TiltSpeed);
+        SetTwistSpeed(_values.TwistSpeed, _isActives.TwistSpeed);
+        SetHorizontalSpeed(_values.HorizontalSpeed, _isActives.HorizontalSpeed);
+        SetVerticalSpeed(_values.VerticalSpeed, _isActives.VerticalSpeed);    
+    }
+
+    public void SetAll(
+        UserUIInputsValues _values,
+        bool _setParameters = true, 
+        bool _setPositions = true, 
+        bool _setSpeeds = true
+    ){
+        var _isActives = new UserUIInputsIsActive();
+        _isActives.Initialize();
+        SetAll(_values, _isActives, _setParameters, _setPositions, _setSpeeds);
+    }
+    public void SetAll(
+        UserUIInputsValues _values,
+        UserUIInputsIsActive _isActives,
+        bool _setParameters = true, 
+        bool _setPositions = true, 
+        bool _setSpeeds = true)
+    {
+        if (_setParameters) SetParameters(_values, _isActives);
+        if (_setPositions) SetPositions(_values, _isActives);
+        if (_setSpeeds) SetSpeeds(_values, _isActives);
+    }
+
+    public void SetInput(InputField _field, float _value = 0, bool _activate = true)
+    {
+        //if (_field == null) return;
         _field.enabled = _activate;
         _field.image.color = _activate ? Color.white : Color.blue;
-        _field.text = _value;
+        _field.text = _value.ToString("0.0");
     }
 
-    public void SetInput(Toggle _field, bool _activate, bool _value = false)
+    public void SetInput(Toggle _field, bool _value = false, bool _activate = true)
     {
+        if (_field == null) return;
         _field.enabled = _activate;
         _field.image.color = _activate ? Color.white : Color.blue;
         _field.isOn = _value;
     }
-    public void SetInput(Dropdown _field, bool _activate, int _value = 0)
+    public void SetInput(Dropdown _field, int _value = 0, bool _activate = true)
     {
+        if (_field == null) return;
         _field.enabled = _activate;
         _field.image.color = _activate ? Color.white : Color.blue;
         _field.value = _value;
@@ -100,40 +194,40 @@ public class UserUIInputs
 [System.Serializable]
 public class UserUIInputsValues
 {
-    public string Duration;
+    public float Duration;
 
-    public string Somersault;
-    public string Tilt;
-    public string Twist;
-    public string HorizontalPosition;
-    public string VerticalPosition;
-    public string SomersaultSpeed;
-    public string TiltSpeed;
-    public string TwistSpeed;
-    public string HorizontalSpeed;
-    public string VerticalSpeed;
+    public float Somersault;
+    public float Tilt;
+    public float Twist;
+    public float HorizontalPosition;
+    public float VerticalPosition;
+    public float SomersaultSpeed;
+    public float TiltSpeed;
+    public float TwistSpeed;
+    public float HorizontalSpeed;
+    public float VerticalSpeed;
 
     public int PresetConditions;
-    public bool Gravity;
+    public bool UseGravity;
     public bool StopOnGround;
 
     public void SetAll(UserUIInputs _inputs)
     {
-        Duration = _inputs.Duration != null ? _inputs.Duration.text : "1.0";
+        Duration = _inputs.Duration != null ? Utils.ToFloat(_inputs.Duration.text) : 1;
 
-        Somersault = _inputs.Somersault != null ? _inputs.Somersault.text : "0.0";
-        Tilt = _inputs.Tilt != null ? _inputs.Tilt.text : "0.0";
-        Twist = _inputs.Twist != null ? _inputs.Twist.text : "0.0";
-        HorizontalPosition = _inputs.HorizontalPosition != null ? _inputs.HorizontalPosition.text : "0.0";
-        VerticalPosition = _inputs.VerticalPosition != null ? _inputs.VerticalPosition.text : "0.0";
-        SomersaultSpeed = _inputs.SomersaultSpeed != null ? _inputs.SomersaultSpeed.text : "0.0";
-        TiltSpeed = _inputs.TiltSpeed != null ? _inputs.TiltSpeed.text : "0.0";
-        TwistSpeed = _inputs.TwistSpeed != null ? _inputs.TwistSpeed.text : "0.0";
-        HorizontalSpeed = _inputs.HorizontalSpeed != null ? _inputs.HorizontalSpeed.text : "0.0";
-        VerticalSpeed = _inputs.VerticalSpeed != null ? _inputs.VerticalSpeed.text : "0.0";
+        Somersault = _inputs.Somersault != null ? Utils.ToFloat(_inputs.Somersault.text) : 0;
+        Tilt = _inputs.Tilt != null ? Utils.ToFloat(_inputs.Tilt.text) : 0;
+        Twist = _inputs.Twist != null ? Utils.ToFloat(_inputs.Twist.text) : 0;
+        HorizontalPosition = _inputs.HorizontalPosition != null ? Utils.ToFloat(_inputs.HorizontalPosition.text) : 0;
+        VerticalPosition = _inputs.VerticalPosition != null ? Utils.ToFloat(_inputs.VerticalPosition.text) : 0;
+        SomersaultSpeed = _inputs.SomersaultSpeed != null ? Utils.ToFloat(_inputs.SomersaultSpeed.text) : 0;
+        TiltSpeed = _inputs.TiltSpeed != null ? Utils.ToFloat(_inputs.TiltSpeed.text) : 0;
+        TwistSpeed = _inputs.TwistSpeed != null ? Utils.ToFloat(_inputs.TwistSpeed.text) : 0;
+        HorizontalSpeed = _inputs.HorizontalSpeed != null ? Utils.ToFloat(_inputs.HorizontalSpeed.text) : 0;
+        VerticalSpeed = _inputs.VerticalSpeed != null ? Utils.ToFloat(_inputs.VerticalSpeed.text) : 0;
 
         PresetConditions = _inputs.PresetConditions != null ? _inputs.PresetConditions.value : 0;
-        Gravity = _inputs.Gravity != null ? _inputs.Gravity.isOn : true;
+        UseGravity = _inputs.UseGravity != null ? _inputs.UseGravity.isOn : true;
         StopOnGround = _inputs.StopOnGround != null ? _inputs.StopOnGround.isOn : false;
     }
 }
@@ -141,22 +235,43 @@ public class UserUIInputsValues
 [System.Serializable]
 public struct UserUIInputsIsActive
 {
-    public bool Somersault;
-    public bool SomersaultSpeed;
-    public bool Tilt;
-    public bool TiltSpeed;
-    public bool Twist;
-    public bool TwistSpeed;
-    public bool HorizontalPosition;
-    public bool HorizontalSpeed;
-    public bool VerticalPosition;
-    public bool VerticalSpeed;
     public bool Duration;
+
+    public bool Somersault;
+    public bool Tilt;
+    public bool Twist;
+    public bool HorizontalPosition;
+    public bool VerticalPosition;
+    public bool SomersaultSpeed;
+    public bool TiltSpeed;
+    public bool TwistSpeed;
+    public bool HorizontalSpeed;
+    public bool VerticalSpeed;
+
+    public bool UseGravity;
+    public bool StopOnGround;
+
+    public void Initialize(){
+        Duration = true;
+        Somersault = true;
+        Tilt = true;
+        Twist = true;
+        HorizontalPosition = true;
+        VerticalPosition = true;
+        SomersaultSpeed = true;
+        TiltSpeed = true;
+        TwistSpeed = true;
+        HorizontalSpeed = true;
+        VerticalSpeed = true;
+        UseGravity = true;
+        StopOnGround = true;
+    }
 }
 
 public class UIManager : MonoBehaviour
 {
-    DrawManager drawManager;
+    protected DrawManager drawManager;
+    protected GameManager gameManager;
 
     public GameObject panelToolTip;
     GameObject panelToolTipPrefab;
@@ -166,30 +281,28 @@ public class UIManager : MonoBehaviour
 
     public bool tooltipOn;
 
-
     public UserUIInputs userInputs { get; protected set; }
     protected UserUIInputsValues userInputsDefaultValues;
     public void SetUserInputs(UserUIInputs _userUIInputs, UserUIInputsValues _default)
     {
         userInputs = _userUIInputs;
         userInputsDefaultValues = _default;
+
+        UpdateAllPropertiesFromDropdown();
     }
 
     void Start()
     {
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
+
         SetTooltip(PlayerPrefs.GetInt("WithToolTip", 0) == 1);
+        
+        SetDropDownPresetCondition(PlayerPrefs.GetInt("PresetConditions", 0));
     }
 
-    public void SetTooltip()
-    {
-        panelToolTipPrefab = (GameObject)Resources.Load("ToolTipCanvas", typeof(GameObject));
-        panelToolTipPrefab = Instantiate(panelToolTipPrefab);
-        panelToolTip = panelToolTipPrefab.transform.Find("PanelToolTip").gameObject;
-        rectTransformBackground = panelToolTip.transform.Find("background").GetComponent<RectTransform>();
-        textToolTip = panelToolTip.transform.Find("text").GetComponent<Text>();
-
-        panelToolTip.SetActive(false);
+    public void SetDropDownPresetCondition(int value){
+        userInputs.SetPresetConditions(value);
     }
 
     public int currentTab = 1;
@@ -263,5 +376,33 @@ public class UIManager : MonoBehaviour
     {
         tooltipOn = _flag;
         PlayerPrefs.SetInt("WithToolTip", tooltipOn ? 1 : 0);
+    }
+
+    public void SetTooltip()
+    {
+        // TODO: This should be in TrainingTooltip.cs
+        panelToolTipPrefab = (GameObject)Resources.Load("ToolTipCanvas", typeof(GameObject));
+        panelToolTipPrefab = Instantiate(panelToolTipPrefab);
+        panelToolTip = panelToolTipPrefab.transform.Find("PanelToolTip").gameObject;
+        rectTransformBackground = panelToolTip.transform.Find("background").GetComponent<RectTransform>();
+        textToolTip = panelToolTip.transform.Find("text").GetComponent<Text>();
+
+        panelToolTip.SetActive(false);
+    }
+
+    public void UpdateAllPropertiesFromDropdown(bool _skipSpeedColumn = false){
+        if (userInputs == null || userInputs.PresetConditions == null) return;
+        var values = gameManager.listCondition.conditions[userInputs.PresetConditions.value].userInputsValues;
+        userInputs.SetAll(values, true, true, !_skipSpeedColumn);
+    }
+
+    public void ToggleGravity(){
+        userInputs.SetUseGravity(userInputs.UseGravity.isOn);
+    }
+
+    public void ToggleStopOnGround()
+    {
+        // TODO: This should be done in BaseProfile
+        userInputs.SetStopOnGround(userInputs.StopOnGround.isOn);
     }
 }
