@@ -8,6 +8,7 @@ using Cinemachine;
 
 public class BaseProfile : LevelBase
 {
+    protected AvatarManager avatarManager;
     protected LevelManager levelManager;
     protected GameManager gameManager;
     protected DrawManager drawManager;
@@ -15,7 +16,7 @@ public class BaseProfile : LevelBase
     protected UIManager uiManager;
     protected MissionManager missionManager;
 
-
+    public GameObject Avatar { get => _avatar = avatarManager.LoadedModels[0].gameObject; }
     public GameObject SaveLoadCompareMenu;
     public Dropdown dropDownCondition;
     public Dropdown dropDownDDLNames;
@@ -62,6 +63,7 @@ public class BaseProfile : LevelBase
 
     void Start()
     {
+        avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
         levelManager = ToolBox.GetInstance().GetManager<LevelManager>();
         gameManager = ToolBox.GetInstance().GetManager<GameManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
@@ -72,11 +74,8 @@ public class BaseProfile : LevelBase
         // Fill some important informations
         if (cameraList.Length != 0){  // cameraList.Length is 0 if we are in the menu
             userUiInputsDefaultValues.SetAll(userUiInputs);
-
-            if (drawManager.CurrentAvatar == DrawManager.AvatarModel.SingleFemale)
-                drawManager.InitAvatar(DrawManager.AvatarModel.SingleFemale);
-            else
-                drawManager.InitAvatar(DrawManager.AvatarModel.SingleMale);
+            avatarManager.LoadAvatar(0);
+            drawManager.Pause();
                 
             // Give some handler to relevant scripts
             drawManager.SetGround(Floor);
@@ -124,7 +123,7 @@ public class BaseProfile : LevelBase
 
     public void SwitchCameraView()
     {
-        if (drawManager.girl1 == null)
+        if (Avatar == null)
         {
             if (MainParameters.Instance.languages.current == Language.English)
             {
@@ -156,8 +155,8 @@ public class BaseProfile : LevelBase
 
             if(cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt == null)
             {
-                if(drawManager.girl1 != null)
-                    cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt = drawManager.girl1.transform.Find("Petra.002/hips").gameObject.transform;
+                if(Avatar != null)
+                    cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt = Avatar.transform.Find("Petra.002/hips").gameObject.transform;
             }
         }
 
@@ -184,8 +183,8 @@ public class BaseProfile : LevelBase
 
             if (cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt == null)
             {
-                if (drawManager.girl1 != null)
-                    cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt = drawManager.girl1.transform.Find("Petra.002/hips").gameObject.transform;
+                if (Avatar != null)
+                    cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt = Avatar.transform.Find("Petra.002/hips").gameObject.transform;
             }
         }
 
@@ -257,24 +256,16 @@ public class BaseProfile : LevelBase
             if (ret == -1)
             {
                 if (MainParameters.Instance.languages.current == Language.English)
-                {
                     ErrorMessage("Please load files first");
-                }
                 else
-                {
                     ErrorMessage("SVP charger d'abord les fichiers");
-                }
             }
             else
             {
                 if (MainParameters.Instance.languages.current == Language.English)
-                {
                     ErrorMessage("Loaded incorrect Simulation files:  " + ret.ToString());
-                }
                 else
-                {
                     ErrorMessage("Fichiers de simulation incorrects chargés:  " + ret.ToString());
-                }
             }
             return;
         }
@@ -282,17 +273,15 @@ public class BaseProfile : LevelBase
         gameManager.WriteToLogFile("Success to load a file");
 
         fileName.text = Path.GetFileName(MainParameters.Instance.joints.fileName);
-
-        if (drawManager.CurrentAvatar == DrawManager.AvatarModel.SingleFemale)
-            drawManager.LoadAvatar(DrawManager.AvatarModel.SingleFemale);
-        else
-            drawManager.LoadAvatar(DrawManager.AvatarModel.SingleMale);
+        avatarManager.LoadAvatar(0);
 
         TakeOffOn();
         InitDropdownDDLNames(0);
 
         dropDownCondition.value = MainParameters.Instance.joints.condition;
 
+        drawManager.Pause();
+        drawManager.MakeSimulationFrame();
         drawManager.StopEditing();
 
         FrontCameraPOV(drawManager.CheckPositionAvatar());
@@ -344,45 +333,27 @@ public class BaseProfile : LevelBase
         }
 
         gameManager.WriteToLogFile("Success to load one");
-
-        if (drawManager.CurrentAvatar == DrawManager.AvatarModel.SingleFemale)
+        if (!avatarManager.LoadAvatar(1))
         {
-            if (!drawManager.LoadAvatar(DrawManager.AvatarModel.DoubleFemale))
+            if (MainParameters.Instance.languages.current == Language.English)
             {
-                if (MainParameters.Instance.languages.current == Language.English)
-                {
-                    ErrorMessage("Failed to load files for the second avatar");
-                }
-                else
-                {
-                    ErrorMessage("Impossible de charger les fichiers pour le deuxième avatar");
-                }
-
-                return;
+                ErrorMessage("Failed to load files for the second avatar");
             }
-        }
-        else
-        {
-            if (!drawManager.LoadAvatar(DrawManager.AvatarModel.DoubleMale))
+            else
             {
-                if (MainParameters.Instance.languages.current == Language.English)
-                {
-                    ErrorMessage("Failed to load files for the second avatar");
-                }
-                else
-                {
-                    ErrorMessage("Impossible de charger les fichiers pour le deuxième avatar");
-                }
-
-                return;
+                ErrorMessage("Impossible de charger les fichiers pour le deuxième avatar");
             }
-        }
 
+            return;
+        }
+        
         gameManager.WriteToLogFile("Success to load two");
 
         TakeOffOn();
         InitDropdownDDLNames(0);
 
+        drawManager.Pause();
+        drawManager.MakeSimulationFrame();
         drawManager.StopEditing();
 
         TutorialMessage();
@@ -415,7 +386,7 @@ public class BaseProfile : LevelBase
     {
         if (uiManager.GetCurrentTab() != 2) return;
 
-        if (drawManager.girl1 == null)
+        if (Avatar == null)
         {
             if (MainParameters.Instance.languages.current == Language.English)
             {
@@ -470,7 +441,7 @@ public class BaseProfile : LevelBase
 
     public void ThirdPOVCamera()
     {
-        if (drawManager.girl1 == null)
+        if (Avatar == null)
         {
             if (MainParameters.Instance.languages.current == Language.English)
             {
@@ -490,7 +461,7 @@ public class BaseProfile : LevelBase
     {
         gameManager.WriteToLogFile("PlayAvatar()");
 
-        if (drawManager.girl1 == null)
+        if (Avatar == null)
         {
             if (MainParameters.Instance.languages.current == Language.English)
             {
@@ -516,7 +487,7 @@ public class BaseProfile : LevelBase
 
         drawManager.Resume();
 
-        if (drawManager.girl1 == null || !drawManager.girl1.activeSelf)
+        if (Avatar == null || !Avatar.activeSelf)
         {
             return;
         }
@@ -604,14 +575,14 @@ public class BaseProfile : LevelBase
     {
         gameManager.WriteToLogFile("SetMaleAvatar()");
 
-        drawManager.SetAvatar(DrawManager.AvatarModel.SingleMale);
+        avatarManager.SetAvatar(AvatarManager.Model.SingleMale);
     }
 
     public void SetFemaleAvatar()
     {
         gameManager.WriteToLogFile("SetFemaleAvatar()");
 
-        drawManager.SetAvatar(DrawManager.AvatarModel.SingleFemale);
+        avatarManager.SetAvatar(AvatarManager.Model.SingleFemale);
     }
 
     public void SetSimulationMode()
@@ -654,7 +625,7 @@ public class BaseProfile : LevelBase
 
     public void TutorialMessage()
     {
-        if (drawManager.girl1 == null) return;
+        if (Avatar == null) return;
 
         if(aniGraphManager.isTutorial == 0)
         {

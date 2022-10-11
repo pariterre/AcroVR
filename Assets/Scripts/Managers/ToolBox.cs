@@ -42,6 +42,7 @@ public class ToolBox : MonoBehaviour {
         }
 
         /// Manager Listing. Must have a .cs script with name
+        CreateManager<AvatarManager>();
         CreateManager<AniGraphManager>();
         CreateManager<GameManager>();
         CreateManager<StatManager>();
