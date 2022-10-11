@@ -19,7 +19,13 @@
 				"VerticalSpeed": false
 			},
 			"Solution": {
-				"HorizontalSpeed": [2.0]
+				"HorizontalSpeed": [2.0],
+				"Nodes": {
+					"HipFlexion": {
+						"T": [0,1],
+						"Q": [[0,0],[125,135]]
+					}
+				}
 			}
 		},
 		{
