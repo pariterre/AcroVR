@@ -283,8 +283,6 @@ public class GameManager : MonoBehaviour
         {
             jointsTemp.nodes[i].ddl = i + 1;
 
-            //            jointsTemp.nodes[i].name = null;
-
             if (i == 0) jointsTemp.nodes[i].name = "Hip_Flexion";
             else if (i == 1) jointsTemp.nodes[i].name = "Knee_Flexion";
             else if (i == 2) jointsTemp.nodes[i].name = "Right_Arm_Flexion";
@@ -294,7 +292,6 @@ public class GameManager : MonoBehaviour
 
 
             jointsTemp.nodes[i].interpolation = MainParameters.Instance.interpolationDefault;
-//            jointsTemp.nodes[i].T = new float[] { 0, 0.0001f};
             jointsTemp.nodes[i].T = new float[] { 0, 1.000000f };
             jointsTemp.nodes[i].Q = new float[] { 0, 0.0f};
             jointsTemp.nodes[i].ddlOppositeSide = -1;

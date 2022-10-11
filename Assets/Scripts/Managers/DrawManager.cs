@@ -71,7 +71,7 @@ public class DrawManager : MonoBehaviour
     public bool canResumeAnimation { get; protected set; } = false;
     public void SetCanResumeAnimation(bool value) { canResumeAnimation = value; }
 
-    float[,] allQ;
+    public float[,] AllQ { get; protected set; }
     float[,] q_girl2;
     public double[] qf { get; protected set; }
     double[] qf_girl2;
@@ -475,7 +475,7 @@ public class DrawManager : MonoBehaviour
     {
         MainParameters.StrucJoints joints = MainParameters.Instance.joints;
 
-        allQ = MathFunc.MatrixCopy(qq);
+        AllQ = MathFunc.MatrixCopy(qq);
         if (restartToZero)
             SetFrameN(0);
         firstFrame = frFrame;
@@ -1125,8 +1125,8 @@ public class DrawManager : MonoBehaviour
 
     public float TravelDistance { 
         get {
-            var _startPoint = MathFunc.MatrixGetColumnD(allQ, 1);
-            var _endPoint = MathFunc.MatrixGetColumnD(allQ, numberFrames - 1);
+            var _startPoint = MathFunc.MatrixGetColumnD(AllQ, 1);
+            var _endPoint = MathFunc.MatrixGetColumnD(AllQ, numberFrames - 1);
             return Vector3.Distance(
                 new Vector3((float)_startPoint[6], (float)_startPoint[8], (float)_startPoint[7]),
                 new Vector3((float)_endPoint[6], (float)_endPoint[8], (float)_endPoint[7])
@@ -1135,16 +1135,16 @@ public class DrawManager : MonoBehaviour
     }
 
     public float HorizontalTravelDistance {
-        get => Mathf.Max((float)MathFunc.MatrixGetColumnD(allQ,1)[7], (float)MathFunc.MatrixGetColumnD(allQ, numberFrames - 1)[7]);
+        get => Mathf.Max((float)MathFunc.MatrixGetColumnD(AllQ,1)[7], (float)MathFunc.MatrixGetColumnD(AllQ, numberFrames - 1)[7]);
     }
     
     public float VerticalTravelDistance {
-        get => Mathf.Max((float)MathFunc.MatrixGetColumnD(allQ, 1)[8], (float)MathFunc.MatrixGetColumnD(allQ, numberFrames - 1)[8]);
+        get => Mathf.Max((float)MathFunc.MatrixGetColumnD(AllQ, 1)[8], (float)MathFunc.MatrixGetColumnD(AllQ, numberFrames - 1)[8]);
     }
 
     public float CheckPositionAvatar()
     {
-        if (IsGestureMode || allQ == null || allQ.GetUpperBound(1) == 0) return 0;
+        if (IsGestureMode || AllQ == null || AllQ.GetUpperBound(1) == 0) return 0;
 
         float _max = Mathf.Max(VerticalTravelDistance, HorizontalTravelDistance);
 
@@ -1162,11 +1162,11 @@ public class DrawManager : MonoBehaviour
 
     public void PlayOneFrame()
     {
-        if (!IsEditing && allQ != null)
+        if (!IsEditing && AllQ != null)
         {
-            if (allQ.GetUpperBound(1) >= frameN)
+            if (AllQ.GetUpperBound(1) >= frameN)
             {
-                qf = MathFunc.MatrixGetColumnD(allQ, firstFrame + frameN);
+                qf = MathFunc.MatrixGetColumnD(AllQ, firstFrame + frameN);
                 if (playMode == MainParameters.Instance.languages.Used.animatorPlayModeGesticulation)
                     for (int i = 0; i < MainParameters.Instance.joints.lagrangianModel.q1.Length; i++)
                         qf[MainParameters.Instance.joints.lagrangianModel.q1[i] - 1] = 0;
@@ -1178,7 +1178,7 @@ public class DrawManager : MonoBehaviour
 
     public void InitPoseAvatar()
     {
-        qf = MathFunc.MatrixGetColumnD(allQ, 1);
+        qf = MathFunc.MatrixGetColumnD(AllQ, 1);
         SetAllDof(qf);
     }
 

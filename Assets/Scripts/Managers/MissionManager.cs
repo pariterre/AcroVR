@@ -122,8 +122,9 @@ public class MissionManager : MonoBehaviour
         MissionInfo mission = AllMissions.missions[CurrentMissionIndex];
 
         // Get the input results from the UI
-        var _somersault = Utils.ToFloat(uiManager.userInputs.Somersault.text);
         var _duration = Utils.ToFloat(uiManager.userInputs.Duration.text);
+        
+        var _somersault = Utils.ToFloat(uiManager.userInputs.Somersault.text);
         var _tilt = Utils.ToFloat(uiManager.userInputs.Tilt.text);
         var _twist = Utils.ToFloat(uiManager.userInputs.Twist.text);
         var _horizontalPosition = Utils.ToFloat(uiManager.userInputs.HorizontalPosition.text);
@@ -134,19 +135,33 @@ public class MissionManager : MonoBehaviour
         var _horizontalSpeed = Utils.ToFloat(uiManager.userInputs.HorizontalSpeed.text);
         var _verticalSpeed = Utils.ToFloat(uiManager.userInputs.VerticalSpeed.text);
 
+        // Get the angles applied to the model
+        var _allQ = drawManager.AllQ;
+        //var _startPoint = MathFunc.MatrixGetRow(AllQ, MainParameters.Instance.joints.);
+        var _hipFlexion = _allQ;
+
         // Get computed results
+        var _travelDistance = drawManager.TravelDistance;
         var _horizontalDistance = drawManager.HorizontalTravelDistance;
         var _verticalDistance = drawManager.VerticalTravelDistance;
-        var _travelDistance = drawManager.TravelDistance;
 
         // All condition must be SUCCESS to declare the result to be valid
         MissionResult = 
             (
                 IsSuccess(_duration, mission.Solution.Duration) == Result.SUCCESS 
+                && IsSuccess(_somersault, mission.Solution.Somersault) == Result.SUCCESS 
+                && IsSuccess(_tilt, mission.Solution.Tilt) == Result.SUCCESS 
+                && IsSuccess(_twist, mission.Solution.Twist) == Result.SUCCESS 
+                && IsSuccess(_horizontalPosition, mission.Solution.HorizontalPosition) == Result.SUCCESS 
+                && IsSuccess(_verticalPosition, mission.Solution.VerticalPosition) == Result.SUCCESS 
+                && IsSuccess(_somersaultSpeed, mission.Solution.SomersaultSpeed) == Result.SUCCESS 
+                && IsSuccess(_tiltSpeed, mission.Solution.TiltSpeed) == Result.SUCCESS 
+                && IsSuccess(_twistSpeed, mission.Solution.TwistSpeed) == Result.SUCCESS 
                 && IsSuccess(_horizontalSpeed, mission.Solution.HorizontalSpeed) == Result.SUCCESS 
                 && IsSuccess(_verticalSpeed, mission.Solution.VerticalSpeed) == Result.SUCCESS 
                 && IsSuccess(_travelDistance, mission.Solution.TravelDistance) == Result.SUCCESS 
-
+                && IsSuccess(_horizontalDistance, mission.Solution.HorizontalTravelDistance) == Result.SUCCESS 
+                && IsSuccess(_verticalDistance, mission.Solution.VerticalTravelDistance) == Result.SUCCESS 
             )
             ? Result.SUCCESS 
             : Result.FAIL;
