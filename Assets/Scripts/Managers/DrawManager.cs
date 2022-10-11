@@ -127,9 +127,6 @@ public class DrawManager : MonoBehaviour
     public bool secondPaused = false;
     public List<string> secondResultMessages = new List<string>();
 
-    public float secondTimeElapsed = 0;
-    public float resultDistance = 0;
-
 
     void Start()
     {
@@ -186,9 +183,6 @@ public class DrawManager : MonoBehaviour
 
         if (Time.time - (timeStarted + pauseTime) >= (timeFrame * secondFrameN) * factorPlaySpeed)
         {
-            if (!secondPaused)
-                secondTimeElapsed = Time.time - (timeStarted + pauseTime);
-
             if (secondFrameN < secondNumberFrames-1)
             {
                 PlayOneFrameForSecond();
@@ -1129,23 +1123,30 @@ public class DrawManager : MonoBehaviour
         if (!secondPaused) secondFrameN++;
     }
 
+    public float TravelDistance { 
+        get {
+            var _startPoint = MathFunc.MatrixGetColumnD(allQ, 1);
+            var _endPoint = MathFunc.MatrixGetColumnD(allQ, numberFrames - 1);
+            return Vector3.Distance(
+                new Vector3((float)_startPoint[6], (float)_startPoint[8], (float)_startPoint[7]),
+                new Vector3((float)_endPoint[6], (float)_endPoint[8], (float)_endPoint[7])
+            );
+        }
+    }
+
+    public float HorizontalTravelDistance {
+        get => Mathf.Max((float)MathFunc.MatrixGetColumnD(allQ,1)[7], (float)MathFunc.MatrixGetColumnD(allQ, numberFrames - 1)[7]);
+    }
+    
+    public float VerticalTravelDistance {
+        get => Mathf.Max((float)MathFunc.MatrixGetColumnD(allQ, 1)[8], (float)MathFunc.MatrixGetColumnD(allQ, numberFrames - 1)[8]);
+    }
+
     public float CheckPositionAvatar()
     {
-        if (IsGestureMode)
-        {
-            return 0;
-        }
+        if (IsGestureMode || allQ == null || allQ.GetUpperBound(1) == 0) return 0;
 
-        if (allQ == null) return 0;
-        if (allQ.GetUpperBound(1) == 0) return 0;
-
-        float vertical = Mathf.Max((float)MathFunc.MatrixGetColumnD(allQ, 1)[8], (float)MathFunc.MatrixGetColumnD(allQ, numberFrames - 1)[8]);
-        float horizontal = Mathf.Max((float)MathFunc.MatrixGetColumnD(allQ,1)[7], (float)MathFunc.MatrixGetColumnD(allQ, numberFrames - 1)[7]);
-
-        float max = Mathf.Max(vertical, horizontal);
-
-        resultDistance = Vector3.Distance(new Vector3((float)MathFunc.MatrixGetColumnD(allQ, 1)[6], (float)MathFunc.MatrixGetColumnD(allQ, 1)[8], (float)MathFunc.MatrixGetColumnD(allQ, 1)[7]),
-            new Vector3((float)MathFunc.MatrixGetColumnD(allQ, numberFrames - 1)[6], (float)MathFunc.MatrixGetColumnD(allQ, numberFrames - 1)[8], (float)MathFunc.MatrixGetColumnD(allQ, numberFrames - 1)[7]));
+        float _max = Mathf.Max(VerticalTravelDistance, HorizontalTravelDistance);
 
         if (q_girl2 != null && cntAvatar > 1)
         {
@@ -1153,11 +1154,10 @@ public class DrawManager : MonoBehaviour
             float horizontal2 = Mathf.Max((float)MathFunc.MatrixGetColumnD(q_girl2, 1)[7], (float)MathFunc.MatrixGetColumnD(q_girl2, secondNumberFrames - 1)[7]);
 
             float max2 = Mathf.Max(vertical2, horizontal2);
-
-            if (max2 > max) return max2;
+            if (max2 > _max) return max2;
         }
 
-        return max;
+        return _max;
     }
 
     public void PlayOneFrame()

@@ -13,8 +13,10 @@ public enum Result
 
 public class MissionManager : MonoBehaviour
 {
+    protected DrawManager drawManager;
+    protected GameManager gameManager;
     protected UIManager uiManager;
-    protected MissionBanner missionBanner;
+    
     public void SetInformationBanner(MissionBanner _banner){ missionBanner = _banner; }
 
     public MissionList AllMissions { get; protected set; }
@@ -40,7 +42,7 @@ public class MissionManager : MonoBehaviour
         }
     }
 
-    private GameManager gameManager;
+    protected MissionBanner missionBanner;
     protected Fireworks fireworks;
     public void SetupFireworks(Fireworks _fireworks){ fireworks = _fireworks; }
 
@@ -55,6 +57,7 @@ public class MissionManager : MonoBehaviour
 
     void Start()
     {
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
         gameManager = ToolBox.GetInstance().GetManager<GameManager>();
         uiManager = ToolBox.GetInstance().GetManager<UIManager>();
     }
@@ -71,8 +74,12 @@ public class MissionManager : MonoBehaviour
         if (missionBanner == null) return;
         
         SetCurrentMission();
-        if (HasActiveMission)
+        if (HasActiveMission){
+            ManageConditions();
+            ManageInputFields();
+            missionBanner.SetText(AllMissions.missions[CurrentMissionIndex].Name);
             missionBanner.Show(false, false);
+        }
     }
 
     public void SetCurrentMission()
@@ -84,11 +91,13 @@ public class MissionManager : MonoBehaviour
             if (AllMissions.missions[i].Level == Level)
             {
                 CurrentMissionIndex = i + SubLevel - 1;  // 1-indexed!
-                missionBanner.SetText(AllMissions.missions[CurrentMissionIndex].Name);
-                ManageInputFields();
-                break;
+                return;
             }
         }
+    }
+
+    void ManageConditions(){
+        uiManager.SetDropDownPresetCondition(AllMissions.missions[CurrentMissionIndex].Condition);
     }
 
     void ManageInputFields()
@@ -100,10 +109,12 @@ public class MissionManager : MonoBehaviour
     public void CheckMissionResult()
     {
         Result IsSuccess(float _value, float[] _contraint){
+            bool CheckMinMax(float input, float min, float max) => input >= min && input <= max;
+            
             if (_contraint == null) return Result.SUCCESS;  // If no constraint was applied
             
             var _minAccepted = _contraint[0];
-            var _maxAccepted = _contraint.Length > 1 ? _contraint[1] : 999;
+            var _maxAccepted = _contraint.Length > 1 ? _contraint[1] : _contraint[0];
             return CheckMinMax(_value, _minAccepted, _maxAccepted) ? Result.SUCCESS : Result.FAIL;
         }
 
@@ -111,35 +122,34 @@ public class MissionManager : MonoBehaviour
         MissionInfo mission = AllMissions.missions[CurrentMissionIndex];
 
         // Get the input results from the UI
-        var Somersault = Utils.ToFloat(uiManager.userInputs.Somersault.text);
-        var Tilt = Utils.ToFloat(uiManager.userInputs.Tilt.text);
-        var Twist = Utils.ToFloat(uiManager.userInputs.Twist.text);
-        var HorizontalPosition = Utils.ToFloat(uiManager.userInputs.HorizontalPosition.text);
-        var VerticalPosition = Utils.ToFloat(uiManager.userInputs.VerticalPosition.text);
-        var SomersaultSpeed = Utils.ToFloat(uiManager.userInputs.SomersaultSpeed.text);
-        var TiltSpeed = Utils.ToFloat(uiManager.userInputs.TiltSpeed.text);
-        var TwistSpeed = Utils.ToFloat(uiManager.userInputs.TwistSpeed.text);
-        var HorizontalSpeed = Utils.ToFloat(uiManager.userInputs.HorizontalSpeed.text);
-        var VerticalSpeed = Utils.ToFloat(uiManager.userInputs.VerticalSpeed.text);
+        var _somersault = Utils.ToFloat(uiManager.userInputs.Somersault.text);
+        var _tilt = Utils.ToFloat(uiManager.userInputs.Tilt.text);
+        var _twist = Utils.ToFloat(uiManager.userInputs.Twist.text);
+        var _horizontalPosition = Utils.ToFloat(uiManager.userInputs.HorizontalPosition.text);
+        var _verticalPosition = Utils.ToFloat(uiManager.userInputs.VerticalPosition.text);
+        var _somersaultSpeed = Utils.ToFloat(uiManager.userInputs.SomersaultSpeed.text);
+        var _tiltSpeed = Utils.ToFloat(uiManager.userInputs.TiltSpeed.text);
+        var _twistSpeed = Utils.ToFloat(uiManager.userInputs.TwistSpeed.text);
+        var _horizontalSpeed = Utils.ToFloat(uiManager.userInputs.HorizontalSpeed.text);
+        var _verticalSpeed = Utils.ToFloat(uiManager.userInputs.VerticalSpeed.text);
 
-        // Compare to accepted results
-        var _resultHorizontalSpeed = IsSuccess(HorizontalSpeed, mission.constraints.HorizontalSpeed);
+        // Get computed results
+        var _horizontalDistance = drawManager.HorizontalTravelDistance;
+        var _verticalDistance = drawManager.VerticalTravelDistance;
+        var _travelDistance = drawManager.TravelDistance;
 
-        // TODO Fix the distance by computing
-        var _resultHorizontalDistance = IsSuccess(HorizontalSpeed, mission.goal.Distance);
-        
+        // All condition must be SUCCESS to declare the result to be valid
         MissionResult = 
-            _resultHorizontalDistance == Result.SUCCESS 
-                && _resultHorizontalSpeed == Result.SUCCESS 
+            (
+                IsSuccess(_horizontalSpeed, mission.constraints.HorizontalSpeed) == Result.SUCCESS 
+                && IsSuccess(_verticalSpeed, mission.constraints.VerticalSpeed) == Result.SUCCESS 
+                && IsSuccess(_travelDistance, mission.goal.Distance) == Result.SUCCESS 
+
+            )
             ? Result.SUCCESS 
             : Result.FAIL;
-        
-        ProcessResult();
-    }
 
-    bool CheckMinMax(float input, float min, float max)
-    {
-        return (input >= min && input <= max);
+        ProcessResult();
     }
 
     void ProcessResult(){

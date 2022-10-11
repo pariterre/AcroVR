@@ -82,9 +82,6 @@
 		{
 			"Level": 2,
 			"Name": "2.1 Entrez comme vitesse verticale 5 m/s, puis observez la trajectoire de l'athlète.",
-			"goal": {
-				"Duration": [0.9, 1.1]
-			},
 			"constraints": {
 				"VerticalSpeed": [5.0]
 			},
@@ -102,15 +99,11 @@
 				"VerticalSpeed": true,
 				"Duration": false
 			},
-			"Condition": 1,
-			"Hint": "La trajectoire se termine lorsque la hauteur finale et la hauteur initiale sont toutes les deux à 0.\nDans l'équation (3), remplacez le temps par 3 s et les deux positions par 0. Vous pouvez ensuite trouver la vitesse initiale.\n(v*t = -1/2 g*t²) peut se transformer en (v = -1/2 g*t)"
+			"Condition": 1
 		},
 		{
 			"Level": 2,
 			"Name": "2.2 Entrez la vitesse verticale nécessaire pour avoir un temps de vol de 3 s.",
-			"goal": {
-				"Duration": [2.7, 3.3]
-			},
 			"constraints": {
 				"VerticalSpeed": [13.2 , 16.2]
 			},
