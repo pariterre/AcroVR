@@ -75,7 +75,7 @@ public class MissionManager : MonoBehaviour
         
         SetCurrentMission();
         if (HasActiveMission){
-            ManageConditions();
+            ManagePresetConditions();
             ManageInputFields();
             missionBanner.SetText(AllMissions.missions[CurrentMissionIndex].Name);
             missionBanner.Show(false, false);
@@ -96,13 +96,13 @@ public class MissionManager : MonoBehaviour
         }
     }
 
-    void ManageConditions(){
-        uiManager.SetDropDownPresetCondition(AllMissions.missions[CurrentMissionIndex].Condition);
+    void ManagePresetConditions(){
+        uiManager.SetDropDownPresetCondition(AllMissions.missions[CurrentMissionIndex].PresetCondition);
     }
 
     void ManageInputFields()
     {
-        UserUIInputsIsActive _status = AllMissions.missions[CurrentMissionIndex].enabledInputs;
+        UserUIInputsIsActive _status = AllMissions.missions[CurrentMissionIndex].EnabledInputs;
         uiManager.userInputs.SetAllFromUI(_status);
     }
 
@@ -123,6 +123,7 @@ public class MissionManager : MonoBehaviour
 
         // Get the input results from the UI
         var _somersault = Utils.ToFloat(uiManager.userInputs.Somersault.text);
+        var _duration = Utils.ToFloat(uiManager.userInputs.Duration.text);
         var _tilt = Utils.ToFloat(uiManager.userInputs.Tilt.text);
         var _twist = Utils.ToFloat(uiManager.userInputs.Twist.text);
         var _horizontalPosition = Utils.ToFloat(uiManager.userInputs.HorizontalPosition.text);
@@ -141,9 +142,10 @@ public class MissionManager : MonoBehaviour
         // All condition must be SUCCESS to declare the result to be valid
         MissionResult = 
             (
-                IsSuccess(_horizontalSpeed, mission.constraints.HorizontalSpeed) == Result.SUCCESS 
-                && IsSuccess(_verticalSpeed, mission.constraints.VerticalSpeed) == Result.SUCCESS 
-                && IsSuccess(_travelDistance, mission.goal.Distance) == Result.SUCCESS 
+                IsSuccess(_duration, mission.Solution.Duration) == Result.SUCCESS 
+                && IsSuccess(_horizontalSpeed, mission.Solution.HorizontalSpeed) == Result.SUCCESS 
+                && IsSuccess(_verticalSpeed, mission.Solution.VerticalSpeed) == Result.SUCCESS 
+                && IsSuccess(_travelDistance, mission.Solution.TravelDistance) == Result.SUCCESS 
 
             )
             ? Result.SUCCESS 

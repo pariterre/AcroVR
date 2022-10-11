@@ -8,22 +8,29 @@ using System.Globalization;
 
 
 [System.Serializable]
-public struct Goal
+public struct AllMissionNodes
 {
-    public float[] Distance;
-    public float[] Duration;
-    public float[] VerticalDistance;
-    public float[] Vrille;
-    public float[] Salto;
+    public MissionNodes HipFlexion;
+    public MissionNodes KneeFlexion;
+    public MissionNodes RightArmFlexion;
+    public MissionNodes RightArmAbduction;
+    public MissionNodes LeftArmFlexion;
+    public MissionNodes LeftArmAbduction;
 }
 
 [System.Serializable]
-public struct SolutionConstraints
+public struct MissionSolution
 {
+    // For each of the item, if it is null, then this item is ignored.
+    // If the array is one element, then answer must equal the solution's value. 
+    // If the array is two elements, then answer must be comprised between solution[0] and solution[1].
+
+    // Solution on general parameters
     public float[] Duration;
     public bool[] UseGravity;
     public bool[] StopOnGround;
 
+    // Solution on take off parameters
     public float[] Somersault;
     public float[] Tilt;
     public float[] Twist;
@@ -34,30 +41,28 @@ public struct SolutionConstraints
     public float[] TwistSpeed;
     public float[] HorizontalSpeed;
     public float[] VerticalSpeed;
+    
+    // Solution on resulting computation
+    public float[] TravelDistance; 
+    public float[] HorizontalTravelDistance; 
+    public float[] VerticalTravelDistance; 
 
-    public MissionNodes HipFlexion;
-    public MissionNodes KneeFlexion;
-    public MissionNodes RightArmFlexion;
-    public MissionNodes RightArmAbduction;
-    public MissionNodes LeftArmFlexion;
-    public MissionNodes LeftArmAbduction;
+    // Solution on angle nodes
+    public AllMissionNodes Nodes;
 }
 
 [System.Serializable]
 public struct MissionInfo
 {
-    public int Level;
     public string Name;
-    public Goal goal;
-    public SolutionConstraints constraints;
-    public int maxActions;
-    public UserUIInputsIsActive enabledInputs;
-    public int Condition;
-    public string Hint;
+    public int Level;
 
-    public MissionNodes HancheFlexion;
-    public MissionNodes BrasGaucheAbduction;
-    public MissionNodes BrasDroitAbduction;
+    public int PresetCondition;
+    public UserUIInputsIsActive EnabledInputs;
+    public AllMissionNodes StartingPositions;
+
+    public MissionSolution Solution;
+    public string Hint;
 
     public string ToHash(){
         return Hash128.Compute(Name).ToString();
@@ -74,7 +79,6 @@ public class MissionList
 [System.Serializable]
 public struct MissionNodes
 {
-    public string Name;
     public float[] T;
     public float[,] Q;
 }
