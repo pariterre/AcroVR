@@ -30,8 +30,9 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
 
     // Cache variables
     protected bool isInitialized = false;
-    protected GameManager gameManager;
+    protected AvatarManager avatarManager;
     protected DrawManager drawManager;
+    protected GameManager gameManager;
     protected StatManager statManager;
 
     // Delegate
@@ -42,11 +43,12 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
     {
         node = getNodeCallback(avatarIndex);
 
-        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
+        avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
         statManager = ToolBox.GetInstance().GetManager<StatManager>();
 
-        angle = (float)drawManager.qf[qIndex];
+        angle = (float)avatarManager.Q[qIndex];
 
         if (!arrow)
         {

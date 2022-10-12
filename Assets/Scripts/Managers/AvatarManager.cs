@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,14 +7,15 @@ public class AvatarManager : MonoBehaviour
     public enum Model
     {
         SingleFemale = 0,
-        DoubleFemale = 1,
-        SingleMale = 2,
+        SingleMale = 1,
+        DoubleFemale = 2,
         DoubleMale = 3,
     }
 
     public struct Avatar {
         public GameObject gameObject;
-        bool IsLoaded { get => gameObject != null; }
+
+        public bool IsLoaded { get => gameObject != null; }
 
         // Root
         public GameObject Hip;
@@ -36,114 +37,71 @@ public class AvatarManager : MonoBehaviour
         public ControlRightArmFlexion RightArmControlFlex;
     }
 
+    protected DrawManager drawManager;
+    public double[] Q { get; protected set; }
+
     void Start(){
-        SetAvatar((AvatarManager.Model)PlayerPrefs.GetInt("AvatarModel", (int)AvatarManager.Model.SingleFemale));
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
 
-        // There are exactly two models that must be loaded
-        LoadedModels.Add(new Avatar());
-        LoadedModels.Add(new Avatar());
+        for (int i=0; i<2; ++i)
+        {
+            NamePrefab.Add("");
+            LoadedModels.Add(new Avatar());
+        }
+
+        SelectAvatar((AvatarManager.Model)PlayerPrefs.GetInt("AvatarModel", (int)AvatarManager.Model.SingleFemale));
     }
 
-    public AvatarManager.Model CurrentAvatarModel { get; protected set; }
-    public void SetAvatar(AvatarManager.Model _avatar){
-        CurrentAvatarModel = _avatar;
-        PlayerPrefs.SetInt("AvatarModel", (int)CurrentAvatarModel);
+    public AvatarManager.Model SelectedAvatarModel { get; protected set; }
+    public void SelectAvatar(AvatarManager.Model _avatar){
+        SelectedAvatarModel = _avatar;
+        PlayerPrefs.SetInt("AvatarModel", (int)SelectedAvatarModel);
+
+        if (SelectedAvatarModel == AvatarManager.Model.SingleFemale || SelectedAvatarModel == AvatarManager.Model.DoubleFemale)
+        {
+            NamePrefab[0] = "girl1_control";
+            NamePrefab[1] = "girl1";
+        }
+        else if (SelectedAvatarModel == AvatarManager.Model.SingleMale || SelectedAvatarModel == AvatarManager.Model.DoubleMale)
+        {
+            NamePrefab[0] = "man1_control";
+            NamePrefab[1] = "man1";
+        }
     }
 
-    string Name;
-    protected GameObject Prefab;
-    protected List<Avatar> LoadedModels = new List<Avatar>();
-    public int NumberOfLoadedAvatars { get => (int)(LoadedModels[0].IsLoaded) + (int)(LoadedModels[1].IsLoaded); }
+    public List<string> NamePrefab { get; protected set; } = new List<string>(2);
+    public List<Avatar> LoadedModels { get; protected set; } = new List<Avatar>(2);
+    public int NumberOfLoadedAvatars { get => Convert.ToInt32(LoadedModels[0].IsLoaded) + Convert.ToInt32(LoadedModels[1].IsLoaded); }
     
-    public bool LoadAvatar(int _index)
+    public void LoadAvatar(int _index)
     {
-        string namePrefab = "";
-        if 
-        switch (_model)
-        {
-            case Avatar.Model.SingleFemale:
-                namePrefab = "girl1_control";
-                if (girl1) girl1.SetActive(true);
-                if (girl2) girl2.SetActive(false);
-                break;
-            case Avatar.Model.DoubleFemale:
-                namePrefab1 = "girl1_control";
-                namePrefab2 = "girl2";
-                if (girl1) girl1.SetActive(true);
-                if (girl2) girl2.SetActive(true);
-                break;
-            case Avatar.Model.SingleMale:
-                namePrefab1 = "man1_control";
-                if (girl1) girl1.SetActive(true);
-                if (girl2) girl2.SetActive(false);
-                break;
-            case Avatar.Model.DoubleMale:
-                namePrefab1 = "man1_control";
-                namePrefab2 = "man2";
-                if (girl1) girl1.SetActive(true);
-                if (girl2) girl2.SetActive(true);
-                break;
-        }
+        LoadPrefab(_index);
+        LoadAvatarControls(_index);
 
-        if (NumberOfLoadedAvatars == 0)
-        {
-            LoadPrefab(
-                namePrefab1, ref girl1Prefab, ref girl1, 
-                ref girl1LeftThigh, ref girl1RightThigh, ref girl1LeftLeg, ref girl1RightLeg, 
-                ref girl1RightArm, ref girl1LeftArm, ref girl1Hip, ref firstView
-            );
-
-            LoadAvatarControls(girl1, 
-                ref girl1ThighControl, ref girl1LegControl, 
-                ref girl1LeftArmControlAbd, ref girl1RightArmControlAbd, ref girl1LeftArmControlFlex, ref girl1RightArmControlFlex);
-        }
-
-
-        if (NumberOfLoadedAvatars > 1)
-        {
-            if (girl2 == null)
-            {
-                LoadGirlPrefab(
-                    namePrefab2, ref girl2Prefab, ref girl2,
-                    ref girl2LeftThigh, ref girl2RightThigh, ref girl2LeftLeg, ref girl2RightLeg,
-                    ref girl2RightArm, ref girl2LeftArm, ref girl2Hip, ref firstView
-                );
-            }
-
-            q1_girl2 = MakeSimulationSecond();
-            q_girl2 = MathFunc.MatrixCopy(q1_girl2);
-        }
-
-        return true;
-    }
-
-    protected string PrefabName(AvatarManager.Model _model){
-        if (_model == AvatarModel.SingleFemale)
-            return "girl1_control";
-        else if (_model == AvatarModel.SingleMale)
-            return "man1_control";
-        else
-            throw new NotImplementedException("This avatar is no implemented") ;
-    }
-
-    protected string PrefabRootDirectory(AvatarManager.Model _model){
-        if (_model == AvatarModel.SingleFemale)
-            return _rootDirectory + "";
-        else if (_model == AvatarModel.SingleMale)
-            return _rootDirectory + "";
-        else
-            throw new NotImplementedException("This avatar is no implemented") ;
+        LoadedModels[_index].gameObject.SetActive(true);
+        if (_index > 0)
+            LoadedModels[_index].gameObject.SetActive((int)SelectedAvatarModel > 1);
     }
     
-    protected void LoadPrefab(int _index, AvatarManager.Model _model, ref GameObject _view)
+    protected void LoadAvatarControls(int _index)
     {
-        _namePrefab = PrefabName(_model);
-        Prefab = (GameObject)Resources.Load(_namePrefab, typeof(GameObject));
+        var _rootDirectory = PrefabRootDirectory(SelectedAvatarModel);
 
-        LoadedModel[_index] = new Avatar();
-        _model = LoadedModel[_index];
-        _model.gameObject = Instantiate(Prefab);
-        var _rootDirectory = PrefabRootDirectory(_model);
+        var _model = LoadedModels[_index];
+        _model.ThighControl = _model.gameObject.transform.Find(_rootDirectory + "/hips/zero_thigh.L/thigh.L/ControlThigh").GetComponent<ControlThigh>();
+        _model.LegControl = _model.gameObject.transform.Find(_rootDirectory + "/hips/zero_thigh.L/thigh.L/zero_shin.L/shin.L/ControlShin").GetComponent<ControlShin>();
+        _model.LeftArmControlAbd = _model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L/ControlLeftArm").GetComponent<ControlLeftArmAbduction>();
+        _model.LeftArmControlFlex = _model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L/ControlLeftArm").GetComponent<ControlLeftArmFlexion>();
+        _model.RightArmControlAbd = _model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R/ControlRightArm").GetComponent<ControlRightArmAbduction>();
+        _model.RightArmControlFlex = _model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R/ControlRightArm").GetComponent<ControlRightArmFlexion>();
+        LoadedModels[_index] = _model;
+    }
+
+    protected void LoadPrefab(int _index)
+    {
+        var _model = new Avatar();
+        _model.gameObject = Instantiate((GameObject)Resources.Load(NamePrefab[_index], typeof(GameObject)));
+        var _rootDirectory = PrefabRootDirectory(SelectedAvatarModel);
 
         // Root
         _model.Hip = _model.gameObject.transform.Find(_rootDirectory + "/hips").gameObject;
@@ -156,41 +114,142 @@ public class AvatarManager : MonoBehaviour
         _model.LeftArm = _model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L").gameObject;
         _model.RightArm = _model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R").gameObject;
 
-        _view = _model.gameObject.transform.Find(_rootDirectory + "/hips/FirstViewPoint").gameObject;
+        drawManager.SetFirstView(_model.gameObject.transform.Find(_rootDirectory + "/hips/FirstViewPoint").gameObject);
 
         // set to zero position
         _model.gameObject.transform.position = Vector3.zero;
         _model.Hip.transform.position = Vector3.zero;
-        CenterAvatar(_index);
         _model.LeftArm.transform.localRotation = Quaternion.identity;
         _model.RightArm.transform.localRotation = Quaternion.identity;
-    }
-    
-    protected void LoadAvatarControls(int _index )
-    {
-        var _rootDirectory = PrefabRootDirectory(_model);
 
-        var _model = LoadedModel[_index];
-        _model.ThighControl = _model.gameObject.transform.Find(_rootDirectory + "/hips/zero_thigh.L/thigh.L/ControlThigh").GetComponent<ControlThigh>();
-        _model.LegControl = _model.gameObject.transform.Find(_rootDirectory + "/hips/zero_thigh.L/thigh.L/zero_shin.L/shin.L/ControlShin").GetComponent<ControlShin>();
-        _model.LeftArmControlAbd = _model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L/ControlLeftArm").GetComponent<ControlLeftArmAbduction>();
-        _model.LeftArmControlFlex = _model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L/ControlLeftArm").GetComponent<ControlLeftArmFlexion>();
-        _model.RightArmControlAbd = _model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R/ControlRightArm").GetComponent<ControlRightArmAbduction>();
-        _model.RightArmControlFlex = _model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R/ControlRightArm").GetComponent<ControlRightArmFlexion>();
+        LoadedModels[_index] = _model;
+        drawManager.CenterAvatar(_index);
     }
 
-    
-    public void CenterAvatar(int _index)
+    protected string PrefabRootDirectory(AvatarManager.Model _model){
+        if (_model == AvatarManager.Model.SingleFemale || _model == AvatarManager.Model.DoubleFemale)
+            return "Petra.002";
+        else if (_model == AvatarManager.Model.SingleMale || _model == AvatarManager.Model.DoubleMale)
+            return "Petra.002";
+        else
+            throw new NotImplementedException("This avatar is no implemented") ;
+    }
+
+    public void SetAllDof(double[] _q)
     {
-        Vector3 _scaling = LoadedModel[_index].gameObject.transform.localScale;
-        var _hipTranslations = Double.IsNaN(InitialFeetHeight) ? new Vector3(0f, 0f, 0f) : new Vector3(0f, -InitialFeetHeight * _scaling.y, 0f);
-        var _hipRotations = new Vector3(0f, 0f, 0f);
-        if (IsSimulationMode && qf != null)
+        Q = _q;
+        drawManager.CenterAvatar(0);
+        SetThigh();
+        SetShin();
+        SetRightArm();
+        SetLeftArm();
+    }
+
+    public void SetThigh(float _value)
+    {
+        Q[LoadedModels[0].ThighControl.avatarIndex] = _value;
+        SetThigh();
+    }
+    protected void SetThigh()
+    {
+        int _ddl = LoadedModels[0].ThighControl.avatarIndex;
+        LoadedModels[0].LeftThigh.transform.localEulerAngles = new Vector3(-(float)Q[_ddl], 0f, 0f) * Mathf.Rad2Deg;
+        LoadedModels[0].RightThigh.transform.localEulerAngles = new Vector3(-(float)Q[_ddl], 0f, 0f) * Mathf.Rad2Deg;
+    }
+
+    public void SetShin(float _value)
+    {
+        Q[LoadedModels[0].LegControl.avatarIndex] = _value;
+        SetShin();
+    }
+    protected void SetShin()
+    {
+        int ddl = LoadedModels[0].LegControl.avatarIndex;
+        LoadedModels[0].LeftLeg.transform.localEulerAngles = new Vector3((float)Q[ddl], 0f, 0f) * Mathf.Rad2Deg;
+        LoadedModels[0].RightLeg.transform.localEulerAngles = new Vector3((float)Q[ddl], 0f, 0f) * Mathf.Rad2Deg;
+    }
+
+
+    public void SetLeftArmAbduction(float _value)
+    {
+        Q[LoadedModels[0].LeftArmControlAbd.avatarIndex] = _value;
+        SetLeftArm();
+    }
+    public void SetLeftArmFlexion(float _value)
+    {
+        Q[LoadedModels[0].LeftArmControlFlex.avatarIndex] = _value;
+        SetLeftArm();
+    }
+    protected void SetLeftArm()
+    {
+        int ddlAbduction = LoadedModels[0].LeftArmControlAbd.avatarIndex;
+        int ddlFlexion = LoadedModels[0].LeftArmControlFlex.avatarIndex;
+        LoadedModels[0].LeftArm.transform.localEulerAngles = new Vector3((float)Q[ddlFlexion], 0, (float)Q[ddlAbduction]) * Mathf.Rad2Deg;
+    }
+
+    public void SetRightArmAbduction(float _value)
+    {
+        Q[LoadedModels[0].RightArmControlAbd.avatarIndex] = _value;
+        SetRightArm();
+    }
+    public void SetRightArmFlexion(float _value)
+    {
+        Q[LoadedModels[0].RightArmControlFlex.avatarIndex] = _value;
+        SetRightArm();
+    }
+    protected void SetRightArm()
+    {
+        int ddlAbduction = LoadedModels[0].RightArmControlAbd.avatarIndex;
+        int ddlFlexion = LoadedModels[0].RightArmControlFlex.avatarIndex;
+        LoadedModels[0].RightArm.transform.localEulerAngles = new Vector3((float)Q[ddlFlexion], 0, (float)Q[ddlAbduction]) * Mathf.Rad2Deg;
+    }
+
+    public float FeetHeight()
+    {
+        return (float)FeetHeight(Q);
+    }
+    public float FeetHeight(float[] q)
+    {
+        double[] qDouble = new double[q.Length];
+        for (int i = 0; i < q.Length; ++i)
+            qDouble[i] = q[i];
+
+        return (float)FeetHeight(qDouble);
+    }
+    public double FeetHeight(double[] q)
+    {
+        float[] tagX;
+        float[] tagY;
+        float[] tagZ;
+        EvaluateTags(q, out tagX, out tagY, out tagZ);
+        return Math.Min(
+            tagZ[MainParameters.Instance.joints.lagrangianModel.feet[0] - 1],
+            tagZ[MainParameters.Instance.joints.lagrangianModel.feet[1] - 1]
+        );
+    }
+
+    public void EvaluateTags(double[] q, out float[] tagX, out float[] tagY, out float[] tagZ)
+    {
+        // q[12]
+
+        double[] tag1;
+        TagsSimple tagsSimple = new TagsSimple();
+        tag1 = tagsSimple.Tags(q);
+
+        // tag1[78]
+
+        int newTagLength = tag1.Length / 3;
+
+        // newTagLength = 26;
+
+        tagX = new float[newTagLength];
+        tagY = new float[newTagLength];
+        tagZ = new float[newTagLength];
+        for (int i = 0; i < newTagLength; i++)
         {
-            _hipTranslations += new Vector3((float)qf[6] * _scaling.x, (float)qf[8] * _scaling.y, (float)qf[7] * _scaling.z);
-            _hipRotations += new Vector3((float)qf[9] * Mathf.Rad2Deg, (float)qf[10] * Mathf.Rad2Deg, (float)qf[11] * Mathf.Rad2Deg);
+            tagX[i] = (float)tag1[i];
+            tagY[i] = (float)tag1[i + newTagLength];
+            tagZ[i] = (float)tag1[i + newTagLength * 2];
         }
-        LoadedModel[_index].Hip.transform.localPosition = _hipTranslations;
-        LoadedModel[_index].Hip.transform.localEulerAngles = _hipRotations;
     }
 }

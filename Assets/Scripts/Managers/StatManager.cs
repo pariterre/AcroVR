@@ -30,6 +30,12 @@ public struct PlayerReplayInfo
 
 public class StatManager : MonoBehaviour
 {
+    AvatarManager avatarManager;
+    DrawManager drawManager;
+    GameManager gameManager;
+    LevelManager levelManager;
+    UIManager uiManager;
+
     public PlayerInfo info;
     protected GameObject selectedJoint;
     protected ControlSegmentGeneric currentControlSegment;
@@ -55,14 +61,6 @@ public class StatManager : MonoBehaviour
 
     GameObject arrow;
 
-    //    GameObject errorPrefab;
-    //    Text errorMessage;
-
-    // Caching
-    GameManager gameManager;
-    DrawManager drawManager;
-    LevelManager levelManager;
-    UIManager uiManager;
     GameObject error;
     BaseProfile _baseProfileInternal;
     BaseProfile baseProfile { get {
@@ -74,10 +72,12 @@ public class StatManager : MonoBehaviour
 
     void Start()
     {
-        gameManager = transform.parent.GetComponentInChildren<GameManager>();
+        avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        gameManager = transform.parent.GetComponentInChildren<GameManager>();
         levelManager = transform.parent.GetComponentInChildren<LevelManager>();
         uiManager = ToolBox.GetInstance().GetManager<UIManager>();
+
         error = GameObject.Find("Training");
 
         colorBlue = Color.blue;
@@ -162,10 +162,10 @@ public class StatManager : MonoBehaviour
             {
                 Vector3 newPosition = Input.mousePosition;
                 Vector3 mouseDistance = newPosition - initPosition;
-                drawManager.girl1.transform.Rotate(Vector3.up * -mouseDistance.x / 5f);
+                avatarManager.LoadedModels[0].gameObject.transform.Rotate(Vector3.up * -mouseDistance.x / 5f);
                 initPosition = newPosition;
             }
-            if (drawManager.girl1 != null && !drawManager.IsEditing && !isRotating && hasHit)
+            if (avatarManager.LoadedModels[0].IsLoaded && !drawManager.IsEditing && !isRotating && hasHit)
             {
                 initPosition = Input.mousePosition;
                 isRotating = true;

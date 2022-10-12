@@ -24,9 +24,8 @@ public class DrawManager : MonoBehaviour
 
     public GameObject girl2;
     GameObject girl2Prefab;
-    float InitialFeetHeight = (float)Double.NaN;
 
-
+    public float InitialFeetHeight { get; protected set; } = (float)Double.NaN;
     // Hip
     private GameObject girl2LeftThigh;
     private GameObject girl2RightThigh;
@@ -45,7 +44,6 @@ public class DrawManager : MonoBehaviour
 
     public float[,] AllQ { get; protected set; }
     float[,] q_girl2;
-    public double[] qf { get; protected set; }
     double[] qf_girl2;
     public float frameRate { get; } = 0.02f;
     public int frameN { get; protected set; } = 0;
@@ -164,7 +162,7 @@ public class DrawManager : MonoBehaviour
             frameN != 0 
             && MainParameters.Instance.joints.StopOnGround && 
             !IsGestureMode && 
-            FeetHeight(qf) < InitialFeetHeight
+            avatarManager.FeetHeight() < InitialFeetHeight
         ) 
             return false;
         
@@ -201,7 +199,7 @@ public class DrawManager : MonoBehaviour
     {
         MakeSimulationFrame();
         if (MainParameters.Instance.joints.nodes == null) return;
-        avatarManager.CenterAvatar(0);
+        CenterAvatar(0);
 
         Play_s(q1, 0, q1.GetUpperBound(1) + 1, true);
 
@@ -209,12 +207,28 @@ public class DrawManager : MonoBehaviour
         {
             girl2.transform.rotation = Quaternion.identity;
             girl2.transform.position = Vector3.zero;
-            avatarManager.CenterAvatar(0);
+            CenterAvatar(1);
 
             secondNumberFrames = q1_girl2.GetUpperBound(1) + 1;
         }
     }
-    
+
+    public void CenterAvatar(int _index)
+    {
+        var _model = avatarManager.LoadedModels[_index];
+        Vector3 _scaling = _model.gameObject.transform.localScale;
+        var _hipTranslations = Double.IsNaN(InitialFeetHeight) ? new Vector3(0f, 0f, 0f) : new Vector3(0f, -InitialFeetHeight * _scaling.y, 0f);
+        var _hipRotations = new Vector3(0f, 0f, 0f);
+        if (IsSimulationMode && avatarManager.Q != null)
+        {
+            var _q = avatarManager.Q;
+            _hipTranslations += new Vector3((float)_q[6] * _scaling.x, (float)_q[8] * _scaling.y, (float)_q[7] * _scaling.z);
+            _hipRotations += new Vector3((float)_q[9] * Mathf.Rad2Deg, (float)_q[10] * Mathf.Rad2Deg, (float)_q[11] * Mathf.Rad2Deg);
+        }
+        _model.Hip.transform.localPosition = _hipTranslations;
+        _model.Hip.transform.localEulerAngles = _hipRotations;
+    }
+
     public void ShowGround(){
         if (Ground != null)
             Ground.SetActive(MainParameters.Instance.joints.StopOnGround);
@@ -225,6 +239,10 @@ public class DrawManager : MonoBehaviour
         factorPlaySpeed = speed;
     }
 
+    public void SetFirstView(GameObject _view)
+    {
+        firstView = _view;
+    }
     public GameObject GetFirstViewTransform()
     {
         return firstView;
@@ -374,7 +392,7 @@ public class DrawManager : MonoBehaviour
         float[] q0 = new float[joints.lagrangianModel.nDDL];
         float[] q0dot = new float[joints.lagrangianModel.nDDL];
         if (Double.IsNaN(InitialFeetHeight)){
-            InitialFeetHeight = FeetHeight(q0);
+            InitialFeetHeight = avatarManager.FeetHeight(q0);
         }
 
         for (int i = 0; i < MainParameters.Instance.joints.nodes.Length; i++)
@@ -426,7 +444,7 @@ public class DrawManager : MonoBehaviour
         double[] Q = new double[joints.lagrangianModel.nDDL];
         for (int i = 0; i < joints.lagrangianModel.nDDL; i++)
             Q[i] = q0[i];
-        EvaluateTags_s(Q, out float[] tagX, out float[] tagY, out float[] tagZ);
+        avatarManager.EvaluateTags(Q, out float[] tagX, out float[] tagY, out float[] tagZ);
 
         // Q[12]
         // tagX[26], tagY[26], tagZ[26]
@@ -497,7 +515,7 @@ public class DrawManager : MonoBehaviour
             double[] qq = new double[joints.lagrangianModel.nDDL];
             for (int j = 0; j < joints.lagrangianModel.nDDL; j++)
                 qq[j] = q[j, i];
-            EvaluateTags_s(qq, out tagX, out tagY, out tagZ);
+            avatarManager.EvaluateTags(qq, out tagX, out tagY, out tagZ);
 
             // Cut the trial when the feet crosses the ground (vertical axis = 0)
             if (
@@ -552,26 +570,6 @@ public class DrawManager : MonoBehaviour
         return qOut;
     }
 
-
-    protected float FeetHeight(float[] q){
-        double[] qDouble = new double[q.Length];
-        for (int i = 0; i<q.Length; ++i)
-            qDouble[i] = q[i];
-
-        return (float)FeetHeight(qDouble);
-    }
-    protected double FeetHeight(double[] q)
-    {
-        float[] tagX;
-        float[] tagY;
-        float[] tagZ;
-        EvaluateTags_s(q, out tagX, out tagY, out tagZ);
-        return Math.Min(
-            tagZ[MainParameters.Instance.joints.lagrangianModel.feet[0] - 1],
-            tagZ[MainParameters.Instance.joints.lagrangianModel.feet[1] - 1]
-        );
-    }
-
     private float[,] MakeSimulationSecond()
     {
         if (secondParameters.joints.nodes == null) return new float[0, 0];
@@ -616,7 +614,7 @@ public class DrawManager : MonoBehaviour
         float[] tagX;
         float[] tagY;
         float[] tagZ;
-        EvaluateTags_s(Q, out tagX, out tagY, out tagZ);
+        avatarManager.EvaluateTags(Q, out tagX, out tagY, out tagZ);
 
         float[] cg = new float[3];
         cg[0] = tagX[tagX.Length - 1];
@@ -682,7 +680,7 @@ public class DrawManager : MonoBehaviour
             double[] qq = new double[joints.lagrangianModel.nDDL];
             for (int j = 0; j < joints.lagrangianModel.nDDL; j++)
                 qq[j] = q[j, i];
-            EvaluateTags_s(qq, out tagX, out tagY, out tagZ);
+            avatarManager.EvaluateTags(qq, out tagX, out tagY, out tagZ);
             if (MainParameters.Instance.joints.UseGravity && tagZ.Min() < -0.05f)
             {
                 secondParameters.joints.tc = (float)t[i];
@@ -730,30 +728,6 @@ public class DrawManager : MonoBehaviour
         return qOut;
     }
 
-    private void EvaluateTags_s(double[] q, out float[] tagX, out float[] tagY, out float[] tagZ)
-    {
-        // q[12]
-
-        double[] tag1;
-        TagsSimple tagsSimple = new TagsSimple();
-        tag1 = tagsSimple.Tags(q);
-
-        // tag1[78]
-
-        int newTagLength = tag1.Length / 3;
-
-        // newTagLength = 26;
-
-        tagX = new float[newTagLength];
-        tagY = new float[newTagLength];
-        tagZ = new float[newTagLength];
-        for (int i = 0; i < newTagLength; i++)
-        {
-            tagX[i] = (float)tag1[i];
-            tagY[i] = (float)tag1[i + newTagLength];
-            tagZ[i] = (float)tag1[i + newTagLength * 2];
-        }
-    }
 
     private Vector ShortDynamics_s(double t, Vector x)
     {
@@ -907,7 +881,7 @@ public class DrawManager : MonoBehaviour
                         qf_girl2[MainParameters.Instance.joints.lagrangianModel.q1[i] - 1] = 0;
             }
 
-        SetAllDof(qf_girl2);
+        avatarManager.SetAllDof(qf_girl2);
         girl2Hip.transform.localRotation = Quaternion.AngleAxis((float)qf_girl2[9] * Mathf.Rad2Deg, Vector3.right) *
                                             Quaternion.AngleAxis((float)qf_girl2[10] * Mathf.Rad2Deg, Vector3.forward) *
                                             Quaternion.AngleAxis((float)qf_girl2[11] * Mathf.Rad2Deg, Vector3.up);
@@ -958,22 +932,18 @@ public class DrawManager : MonoBehaviour
     {
         if (!IsEditing && AllQ != null)
         {
-            if (AllQ.GetUpperBound(1) >= frameN)
-            {
-                qf = MathFunc.MatrixGetColumnD(AllQ, firstFrame + frameN);
-                if (playMode == MainParameters.Instance.languages.Used.animatorPlayModeGesticulation)
-                    for (int i = 0; i < MainParameters.Instance.joints.lagrangianModel.q1.Length; i++)
-                        qf[MainParameters.Instance.joints.lagrangianModel.q1[i] - 1] = 0;
-            }
-            SetAllDof(qf);
+            var _q = MathFunc.MatrixGetColumnD(AllQ, firstFrame + frameN);
+            if (playMode == MainParameters.Instance.languages.Used.animatorPlayModeGesticulation)
+                for (int i = 0; i < MainParameters.Instance.joints.lagrangianModel.q1.Length; i++)
+                    _q[MainParameters.Instance.joints.lagrangianModel.q1[i] - 1] = 0;
+            avatarManager.SetAllDof(_q);
             if (!isPaused) SetFrameN(frameN + 1);
         }
     }
 
     public void InitPoseAvatar()
     {
-        qf = MathFunc.MatrixGetColumnD(AllQ, 1);
-        SetAllDof(qf);
+        avatarManager.SetAllDof(MathFunc.MatrixGetColumnD(AllQ, 1));
     }
 
 
@@ -994,112 +964,7 @@ public class DrawManager : MonoBehaviour
             sliderAnimation.EnableSlider();
     }
 
-    public void SetAllDof(double[] _qf){
-        CenterAvatar(0);
-        SetThigh(_qf);
-        SetShin(_qf);
-        SetRightArm(_qf);
-        SetLeftArm(_qf);
-    }
-
-    public void SetQfThigh(float _value)
-    {
-        int ddl = girl1ThighControl.avatarIndex;
-        qf[ddl] = _value;
-    }
-
-    public void SetThigh(double[] _qf){
-        int ddl = girl1ThighControl.avatarIndex;
-        girl1LeftThigh.transform.localEulerAngles = new Vector3(-(float)_qf[ddl], 0f, 0f) * Mathf.Rad2Deg;
-        girl1RightThigh.transform.localEulerAngles = new Vector3(-(float)_qf[ddl], 0f, 0f) * Mathf.Rad2Deg;
-    }
-
-    public void ControlThigh(float _value)
-    {
-        SetQfThigh(_value);
-        SetThigh(qf);
-    }
-
-    public void SetQfShin(float _value)
-    {
-        int ddl = girl1LegControl.avatarIndex;
-        qf[ddl] = _value;
-    }
-
-    public void SetShin(double[] _qf)
-    {
-        int ddl = girl1LegControl.avatarIndex;
-        girl1LeftLeg.transform.localEulerAngles = new Vector3((float)_qf[ddl], 0f, 0f) * Mathf.Rad2Deg;
-        girl1RightLeg.transform.localEulerAngles = new Vector3((float)_qf[ddl], 0f, 0f) * Mathf.Rad2Deg;
-    }
-
-    public void ControlShin(float _value)
-    {
-        SetQfShin(_value);
-        SetShin(qf);
-    }
-
-    public void SetQfRightArmAbduction(float _value)
-    {
-        int ddl = girl1RightArmControlAbd.avatarIndex;
-        qf[ddl] = _value;
-    }
-    public void SetQfRightArmFlexion(float _value)
-    {
-        int ddl =girl1RightArmControlFlex.avatarIndex;
-        qf[ddl] = _value;
-    }
-
-    protected void SetRightArm(double[] _qf)
-    {
-        int ddlAbduction = girl1RightArmControlAbd.avatarIndex;
-        int ddlFlexion = girl1RightArmControlFlex.avatarIndex;
-        girl1RightArm.transform.localEulerAngles = new Vector3((float)_qf[ddlFlexion], 0, (float)_qf[ddlAbduction]) * Mathf.Rad2Deg;
-    }
-
-    public void ControlRightArmAbduction(float _value)
-    {
-        SetQfRightArmAbduction(_value);
-        SetRightArm(qf);
-    }
-    
-    public void ControlRightArmFlexion(float _value)
-    {
-        SetQfRightArmFlexion(_value);
-        SetRightArm(qf);
-    }
-
-    public void SetQfLeftArmAbduction(float _value)
-    {
-        int ddl = girl1LeftArmControlAbd.avatarIndex;
-        qf[ddl] = _value;
-    }
-    public void SetQfLeftArmFlexion(float _value)
-    {
-        int ddl = girl1LeftArmControlFlex.avatarIndex;
-        qf[4] = _value;
-    }
-
-    protected void SetLeftArm(double[] _qf)
-    {
-        int ddlAbduction = girl1LeftArmControlAbd.avatarIndex;
-        int ddlFlexion = girl1LeftArmControlFlex.avatarIndex;
-        girl1LeftArm.transform.localEulerAngles = new Vector3((float)_qf[ddlFlexion], 0, (float)_qf[ddlAbduction]) * Mathf.Rad2Deg;
-    }
-
-    public void ControlLeftArmAbduction(float _value)
-    {
-        SetQfLeftArmAbduction(_value);
-        SetLeftArm(qf);
-    }
-
-    public void ControlLeftArmFlexion(float _value)
-    {
-        SetQfLeftArmFlexion(_value);
-        SetLeftArm(qf);
-    }
-
-    public GameObject Avatar { get => _avatar = avatarManager.LoadedModels[0].gameObject; }
+    public GameObject Avatar { get => avatarManager.LoadedModels[0].gameObject; }
 
     public bool PauseAvatar()
     {

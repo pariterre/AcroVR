@@ -16,7 +16,7 @@ public class BaseProfile : LevelBase
     protected UIManager uiManager;
     protected MissionManager missionManager;
 
-    public GameObject Avatar { get => _avatar = avatarManager.LoadedModels[0].gameObject; }
+    public GameObject Avatar { get => avatarManager.LoadedModels[0].gameObject; }
     public GameObject SaveLoadCompareMenu;
     public Dropdown dropDownCondition;
     public Dropdown dropDownDDLNames;
@@ -333,19 +333,7 @@ public class BaseProfile : LevelBase
         }
 
         gameManager.WriteToLogFile("Success to load one");
-        if (!avatarManager.LoadAvatar(1))
-        {
-            if (MainParameters.Instance.languages.current == Language.English)
-            {
-                ErrorMessage("Failed to load files for the second avatar");
-            }
-            else
-            {
-                ErrorMessage("Impossible de charger les fichiers pour le deuxième avatar");
-            }
-
-            return;
-        }
+        avatarManager.LoadAvatar(1);
         
         gameManager.WriteToLogFile("Success to load two");
 
@@ -575,14 +563,14 @@ public class BaseProfile : LevelBase
     {
         gameManager.WriteToLogFile("SetMaleAvatar()");
 
-        avatarManager.SetAvatar(AvatarManager.Model.SingleMale);
+        avatarManager.SelectAvatar(AvatarManager.Model.SingleMale);
     }
 
     public void SetFemaleAvatar()
     {
         gameManager.WriteToLogFile("SetFemaleAvatar()");
 
-        avatarManager.SetAvatar(AvatarManager.Model.SingleFemale);
+        avatarManager.SelectAvatar(AvatarManager.Model.SingleFemale);
     }
 
     public void SetSimulationMode()

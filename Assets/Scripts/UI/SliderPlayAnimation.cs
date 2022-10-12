@@ -8,7 +8,7 @@ using System.Globalization;
 
 public class SliderPlayAnimation : MonoBehaviour
 {
-    // Variables
+    protected AvatarManager avatarManager;
     protected DrawManager drawManager;
     protected UIManager uiManager;
     public Slider slider;
@@ -19,6 +19,7 @@ public class SliderPlayAnimation : MonoBehaviour
 
     void Start()
     {
+        avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
         uiManager = ToolBox.GetInstance().GetManager<UIManager>();
         slider.minValue = 0f;
@@ -63,7 +64,7 @@ public class SliderPlayAnimation : MonoBehaviour
         drawManager.SetFrameN(currentFrame);
         textChrono.text = drawManager.frameNtime + " s";
 
-        if (drawManager.cntAvatar > 1)
+        if (avatarManager.NumberOfLoadedAvatars > 1)
         {
             var secondCurrentFrame = currentFrame;
             if (secondCurrentFrame >= drawManager.secondNumberFrames)
@@ -83,7 +84,7 @@ public class SliderPlayAnimation : MonoBehaviour
             drawManager.Pause();
             drawManager.PlayOneFrame();
 
-            if (drawManager.cntAvatar > 1)
+            if (avatarManager.NumberOfLoadedAvatars > 1)
                 drawManager.secondPaused = true;
         }
     }
