@@ -272,16 +272,16 @@ public class BaseProfile : LevelBase
 
         gameManager.WriteToLogFile("Success to load a file");
 
-        fileName.text = Path.GetFileName(MainParameters.Instance.joints.fileName);
+        fileName.text = Path.GetFileName(drawManager.Joints(0).fileName);
         avatarManager.LoadAvatar(0);
 
         TakeOffOn();
         InitDropdownDDLNames(0);
 
-        dropDownCondition.value = MainParameters.Instance.joints.condition;
+        dropDownCondition.value = drawManager.Joints(0).condition;
 
         drawManager.Pause();
-        drawManager.MakeSimulationFrame();
+        drawManager.MakeSimulationFrame(0);
         drawManager.StopEditing();
 
         FrontCameraPOV(drawManager.CheckPositionAvatar());
@@ -289,10 +289,11 @@ public class BaseProfile : LevelBase
         TutorialMessage();
         aniGraphManager.cntAvatar = 0;
 
-        float t = (drawManager.numberFrames - 1) * 0.02f;
+        float t = (drawManager.NumberFrames - 1) * 0.02f;
         endFrameText.text = t + " sec";
 
-        if (t < MainParameters.Instance.joints.Duration) MainParameters.Instance.joints.Duration = t;
+        if (t < drawManager.Joints(0).Duration) 
+            MainParameters.Instance.joints.Duration = t;
 
         gameManager.InterpolationDDL();
         gameManager.DisplayDDL(0, true);
@@ -341,7 +342,7 @@ public class BaseProfile : LevelBase
         InitDropdownDDLNames(0);
 
         drawManager.Pause();
-        drawManager.MakeSimulationFrame();
+        drawManager.MakeSimulationFrame(1);
         drawManager.StopEditing();
 
         TutorialMessage();
@@ -409,14 +410,14 @@ public class BaseProfile : LevelBase
 
     public void DisplayDDL(int ddl, bool axisRange)
     {
-        if (MainParameters.Instance.joints.nodes == null) return;
+        if (drawManager.Joints(0).nodes == null) return;
 
         if (ddl >= 0)
         {
             aniGraphManager.DisplayCurveAndNodes(0, ddl, axisRange);
-            if (MainParameters.Instance.joints.nodes[ddl].ddlOppositeSide >= 0)
+            if (drawManager.Joints(0).nodes[ddl].ddlOppositeSide >= 0)
             {
-                aniGraphManager.DisplayCurveAndNodes(1, MainParameters.Instance.joints.nodes[ddl].ddlOppositeSide, axisRange);
+                aniGraphManager.DisplayCurveAndNodes(1, drawManager.Joints(0).nodes[ddl].ddlOppositeSide, axisRange);
             }
         }
     }
@@ -462,7 +463,7 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        drawManager.ShowAvatar();
+        drawManager.ShowAvatar(0);
     }
 
     public void PlayAvatarButton()
@@ -493,7 +494,7 @@ public class BaseProfile : LevelBase
             drawManager.SetAnimationSpeed(0.8f);
 
         drawManager.StopEditing();
-        drawManager.PlayAvatar();
+        drawManager.PlayAvatar(0);
 
         SwitchCameraView();
 
@@ -504,12 +505,13 @@ public class BaseProfile : LevelBase
 
     public void PauseAvatarButton()
     {
-        if (!drawManager.PauseAvatar()) 
+        if (!drawManager.PauseAvatar(0)) 
             return;
-        if (drawManager.isPaused)
+        if (drawManager.IsPaused)
         {
             sliderPlay.ShowPlayButton();
-        } else
+        } 
+        else
         {
             sliderPlay.ShowPauseButton();
         }
@@ -530,7 +532,7 @@ public class BaseProfile : LevelBase
         else
             SetSimulationMode();
 
-        drawManager.ForceFullUpdate();
+        drawManager.ForceFullUpdate(0);
         SwitchCameraView();
 
         if (_properties.HasTutorial)

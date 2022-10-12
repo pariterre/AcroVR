@@ -34,8 +34,8 @@ public class SliderPlayAnimation : MonoBehaviour
 
     void Update()
     {
-        if (drawManager.timeElapsed > 0 && !drawManager.isPaused)
-            textChrono.text = drawManager.frameNtime + " s";
+        if (drawManager.timeElapsed > 0 && !drawManager.IsPaused)
+            textChrono.text = drawManager.CurrentTime + " s";
     }
 
     public void SetSlider(int value)
@@ -59,20 +59,20 @@ public class SliderPlayAnimation : MonoBehaviour
     {
         if (drawManager.IsEditing) return;
         
-        slider.maxValue = (float)drawManager.numberFrames - 1;
-        var currentFrame = (int)slider.value;
-        drawManager.SetFrameN(currentFrame);
-        textChrono.text = drawManager.frameNtime + " s";
+        slider.maxValue = (float)drawManager.NumberFrames - 1;
+        var _currentFrame = (int)slider.value;
+        drawManager.SetCurrrentFrame(0, _currentFrame);
+        textChrono.text = drawManager.CurrentTime + " s";
 
         if (avatarManager.NumberOfLoadedAvatars > 1)
         {
-            var secondCurrentFrame = currentFrame;
+            var secondCurrentFrame = _currentFrame;
             if (secondCurrentFrame >= drawManager.secondNumberFrames)
                 secondCurrentFrame = drawManager.secondNumberFrames - 1;
-            drawManager.SetSecondFrameN(secondCurrentFrame);
+            drawManager.SetCurrrentFrame(1, secondCurrentFrame);
         }
 
-        if (!drawManager.isPaused && ((int)slider.value == 0 || (int)slider.value == (int)slider.maxValue || !drawManager.ShouldContinuePlaying()) )
+        if (!drawManager.IsPaused && ((int)slider.value == 0 || (int)slider.value == (int)slider.maxValue || !drawManager.ShouldContinuePlaying(0)) )
         {
             drawManager.SetCanResumeAnimation(false);
             ShowPlayButton();
@@ -82,7 +82,7 @@ public class SliderPlayAnimation : MonoBehaviour
         {
             ShowPlayButton();
             drawManager.Pause();
-            drawManager.PlayOneFrame();
+            drawManager.PlayOneFrame(0);
 
             if (avatarManager.NumberOfLoadedAvatars > 1)
                 drawManager.secondPaused = true;

@@ -87,9 +87,9 @@ public class UserUIInputs
     public Toggle UseGravity;
     public void SetUseGravity(bool _value, bool _activateField = true) {
         SetInput(UseGravity, _value, _activateField);
-        MainParameters.Instance.joints.UseGravity = _value;
+        MainParameters.Instance.joints.UseGravity = _value;  // TODO Change this to drawManager.Joints(0)
         if (UseGravity != null)
-            ToolBox.GetInstance().GetManager<DrawManager>().ForceFullUpdate();
+            ToolBox.GetInstance().GetManager<DrawManager>().ForceFullUpdate(0);
     }
 
     public Toggle StopOnGround;
@@ -97,7 +97,7 @@ public class UserUIInputs
         SetInput(StopOnGround, _value, _activateField);
         MainParameters.Instance.joints.StopOnGround = _value;
         if (StopOnGround != null)
-            ToolBox.GetInstance().GetManager<DrawManager>().ForceFullUpdate();
+            ToolBox.GetInstance().GetManager<DrawManager>().ForceFullUpdate(0);
     }
 
     public void SetParameters(UserUIInputsValues _values){

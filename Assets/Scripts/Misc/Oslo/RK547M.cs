@@ -13,13 +13,13 @@ namespace Microsoft.Research.Oslo
 
         // <summary>Simple Euler implementation with fixed time step. Not intended for practical use</summary>
         //[Obsolete("Euler method is provided only as an example")]
-        public static IEnumerable<SolPoint> Euler(double t0, Vector x0, Func<double, Vector, Vector> f)
+        public static IEnumerable<SolPoint> Euler(MainParameters.StrucJoints _joints, double t0, Vector x0, Func<MainParameters.StrucJoints, double, Vector, Vector> f)
         {
-            return Euler(t0, x0, f, Options.Default);
+            return Euler(_joints, t0, x0, f, Options.Default);
         }
 
         //[Obsolete("Euler method is provided only as an example")]
-        public static IEnumerable<SolPoint> Euler(double t0, Vector x0, Func<double, Vector, Vector> f, Options opts)
+        public static IEnumerable<SolPoint> Euler(MainParameters.StrucJoints _joints, double t0, Vector x0, Func<MainParameters.StrucJoints, double, Vector, Vector> f, Options opts)
         {
             double t = t0;
             Vector x = x0;
@@ -31,7 +31,7 @@ namespace Microsoft.Research.Oslo
 
             while (true) // Can produce any number of solution points
             {
-                Vector x1 = f(t, x);
+                Vector x1 = f(_joints, t, x);
                 x = x + dt * x1;
                 t = t + dt; //Go to the next point of our time grid
                 yield return new SolPoint(t, x);
@@ -39,15 +39,15 @@ namespace Microsoft.Research.Oslo
         }
 
         //[Obsolete("Fixed step RK45 method is provided only as an example")]        
-        public static IEnumerable<SolPoint> RK45(double t0, Vector x0, Func<double, Vector, Vector> f)
+        public static IEnumerable<SolPoint> RK45(MainParameters.StrucJoints _joints, double t0, Vector x0, Func<MainParameters.StrucJoints, double, Vector, Vector> f)
         {
-            return RK45(t0, x0, f, Options.Default);
+            return RK45(_joints, t0, x0, f, Options.Default);
         }
 
 
         //<summary>Simple RK implementation with fixed time step. Not intended for practical use</summary>
         //[Obsolete("Fixed step RK45 method is provided only as an example")]
-        public static IEnumerable<SolPoint> RK45(double t0, Vector x0, Func<double, Vector, Vector> f, Options opts)
+        public static IEnumerable<SolPoint> RK45(MainParameters.StrucJoints _joints, double t0, Vector x0, Func<MainParameters.StrucJoints, double, Vector, Vector> f, Options opts)
         {
             double t = t0;
             Vector x = x0;
@@ -59,13 +59,13 @@ namespace Microsoft.Research.Oslo
 
             while (true) // Can produce any number of solution points
             {
-                Vector x1 = f(t, x);
+                Vector x1 = f(_joints, t, x);
                 Vector xx = x + x1 * (dt / 2.0);
-                Vector x2 = f(t + dt / 2.0, xx);
+                Vector x2 = f(_joints, t + dt / 2.0, xx);
                 xx = x + x2 * (dt / 2.0);
-                Vector x3 = f(t + dt / 2.0, xx);
+                Vector x3 = f(_joints, t + dt / 2.0, xx);
                 xx = x + x3 * dt;
-                Vector x4 = f(t + dt, xx);
+                Vector x4 = f(_joints, t + dt, xx);
                 x = x + (dt / 6.0) * (x1 + 2.0 * x2 + 2.0 * x3 + x4);
                 t = t + dt; //Go to the next point of our time grid
                 yield return new SolPoint(t, x);
@@ -90,9 +90,9 @@ namespace Microsoft.Research.Oslo
         /// and then enumerate solution point from <see cref="System.IEnumerable"/> 'sol'.
         /// </example>
         /// <returns>Endless sequence of solution points</returns>
-        public static IEnumerable<SolPoint> RK547M(double t0, Vector x0, Func<double, Vector, Vector> f)
+        public static IEnumerable<SolPoint> RK547M(MainParameters.StrucJoints _joints, double t0, Vector x0, Func<MainParameters.StrucJoints, double, Vector, Vector> f)
         {
-            return RK547M(t0, x0, f, Options.Default);
+            return RK547M(_joints, t0, x0, f, Options.Default);
         }
 
 
@@ -119,9 +119,9 @@ namespace Microsoft.Research.Oslo
         /// <returns>Endless sequence of solution points</returns>
 
 
-        public static IEnumerable<SolPoint> RK547M(double tstart, double tfinal, Vector x0, Func<double, Vector, Vector> f)
+        public static IEnumerable<SolPoint> RK547M(MainParameters.StrucJoints _joints, double tstart, double tfinal, Vector x0, Func<MainParameters.StrucJoints, double, Vector, Vector> f)
         {
-            return RK547M(tstart, tfinal, x0, f, Options.Default);
+            return RK547M(_joints, tstart, tfinal, x0, f, Options.Default);
         }
 
 
@@ -143,7 +143,7 @@ namespace Microsoft.Research.Oslo
         /// and then enumerate solution point from <see cref="System.IEnumerable"/> 'sol'.
         /// </example>
         /// <returns>Endless sequence of solution points</returns>
-        public static IEnumerable<SolPoint> RK547M(double t0, Vector x0, Func<double, Vector, Vector> f, Options opts)
+        public static IEnumerable<SolPoint> RK547M(MainParameters.StrucJoints _joints, double t0, Vector x0, Func<MainParameters.StrucJoints, double, Vector, Vector> f, Options opts)
         {
             // Safety factors for automatic step control
             // See Solving Ordinary Differential Equations I Non stiff problems by E. Hairer, S.P. Norsett, G.Wanner
@@ -194,7 +194,7 @@ namespace Microsoft.Research.Oslo
             {
                 double d0 = 0.0d, d1 = 0.0d;
                 double[] sc = new double[n];
-                var f0 = f(t0, x0);
+                var f0 = f(_joints, t0, x0);
                 for (int i = 0; i < n; i++)
                 {
                     sc[i] = opts.AbsoluteTolerance + opts.RelativeTolerance * Math.Abs(x0[i]);
@@ -203,7 +203,7 @@ namespace Microsoft.Research.Oslo
                 }
                 var h0 = Math.Min(d0, d1) < 1e-5 ? 1e-6 : 1e-2 * (d0 / d1);
 
-                var f1 = f(t0 + h0, x0 + h0 * f0);
+                var f1 = f(_joints, t0 + h0, x0 + h0 * f0);
                 double d2 = 0;
                 for (int i = 0; i < n; i++)
                     d2 = Math.Max(d2, Math.Abs(f0[i] - f1[i]) / sc[i] / h0);
@@ -244,7 +244,7 @@ namespace Microsoft.Research.Oslo
                     prevDt = dt;
                     Vector.Copy(prevX, x1);
                     // Compute internal method variables.
-                    k[0] = dt * f(t, x1);
+                    k[0] = dt * f(_joints, t, x1);
                     for (int i = 1; i < s; i++)
                     {
                         Vector.Copy(x1, x2[i - 1]);
@@ -252,7 +252,7 @@ namespace Microsoft.Research.Oslo
                         {
                             x2[i - 1].MulAdd(k[j], a[i - 1][j]);
                         }
-                        k[i] = dt * f(t + dt * c[i], x2[i - 1]);
+                        k[i] = dt * f(_joints, t + dt * c[i], x2[i - 1]);
                     }
                     //Try to compute X in the next time point.
                     Vector.Copy(prevX, x);
@@ -326,14 +326,14 @@ namespace Microsoft.Research.Oslo
         /// and then enumerate solution point from <see cref="System.IEnumerable"/> 'sol'.
         /// </example>
         /// <returns>Endless sequence of solution points</returns>
-        public static IEnumerable<SolPoint> RK547M(double tstart, double tfinal, Vector x0, Func<double, Vector, Vector> f, Options opts)
+        public static IEnumerable<SolPoint> RK547M(MainParameters.StrucJoints _joints, double tstart, double tfinal, Vector x0, Func<MainParameters.StrucJoints, double, Vector, Vector> f, Options opts)
         {
             if (opts == null)
                 throw new ArgumentException("opts");
 
             if (opts.MaxStep == Double.MaxValue) opts.MaxStep = (tfinal - tstart) * 1e-2;
 
-            return Ode.RK547M(tstart, x0, f, opts).SolveFromTo(tstart, tfinal);
+            return Ode.RK547M(_joints, tstart, x0, f, opts).SolveFromTo(tstart, tfinal);
         }
 
         /// <summary>Interpolation for Runge-Kutta 5(4)7M method</summary>

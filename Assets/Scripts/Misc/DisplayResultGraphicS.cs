@@ -54,7 +54,7 @@ public class DisplayResultGraphicS : MonoBehaviour
 
     public void ShowResult()
     {
-        if (MainParameters.Instance.joints.q0 == null) return;
+        if (drawManager.Joints(0).q0 == null) return;
 
         if (aniGraphManager.cntAvatar == 1)
         {
@@ -70,7 +70,7 @@ public class DisplayResultGraphicS : MonoBehaviour
 
     public void DropDownAvatarChanged(int value)
     {
-        if (MainParameters.Instance.joints.q0 == null) return;
+        if (drawManager.Joints(0).q0 == null) return;
 
         aniGraphManager.cntAvatar = value;
         DropDownGraphicNameOnValueChanged(MainParameters.Instance.resultsGraphicsUsed[panelGraphicNumber - 1]);
@@ -79,8 +79,8 @@ public class DisplayResultGraphicS : MonoBehaviour
         
     public void DropDownGraphicNameOnValueChanged(int value)
     {
-        if (MainParameters.Instance.joints.q0 == null) return;
-        if (MainParameters.Instance.joints.rot == null) return;
+        if (drawManager.Joints(0).q0 == null) return;
+        if (drawManager.Joints(0).rot == null) return;
 
         MainParameters.Instance.resultsGraphicsUsed[panelGraphicNumber - 1] = value;
 
@@ -161,55 +161,55 @@ public class DisplayResultGraphicS : MonoBehaviour
                 case 0:
                     aniGraphManager.DisplayCurves(
                         graph, 
-                        MainParameters.Instance.joints.t,
-                        MainParameters.Instance.joints.rot,
-                        drawManager.secondParameters.joints.t,
-                        drawManager.secondParameters.joints.rot
+                        drawManager.Joints(0).t,
+                        drawManager.Joints(0).rot,
+                        drawManager.Joints(1).t,
+                        drawManager.Joints(1).rot
                         );
                     break;
                 case 1:
                     aniGraphManager.DisplayCurves(
                         graph,
-                        MainParameters.Instance.joints.t,
-                        MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1), 
-                        drawManager.secondParameters.joints.t, 
-                        MathFunc.MatrixGetColumn(drawManager.secondParameters.joints.rot, 1)
+                        drawManager.Joints(0).t,
+                        MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 1), 
+                        drawManager.Joints(1).t, 
+                        MathFunc.MatrixGetColumn(drawManager.Joints(1).rot, 1)
                     );
                     break;
                 case 2:
                     aniGraphManager.DisplayCurves(
                         graph, 
-                        MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), 
-                        MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1), 
-                        MathFunc.MatrixGetColumn(drawManager.secondParameters.joints.rot, 0), 
-                        MathFunc.MatrixGetColumn(drawManager.secondParameters.joints.rot, 1)
+                        MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 0), 
+                        MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 1), 
+                        MathFunc.MatrixGetColumn(drawManager.Joints(1).rot, 0), 
+                        MathFunc.MatrixGetColumn(drawManager.Joints(1).rot, 1)
                     );
                     break;
                 case 3:
                     aniGraphManager.DisplayCurves(
                         graph, 
-                        MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2), 
-                        MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1), 
-                        MathFunc.MatrixGetColumn(drawManager.secondParameters.joints.rot, 2), 
-                        MathFunc.MatrixGetColumn(drawManager.secondParameters.joints.rot, 1)
+                        MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 2), 
+                        MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 1), 
+                        MathFunc.MatrixGetColumn(drawManager.Joints(1).rot, 2), 
+                        MathFunc.MatrixGetColumn(drawManager.Joints(1).rot, 1)
                     );
                     break;
                 case 4:
                     aniGraphManager.DisplayCurves(
                         graph, 
-                        MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), 
-                        MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2), 
-                        MathFunc.MatrixGetColumn(drawManager.secondParameters.joints.rot, 0), 
-                        MathFunc.MatrixGetColumn(drawManager.secondParameters.joints.rot, 2)
+                        MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 0), 
+                        MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 2), 
+                        MathFunc.MatrixGetColumn(drawManager.Joints(1).rot, 0), 
+                        MathFunc.MatrixGetColumn(drawManager.Joints(1).rot, 2)
                     );
                     break;
                 case 5:
                     aniGraphManager.DisplayCurves(
                         graph, 
-                        MainParameters.Instance.joints.t, 
-                        MainParameters.Instance.joints.rotdot, 
-                        drawManager.secondParameters.joints.t, 
-                        drawManager.secondParameters.joints.rotdot
+                        drawManager.Joints(0).t, 
+                        drawManager.Joints(0).rotdot, 
+                        drawManager.Joints(1).t, 
+                        drawManager.Joints(1).rotdot
                     );
                     break;
             }
@@ -217,17 +217,17 @@ public class DisplayResultGraphicS : MonoBehaviour
         else
         {
             if (_v == 0)
-                aniGraphManager.DisplayCurves(graph, MainParameters.Instance.joints.t, MainParameters.Instance.joints.rot);
+                aniGraphManager.DisplayCurves(graph, drawManager.Joints(0).t, drawManager.Joints(0).rot);
             else if (_v == 1)
-                aniGraphManager.DisplayCurves(graph, MainParameters.Instance.joints.t, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
+                aniGraphManager.DisplayCurves(graph, drawManager.Joints(0).t, MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 1));
             else if (_v == 2)
-                aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
+                aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 0), MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 1));
             else if (_v == 3)
-                aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
+                aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 2), MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 1));
             else if (_v == 4)
-                aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2));
+                aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 0), MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 2));
             else if (_v == 5)
-                aniGraphManager.DisplayCurves(graph, MainParameters.Instance.joints.t, MainParameters.Instance.joints.rotdot);
+                aniGraphManager.DisplayCurves(graph, drawManager.Joints(0).t, drawManager.Joints(0).rotdot);
             else
                 throw new ArgumentException("Wrong _v");
         }

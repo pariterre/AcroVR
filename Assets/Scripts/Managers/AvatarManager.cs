@@ -137,6 +137,8 @@ public class AvatarManager : MonoBehaviour
 
     public void SetAllDof(int _avatarIndex, double[] _q)
     {
+        if (!LoadedModels[_avatarIndex].IsLoaded) return;
+
         Q = _q;
         drawManager.CenterAvatar(_avatarIndex);
         SetThigh(_avatarIndex);
@@ -147,11 +149,15 @@ public class AvatarManager : MonoBehaviour
 
     public void SetThigh(int _avatarIndex, float _value)
     {
-        Q[LoadedModels[0].ThighControl.avatarIndex] = _value;
+        if (!LoadedModels[_avatarIndex].IsLoaded) return;
+
+        Q[LoadedModels[_avatarIndex].ThighControl.avatarIndex] = _value;
         SetThigh(_avatarIndex);
     }
     protected void SetThigh(int _avatarIndex)
     {
+        if (!LoadedModels[_avatarIndex].IsLoaded) return;
+
         int _ddl = LoadedModels[_avatarIndex].ThighControl.avatarIndex;
         LoadedModels[_avatarIndex].LeftThigh.transform.localEulerAngles = new Vector3(-(float)Q[_ddl], 0f, 0f) * Mathf.Rad2Deg;
         LoadedModels[_avatarIndex].RightThigh.transform.localEulerAngles = new Vector3(-(float)Q[_ddl], 0f, 0f) * Mathf.Rad2Deg;
@@ -159,29 +165,38 @@ public class AvatarManager : MonoBehaviour
 
     public void SetShin(int _avatarIndex, float _value)
     {
+        if (!LoadedModels[_avatarIndex].IsLoaded) return;
+
         Q[LoadedModels[_avatarIndex].LegControl.avatarIndex] = _value;
         SetShin(_avatarIndex);
     }
     protected void SetShin(int _avatarIndex)
     {
+        if (!LoadedModels[_avatarIndex].IsLoaded) return;
+
         int ddl = LoadedModels[_avatarIndex].LegControl.avatarIndex;
         LoadedModels[_avatarIndex].LeftLeg.transform.localEulerAngles = new Vector3((float)Q[ddl], 0f, 0f) * Mathf.Rad2Deg;
         LoadedModels[_avatarIndex].RightLeg.transform.localEulerAngles = new Vector3((float)Q[ddl], 0f, 0f) * Mathf.Rad2Deg;
     }
 
-
     public void SetLeftArmAbduction(int _avatarIndex, float _value)
     {
+        if (!LoadedModels[_avatarIndex].IsLoaded) return;
+
         Q[LoadedModels[_avatarIndex].LeftArmControlAbd.avatarIndex] = _value;
         SetLeftArm(_avatarIndex);
     }
     public void SetLeftArmFlexion(int _avatarIndex, float _value)
     {
+        if (!LoadedModels[_avatarIndex].IsLoaded) return;
+
         Q[LoadedModels[_avatarIndex].LeftArmControlFlex.avatarIndex] = _value;
         SetLeftArm(_avatarIndex);
     }
     protected void SetLeftArm(int _avatarIndex)
     {
+        if (!LoadedModels[_avatarIndex].IsLoaded) return;
+
         int ddlAbduction = LoadedModels[_avatarIndex].LeftArmControlAbd.avatarIndex;
         int ddlFlexion = LoadedModels[_avatarIndex].LeftArmControlFlex.avatarIndex;
         LoadedModels[_avatarIndex].LeftArm.transform.localEulerAngles = new Vector3((float)Q[ddlFlexion], 0, (float)Q[ddlAbduction]) * Mathf.Rad2Deg;
@@ -189,16 +204,22 @@ public class AvatarManager : MonoBehaviour
 
     public void SetRightArmAbduction(int _avatarIndex, float _value)
     {
+        if (!LoadedModels[_avatarIndex].IsLoaded) return;
+
         Q[LoadedModels[_avatarIndex].RightArmControlAbd.avatarIndex] = _value;
         SetRightArm(_avatarIndex);
     }
     public void SetRightArmFlexion(int _avatarIndex, float _value)
     {
+        if (!LoadedModels[_avatarIndex].IsLoaded) return;
+
         Q[LoadedModels[_avatarIndex].RightArmControlFlex.avatarIndex] = _value;
         SetRightArm(_avatarIndex);
     }
     protected void SetRightArm(int _avatarIndex)
     {
+        if (!LoadedModels[_avatarIndex].IsLoaded) return;
+
         int ddlAbduction = LoadedModels[_avatarIndex].RightArmControlAbd.avatarIndex;
         int ddlFlexion = LoadedModels[_avatarIndex].RightArmControlFlex.avatarIndex;
         LoadedModels[_avatarIndex].RightArm.transform.localEulerAngles = new Vector3((float)Q[ddlFlexion], 0, (float)Q[ddlAbduction]) * Mathf.Rad2Deg;
@@ -223,8 +244,8 @@ public class AvatarManager : MonoBehaviour
         float[] tagZ;
         EvaluateTags(q, out tagX, out tagY, out tagZ);
         return Math.Min(
-            tagZ[MainParameters.Instance.joints.lagrangianModel.feet[0] - 1],
-            tagZ[MainParameters.Instance.joints.lagrangianModel.feet[1] - 1]
+            tagZ[drawManager.Joints(0).lagrangianModel.feet[0] - 1],
+            tagZ[drawManager.Joints(0).lagrangianModel.feet[1] - 1]
         );
     }
 

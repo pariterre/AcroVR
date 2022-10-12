@@ -297,10 +297,9 @@ public class GameManager : MonoBehaviour
             jointsTemp.nodes[i].ddlOppositeSide = -1;
         }
 
-        MainParameters.Instance.joints = jointsTemp;
-
-        LagrangianModelSimple lagrangianModelSimple = new LagrangianModelSimple();
-        MainParameters.Instance.joints.lagrangianModel = lagrangianModelSimple.GetParameters;
+        jointsTemp.lagrangianModel = new LagrangianModelSimple().GetParameters;
+        
+        drawManager.SetJoints(0, jointsTemp);
     }
 
     private bool ReadAniFromJson(string fileName)
@@ -349,10 +348,9 @@ public class GameManager : MonoBehaviour
             jointsTemp.nodes[i].ddlOppositeSide = -1;
         }
 
-        MainParameters.Instance.joints = jointsTemp;
-
-        LagrangianModelSimple lagrangianModelSimple = new LagrangianModelSimple();
-        MainParameters.Instance.joints.lagrangianModel = lagrangianModelSimple.GetParameters;
+        jointsTemp.lagrangianModel = new LagrangianModelSimple().GetParameters;
+        
+        drawManager.SetJoints(0, jointsTemp);
 
         return true;
     }
@@ -371,7 +369,7 @@ public class GameManager : MonoBehaviour
 
         AnimationInfo info = JsonUtility.FromJson<AnimationInfo>(dataAsJson);
 
-        AvatarSimulation.StrucJoints jointsTemp = new AvatarSimulation.StrucJoints();
+        MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
         jointsTemp.fileName = fileName;
         jointsTemp.nodes = null;
         jointsTemp.Duration = info.Duration;
@@ -389,7 +387,7 @@ public class GameManager : MonoBehaviour
         jointsTemp.takeOffParam.HorizontalSpeed = info.HorizontalSpeed;
         jointsTemp.takeOffParam.VerticalSpeed = info.VerticalSpeed;
 
-        jointsTemp.nodes = new AvatarSimulation.StrucNodes[info.nodes.Count];
+        jointsTemp.nodes = new MainParameters.StrucNodes[info.nodes.Count];
 
         WriteToLogFile("For() Start info.nodes.Count: " + info.nodes.Count.ToString());
 
@@ -397,16 +395,14 @@ public class GameManager : MonoBehaviour
         {
             jointsTemp.nodes[i].ddl = i + 1;
             jointsTemp.nodes[i].name = info.nodes[i].Name;
-            jointsTemp.nodes[i].interpolation = drawManager.secondParameters.interpolationDefault;
+            jointsTemp.nodes[i].interpolation = MainParameters.Instance.interpolationDefault;
             jointsTemp.nodes[i].T = info.nodes[i].T;
             jointsTemp.nodes[i].Q = info.nodes[i].Q;
             jointsTemp.nodes[i].ddlOppositeSide = -1;
         }
+        jointsTemp.lagrangianModel = (new LagrangianModelSimple()).GetParameters;
 
-        drawManager.secondParameters.joints = jointsTemp;
-
-        LagrangianModelSimple lagrangianModelSimple = new LagrangianModelSimple();
-        drawManager.secondParameters.joints.lagrangianModel = lagrangianModelSimple.GetParameters;
+        drawManager.SetJoints(1, jointsTemp);
 
         return true;
     }
@@ -467,27 +463,27 @@ public class GameManager : MonoBehaviour
         AnimationInfo info = new AnimationInfo();
 
         info.Objective = "default";
-        info.Duration = MainParameters.Instance.joints.Duration;
-        info.UseGravity = MainParameters.Instance.joints.UseGravity;
-        info.StopOnGround = MainParameters.Instance.joints.StopOnGround;
-        info.Condition = MainParameters.Instance.joints.condition;
-        info.Somersault = MainParameters.Instance.joints.takeOffParam.Somersault;
-        info.Tilt = MainParameters.Instance.joints.takeOffParam.Tilt;
-        info.Twist = MainParameters.Instance.joints.takeOffParam.Twist;
-        info.HorizontalPosition = MainParameters.Instance.joints.takeOffParam.HorizontalPosition;
-        info.VerticalPosition = MainParameters.Instance.joints.takeOffParam.VerticalPosition;
-        info.SomersaultSpeed = MainParameters.Instance.joints.takeOffParam.SomersaultSpeed;
-        info.TiltSpeed = MainParameters.Instance.joints.takeOffParam.TiltSpeed;
-        info.TwistSpeed = MainParameters.Instance.joints.takeOffParam.TwistSpeed;
-        info.HorizontalSpeed = MainParameters.Instance.joints.takeOffParam.HorizontalSpeed;
-        info.VerticalSpeed = MainParameters.Instance.joints.takeOffParam.VerticalSpeed;
+        info.Duration = drawManager.Joints(0).Duration;
+        info.UseGravity = drawManager.Joints(0).UseGravity;
+        info.StopOnGround = drawManager.Joints(0).StopOnGround;
+        info.Condition = drawManager.Joints(0).condition;
+        info.Somersault = drawManager.Joints(0).takeOffParam.Somersault;
+        info.Tilt = drawManager.Joints(0).takeOffParam.Tilt;
+        info.Twist = drawManager.Joints(0).takeOffParam.Twist;
+        info.HorizontalPosition = drawManager.Joints(0).takeOffParam.HorizontalPosition;
+        info.VerticalPosition = drawManager.Joints(0).takeOffParam.VerticalPosition;
+        info.SomersaultSpeed = drawManager.Joints(0).takeOffParam.SomersaultSpeed;
+        info.TiltSpeed = drawManager.Joints(0).takeOffParam.TiltSpeed;
+        info.TwistSpeed = drawManager.Joints(0).takeOffParam.TwistSpeed;
+        info.HorizontalSpeed = drawManager.Joints(0).takeOffParam.HorizontalSpeed;
+        info.VerticalSpeed = drawManager.Joints(0).takeOffParam.VerticalSpeed;
 
-        for (int i = 0; i < MainParameters.Instance.joints.nodes.Length; i++)
+        for (int i = 0; i < drawManager.Joints(0).nodes.Length; i++)
         {
             Nodes n = new Nodes();
-            n.Name = MainParameters.Instance.joints.nodes[i].name;
-            n.T = MainParameters.Instance.joints.nodes[i].T;
-            n.Q = MainParameters.Instance.joints.nodes[i].Q;
+            n.Name = drawManager.Joints(0).nodes[i].name;
+            n.T = drawManager.Joints(0).nodes[i].T;
+            n.Q = drawManager.Joints(0).nodes[i].Q;
 
             info.nodes.Add(n);
         }
@@ -500,39 +496,39 @@ public class GameManager : MonoBehaviour
     {
         string fileLines = string.Format(
             "Duration: {0}{1}Condition: {2}{3}VerticalSpeed: {4:0.000}{5}AnteroposteriorSpeed: {6:0.000}{7}SomersaultSpeed: {8:0.000}{9}TwistSpeed: {10:0.000}{11}Tilt: {12:0.000}{13}Rotation: {14:0.000}{15}{16}",
-            MainParameters.Instance.joints.Duration, System.Environment.NewLine,
-            MainParameters.Instance.joints.condition, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.Somersault, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.Tilt, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.Twist, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.HorizontalPosition, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.VerticalPosition, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.SomersaultSpeed, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.TiltSpeed, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.TwistSpeed, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.HorizontalSpeed, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.VerticalSpeed, System.Environment.NewLine
+            drawManager.Joints(0).Duration, System.Environment.NewLine,
+            drawManager.Joints(0).condition, System.Environment.NewLine,
+            drawManager.Joints(0).takeOffParam.Somersault, System.Environment.NewLine,
+            drawManager.Joints(0).takeOffParam.Tilt, System.Environment.NewLine,
+            drawManager.Joints(0).takeOffParam.Twist, System.Environment.NewLine,
+            drawManager.Joints(0).takeOffParam.HorizontalPosition, System.Environment.NewLine,
+            drawManager.Joints(0).takeOffParam.VerticalPosition, System.Environment.NewLine,
+            drawManager.Joints(0).takeOffParam.SomersaultSpeed, System.Environment.NewLine,
+            drawManager.Joints(0).takeOffParam.TiltSpeed, System.Environment.NewLine,
+            drawManager.Joints(0).takeOffParam.TwistSpeed, System.Environment.NewLine,
+            drawManager.Joints(0).takeOffParam.HorizontalSpeed, System.Environment.NewLine,
+            drawManager.Joints(0).takeOffParam.VerticalSpeed, System.Environment.NewLine
         );
 
         fileLines = string.Format("{0}Nodes{1}DDL, name, interpolation (type, numIntervals, slopes), T, Q{2}", fileLines, System.Environment.NewLine, System.Environment.NewLine);
 
-        for (int i = 0; i < MainParameters.Instance.joints.nodes.Length; i++)
+        for (int i = 0; i < drawManager.Joints(0).nodes.Length; i++)
         {
-            fileLines = string.Format("{0}{1}:{2}:{3},{4},{5:0.000000},{6:0.000000}:", fileLines, i + 1, MainParameters.Instance.joints.nodes[i].name, MainParameters.Instance.joints.nodes[i].interpolation.type,
-                MainParameters.Instance.joints.nodes[i].interpolation.numIntervals, MainParameters.Instance.joints.nodes[i].interpolation.slope[0], MainParameters.Instance.joints.nodes[i].interpolation.slope[1]);
-            for (int j = 0; j < MainParameters.Instance.joints.nodes[i].T.Length; j++)
+            fileLines = string.Format("{0}{1}:{2}:{3},{4},{5:0.000000},{6:0.000000}:", fileLines, i + 1, drawManager.Joints(0).nodes[i].name, drawManager.Joints(0).nodes[i].interpolation.type,
+                drawManager.Joints(0).nodes[i].interpolation.numIntervals, drawManager.Joints(0).nodes[i].interpolation.slope[0], drawManager.Joints(0).nodes[i].interpolation.slope[1]);
+            for (int j = 0; j < drawManager.Joints(0).nodes[i].T.Length; j++)
             {
-                if (j < MainParameters.Instance.joints.nodes[i].T.Length - 1)
-                    fileLines = string.Format("{0}{1:0.000000},", fileLines, MainParameters.Instance.joints.nodes[i].T[j]);
+                if (j < drawManager.Joints(0).nodes[i].T.Length - 1)
+                    fileLines = string.Format("{0}{1:0.000000},", fileLines, drawManager.Joints(0).nodes[i].T[j]);
                 else
-                    fileLines = string.Format("{0}{1:0.000000}:", fileLines, MainParameters.Instance.joints.nodes[i].T[j]);
+                    fileLines = string.Format("{0}{1:0.000000}:", fileLines, drawManager.Joints(0).nodes[i].T[j]);
             }
-            for (int j = 0; j < MainParameters.Instance.joints.nodes[i].Q.Length; j++)
+            for (int j = 0; j < drawManager.Joints(0).nodes[i].Q.Length; j++)
             {
-                if (j < MainParameters.Instance.joints.nodes[i].Q.Length - 1)
-                    fileLines = string.Format("{0}{1:0.000000},", fileLines, MainParameters.Instance.joints.nodes[i].Q[j]);
+                if (j < drawManager.Joints(0).nodes[i].Q.Length - 1)
+                    fileLines = string.Format("{0}{1:0.000000},", fileLines, drawManager.Joints(0).nodes[i].Q[j]);
                 else
-                    fileLines = string.Format("{0}{1:0.000000}:{2}", fileLines, MainParameters.Instance.joints.nodes[i].Q[j], System.Environment.NewLine);
+                    fileLines = string.Format("{0}{1:0.000000}:{2}", fileLines, drawManager.Joints(0).nodes[i].Q[j], System.Environment.NewLine);
             }
         }
 
@@ -736,29 +732,21 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        MainParameters.Instance.joints = jointsTemp;
 
-        WriteToLogFile("Assigned MainParameters.Instance.joints");
-
-        //        LagrangianModelSimple lagrangianModelSimple = new LagrangianModelSimple();
-        //        MainParameters.Instance.joints.lagrangianModel = lagrangianModelSimple.GetParameters;
-
-        if (MainParameters.Instance.joints.lagrangianModelName == MainParameters.LagrangianModelNames.Sasha23ddl)
+        WriteToLogFile("Assigned drawManager.Joints(0)");
+        if (drawManager.Joints(0).lagrangianModelName == MainParameters.LagrangianModelNames.Sasha23ddl)
         {
             WriteToLogFile("LagrangianModelSasha23ddl()");
-
-            LagrangianModelSasha23ddl lagrangianModelSasha23ddl = new LagrangianModelSasha23ddl();
-            MainParameters.Instance.joints.lagrangianModel = lagrangianModelSasha23ddl.GetParameters;
+            jointsTemp.lagrangianModel = new LagrangianModelSasha23ddl().GetParameters;
         }
         else
         {
             WriteToLogFile("LagrangianModelSimple()");
-
-            LagrangianModelSimple lagrangianModelSimple = new LagrangianModelSimple();
-            MainParameters.Instance.joints.lagrangianModel = lagrangianModelSimple.GetParameters;
+            jointsTemp.lagrangianModel = new LagrangianModelSimple().GetParameters;
         }
 
-        MainParameters.StrucJoints joints = MainParameters.Instance.joints;
+        drawManager.SetJoints(0, jointsTemp);
+        MainParameters.StrucJoints joints = drawManager.Joints(0);
 
         int nDDL = 0;
         MainParameters.StrucNodes[] nodes = new MainParameters.StrucNodes[joints.lagrangianModel.q2.Length];
@@ -811,7 +799,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        MainParameters.Instance.joints.nodes = nodes;
+        drawManager.SetJointsNodes(0, nodes);
 
         return true;
     }
@@ -828,7 +816,7 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
-        AvatarSimulation.StrucJoints jointsTemp = new AvatarSimulation.StrucJoints();
+        MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
         jointsTemp.fileName = fileName;
         jointsTemp.nodes = null;
         jointsTemp.Duration = 0;
@@ -955,7 +943,7 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In DDL");
 
-                jointsTemp.nodes = new AvatarSimulation.StrucNodes[fileLines.Length - i - 1];
+                jointsTemp.nodes = new MainParameters.StrucNodes[fileLines.Length - i - 1];
                 ddlNum = 0;
 
                 int temp = fileLines.Length - i - 1;
@@ -974,7 +962,7 @@ public class GameManager : MonoBehaviour
 
                 WriteToLogFile("jointsTemp.nodes[ddlNum].name: " + jointsTemp.nodes[ddlNum].name);
 
-                jointsTemp.nodes[ddlNum].interpolation = drawManager.secondParameters.interpolationDefault;
+                jointsTemp.nodes[ddlNum].interpolation = MainParameters.Instance.interpolationDefault;
 
                 WriteToLogFile("jointsTemp.nodes[ddlNum].interpolation: " + jointsTemp.nodes[ddlNum].interpolation.type.ToString());
 
@@ -988,13 +976,10 @@ public class GameManager : MonoBehaviour
                 ddlNum++;
             }
         }
+        jointsTemp.lagrangianModel = (new LagrangianModelSimple()).GetParameters;
 
-        drawManager.secondParameters.joints = jointsTemp;
-
-        WriteToLogFile("Assigned MainParameters.Instance.joints");
-
-        LagrangianModelSimple lagrangianModelSimple = new LagrangianModelSimple();
-        drawManager.secondParameters.joints.lagrangianModel = lagrangianModelSimple.GetParameters;
+        drawManager.SetJoints(1, jointsTemp);
+        WriteToLogFile("Assigned drawManager.Joints(0)");
 
         return true;
     }
@@ -1019,36 +1004,33 @@ public class GameManager : MonoBehaviour
 
     public void InterpolationDDL()
     {
-        int n = (int)(MainParameters.Instance.joints.Duration / MainParameters.Instance.joints.lagrangianModel.dt)+1;
+        int n = (int)(drawManager.Joints(0).Duration / drawManager.Joints(0).lagrangianModel.dt)+1;
         float[] t0 = new float[n];
-        float[,] q0 = new float[MainParameters.Instance.joints.lagrangianModel.nDDL, n];
+        float[,] q0 = new float[drawManager.Joints(0).lagrangianModel.nDDL, n];
 
-        GenerateQ0_s(MainParameters.Instance.joints.lagrangianModel, MainParameters.Instance.joints.Duration, 0, out t0, out q0);
+        GenerateQ0_s(drawManager.Joints(0), drawManager.Joints(0).Duration, 0, out t0, out q0);
 
-        MainParameters.Instance.joints.t0 = MathFunc.MatrixCopy(t0);
-        MainParameters.Instance.joints.q0 = MathFunc.MatrixCopy(q0);
+        drawManager.SetJointsTandQ(0, t0, q0);
     }
 
-    private void GenerateQ0_s(LagrangianModelManager.StrucLagrangianModel lagrangianModel, float tf, int qi, out float[] t0, out float[,] q0)
+    private void GenerateQ0_s(MainParameters.StrucJoints _joints, float tf, int qi, out float[] t0, out float[,] q0)
     {
         int[] ni;
         if (qi > 0)
             ni = new int[1] { qi };
         else
-            ni = lagrangianModel.q2;
+            ni = _joints.lagrangianModel.q2;
 
         float[] qd;
-        int n = (int)(tf / lagrangianModel.dt)+1;
+        int n = (int)(tf / _joints.lagrangianModel.dt)+1;
         t0 = new float[n];
-        q0 = new float[lagrangianModel.nDDL, n];
+        q0 = new float[_joints.lagrangianModel.nDDL, n];
 
         int i = 0;
-        for (float interval = 0; interval < tf; interval += lagrangianModel.dt)
+        for (float interval = 0; interval < tf; interval += _joints.lagrangianModel.dt)
         {
             t0[i] = interval;
-            Trajectory_ss(lagrangianModel, interval, ni, out qd);
-            //            Trajectory trajectory = new Trajectory(lagrangianModel, interval, ni, out qd);
-            //            trajectory.ToString();                  // Pour enlever un warning lors de la compilation
+            Trajectory_ss(_joints, interval, ni, out qd);
             for (int ddl = 0; ddl < qd.Length; ddl++)
                 q0[ddl, i] = qd[ddl];
             i++;
@@ -1057,11 +1039,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void Trajectory_ss(LagrangianModelManager.StrucLagrangianModel lagrangianModel, float t, int[] qi, out float[] qd)
+    private void Trajectory_ss(MainParameters.StrucJoints _joints, float t, int[] qi, out float[] qd)
     {
         float[] qdotd;
         float[] qddotd;
-        drawManager.Trajectory_s(lagrangianModel, t, qi, out qd, out qdotd, out qddotd);
+        drawManager.Trajectory(_joints, t, qi, out qd, out qdotd, out qddotd);
     }
 
     public void DisplayDDL(int ddl, bool axisRange)
@@ -1069,9 +1051,9 @@ public class GameManager : MonoBehaviour
         if (ddl >= 0)
         {
             transform.parent.GetComponentInChildren<AniGraphManager>().DisplayCurveAndNodes(0, ddl, axisRange);
-            if (MainParameters.Instance.joints.nodes[ddl].ddlOppositeSide >= 0)
+            if (drawManager.Joints(0).nodes[ddl].ddlOppositeSide >= 0)
             {
-                transform.parent.GetComponentInChildren<AniGraphManager>().DisplayCurveAndNodes(1, MainParameters.Instance.joints.nodes[ddl].ddlOppositeSide, true);
+                transform.parent.GetComponentInChildren<AniGraphManager>().DisplayCurveAndNodes(1, drawManager.Joints(0).nodes[ddl].ddlOppositeSide, true);
             }
         }
     }

@@ -228,15 +228,15 @@ public class StatManager : MonoBehaviour
     public int FindPreviousNode(int _dof)
     {
         int last = MainParameters.Instance.joints.nodes[_dof].T.Length - 1;
-        if (drawManager.frameN == 0) 
+        if (drawManager.CurrentFrame == 0) 
             return 0;
-        else if (drawManager.frameNtime == MainParameters.Instance.joints.nodes[_dof].T[last]) 
+        else if (drawManager.CurrentTime == MainParameters.Instance.joints.nodes[_dof].T[last]) 
             return last;
 
         int i = 0;
         while (
                 i < MainParameters.Instance.joints.nodes[_dof].T.Length
-                && drawManager.frameNtime >= MainParameters.Instance.joints.nodes[_dof].T[i]
+                && drawManager.CurrentTime >= MainParameters.Instance.joints.nodes[_dof].T[i]
             )
         {
             i++;
@@ -250,7 +250,7 @@ public class StatManager : MonoBehaviour
         gameManager.DisplayDDL(_dof, true);
 
         int node = FindPreviousNode(_dof);
-        if (MainParameters.Instance.joints.nodes[_dof].T[node] == drawManager.frameNtime)
+        if (MainParameters.Instance.joints.nodes[_dof].T[node] == drawManager.CurrentTime)
             return node;
 
 
@@ -263,7 +263,7 @@ public class StatManager : MonoBehaviour
             Q[i] = MainParameters.Instance.joints.nodes[_dof].Q[i];
         }
 
-        T[node + 1] = drawManager.frameNtime;
+        T[node + 1] = drawManager.CurrentTime;
         Q[node + 1] = currentControlSegment.angle;
 
         for (int i = node + 1; i < MainParameters.Instance.joints.nodes[_dof].T.Length; i++)
