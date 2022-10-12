@@ -881,7 +881,7 @@ public class DrawManager : MonoBehaviour
                         qf_girl2[MainParameters.Instance.joints.lagrangianModel.q1[i] - 1] = 0;
             }
 
-        avatarManager.SetAllDof(qf_girl2);
+        avatarManager.SetAllDof(1, qf_girl2);
         girl2Hip.transform.localRotation = Quaternion.AngleAxis((float)qf_girl2[9] * Mathf.Rad2Deg, Vector3.right) *
                                             Quaternion.AngleAxis((float)qf_girl2[10] * Mathf.Rad2Deg, Vector3.forward) *
                                             Quaternion.AngleAxis((float)qf_girl2[11] * Mathf.Rad2Deg, Vector3.up);
@@ -936,14 +936,14 @@ public class DrawManager : MonoBehaviour
             if (playMode == MainParameters.Instance.languages.Used.animatorPlayModeGesticulation)
                 for (int i = 0; i < MainParameters.Instance.joints.lagrangianModel.q1.Length; i++)
                     _q[MainParameters.Instance.joints.lagrangianModel.q1[i] - 1] = 0;
-            avatarManager.SetAllDof(_q);
+            avatarManager.SetAllDof(0, _q);
             if (!isPaused) SetFrameN(frameN + 1);
         }
     }
 
     public void InitPoseAvatar()
     {
-        avatarManager.SetAllDof(MathFunc.MatrixGetColumnD(AllQ, 1));
+        avatarManager.SetAllDof(0, MathFunc.MatrixGetColumnD(AllQ, 1));
     }
 
 

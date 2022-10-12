@@ -36,7 +36,7 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
     protected StatManager statManager;
 
     // Delegate
-    protected delegate void DrawingCallback(float value);
+    protected delegate void DrawingCallback(int _avatarIndex, float value);
     public delegate int GetNodeCallback(int index);
 
     public virtual void Init(GetNodeCallback getNodeCallback)
@@ -150,6 +150,6 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
         gameManager.InterpolationDDL();
         gameManager.DisplayDDL(avatarIndex, true);
 
-        drawingCallback(CurrentAngle);
+        drawingCallback(0, CurrentAngle);
     }
 }

@@ -135,73 +135,73 @@ public class AvatarManager : MonoBehaviour
             throw new NotImplementedException("This avatar is no implemented") ;
     }
 
-    public void SetAllDof(double[] _q)
+    public void SetAllDof(int _avatarIndex, double[] _q)
     {
         Q = _q;
-        drawManager.CenterAvatar(0);
-        SetThigh();
-        SetShin();
-        SetRightArm();
-        SetLeftArm();
+        drawManager.CenterAvatar(_avatarIndex);
+        SetThigh(_avatarIndex);
+        SetShin(_avatarIndex);
+        SetRightArm(_avatarIndex);
+        SetLeftArm(_avatarIndex);
     }
 
-    public void SetThigh(float _value)
+    public void SetThigh(int _avatarIndex, float _value)
     {
         Q[LoadedModels[0].ThighControl.avatarIndex] = _value;
-        SetThigh();
+        SetThigh(_avatarIndex);
     }
-    protected void SetThigh()
+    protected void SetThigh(int _avatarIndex)
     {
-        int _ddl = LoadedModels[0].ThighControl.avatarIndex;
-        LoadedModels[0].LeftThigh.transform.localEulerAngles = new Vector3(-(float)Q[_ddl], 0f, 0f) * Mathf.Rad2Deg;
-        LoadedModels[0].RightThigh.transform.localEulerAngles = new Vector3(-(float)Q[_ddl], 0f, 0f) * Mathf.Rad2Deg;
-    }
-
-    public void SetShin(float _value)
-    {
-        Q[LoadedModels[0].LegControl.avatarIndex] = _value;
-        SetShin();
-    }
-    protected void SetShin()
-    {
-        int ddl = LoadedModels[0].LegControl.avatarIndex;
-        LoadedModels[0].LeftLeg.transform.localEulerAngles = new Vector3((float)Q[ddl], 0f, 0f) * Mathf.Rad2Deg;
-        LoadedModels[0].RightLeg.transform.localEulerAngles = new Vector3((float)Q[ddl], 0f, 0f) * Mathf.Rad2Deg;
+        int _ddl = LoadedModels[_avatarIndex].ThighControl.avatarIndex;
+        LoadedModels[_avatarIndex].LeftThigh.transform.localEulerAngles = new Vector3(-(float)Q[_ddl], 0f, 0f) * Mathf.Rad2Deg;
+        LoadedModels[_avatarIndex].RightThigh.transform.localEulerAngles = new Vector3(-(float)Q[_ddl], 0f, 0f) * Mathf.Rad2Deg;
     }
 
-
-    public void SetLeftArmAbduction(float _value)
+    public void SetShin(int _avatarIndex, float _value)
     {
-        Q[LoadedModels[0].LeftArmControlAbd.avatarIndex] = _value;
-        SetLeftArm();
+        Q[LoadedModels[_avatarIndex].LegControl.avatarIndex] = _value;
+        SetShin(_avatarIndex);
     }
-    public void SetLeftArmFlexion(float _value)
+    protected void SetShin(int _avatarIndex)
     {
-        Q[LoadedModels[0].LeftArmControlFlex.avatarIndex] = _value;
-        SetLeftArm();
-    }
-    protected void SetLeftArm()
-    {
-        int ddlAbduction = LoadedModels[0].LeftArmControlAbd.avatarIndex;
-        int ddlFlexion = LoadedModels[0].LeftArmControlFlex.avatarIndex;
-        LoadedModels[0].LeftArm.transform.localEulerAngles = new Vector3((float)Q[ddlFlexion], 0, (float)Q[ddlAbduction]) * Mathf.Rad2Deg;
+        int ddl = LoadedModels[_avatarIndex].LegControl.avatarIndex;
+        LoadedModels[_avatarIndex].LeftLeg.transform.localEulerAngles = new Vector3((float)Q[ddl], 0f, 0f) * Mathf.Rad2Deg;
+        LoadedModels[_avatarIndex].RightLeg.transform.localEulerAngles = new Vector3((float)Q[ddl], 0f, 0f) * Mathf.Rad2Deg;
     }
 
-    public void SetRightArmAbduction(float _value)
+
+    public void SetLeftArmAbduction(int _avatarIndex, float _value)
     {
-        Q[LoadedModels[0].RightArmControlAbd.avatarIndex] = _value;
-        SetRightArm();
+        Q[LoadedModels[_avatarIndex].LeftArmControlAbd.avatarIndex] = _value;
+        SetLeftArm(_avatarIndex);
     }
-    public void SetRightArmFlexion(float _value)
+    public void SetLeftArmFlexion(int _avatarIndex, float _value)
     {
-        Q[LoadedModels[0].RightArmControlFlex.avatarIndex] = _value;
-        SetRightArm();
+        Q[LoadedModels[_avatarIndex].LeftArmControlFlex.avatarIndex] = _value;
+        SetLeftArm(_avatarIndex);
     }
-    protected void SetRightArm()
+    protected void SetLeftArm(int _avatarIndex)
     {
-        int ddlAbduction = LoadedModels[0].RightArmControlAbd.avatarIndex;
-        int ddlFlexion = LoadedModels[0].RightArmControlFlex.avatarIndex;
-        LoadedModels[0].RightArm.transform.localEulerAngles = new Vector3((float)Q[ddlFlexion], 0, (float)Q[ddlAbduction]) * Mathf.Rad2Deg;
+        int ddlAbduction = LoadedModels[_avatarIndex].LeftArmControlAbd.avatarIndex;
+        int ddlFlexion = LoadedModels[_avatarIndex].LeftArmControlFlex.avatarIndex;
+        LoadedModels[_avatarIndex].LeftArm.transform.localEulerAngles = new Vector3((float)Q[ddlFlexion], 0, (float)Q[ddlAbduction]) * Mathf.Rad2Deg;
+    }
+
+    public void SetRightArmAbduction(int _avatarIndex, float _value)
+    {
+        Q[LoadedModels[_avatarIndex].RightArmControlAbd.avatarIndex] = _value;
+        SetRightArm(_avatarIndex);
+    }
+    public void SetRightArmFlexion(int _avatarIndex, float _value)
+    {
+        Q[LoadedModels[_avatarIndex].RightArmControlFlex.avatarIndex] = _value;
+        SetRightArm(_avatarIndex);
+    }
+    protected void SetRightArm(int _avatarIndex)
+    {
+        int ddlAbduction = LoadedModels[_avatarIndex].RightArmControlAbd.avatarIndex;
+        int ddlFlexion = LoadedModels[_avatarIndex].RightArmControlFlex.avatarIndex;
+        LoadedModels[_avatarIndex].RightArm.transform.localEulerAngles = new Vector3((float)Q[ddlFlexion], 0, (float)Q[ddlAbduction]) * Mathf.Rad2Deg;
     }
 
     public float FeetHeight()
