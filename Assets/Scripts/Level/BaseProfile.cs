@@ -272,13 +272,13 @@ public class BaseProfile : LevelBase
 
         gameManager.WriteToLogFile("Success to load a file");
 
-        fileName.text = Path.GetFileName(drawManager.Joints(0).fileName);
+        fileName.text = Path.GetFileName(avatarManager.LoadedModels[0].Joints.fileName);
         avatarManager.LoadAvatar(0);
 
         TakeOffOn();
         InitDropdownDDLNames(0);
 
-        dropDownCondition.value = drawManager.Joints(0).condition;
+        dropDownCondition.value = drawManager.PresetCondition;
 
         drawManager.Pause();
         drawManager.MakeSimulationFrame(0);
@@ -292,8 +292,8 @@ public class BaseProfile : LevelBase
         float t = (drawManager.NumberFrames - 1) * 0.02f;
         endFrameText.text = t + " sec";
 
-        if (t < drawManager.Joints(0).Duration) 
-            MainParameters.Instance.joints.Duration = t;
+        if (t < drawManager.Duration) 
+            drawManager.SetDuration(t);
 
         gameManager.InterpolationDDL();
         gameManager.DisplayDDL(0, true);
@@ -410,14 +410,14 @@ public class BaseProfile : LevelBase
 
     public void DisplayDDL(int ddl, bool axisRange)
     {
-        if (drawManager.Joints(0).nodes == null) return;
+        if (avatarManager.LoadedModels[0].Joints.nodes == null) return;
 
         if (ddl >= 0)
         {
             aniGraphManager.DisplayCurveAndNodes(0, ddl, axisRange);
-            if (drawManager.Joints(0).nodes[ddl].ddlOppositeSide >= 0)
+            if (avatarManager.LoadedModels[0].Joints.nodes[ddl].ddlOppositeSide >= 0)
             {
-                aniGraphManager.DisplayCurveAndNodes(1, drawManager.Joints(0).nodes[ddl].ddlOppositeSide, axisRange);
+                aniGraphManager.DisplayCurveAndNodes(1, avatarManager.LoadedModels[0].Joints.nodes[ddl].ddlOppositeSide, axisRange);
             }
         }
     }

@@ -131,6 +131,7 @@ public class ConditionInfo
 public class GameManager : MonoBehaviour
 {
     protected BaseProfile profile;
+    protected AvatarManager avatarManager;
     protected DrawManager drawManager;
     protected MissionManager missionManager;
     protected UIManager uiManager;
@@ -146,8 +147,9 @@ public class GameManager : MonoBehaviour
 
 	private void Start()
     {
-        missionManager = ToolBox.GetInstance().GetManager<MissionManager>();
+        avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        missionManager = ToolBox.GetInstance().GetManager<MissionManager>();
         uiManager = ToolBox.GetInstance().GetManager<UIManager>();
 
         System.Globalization.NumberFormatInfo nfi = new System.Globalization.NumberFormatInfo();
@@ -196,12 +198,12 @@ public class GameManager : MonoBehaviour
         string extension = GetSimpleExtension(fileName);
         if (extension == "txt")
         {
-            if(!ReadDataFiles_s(fileName))
+            if(!ReadDataFiles(fileName))
                 return -2;
         }
         else
         {
-            if (!ReadAniFromJson(fileName))
+            if (!ReadAniFromJson(0, fileName))
                 return -3;
         }
 
@@ -237,7 +239,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if (!ReadAniFromJsonSecond(fileName))
+            if (!ReadAniFromJson(1, fileName))
                 return -3;
         }
 
@@ -259,50 +261,10 @@ public class GameManager : MonoBehaviour
 
     public void InitAnimationInfo()
     {
-        MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
-        jointsTemp.fileName = null;
-        jointsTemp.nodes = null;
-        jointsTemp.Duration = 1;
-        jointsTemp.UseGravity = false;
-        jointsTemp.StopOnGround = true;
-        jointsTemp.condition = 0;
-        jointsTemp.takeOffParam.Somersault = 0;
-        jointsTemp.takeOffParam.Tilt = 0;
-        jointsTemp.takeOffParam.Twist = 0;
-        jointsTemp.takeOffParam.HorizontalPosition = 0;
-        jointsTemp.takeOffParam.VerticalPosition = 0;
-        jointsTemp.takeOffParam.SomersaultSpeed = 0;
-        jointsTemp.takeOffParam.TiltSpeed = 0;
-        jointsTemp.takeOffParam.TwistSpeed = 0;
-        jointsTemp.takeOffParam.HorizontalSpeed = 0;
-        jointsTemp.takeOffParam.VerticalSpeed = 0;
-
-        jointsTemp.nodes = new MainParameters.StrucNodes[6];
-
-        for (int i = 0; i < 6; i++)
-        {
-            jointsTemp.nodes[i].ddl = i + 1;
-
-            if (i == 0) jointsTemp.nodes[i].name = "Hip_Flexion";
-            else if (i == 1) jointsTemp.nodes[i].name = "Knee_Flexion";
-            else if (i == 2) jointsTemp.nodes[i].name = "Right_Arm_Flexion";
-            else if (i == 3) jointsTemp.nodes[i].name = "Right_Arm_Abduction";
-            else if (i == 4) jointsTemp.nodes[i].name = "Left_Arm_Flexion";
-            else if (i == 5) jointsTemp.nodes[i].name = "Left_Arm_Abduction";
-
-
-            jointsTemp.nodes[i].interpolation = MainParameters.Instance.interpolationDefault;
-            jointsTemp.nodes[i].T = new float[] { 0, 1.000000f };
-            jointsTemp.nodes[i].Q = new float[] { 0, 0.0f};
-            jointsTemp.nodes[i].ddlOppositeSide = -1;
-        }
-
-        jointsTemp.lagrangianModel = new LagrangianModelSimple().GetParameters;
-        
-        drawManager.SetJoints(0, jointsTemp);
+        avatarManager.LoadedModels[0].ResetJoints();
     }
 
-    private bool ReadAniFromJson(string fileName)
+    protected bool ReadAniFromJson(int _avatarIndex, string fileName)
     {
         WriteToLogFile("ReadAniFromJSON()");
 
@@ -315,24 +277,26 @@ public class GameManager : MonoBehaviour
         }
 
         AnimationInfo info = JsonUtility.FromJson<AnimationInfo>(dataAsJson);
+        // TODO: Deal with these extra information
+        Debug.Log("Deal with the info");
+        //jointsTemp.Duration = info.Duration;
+        //jointsTemp.UseGravity = info.UseGravity;
+        //jointsTemp.StopOnGround = info.StopOnGround;
 
         MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
         jointsTemp.fileName = fileName;
         jointsTemp.nodes = null;
-        jointsTemp.Duration = info.Duration;
-        jointsTemp.UseGravity = info.UseGravity;
-        jointsTemp.StopOnGround = info.StopOnGround;
-        jointsTemp.condition = info.Condition;
-        jointsTemp.takeOffParam.Somersault = info.Somersault;
-        jointsTemp.takeOffParam.Tilt = info.Tilt;
-        jointsTemp.takeOffParam.Twist = info.Twist;
-        jointsTemp.takeOffParam.HorizontalPosition = info.HorizontalPosition;
-        jointsTemp.takeOffParam.VerticalPosition = info.VerticalPosition;
-        jointsTemp.takeOffParam.SomersaultSpeed = info.SomersaultSpeed;
-        jointsTemp.takeOffParam.TiltSpeed = info.TiltSpeed;
-        jointsTemp.takeOffParam.TwistSpeed = info.TwistSpeed;
-        jointsTemp.takeOffParam.HorizontalSpeed = info.HorizontalSpeed;
-        jointsTemp.takeOffParam.VerticalSpeed = info.VerticalSpeed;
+        //jointsTemp.condition = info.Condition;
+        //jointsTemp.takeOffParam.Somersault = info.Somersault;
+        //jointsTemp.takeOffParam.Tilt = info.Tilt;
+        //jointsTemp.takeOffParam.Twist = info.Twist;
+        //jointsTemp.takeOffParam.HorizontalPosition = info.HorizontalPosition;
+        //jointsTemp.takeOffParam.VerticalPosition = info.VerticalPosition;
+        //jointsTemp.takeOffParam.SomersaultSpeed = info.SomersaultSpeed;
+        //jointsTemp.takeOffParam.TiltSpeed = info.TiltSpeed;
+        //jointsTemp.takeOffParam.TwistSpeed = info.TwistSpeed;
+        //jointsTemp.takeOffParam.HorizontalSpeed = info.HorizontalSpeed;
+        //jointsTemp.takeOffParam.VerticalSpeed = info.VerticalSpeed;
 
         jointsTemp.nodes = new MainParameters.StrucNodes[info.nodes.Count];
 
@@ -349,60 +313,8 @@ public class GameManager : MonoBehaviour
         }
 
         jointsTemp.lagrangianModel = new LagrangianModelSimple().GetParameters;
-        
-        drawManager.SetJoints(0, jointsTemp);
 
-        return true;
-    }
-
-    private bool ReadAniFromJsonSecond(string fileName)
-    {
-        WriteToLogFile("ReadAniFromJsonSecond()");
-
-        string dataAsJson = File.ReadAllText(fileName);
-
-        if (dataAsJson[0] != '{')
-        {
-            WriteToLogFile("Parse Error [0]: " + dataAsJson[0]);
-            return false;
-        }
-
-        AnimationInfo info = JsonUtility.FromJson<AnimationInfo>(dataAsJson);
-
-        MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
-        jointsTemp.fileName = fileName;
-        jointsTemp.nodes = null;
-        jointsTemp.Duration = info.Duration;
-        jointsTemp.UseGravity = info.UseGravity;
-        jointsTemp.StopOnGround = info.StopOnGround;
-        jointsTemp.condition = info.Condition;
-        jointsTemp.takeOffParam.Somersault = info.Somersault;
-        jointsTemp.takeOffParam.Twist = info.Twist;
-        jointsTemp.takeOffParam.Tilt = info.Tilt;
-        jointsTemp.takeOffParam.HorizontalPosition = info.HorizontalPosition;
-        jointsTemp.takeOffParam.VerticalPosition = info.VerticalPosition;
-        jointsTemp.takeOffParam.SomersaultSpeed = info.SomersaultSpeed;
-        jointsTemp.takeOffParam.TwistSpeed = info.TwistSpeed;
-        jointsTemp.takeOffParam.TiltSpeed = info.TiltSpeed;
-        jointsTemp.takeOffParam.HorizontalSpeed = info.HorizontalSpeed;
-        jointsTemp.takeOffParam.VerticalSpeed = info.VerticalSpeed;
-
-        jointsTemp.nodes = new MainParameters.StrucNodes[info.nodes.Count];
-
-        WriteToLogFile("For() Start info.nodes.Count: " + info.nodes.Count.ToString());
-
-        for (int i = 0; i < info.nodes.Count; i++)
-        {
-            jointsTemp.nodes[i].ddl = i + 1;
-            jointsTemp.nodes[i].name = info.nodes[i].Name;
-            jointsTemp.nodes[i].interpolation = MainParameters.Instance.interpolationDefault;
-            jointsTemp.nodes[i].T = info.nodes[i].T;
-            jointsTemp.nodes[i].Q = info.nodes[i].Q;
-            jointsTemp.nodes[i].ddlOppositeSide = -1;
-        }
-        jointsTemp.lagrangianModel = (new LagrangianModelSimple()).GetParameters;
-
-        drawManager.SetJoints(1, jointsTemp);
+        avatarManager.LoadedModels[_avatarIndex].SetJoints(jointsTemp);
 
         return true;
     }
@@ -463,27 +375,27 @@ public class GameManager : MonoBehaviour
         AnimationInfo info = new AnimationInfo();
 
         info.Objective = "default";
-        info.Duration = drawManager.Joints(0).Duration;
-        info.UseGravity = drawManager.Joints(0).UseGravity;
-        info.StopOnGround = drawManager.Joints(0).StopOnGround;
-        info.Condition = drawManager.Joints(0).condition;
-        info.Somersault = drawManager.Joints(0).takeOffParam.Somersault;
-        info.Tilt = drawManager.Joints(0).takeOffParam.Tilt;
-        info.Twist = drawManager.Joints(0).takeOffParam.Twist;
-        info.HorizontalPosition = drawManager.Joints(0).takeOffParam.HorizontalPosition;
-        info.VerticalPosition = drawManager.Joints(0).takeOffParam.VerticalPosition;
-        info.SomersaultSpeed = drawManager.Joints(0).takeOffParam.SomersaultSpeed;
-        info.TiltSpeed = drawManager.Joints(0).takeOffParam.TiltSpeed;
-        info.TwistSpeed = drawManager.Joints(0).takeOffParam.TwistSpeed;
-        info.HorizontalSpeed = drawManager.Joints(0).takeOffParam.HorizontalSpeed;
-        info.VerticalSpeed = drawManager.Joints(0).takeOffParam.VerticalSpeed;
+        info.Duration = drawManager.Duration;
+        info.UseGravity = drawManager.UseGravity;
+        info.StopOnGround = drawManager.StopOnGround;
+        info.Condition = drawManager.PresetCondition;
+        info.Somersault = drawManager.TakeOffParameters.Somersault;
+        info.Tilt = drawManager.TakeOffParameters.Tilt;
+        info.Twist = drawManager.TakeOffParameters.Twist;
+        info.HorizontalPosition = drawManager.TakeOffParameters.HorizontalPosition;
+        info.VerticalPosition = drawManager.TakeOffParameters.VerticalPosition;
+        info.SomersaultSpeed = drawManager.TakeOffParameters.SomersaultSpeed;
+        info.TiltSpeed = drawManager.TakeOffParameters.TiltSpeed;
+        info.TwistSpeed = drawManager.TakeOffParameters.TwistSpeed;
+        info.HorizontalSpeed = drawManager.TakeOffParameters.HorizontalSpeed;
+        info.VerticalSpeed = drawManager.TakeOffParameters.VerticalSpeed;
 
-        for (int i = 0; i < drawManager.Joints(0).nodes.Length; i++)
+        for (int i = 0; i < avatarManager.LoadedModels[0].Joints.nodes.Length; i++)
         {
             Nodes n = new Nodes();
-            n.Name = drawManager.Joints(0).nodes[i].name;
-            n.T = drawManager.Joints(0).nodes[i].T;
-            n.Q = drawManager.Joints(0).nodes[i].Q;
+            n.Name = avatarManager.LoadedModels[0].Joints.nodes[i].name;
+            n.T = avatarManager.LoadedModels[0].Joints.nodes[i].T;
+            n.Q = avatarManager.LoadedModels[0].Joints.nodes[i].Q;
 
             info.nodes.Add(n);
         }
@@ -496,49 +408,52 @@ public class GameManager : MonoBehaviour
     {
         string fileLines = string.Format(
             "Duration: {0}{1}Condition: {2}{3}VerticalSpeed: {4:0.000}{5}AnteroposteriorSpeed: {6:0.000}{7}SomersaultSpeed: {8:0.000}{9}TwistSpeed: {10:0.000}{11}Tilt: {12:0.000}{13}Rotation: {14:0.000}{15}{16}",
-            drawManager.Joints(0).Duration, System.Environment.NewLine,
-            drawManager.Joints(0).condition, System.Environment.NewLine,
-            drawManager.Joints(0).takeOffParam.Somersault, System.Environment.NewLine,
-            drawManager.Joints(0).takeOffParam.Tilt, System.Environment.NewLine,
-            drawManager.Joints(0).takeOffParam.Twist, System.Environment.NewLine,
-            drawManager.Joints(0).takeOffParam.HorizontalPosition, System.Environment.NewLine,
-            drawManager.Joints(0).takeOffParam.VerticalPosition, System.Environment.NewLine,
-            drawManager.Joints(0).takeOffParam.SomersaultSpeed, System.Environment.NewLine,
-            drawManager.Joints(0).takeOffParam.TiltSpeed, System.Environment.NewLine,
-            drawManager.Joints(0).takeOffParam.TwistSpeed, System.Environment.NewLine,
-            drawManager.Joints(0).takeOffParam.HorizontalSpeed, System.Environment.NewLine,
-            drawManager.Joints(0).takeOffParam.VerticalSpeed, System.Environment.NewLine
+            drawManager.Duration, System.Environment.NewLine,
+            drawManager.PresetCondition, System.Environment.NewLine,
+            drawManager.TakeOffParameters.Somersault, System.Environment.NewLine,
+            drawManager.TakeOffParameters.Tilt, System.Environment.NewLine,
+            drawManager.TakeOffParameters.Twist, System.Environment.NewLine,
+            drawManager.TakeOffParameters.HorizontalPosition, System.Environment.NewLine,
+            drawManager.TakeOffParameters.VerticalPosition, System.Environment.NewLine,
+            drawManager.TakeOffParameters.SomersaultSpeed, System.Environment.NewLine,
+            drawManager.TakeOffParameters.TiltSpeed, System.Environment.NewLine,
+            drawManager.TakeOffParameters.TwistSpeed, System.Environment.NewLine,
+            drawManager.TakeOffParameters.HorizontalSpeed, System.Environment.NewLine,
+            drawManager.TakeOffParameters.VerticalSpeed, System.Environment.NewLine
         );
 
         fileLines = string.Format("{0}Nodes{1}DDL, name, interpolation (type, numIntervals, slopes), T, Q{2}", fileLines, System.Environment.NewLine, System.Environment.NewLine);
 
-        for (int i = 0; i < drawManager.Joints(0).nodes.Length; i++)
+        var _nodes = avatarManager.LoadedModels[0].Joints.nodes;
+        for (int i = 0; i < _nodes.Length; i++)
         {
-            fileLines = string.Format("{0}{1}:{2}:{3},{4},{5:0.000000},{6:0.000000}:", fileLines, i + 1, drawManager.Joints(0).nodes[i].name, drawManager.Joints(0).nodes[i].interpolation.type,
-                drawManager.Joints(0).nodes[i].interpolation.numIntervals, drawManager.Joints(0).nodes[i].interpolation.slope[0], drawManager.Joints(0).nodes[i].interpolation.slope[1]);
-            for (int j = 0; j < drawManager.Joints(0).nodes[i].T.Length; j++)
+            fileLines = string.Format("{0}{1}:{2}:{3},{4},{5:0.000000},{6:0.000000}:", fileLines, i + 1, _nodes[i].name, _nodes[i].interpolation.type,
+                _nodes[i].interpolation.numIntervals, _nodes[i].interpolation.slope[0], _nodes[i].interpolation.slope[1]);
+            for (int j = 0; j < _nodes[i].T.Length; j++)
             {
-                if (j < drawManager.Joints(0).nodes[i].T.Length - 1)
-                    fileLines = string.Format("{0}{1:0.000000},", fileLines, drawManager.Joints(0).nodes[i].T[j]);
+                if (j < _nodes[i].T.Length - 1)
+                    fileLines = string.Format("{0}{1:0.000000},", fileLines, _nodes[i].T[j]);
                 else
-                    fileLines = string.Format("{0}{1:0.000000}:", fileLines, drawManager.Joints(0).nodes[i].T[j]);
+                    fileLines = string.Format("{0}{1:0.000000}:", fileLines, _nodes[i].T[j]);
             }
-            for (int j = 0; j < drawManager.Joints(0).nodes[i].Q.Length; j++)
+            for (int j = 0; j < _nodes[i].Q.Length; j++)
             {
-                if (j < drawManager.Joints(0).nodes[i].Q.Length - 1)
-                    fileLines = string.Format("{0}{1:0.000000},", fileLines, drawManager.Joints(0).nodes[i].Q[j]);
+                if (j < _nodes[i].Q.Length - 1)
+                    fileLines = string.Format("{0}{1:0.000000},", fileLines, _nodes[i].Q[j]);
                 else
-                    fileLines = string.Format("{0}{1:0.000000}:{2}", fileLines, drawManager.Joints(0).nodes[i].Q[j], System.Environment.NewLine);
+                    fileLines = string.Format("{0}{1:0.000000}:{2}", fileLines, _nodes[i].Q[j], System.Environment.NewLine);
             }
         }
 
         System.IO.File.WriteAllText(fileName, fileLines);
     }
 
-    private bool ReadDataFiles_s(string fileName)
+    protected bool ReadDataFiles(string fileName)
     {
         WriteToLogFile("ReadDataFilesTxT()");
 
+        // TODO Fix the file to read
+        Debug.Log("Fix the file to read");
         string[] fileLines = System.IO.File.ReadAllLines(fileName);
 
         if(fileLines[0][0] == '{')
@@ -547,24 +462,7 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
-        MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
-        jointsTemp.fileName = fileName;
-        jointsTemp.nodes = null;
-        jointsTemp.Duration = 0;
-        jointsTemp.UseGravity = false;
-        jointsTemp.StopOnGround = true;
-        jointsTemp.condition = 0;
-        jointsTemp.takeOffParam.Somersault = 0;
-        jointsTemp.takeOffParam.Tilt = 0;
-        jointsTemp.takeOffParam.Twist = 0;
-        jointsTemp.takeOffParam.HorizontalPosition = 0;
-        jointsTemp.takeOffParam.VerticalPosition = 0;
-        jointsTemp.takeOffParam.SomersaultSpeed = 0;
-        jointsTemp.takeOffParam.TiltSpeed = 0;
-        jointsTemp.takeOffParam.TwistSpeed = 0;
-        jointsTemp.takeOffParam.HorizontalSpeed = 0;
-        jointsTemp.takeOffParam.VerticalSpeed = 0;
-
+        MainParameters.StrucTakeOffParam _takeOff = MainParameters.StrucTakeOffParam.Default;
         string[] values;
         int ddlNum = -1;
 
@@ -579,94 +477,142 @@ public class GameManager : MonoBehaviour
             if (values[0].Contains("Duration"))
             {
                 WriteToLogFile("In Duration");
-
-                jointsTemp.Duration = Utils.ToFloat(values[1]);
-                if (jointsTemp.Duration == -999)
-                    jointsTemp.Duration = MainParameters.Instance.DurationDefault;
-
-                WriteToLogFile("jointsTemp.Duration: " + jointsTemp.Duration.ToString());
+                var _duration = Utils.ToFloat(values[1]);
+                if (_duration == -999)
+                    _duration = MainParameters.StrucTakeOffParam.Default.Duration;
+                drawManager.SetDuration(_duration);
+                WriteToLogFile("jointsTemp.Duration: " + drawManager.Duration.ToString());
             }
             else if (values[0].Contains("UseGravity"))
             {
                 WriteToLogFile("In UseGravity");
-                jointsTemp.UseGravity = Utils.ToBool(values[1]);
-                WriteToLogFile("jointsTemp.UseGravity " + jointsTemp.UseGravity.ToString());
+                drawManager.SetUseGravity(Utils.ToBool(values[1]));
+                WriteToLogFile("jointsTemp.UseGravity " + drawManager.UseGravity.ToString());
             }
             else if (values[0].Contains("StopOnGround"))
             {
                 WriteToLogFile("In StopOnGround");
-                jointsTemp.StopOnGround = Utils.ToBool(values[1]);
-                WriteToLogFile("jointsTemp.StopOnGround " + jointsTemp.StopOnGround.ToString());
+                drawManager.SetStopOnGround(Utils.ToBool(values[1]));
+                WriteToLogFile("jointsTemp.StopOnGround " + drawManager.StopOnGround.ToString());
             }
             else if (values[0].Contains("Condition"))
             {
                 WriteToLogFile("In Condition");
 
-                jointsTemp.condition = int.Parse(values[1], CultureInfo.InvariantCulture);
-                if (jointsTemp.condition == -999)
-                    jointsTemp.condition = MainParameters.Instance.conditionDefault;
+                var _presetCondition = int.Parse(values[1], CultureInfo.InvariantCulture);
+                if (_presetCondition == -999)
+                    _presetCondition = MainParameters.StrucTakeOffParam.Default.PresetCondition;
+                drawManager.SetPresetCondition(_presetCondition);
 
-                WriteToLogFile("jointsTemp.condition: " + jointsTemp.condition.ToString());
-            }
-            else if (values[0].Contains("VerticalSpeed"))
-            {
-                WriteToLogFile("In VerticalSpeed");
-
-                jointsTemp.takeOffParam.VerticalSpeed = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.VerticalSpeed == -999)
-                    jointsTemp.takeOffParam.VerticalSpeed = MainParameters.Instance.takeOffParamDefault.VerticalSpeed;
-
-                WriteToLogFile("jointsTemp.takeOffParam.VerticalSpeed: " + jointsTemp.takeOffParam.VerticalSpeed.ToString());
-            }
-            else if (values[0].Contains("HorizontalSpeed"))
-            {
-                WriteToLogFile("In HorizontalSpeed");
-
-                jointsTemp.takeOffParam.HorizontalSpeed = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.HorizontalSpeed == -999)
-                    jointsTemp.takeOffParam.HorizontalSpeed = MainParameters.Instance.takeOffParamDefault.HorizontalSpeed;
-
-                WriteToLogFile("jointsTemp.takeOffParam.HorizontalSpeed: " + jointsTemp.takeOffParam.HorizontalSpeed.ToString());
-            }
-            else if (values[0].Contains("SomersaultSpeed"))
-            {
-                WriteToLogFile("In SomersaultSpeed");
-
-                jointsTemp.takeOffParam.SomersaultSpeed = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.SomersaultSpeed == -999)
-                    jointsTemp.takeOffParam.SomersaultSpeed = MainParameters.Instance.takeOffParamDefault.SomersaultSpeed;
-
-                WriteToLogFile("jointsTemp.takeOffParam.SomersaultSpeed: " + jointsTemp.takeOffParam.SomersaultSpeed.ToString());
-            }
-            else if (values[0].Contains("TwistSpeed"))
-            {
-                WriteToLogFile("In TwistSpeed");
-
-                jointsTemp.takeOffParam.TwistSpeed = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.TwistSpeed == -999)
-                    jointsTemp.takeOffParam.TwistSpeed = MainParameters.Instance.takeOffParamDefault.TwistSpeed;
-
-                WriteToLogFile("jointsTemp.takeOffParam.TwistSpeed: " + jointsTemp.takeOffParam.TwistSpeed.ToString());
-            }
-            else if (values[0].Contains("Tilt"))
-            {
-                WriteToLogFile("In Tilt");
-
-                jointsTemp.takeOffParam.Tilt = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.Tilt == -999)
-                    jointsTemp.takeOffParam.Tilt = MainParameters.Instance.takeOffParamDefault.Tilt;
-
-                WriteToLogFile("jointsTemp.takeOffParam.Tilt: " + jointsTemp.takeOffParam.Tilt.ToString());
+                WriteToLogFile("jointsTemp.condition: " + drawManager.PresetCondition.ToString());
             }
             else if (values[0].Contains("Somersault"))
             {
                 WriteToLogFile("In Somerssault");
 
-                jointsTemp.takeOffParam.Somersault = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.Somersault == -999)
-                    jointsTemp.takeOffParam.Somersault = MainParameters.Instance.takeOffParamDefault.Somersault;
+                var _somersault = Utils.ToFloat(values[1]);
+                if (_somersault == -999)
+                    _somersault = MainParameters.StrucTakeOffParam.Default.Somersault;
+                _takeOff.Somersault = _somersault;
 
-                WriteToLogFile("jointsTemp.takeOffParam.Somersault: " + jointsTemp.takeOffParam.Somersault.ToString());
+                WriteToLogFile("_takeOff.Somersault: " + _takeOff.Somersault.ToString());
+            }
+            else if (values[0].Contains("Tilt"))
+            {
+                WriteToLogFile("In Tilt");
+
+                var _tilt = Utils.ToFloat(values[1]);
+                if (_tilt == -999)
+                    _tilt = MainParameters.StrucTakeOffParam.Default.Tilt;
+                _takeOff.Tilt = _tilt;
+
+                WriteToLogFile("_takeOff.Tilt: " + _takeOff.Tilt.ToString());
+            }
+            else if (values[0].Contains("Twist"))
+            {
+                WriteToLogFile("In Twist");
+
+                var _twist = Utils.ToFloat(values[1]);
+                if (_twist == -999)
+                    _twist = MainParameters.StrucTakeOffParam.Default.Twist;
+                _takeOff.Twist = _twist;
+
+                WriteToLogFile("_takeOff.Twist: " + _takeOff.Twist.ToString());
+            }
+            else if (values[0].Contains("HorizontalPosition"))
+            {
+                WriteToLogFile("In HorizontalPosition");
+
+                var _hPosition = Utils.ToFloat(values[1]);
+                if (_hPosition == -999)
+                    _hPosition = MainParameters.StrucTakeOffParam.Default.HorizontalPosition;
+                _takeOff.HorizontalPosition = _hPosition;
+
+                WriteToLogFile("_takeOff.HorizontalPosition: " + _takeOff.HorizontalPosition.ToString());
+            }
+            else if (values[0].Contains("VerticalPosition"))
+            {
+                WriteToLogFile("In VerticalPosition");
+                var _vPosition = Utils.ToFloat(values[1]);
+                if (_vPosition == -999)
+                    _vPosition = MainParameters.StrucTakeOffParam.Default.VerticalPosition;
+                _takeOff.VerticalPosition = _vPosition;
+
+                WriteToLogFile("_takeOff.VerticalPosition: " + _takeOff.VerticalPosition.ToString());
+            }
+            else if (values[0].Contains("SomersaultSpeed"))
+            {
+                WriteToLogFile("In SomersaultSpeed");
+
+                var _somersaultSpeed = Utils.ToFloat(values[1]);
+                if (_somersaultSpeed == -999)
+                    _somersaultSpeed = MainParameters.StrucTakeOffParam.Default.SomersaultSpeed;
+                _takeOff.SomersaultSpeed = _somersaultSpeed;
+
+                WriteToLogFile("_takeOff.SomersaultSpeed: " + _takeOff.SomersaultSpeed.ToString());
+            }
+            else if (values[0].Contains("TiltSpeed"))
+            {
+                WriteToLogFile("In TiltSpeed");
+
+                var _tiltSpeed = Utils.ToFloat(values[1]);
+                if (_tiltSpeed == -999)
+                    _tiltSpeed = MainParameters.StrucTakeOffParam.Default.TiltSpeed;
+                _takeOff.TiltSpeed = _tiltSpeed;
+
+                WriteToLogFile("_takeOff.TiltSpeed: " + _takeOff.TiltSpeed.ToString());
+            }
+            else if (values[0].Contains("TwistSpeed"))
+            {
+                WriteToLogFile("In TwistSpeed");
+
+                var _twistSpeed = Utils.ToFloat(values[1]);
+                if (_twistSpeed == -999)
+                    _twistSpeed = MainParameters.StrucTakeOffParam.Default.TwistSpeed;
+                _takeOff.TwistSpeed = _twistSpeed;
+
+                WriteToLogFile("_takeOff.TwistSpeed: " + _takeOff.TwistSpeed.ToString());
+            }
+            else if (values[0].Contains("HorizontalSpeed"))
+            {
+                WriteToLogFile("In HorizontalSpeed");
+
+                var _hSpeed = Utils.ToFloat(values[1]);
+                if (_hSpeed == -999)
+                    _hSpeed = MainParameters.StrucTakeOffParam.Default.HorizontalSpeed;
+                _takeOff.HorizontalSpeed = _hSpeed;
+
+                WriteToLogFile("_takeOff.HorizontalSpeed: " + _takeOff.HorizontalSpeed.ToString());
+            }
+            else if (values[0].Contains("VerticalSpeed"))
+            {
+                WriteToLogFile("In VerticalSpeed");
+                var _vSpeed = Utils.ToFloat(values[1]);
+                if (_vSpeed == -999)
+                    _vSpeed = MainParameters.StrucTakeOffParam.Default.VerticalSpeed;
+                _takeOff.VerticalSpeed = _vSpeed;
+
+                WriteToLogFile("_takeOff.VerticalSpeed: " + _takeOff.VerticalSpeed.ToString());
             }
             else if (values[0].Contains("DDL"))
             {
@@ -770,7 +716,7 @@ public class GameManager : MonoBehaviour
             {
                 nodes[nDDL].ddl = i;
                 nodes[nDDL].name = joints.lagrangianModel.ddlName[i - 1];
-                nodes[nDDL].T = new float[3] { joints.Duration * 0.25f, joints.Duration * 0.5f, joints.Duration * 0.75f };
+                nodes[nDDL].T = new float[3] { drawManager.Duration * 0.25f, drawManager.Duration * 0.5f, drawManager.Duration * 0.75f };
                 nodes[nDDL].Q = new float[3] { 0, 0, 0 };
                 nodes[nDDL].interpolation = interpolation;
                 nodes[nDDL].ddlOppositeSide = -1;
@@ -885,7 +831,7 @@ public class GameManager : MonoBehaviour
 
                 jointsTemp.takeOffParam.VerticalSpeed = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.VerticalSpeed == -999)
-                    jointsTemp.takeOffParam.VerticalSpeed = MainParameters.Instance.takeOffParamDefault.VerticalSpeed;
+                    jointsTemp.takeOffParam.VerticalSpeed = MainParameters.StrucTakeOffParam.Default.VerticalSpeed;
 
                 WriteToLogFile("jointsTemp.takeOffParam.VerticalSpeed: " + jointsTemp.takeOffParam.VerticalSpeed.ToString());
             }
@@ -895,7 +841,7 @@ public class GameManager : MonoBehaviour
 
                 jointsTemp.takeOffParam.HorizontalSpeed = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.HorizontalSpeed == -999)
-                    jointsTemp.takeOffParam.HorizontalSpeed = MainParameters.Instance.takeOffParamDefault.HorizontalSpeed;
+                    jointsTemp.takeOffParam.HorizontalSpeed = MainParameters.StrucTakeOffParam.Default.HorizontalSpeed;
 
                 WriteToLogFile("jointsTemp.takeOffParam.HorizontalSpeed: " + jointsTemp.takeOffParam.HorizontalSpeed.ToString());
             }
@@ -905,7 +851,7 @@ public class GameManager : MonoBehaviour
 
                 jointsTemp.takeOffParam.SomersaultSpeed = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.SomersaultSpeed == -999)
-                    jointsTemp.takeOffParam.SomersaultSpeed = MainParameters.Instance.takeOffParamDefault.SomersaultSpeed;
+                    jointsTemp.takeOffParam.SomersaultSpeed = MainParameters.StrucTakeOffParam.Default.SomersaultSpeed;
 
                 WriteToLogFile("jointsTemp.takeOffParam.SomersaultSpeed: " + jointsTemp.takeOffParam.SomersaultSpeed.ToString());
             }
@@ -915,7 +861,7 @@ public class GameManager : MonoBehaviour
 
                 jointsTemp.takeOffParam.TwistSpeed = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.TwistSpeed == -999)
-                    jointsTemp.takeOffParam.TwistSpeed = MainParameters.Instance.takeOffParamDefault.TwistSpeed;
+                    jointsTemp.takeOffParam.TwistSpeed = MainParameters.StrucTakeOffParam.Default.TwistSpeed;
 
                 WriteToLogFile("jointsTemp.takeOffParam.TwistSpeed: " + jointsTemp.takeOffParam.TwistSpeed.ToString());
             }
@@ -925,7 +871,7 @@ public class GameManager : MonoBehaviour
 
                 jointsTemp.takeOffParam.Tilt = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.Tilt == -999)
-                    jointsTemp.takeOffParam.Tilt = MainParameters.Instance.takeOffParamDefault.Tilt;
+                    jointsTemp.takeOffParam.Tilt = MainParameters.StrucTakeOffParam.Default.Tilt;
 
                 WriteToLogFile("jointsTemp.takeOffParam.Tilt: " + jointsTemp.takeOffParam.Tilt.ToString());
             }
@@ -935,7 +881,7 @@ public class GameManager : MonoBehaviour
 
                 jointsTemp.takeOffParam.Somersault = Utils.ToFloat(values[1]);
                 if (jointsTemp.takeOffParam.Somersault == -999)
-                    jointsTemp.takeOffParam.Somersault = MainParameters.Instance.takeOffParamDefault.Somersault;
+                    jointsTemp.takeOffParam.Somersault = MainParameters.StrucTakeOffParam.Default.Somersault;
 
                 WriteToLogFile("jointsTemp.takeOffParam.Somersault: " + jointsTemp.takeOffParam.Somersault.ToString());
             }

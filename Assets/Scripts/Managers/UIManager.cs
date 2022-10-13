@@ -13,7 +13,7 @@ public class UserUIInputs
     public InputField Duration;
     public void SetDuration(float _value, bool _activateField = true) {
         SetInput(Duration, _value, _activateField);
-        MainParameters.Instance.joints.Duration = _value;
+        ToolBox.GetInstance().GetManager<DrawManager>().SetDuration(_value);
     }
 
     public InputField Somersault;

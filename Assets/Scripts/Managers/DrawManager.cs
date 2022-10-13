@@ -17,35 +17,16 @@ public class DrawManager : MonoBehaviour
 
     public class AvatarProperties
     {
-        public AvatarProperties(MainParameters.StrucJoints _joints, float _frameRate)
-        {
-            Joints = _joints;
-            FrameRate = _frameRate;
-        }
-
         public bool IsPaused = true;
         public int CurrentFrame = 0;
         public float FrameRate;
-        public float CurrentTime { get => CurrentFrame * FrameRate; }
+        public float CurrentTime(float _frameRate) => CurrentFrame * _frameRate;
 
         public float InitialFeetHeight = (float)Double.NaN;
         public float[,] Q;  // q1
-        public MainParameters.StrucJoints Joints;
     }
 
     protected AvatarManager avatarManager;
-    public MainParameters.StrucJoints Joints(int _avatarIndex) => avatarProperties[_avatarIndex].Joints;
-    public void SetJoints(int _avatarIndex, MainParameters.StrucJoints _joints)
-    {
-        avatarProperties[_avatarIndex].Joints = _joints;
-        if (_avatarIndex == 0)
-            MainParameters.Instance.joints = _joints;
-    }
-    public void SetJointsTandQ(int _avatarIndex, float[] t0, float[,] q0) {
-        avatarProperties[_avatarIndex].Joints.t0 = MathFunc.MatrixCopy(t0);
-        avatarProperties[_avatarIndex].Joints.q0 = MathFunc.MatrixCopy(q0);
-    }
-    public void SetJointsNodes(int _avatarIndex, MainParameters.StrucNodes[] _nodes) { avatarProperties[_avatarIndex].Joints.nodes = _nodes; }
     protected StatManager statManager;
     protected UIManager uiManager;
 
@@ -69,12 +50,24 @@ public class DrawManager : MonoBehaviour
     
     int firstFrame = 0;
     public int CurrentFrame { get => avatarProperties[0].CurrentFrame; }
-    public float CurrentTime { get => avatarProperties[0].CurrentTime; }
+    public float CurrentTime { get => avatarProperties[0].CurrentTime(FrameRate); }
     public int NumberFrames = 0;
     public float timeElapsed = 0;
     public float timeFrame = 0;
     float timeStarted = 0;
     float factorPlaySpeed = 1f;
+    public float Duration { get; protected set; } = 0f;
+    public void SetDuration(float _value) { Duration = _value; }
+    public bool StopOnGround { get; protected set; } = true;
+    public void SetStopOnGround(bool _value) { StopOnGround = _value; }
+
+    public bool UseGravity { get; protected set; } = false;
+    public void SetUseGravity(bool _value) { UseGravity = _value; }
+
+    public int PresetCondition { get; protected set; } = 0;
+    public void SetPresetCondition(int _value) { PresetCondition = _value; }
+
+    public MainParameters.StrucTakeOffParam TakeOffParameters;
 
     string playMode = MainParameters.Instance.languages.Used.animatorPlayModeSimulation;
     
@@ -106,8 +99,8 @@ public class DrawManager : MonoBehaviour
         statManager = ToolBox.GetInstance().GetManager<StatManager>();
         uiManager = ToolBox.GetInstance().GetManager<UIManager>();
 
-        avatarProperties.Add(new AvatarProperties(MainParameters.Instance.joints, FrameRate));
-        avatarProperties.Add(new AvatarProperties(new MainParameters.StrucJoints(), FrameRate));
+        avatarProperties.Add(new AvatarProperties());
+        avatarProperties.Add(new AvatarProperties());
 
         uiManager.UpdateAllPropertiesFromDropdown();
     }
@@ -170,7 +163,7 @@ public class DrawManager : MonoBehaviour
 
         if (
             avatarProperties[_avatarIndex].CurrentFrame != 0 
-            && Joints(_avatarIndex).StopOnGround && 
+            && StopOnGround && 
             !IsGestureMode && 
             avatarManager.FeetHeight() < avatarProperties[_avatarIndex].InitialFeetHeight
         ) 
@@ -190,7 +183,7 @@ public class DrawManager : MonoBehaviour
 
     public void MakeSimulationFrame(int _avatarIndex)
     {
-        if (Joints(_avatarIndex).nodes == null) return;
+        if (avatarManager.LoadedModels[_avatarIndex].Joints.nodes == null) return;
 
         avatarProperties[_avatarIndex].Q = MakeSimulation(_avatarIndex);
     }
@@ -206,7 +199,7 @@ public class DrawManager : MonoBehaviour
     public void ShowAvatar(int _avatarIndex)
     {
         MakeSimulationFrame(_avatarIndex);
-        if (Joints(_avatarIndex).nodes == null) return;
+        if (avatarManager.LoadedModels[_avatarIndex].Joints.nodes == null) return;
 
         CenterAvatar(_avatarIndex);
         Play(_avatarIndex, avatarProperties[_avatarIndex].Q, 0, avatarProperties[_avatarIndex].Q.GetUpperBound(1) + 1, true);
@@ -234,7 +227,7 @@ public class DrawManager : MonoBehaviour
 
     public void ShowGround(){
         if (Ground != null)
-            Ground.SetActive(Joints(0).StopOnGround);
+            Ground.SetActive(StopOnGround);
     }
 
     public void SetAnimationSpeed(float speed)
@@ -253,7 +246,7 @@ public class DrawManager : MonoBehaviour
 
     public void PlayAvatar(int _avatarIndex)
     {
-        if (Joints(_avatarIndex).nodes == null) return;
+        if (avatarManager.LoadedModels[_avatarIndex].Joints.nodes == null) return;
 
         ShowAvatar(_avatarIndex);
         Resume();
@@ -289,7 +282,7 @@ public class DrawManager : MonoBehaviour
 
     protected void Play(int _avatarIndex, float[,] qq, int frFrame, int nFrames, bool restartToZero)
     {
-        MainParameters.StrucJoints joints = Joints(_avatarIndex);
+        MainParameters.StrucJoints joints = avatarManager.LoadedModels[_avatarIndex].Joints;
 
         AllQ = MathFunc.MatrixCopy(qq);
         if (restartToZero)
@@ -307,7 +300,7 @@ public class DrawManager : MonoBehaviour
             if (joints.tc > 0)                          // Il y a eu contact avec le sol, alors seulement une partie des données sont utilisé
                 timeFrame = joints.tc / (NumberFrames - 1);
             else                                        // Aucun contact avec le sol, alors toutes les données sont utilisé
-                timeFrame = joints.Duration / (NumberFrames - 1);
+                timeFrame = Duration / (NumberFrames - 1);
         }
         else
             timeFrame = 0;
@@ -360,9 +353,9 @@ public class DrawManager : MonoBehaviour
 
     private float[,] MakeSimulation(int _avatarIndex)
     {
-        if (avatarProperties[_avatarIndex].Joints.nodes == null) return new float[0,0];
+        if (avatarManager.LoadedModels[_avatarIndex].Joints.nodes == null) return new float[0,0];
 
-        MainParameters.StrucJoints _joints = avatarProperties[_avatarIndex].Joints;
+        MainParameters.StrucJoints _joints = avatarManager.LoadedModels[_avatarIndex].Joints;
         float[] q0 = new float[_joints.lagrangianModel.nDDL];
         float[] q0dot = new float[_joints.lagrangianModel.nDDL];
         if (Double.IsNaN(avatarProperties[_avatarIndex].InitialFeetHeight)){
@@ -458,9 +451,9 @@ public class DrawManager : MonoBehaviour
 
         Options options = new Options();
         options.InitialStep = _joints.lagrangianModel.dt;
-        var sol = Ode.RK547M(_joints, 0, _joints.Duration + _joints.lagrangianModel.dt, new Vector(x0), ShortDynamics, options);
+        var sol = Ode.RK547M(_joints, 0, Duration + _joints.lagrangianModel.dt, new Vector(x0), ShortDynamics, options);
 
-        var points = sol.SolveFromToStep(0, _joints.Duration + _joints.lagrangianModel.dt, _joints.lagrangianModel.dt).ToArray();
+        var points = sol.SolveFromToStep(0, Duration + _joints.lagrangianModel.dt, _joints.lagrangianModel.dt).ToArray();
 
         // test0 = point[51]
         // test1 = point[251]
@@ -492,12 +485,7 @@ public class DrawManager : MonoBehaviour
             avatarManager.EvaluateTags(qq, out tagX, out tagY, out tagZ);
 
             // Cut the trial when the feet crosses the ground (vertical axis = 0)
-            if (
-                  !IsGestureMode && i > 0 
-                  && _joints.StopOnGround 
-                  && _joints.UseGravity 
-                  && tagZ.Min() < avatarProperties[_avatarIndex].InitialFeetHeight
-            )
+            if (!IsGestureMode && i > 0 && StopOnGround && UseGravity && tagZ.Min() < avatarProperties[_avatarIndex].InitialFeetHeight)
             {
                 _joints.tc = (float)t[i];
                 break;
@@ -566,7 +554,7 @@ public class DrawManager : MonoBehaviour
         NLEffects1Simple nlEffects1Simple = new NLEffects1Simple();
         n1 = nlEffects1Simple.NLEffects1(q, qdot);
 
-        if (!_joints.UseGravity)
+        if (!UseGravity)
         {
             double[] n1zero;
             n1zero = nlEffects1Simple.NLEffects1(q, new double[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
@@ -648,8 +636,8 @@ public class DrawManager : MonoBehaviour
         {
             var _q = MathFunc.MatrixGetColumnD(AllQ, firstFrame + avatarProperties[_avatarIndex].CurrentFrame);
             if (playMode == MainParameters.Instance.languages.Used.animatorPlayModeGesticulation)
-                for (int i = 0; i < Joints(_avatarIndex).lagrangianModel.q1.Length; i++)
-                    _q[Joints(_avatarIndex).lagrangianModel.q1[i] - 1] = 0;
+                for (int i = 0; i < avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.q1.Length; i++)
+                    _q[avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.q1[i] - 1] = 0;
             avatarManager.SetAllDof(_avatarIndex, _q);
             
             if (!avatarProperties[_avatarIndex].IsPaused) SetCurrrentFrame(_avatarIndex, avatarProperties[_avatarIndex].CurrentFrame + 1);
@@ -683,7 +671,7 @@ public class DrawManager : MonoBehaviour
 
     public bool PauseAvatar(int _avatarIndex)
     {
-        if (Joints(_avatarIndex).nodes == null || Avatar(_avatarIndex) == null || !Avatar(_avatarIndex).activeSelf) 
+        if (avatarManager.LoadedModels[_avatarIndex].Joints.nodes == null || Avatar(_avatarIndex) == null || !Avatar(_avatarIndex).activeSelf) 
             return false;
 
         Avatar(_avatarIndex).transform.rotation = Quaternion.identity;

@@ -12,29 +12,67 @@ public class AvatarManager : MonoBehaviour
         DoubleMale = 3,
     }
 
-    public struct Avatar {
+    public class Avatar {
         public GameObject gameObject;
 
         public bool IsLoaded { get => gameObject != null; }
 
         // Root
-        public GameObject Hip;
+        public GameObject Hip { get; protected set; }
+        public void SetHip(GameObject _hip) { Hip = _hip; }
 
         // Hip
-        public GameObject LeftThigh;
-        public GameObject RightThigh;
-        public ControlThigh ThighControl;
+        public GameObject LeftThigh { get; protected set; }
+        public void SetLeftThigh(GameObject _leftThigh) { LeftThigh = _leftThigh; }
+        public GameObject RightThigh { get; protected set; }
+        public void SetRightThigh(GameObject _rightThigh) { RightThigh = _rightThigh; }
+        public ControlThigh ThighControl { get; protected set; }
+        public void SetThighControl(ControlThigh _thighControl) { ThighControl = _thighControl; }
         // Knee
-        public GameObject LeftLeg;
-        public GameObject RightLeg;
-        public ControlShin LegControl;
+        public GameObject LeftLeg { get; protected set; }
+        public void SetLeftLeg(GameObject _leftLeg) { LeftLeg = _leftLeg; }
+        public GameObject RightLeg { get; protected set; }
+        public void SetRightLeg(GameObject _rightLeg) { RightLeg = _rightLeg; }
+        public ControlShin LegControl { get; protected set; }
+        public void SetLegControl(ControlShin _leftControl) { LegControl = _leftControl; }
         // Shoulder
-        public GameObject LeftArm;
-        public ControlLeftArmAbduction LeftArmControlAbd;
-        public ControlLeftArmFlexion LeftArmControlFlex;
-        public GameObject RightArm;
-        public ControlRightArmAbduction RightArmControlAbd;
-        public ControlRightArmFlexion RightArmControlFlex;
+        public GameObject LeftArm { get; protected set; }
+        public void SetLeftArm(GameObject _leftArm) { LeftArm = _leftArm; }
+        public ControlLeftArmAbduction LeftArmControlAbd { get; protected set; }
+        public void SetLeftArmControlAbd(ControlLeftArmAbduction _leftArmControlAbd) { LeftArmControlAbd = _leftArmControlAbd; }
+        public ControlLeftArmFlexion LeftArmControlFlexion { get; protected set; }
+        public void SetLeftArmControlFlexion(ControlLeftArmFlexion _leftArmControlFlexion) { LeftArmControlFlexion = _leftArmControlFlexion; }
+        public GameObject RightArm { get; protected set; }
+        public void SetRightArm(GameObject _rightArm) { RightArm = _rightArm; }
+        public ControlRightArmAbduction RightArmControlAbd { get; protected set; }
+        public void SetRightArmControlAbd(ControlRightArmAbduction _rightArmControlAbd) { RightArmControlAbd = _rightArmControlAbd; }
+        public ControlRightArmFlexion RightArmControlFlexion { get; protected set; }
+        public void SetRightArmControlFlexion(ControlRightArmFlexion _rightArmControlFlexion) { RightArmControlFlexion = _rightArmControlFlexion; }
+
+        public MainParameters.StrucJoints Joints { get; protected set; } = MainParameters.StrucJoints.Default;
+        public void SetJoints(MainParameters.StrucJoints _joints){ Joints = _joints; }
+        public void ResetJoints()
+        {
+            MainParameters.StrucJoints _joints = MainParameters.StrucJoints.Default;
+            _joints.lagrangianModel = new LagrangianModelSimple().GetParameters;
+            for (int i = 0; i < 6; i++)
+            {
+                _joints.nodes[i].ddl = i + 1;
+
+                if (i == 0) _joints.nodes[i].name = "Hip_Flexion";
+                else if (i == 1) _joints.nodes[i].name = "Knee_Flexion";
+                else if (i == 2) _joints.nodes[i].name = "Right_Arm_Flexion";
+                else if (i == 3) _joints.nodes[i].name = "Right_Arm_Abduction";
+                else if (i == 4) _joints.nodes[i].name = "Left_Arm_Flexion";
+                else if (i == 5) _joints.nodes[i].name = "Left_Arm_Abduction";
+
+                _joints.nodes[i].interpolation = MainParameters.Instance.interpolationDefault;
+                _joints.nodes[i].T = new float[] { 0, 1.000000f };
+                _joints.nodes[i].Q = new float[] { 0, 0.0f };
+                _joints.nodes[i].ddlOppositeSide = -1;
+            }
+            Joints = _joints;
+        }
     }
 
     protected DrawManager drawManager;
@@ -88,12 +126,12 @@ public class AvatarManager : MonoBehaviour
         var _rootDirectory = PrefabRootDirectory(SelectedAvatarModel);
 
         var _model = LoadedModels[_index];
-        _model.ThighControl = _model.gameObject.transform.Find(_rootDirectory + "/hips/zero_thigh.L/thigh.L/ControlThigh").GetComponent<ControlThigh>();
-        _model.LegControl = _model.gameObject.transform.Find(_rootDirectory + "/hips/zero_thigh.L/thigh.L/zero_shin.L/shin.L/ControlShin").GetComponent<ControlShin>();
-        _model.LeftArmControlAbd = _model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L/ControlLeftArm").GetComponent<ControlLeftArmAbduction>();
-        _model.LeftArmControlFlex = _model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L/ControlLeftArm").GetComponent<ControlLeftArmFlexion>();
-        _model.RightArmControlAbd = _model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R/ControlRightArm").GetComponent<ControlRightArmAbduction>();
-        _model.RightArmControlFlex = _model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R/ControlRightArm").GetComponent<ControlRightArmFlexion>();
+        _model.SetThighControl(_model.gameObject.transform.Find(_rootDirectory + "/hips/zero_thigh.L/thigh.L/ControlThigh").GetComponent<ControlThigh>());
+        _model.SetLegControl(_model.gameObject.transform.Find(_rootDirectory + "/hips/zero_thigh.L/thigh.L/zero_shin.L/shin.L/ControlShin").GetComponent<ControlShin>());
+        _model.SetLeftArmControlAbd(_model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L/ControlLeftArm").GetComponent<ControlLeftArmAbduction>());
+        _model.SetLeftArmControlFlexion(_model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L/ControlLeftArm").GetComponent<ControlLeftArmFlexion>());
+        _model.SetRightArmControlAbd(_model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R/ControlRightArm").GetComponent<ControlRightArmAbduction>());
+        _model.SetRightArmControlFlexion(_model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R/ControlRightArm").GetComponent<ControlRightArmFlexion>());
         LoadedModels[_index] = _model;
     }
 
@@ -104,15 +142,15 @@ public class AvatarManager : MonoBehaviour
         var _rootDirectory = PrefabRootDirectory(SelectedAvatarModel);
 
         // Root
-        _model.Hip = _model.gameObject.transform.Find(_rootDirectory + "/hips").gameObject;
-        _model.LeftThigh = _model.gameObject.transform.Find(_rootDirectory + "/hips/zero_thigh.L/thigh.L").gameObject;
-        _model.RightThigh = _model.gameObject.transform.Find(_rootDirectory + "/hips/zero_thigh.R/thigh.R").gameObject;
+        _model.SetHip(_model.gameObject.transform.Find(_rootDirectory + "/hips").gameObject);
+        _model.SetLeftThigh(_model.gameObject.transform.Find(_rootDirectory + "/hips/zero_thigh.L/thigh.L").gameObject);
+        _model.SetRightThigh(_model.gameObject.transform.Find(_rootDirectory + "/hips/zero_thigh.R/thigh.R").gameObject);
         // Knee
-        _model.LeftLeg = _model.gameObject.transform.Find(_rootDirectory + "/hips/zero_thigh.L/thigh.L/zero_shin.L/shin.L").gameObject;
-        _model.RightLeg = _model.gameObject.transform.Find(_rootDirectory + "/hips/zero_thigh.R/thigh.R/zero_shin.R/shin.R").gameObject;
+        _model.SetLeftLeg(_model.gameObject.transform.Find(_rootDirectory + "/hips/zero_thigh.L/thigh.L/zero_shin.L/shin.L").gameObject);
+        _model.SetRightLeg(_model.gameObject.transform.Find(_rootDirectory + "/hips/zero_thigh.R/thigh.R/zero_shin.R/shin.R").gameObject);
         // Shoulder
-        _model.LeftArm = _model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L").gameObject;
-        _model.RightArm = _model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R").gameObject;
+        _model.SetLeftArm(_model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L").gameObject);
+        _model.SetRightArm(_model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R").gameObject);
 
         drawManager.SetFirstView(_model.gameObject.transform.Find(_rootDirectory + "/hips/FirstViewPoint").gameObject);
 
@@ -190,7 +228,7 @@ public class AvatarManager : MonoBehaviour
     {
         if (!LoadedModels[_avatarIndex].IsLoaded) return;
 
-        Q[LoadedModels[_avatarIndex].LeftArmControlFlex.avatarIndex] = _value;
+        Q[LoadedModels[_avatarIndex].LeftArmControlFlexion.avatarIndex] = _value;
         SetLeftArm(_avatarIndex);
     }
     protected void SetLeftArm(int _avatarIndex)
@@ -198,7 +236,7 @@ public class AvatarManager : MonoBehaviour
         if (!LoadedModels[_avatarIndex].IsLoaded) return;
 
         int ddlAbduction = LoadedModels[_avatarIndex].LeftArmControlAbd.avatarIndex;
-        int ddlFlexion = LoadedModels[_avatarIndex].LeftArmControlFlex.avatarIndex;
+        int ddlFlexion = LoadedModels[_avatarIndex].LeftArmControlFlexion.avatarIndex;
         LoadedModels[_avatarIndex].LeftArm.transform.localEulerAngles = new Vector3((float)Q[ddlFlexion], 0, (float)Q[ddlAbduction]) * Mathf.Rad2Deg;
     }
 
@@ -213,7 +251,7 @@ public class AvatarManager : MonoBehaviour
     {
         if (!LoadedModels[_avatarIndex].IsLoaded) return;
 
-        Q[LoadedModels[_avatarIndex].RightArmControlFlex.avatarIndex] = _value;
+        Q[LoadedModels[_avatarIndex].RightArmControlFlexion.avatarIndex] = _value;
         SetRightArm(_avatarIndex);
     }
     protected void SetRightArm(int _avatarIndex)
@@ -221,7 +259,7 @@ public class AvatarManager : MonoBehaviour
         if (!LoadedModels[_avatarIndex].IsLoaded) return;
 
         int ddlAbduction = LoadedModels[_avatarIndex].RightArmControlAbd.avatarIndex;
-        int ddlFlexion = LoadedModels[_avatarIndex].RightArmControlFlex.avatarIndex;
+        int ddlFlexion = LoadedModels[_avatarIndex].RightArmControlFlexion.avatarIndex;
         LoadedModels[_avatarIndex].RightArm.transform.localEulerAngles = new Vector3((float)Q[ddlFlexion], 0, (float)Q[ddlAbduction]) * Mathf.Rad2Deg;
     }
 
@@ -244,8 +282,8 @@ public class AvatarManager : MonoBehaviour
         float[] tagZ;
         EvaluateTags(q, out tagX, out tagY, out tagZ);
         return Math.Min(
-            tagZ[drawManager.Joints(0).lagrangianModel.feet[0] - 1],
-            tagZ[drawManager.Joints(0).lagrangianModel.feet[1] - 1]
+            tagZ[LoadedModels[0].Joints.lagrangianModel.feet[0] - 1],
+            tagZ[LoadedModels[0].Joints.lagrangianModel.feet[1] - 1]
         );
     }
 
@@ -274,3 +312,11 @@ public class AvatarManager : MonoBehaviour
         }
     }
 }
+
+
+//public void SetJointsTandQ(int _avatarIndex, float[] t0, float[,] q0)
+//{
+//    avatarProperties[_avatarIndex].Joints.t0 = MathFunc.MatrixCopy(t0);
+//    avatarProperties[_avatarIndex].Joints.q0 = MathFunc.MatrixCopy(q0);
+//}
+//public void SetJointsNodes(int _avatarIndex, MainParameters.StrucNodes[] _nodes) { avatarProperties[_avatarIndex].Joints.nodes = _nodes; }

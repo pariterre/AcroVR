@@ -50,6 +50,11 @@ public class MainParameters
 	/// <summary> Description de la structure contenant les paramètres de décollage. </summary>
 	public struct StrucTakeOffParam
 	{
+		public float Duration;
+		public bool UseGravity;
+		public bool StopOnGround;
+		public int PresetCondition;
+
 		public float Somersault;
 		public float Tilt;
 		public float Twist;
@@ -60,10 +65,17 @@ public class MainParameters
 		public float TwistSpeed;
 		public float HorizontalSpeed;
 		public float VerticalSpeed;
+
+		static public StrucTakeOffParam Default 
+		{ 
+			get {
+				StrucTakeOffParam _out = new StrucTakeOffParam();
+				_out.Duration = 1f;
+				return _out; 
+			} 
+		}
 	}
 
-    /// <summary> Structure contenant les valeurs de défaut pour les paramètres de décollage. </summary>
-    public StrucTakeOffParam takeOffParamDefault;
     #endregion
 
 	public enum DataType { Simulation};
@@ -81,19 +93,6 @@ public class MainParameters
 		public float[] t0;
 		/// <summary> Liste de tous les angles interpolés pour chacune des articulations. [m,n]: m = DDL, n = Frames. </summary>
 		public float[,] q0;
-		/// <summary> Durée de la figure (en secondes). </summary>
-		public float Duration;
-		/// <summary> If Gravity should be applied or ignored. </summary>
-		public bool UseGravity;
-		/// <summary> If the Ground should be considered the end of the movement. </summary>
-		public bool StopOnGround;
-		/// <summary> Structure contenant les données relatifs aux paramètres initiaux d'envol. </summary>
-		public StrucTakeOffParam takeOffParam;
-		/// <summary>
-		/// <para>Condition utilisée pour exécuter la figure. </para>
-		/// (0 = Sans gravité, 1 = Trampoline, 2 = Chute, 3 = Plongeon 1m, 4 = Plongeon 3m, 5 = Plongeon 5m, 6 = Plongeon 10m, 7 = Barre fixe, 8 = Barres asymétriques, 9 = Saut à la perche).
-		/// </summary>
-		public int condition;
 		/// <summary> Type de données utilisée. </summary>
 		public DataType dataType;
 		/// <summary> Nom du modèle Lagrangien utilisée. </summary>
@@ -108,22 +107,31 @@ public class MainParameters
 		public float[,] rot;
 		/// <summary> Liste des vitesses des angles interpolés pour les articulations de rotation (périlleux, inclinaison et torsion), jusqu'au contact avec le sol. [m,n]: m = 3, n = Frames. </summary>
 		public float[,] rotdot;
+
+		static public StrucJoints Default { get
+			{
+                StrucJoints _out = new StrucJoints()
+                {
+                    fileName = "",
+                    nodes = null,
+                    t0 = null,
+                    q0 = null,
+                    dataType = DataType.Simulation,
+                    lagrangianModelName = LagrangianModelNames.Simple,
+                    lagrangianModel = new LagrangianModelManager.StrucLagrangianModel(),
+                    tc = 0,
+                    t = null,
+                    rot = null,
+                    rotdot = null
+                };
+                return _out;
+			}
+		}
 	}
 
 	/// <summary> Structure contenant les données des angles des articulations (DDL). </summary>
-	public StrucJoints joints;
+	//public StrucJoints joints;
 
-    /// <summary> Valeur de défaut pour la durée de la figure. </summary>
-    public float DurationDefault;
-
-    /// <summary> Default value for Use Gravity. </summary>
-	public bool UseGravityDefault; 
-
-    /// <summary> Default value for Stop on ground variable. </summary>
-	public bool StopOnGroundDefault; 
-
-    /// <summary> Valeur de défaut pour la condition utilisée pour exécuter la figure. </summary>
-    public int conditionDefault;
 	#endregion
 
 	#region ScrollViewMessages
@@ -304,39 +312,27 @@ public class MainParameters
 		interpolationDefault.type = InterpolationType.Quintic;
 		interpolationDefault.numIntervals = 0;
 		interpolationDefault.slope = new float[] { 0, 0 };
-        takeOffParamDefault.Somersault = 0;
-        takeOffParamDefault.Tilt = 0;
-        takeOffParamDefault.Twist = 0;
-        takeOffParamDefault.HorizontalPosition = 0;
-		takeOffParamDefault.VerticalPosition = 0;
-        takeOffParamDefault.SomersaultSpeed = 0;
-        takeOffParamDefault.TiltSpeed = 0;
-        takeOffParamDefault.TwistSpeed = 0;
-        takeOffParamDefault.HorizontalSpeed = 0;
-		takeOffParamDefault.VerticalSpeed = 0;
-		DurationDefault = 0;
-		UseGravityDefault = false;
-		StopOnGroundDefault = true;
-		conditionDefault = 0;
+
+		DurationDefault = 1f;
 
 		// Initialisation des paramètres reliés aux données des angles des articulations.
 
-		joints.fileName = "";
-		joints.nodes = null;
-		joints.t0 = null;
-		joints.q0 = null;
-		joints.Duration = DurationDefault;
-		joints.UseGravity = UseGravityDefault;
-		joints.StopOnGround = StopOnGroundDefault;
-		joints.takeOffParam = takeOffParamDefault;
-		joints.condition = conditionDefault;
-		joints.dataType = DataType.Simulation;
-		joints.lagrangianModelName = LagrangianModelNames.Simple;
-		joints.lagrangianModel = new LagrangianModelManager.StrucLagrangianModel();
-		joints.tc = 0;
-		joints.t = null;
-		joints.rot = null;
-		joints.rotdot = null;
+		//joints.fileName = "";
+		//joints.nodes = null;
+		//joints.t0 = null;
+		//joints.q0 = null;
+		//joints.Duration = 0;
+		//joints.UseGravity = false;
+		//joints.StopOnGround = true;
+		//joints.takeOffParam = new StrucTakeOffParam();
+		//joints.condition = 0;
+		//joints.dataType = DataType.Simulation;
+		//joints.lagrangianModelName = LagrangianModelNames.Simple;
+		//joints.lagrangianModel = new LagrangianModelManager.StrucLagrangianModel();
+		//joints.tc = 0;
+		//joints.t = null;
+		//joints.rot = null;
+		//joints.rotdot = null;
 
 		// Initialisation de la liste des messages, utilisé pour la boîte des messages.
 
