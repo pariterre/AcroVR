@@ -6,6 +6,7 @@ using ChartAndGraph;
 
 public class DisplayResultGraphicS : MonoBehaviour
 {
+    protected AvatarManager avatarManager;
     protected DrawManager drawManager;
     protected AniGraphManager aniGraphManager;
 
@@ -25,6 +26,7 @@ public class DisplayResultGraphicS : MonoBehaviour
 
 	void Awake()
 	{
+        avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
         aniGraphManager = ToolBox.GetInstance().GetManager<AniGraphManager>();
 	}
@@ -54,7 +56,7 @@ public class DisplayResultGraphicS : MonoBehaviour
 
     public void ShowResult()
     {
-        if (drawManager.Joints(0).q0 == null) return;
+        if (avatarManager.LoadedModels[0].Joints.q0 == null) return;
 
         if (aniGraphManager.cntAvatar == 1)
         {
@@ -70,7 +72,7 @@ public class DisplayResultGraphicS : MonoBehaviour
 
     public void DropDownAvatarChanged(int value)
     {
-        if (drawManager.Joints(0).q0 == null) return;
+        if (avatarManager.LoadedModels[0].Joints.q0 == null) return;
 
         aniGraphManager.cntAvatar = value;
         DropDownGraphicNameOnValueChanged(MainParameters.Instance.resultsGraphicsUsed[panelGraphicNumber - 1]);
@@ -79,8 +81,8 @@ public class DisplayResultGraphicS : MonoBehaviour
         
     public void DropDownGraphicNameOnValueChanged(int value)
     {
-        if (drawManager.Joints(0).q0 == null) return;
-        if (drawManager.Joints(0).rot == null) return;
+        if (avatarManager.LoadedModels[0].Joints.q0 == null) return;
+        if (avatarManager.LoadedModels[0].Joints.rot == null) return;
 
         MainParameters.Instance.resultsGraphicsUsed[panelGraphicNumber - 1] = value;
 
@@ -161,55 +163,55 @@ public class DisplayResultGraphicS : MonoBehaviour
                 case 0:
                     aniGraphManager.DisplayCurves(
                         graph, 
-                        drawManager.Joints(0).t,
-                        drawManager.Joints(0).rot,
-                        drawManager.Joints(1).t,
-                        drawManager.Joints(1).rot
+                        avatarManager.LoadedModels[0].Joints.t,
+                        avatarManager.LoadedModels[0].Joints.rot,
+                        avatarManager.LoadedModels[1].Joints.t,
+                        avatarManager.LoadedModels[1].Joints.rot
                         );
                     break;
                 case 1:
                     aniGraphManager.DisplayCurves(
                         graph,
-                        drawManager.Joints(0).t,
-                        MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 1), 
-                        drawManager.Joints(1).t, 
-                        MathFunc.MatrixGetColumn(drawManager.Joints(1).rot, 1)
+                        avatarManager.LoadedModels[0].Joints.t,
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 1), 
+                        avatarManager.LoadedModels[1].Joints.t, 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[1].Joints.rot, 1)
                     );
                     break;
                 case 2:
                     aniGraphManager.DisplayCurves(
                         graph, 
-                        MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 0), 
-                        MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 1), 
-                        MathFunc.MatrixGetColumn(drawManager.Joints(1).rot, 0), 
-                        MathFunc.MatrixGetColumn(drawManager.Joints(1).rot, 1)
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 0), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 1), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[1].Joints.rot, 0), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[1].Joints.rot, 1)
                     );
                     break;
                 case 3:
                     aniGraphManager.DisplayCurves(
                         graph, 
-                        MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 2), 
-                        MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 1), 
-                        MathFunc.MatrixGetColumn(drawManager.Joints(1).rot, 2), 
-                        MathFunc.MatrixGetColumn(drawManager.Joints(1).rot, 1)
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 2), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 1), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[1].Joints.rot, 2), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[1].Joints.rot, 1)
                     );
                     break;
                 case 4:
                     aniGraphManager.DisplayCurves(
                         graph, 
-                        MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 0), 
-                        MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 2), 
-                        MathFunc.MatrixGetColumn(drawManager.Joints(1).rot, 0), 
-                        MathFunc.MatrixGetColumn(drawManager.Joints(1).rot, 2)
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 0), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 2), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[1].Joints.rot, 0), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[1].Joints.rot, 2)
                     );
                     break;
                 case 5:
                     aniGraphManager.DisplayCurves(
                         graph, 
-                        drawManager.Joints(0).t, 
-                        drawManager.Joints(0).rotdot, 
-                        drawManager.Joints(1).t, 
-                        drawManager.Joints(1).rotdot
+                        avatarManager.LoadedModels[0].Joints.t, 
+                        avatarManager.LoadedModels[0].Joints.rotdot, 
+                        avatarManager.LoadedModels[1].Joints.t, 
+                        avatarManager.LoadedModels[1].Joints.rotdot
                     );
                     break;
             }
@@ -217,17 +219,17 @@ public class DisplayResultGraphicS : MonoBehaviour
         else
         {
             if (_v == 0)
-                aniGraphManager.DisplayCurves(graph, drawManager.Joints(0).t, drawManager.Joints(0).rot);
+                aniGraphManager.DisplayCurves(graph, avatarManager.LoadedModels[0].Joints.t, avatarManager.LoadedModels[0].Joints.rot);
             else if (_v == 1)
-                aniGraphManager.DisplayCurves(graph, drawManager.Joints(0).t, MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 1));
+                aniGraphManager.DisplayCurves(graph, avatarManager.LoadedModels[0].Joints.t, MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 1));
             else if (_v == 2)
-                aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 0), MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 1));
+                aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 0), MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 1));
             else if (_v == 3)
-                aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 2), MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 1));
+                aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 2), MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 1));
             else if (_v == 4)
-                aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 0), MathFunc.MatrixGetColumn(drawManager.Joints(0).rot, 2));
+                aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 0), MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 2));
             else if (_v == 5)
-                aniGraphManager.DisplayCurves(graph, drawManager.Joints(0).t, drawManager.Joints(0).rotdot);
+                aniGraphManager.DisplayCurves(graph, avatarManager.LoadedModels[0].Joints.t, avatarManager.LoadedModels[0].Joints.rotdot);
             else
                 throw new ArgumentException("Wrong _v");
         }

@@ -109,27 +109,27 @@ public class StatManager : MonoBehaviour
         replayInfo.player = info;
 
         replayInfo.replay.Objective = "default";
-        replayInfo.replay.Duration = MainParameters.Instance.joints.Duration;
-        replayInfo.replay.UseGravity = MainParameters.Instance.joints.UseGravity;
-        replayInfo.replay.StopOnGround = MainParameters.Instance.joints.StopOnGround;
+        replayInfo.replay.Duration = drawManager.Duration;
+        replayInfo.replay.UseGravity = drawManager.UseGravity;
+        replayInfo.replay.StopOnGround = drawManager.StopOnGround;
 
-        replayInfo.replay.Somersault = MainParameters.Instance.joints.takeOffParam.Somersault;
-        replayInfo.replay.Tilt = MainParameters.Instance.joints.takeOffParam.Tilt;
-        replayInfo.replay.Twist = MainParameters.Instance.joints.takeOffParam.Twist;
-        replayInfo.replay.HorizontalPosition = MainParameters.Instance.joints.takeOffParam.HorizontalPosition;
-        replayInfo.replay.VerticalPosition = MainParameters.Instance.joints.takeOffParam.VerticalPosition;
-        replayInfo.replay.SomersaultSpeed = MainParameters.Instance.joints.takeOffParam.SomersaultSpeed;
-        replayInfo.replay.TiltSpeed = MainParameters.Instance.joints.takeOffParam.TiltSpeed;
-        replayInfo.replay.TwistSpeed = MainParameters.Instance.joints.takeOffParam.TwistSpeed;
-        replayInfo.replay.HorizontalSpeed = MainParameters.Instance.joints.takeOffParam.HorizontalSpeed;
-        replayInfo.replay.VerticalSpeed = MainParameters.Instance.joints.takeOffParam.VerticalSpeed;
+        replayInfo.replay.Somersault = drawManager.TakeOffParameters.Somersault;
+        replayInfo.replay.Tilt = drawManager.TakeOffParameters.Tilt;
+        replayInfo.replay.Twist = drawManager.TakeOffParameters.Twist;
+        replayInfo.replay.HorizontalPosition = drawManager.TakeOffParameters.HorizontalPosition;
+        replayInfo.replay.VerticalPosition = drawManager.TakeOffParameters.VerticalPosition;
+        replayInfo.replay.SomersaultSpeed = drawManager.TakeOffParameters.SomersaultSpeed;
+        replayInfo.replay.TiltSpeed = drawManager.TakeOffParameters.TiltSpeed;
+        replayInfo.replay.TwistSpeed = drawManager.TakeOffParameters.TwistSpeed;
+        replayInfo.replay.HorizontalSpeed = drawManager.TakeOffParameters.HorizontalSpeed;
+        replayInfo.replay.VerticalSpeed = drawManager.TakeOffParameters.VerticalSpeed;
 
-        for (int i = 0; i < MainParameters.Instance.joints.nodes.Length; i++)
+        for (int i = 0; i < avatarManager.LoadedModels[0].Joints.nodes.Length; i++)
         {
             Nodes n = new Nodes();
-            n.Name = MainParameters.Instance.joints.nodes[i].name;
-            n.T = MainParameters.Instance.joints.nodes[i].T;
-            n.Q = MainParameters.Instance.joints.nodes[i].Q;
+            n.Name = avatarManager.LoadedModels[0].Joints.nodes[i].name;
+            n.T = avatarManager.LoadedModels[0].Joints.nodes[i].T;
+            n.Q = avatarManager.LoadedModels[0].Joints.nodes[i].Q;
 
             replayInfo.replay.nodes.Add(n);
         }
@@ -227,16 +227,16 @@ public class StatManager : MonoBehaviour
 
     public int FindPreviousNode(int _dof)
     {
-        int last = MainParameters.Instance.joints.nodes[_dof].T.Length - 1;
+        int last = avatarManager.LoadedModels[0].Joints.nodes[_dof].T.Length - 1;
         if (drawManager.CurrentFrame == 0) 
             return 0;
-        else if (drawManager.CurrentTime == MainParameters.Instance.joints.nodes[_dof].T[last]) 
+        else if (drawManager.CurrentTime == avatarManager.LoadedModels[0].Joints.nodes[_dof].T[last]) 
             return last;
 
         int i = 0;
         while (
-                i < MainParameters.Instance.joints.nodes[_dof].T.Length
-                && drawManager.CurrentTime >= MainParameters.Instance.joints.nodes[_dof].T[i]
+                i < avatarManager.LoadedModels[0].Joints.nodes[_dof].T.Length
+                && drawManager.CurrentTime >= avatarManager.LoadedModels[0].Joints.nodes[_dof].T[i]
             )
         {
             i++;
@@ -250,29 +250,29 @@ public class StatManager : MonoBehaviour
         gameManager.DisplayDDL(_dof, true);
 
         int node = FindPreviousNode(_dof);
-        if (MainParameters.Instance.joints.nodes[_dof].T[node] == drawManager.CurrentTime)
+        if (avatarManager.LoadedModels[0].Joints.nodes[_dof].T[node] == drawManager.CurrentTime)
             return node;
 
 
-        float[] T = new float[MainParameters.Instance.joints.nodes[_dof].T.Length + 1];
-        float[] Q = new float[MainParameters.Instance.joints.nodes[_dof].Q.Length + 1];
+        float[] T = new float[avatarManager.LoadedModels[0].Joints.nodes[_dof].T.Length + 1];
+        float[] Q = new float[avatarManager.LoadedModels[0].Joints.nodes[_dof].Q.Length + 1];
 
         for (int i = 0; i <= node; i++)
         {
-            T[i] = MainParameters.Instance.joints.nodes[_dof].T[i];
-            Q[i] = MainParameters.Instance.joints.nodes[_dof].Q[i];
+            T[i] = avatarManager.LoadedModels[0].Joints.nodes[_dof].T[i];
+            Q[i] = avatarManager.LoadedModels[0].Joints.nodes[_dof].Q[i];
         }
 
         T[node + 1] = drawManager.CurrentTime;
         Q[node + 1] = currentControlSegment.angle;
 
-        for (int i = node + 1; i < MainParameters.Instance.joints.nodes[_dof].T.Length; i++)
+        for (int i = node + 1; i < avatarManager.LoadedModels[0].Joints.nodes[_dof].T.Length; i++)
         {
-            T[i + 1] = MainParameters.Instance.joints.nodes[_dof].T[i];
-            Q[i + 1] = MainParameters.Instance.joints.nodes[_dof].Q[i];
+            T[i + 1] = avatarManager.LoadedModels[0].Joints.nodes[_dof].T[i];
+            Q[i + 1] = avatarManager.LoadedModels[0].Joints.nodes[_dof].Q[i];
         }
-        MainParameters.Instance.joints.nodes[_dof].T = MathFunc.MatrixCopy(T);
-        MainParameters.Instance.joints.nodes[_dof].Q = MathFunc.MatrixCopy(Q);
+        avatarManager.LoadedModels[0].Joints.nodes[_dof].T = MathFunc.MatrixCopy(T);
+        avatarManager.LoadedModels[0].Joints.nodes[_dof].Q = MathFunc.MatrixCopy(Q);
 
         gameManager.InterpolationDDL();
         gameManager.DisplayDDL(_dof, true);

@@ -198,7 +198,7 @@ public class GameManager : MonoBehaviour
         string extension = GetSimpleExtension(fileName);
         if (extension == "txt")
         {
-            if(!ReadDataFiles(fileName))
+            if(!ReadDataFiles(0, fileName))
                 return -2;
         }
         else
@@ -234,7 +234,7 @@ public class GameManager : MonoBehaviour
         string extension = GetSimpleExtension(fileName);
         if (extension == "txt")
         {
-            if (!ReadDataFileSecond(fileName))
+            if (!ReadDataFiles(1, fileName))
                 return -2;
         }
         else
@@ -390,12 +390,13 @@ public class GameManager : MonoBehaviour
         info.HorizontalSpeed = drawManager.TakeOffParameters.HorizontalSpeed;
         info.VerticalSpeed = drawManager.TakeOffParameters.VerticalSpeed;
 
-        for (int i = 0; i < avatarManager.LoadedModels[0].Joints.nodes.Length; i++)
+        MainParameters.StrucJoints _joints = avatarManager.LoadedModels[0].Joints;
+        for (int i = 0; i < _joints.nodes.Length; i++)
         {
             Nodes n = new Nodes();
-            n.Name = avatarManager.LoadedModels[0].Joints.nodes[i].name;
-            n.T = avatarManager.LoadedModels[0].Joints.nodes[i].T;
-            n.Q = avatarManager.LoadedModels[0].Joints.nodes[i].Q;
+            n.Name = _joints.nodes[i].name;
+            n.T = _joints.nodes[i].T;
+            n.Q = _joints.nodes[i].Q;
 
             info.nodes.Add(n);
         }
@@ -448,7 +449,7 @@ public class GameManager : MonoBehaviour
         System.IO.File.WriteAllText(fileName, fileLines);
     }
 
-    protected bool ReadDataFiles(string fileName)
+    protected bool ReadDataFiles(int _avatarIndex, string fileName)
     {
         WriteToLogFile("ReadDataFilesTxT()");
 
@@ -462,6 +463,8 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
+        // TODO:
+        Debug.Log("Make sure this _joints is actually a shallow copy to the actual Joints so 'nodes' changes");
         MainParameters.StrucTakeOffParam _takeOff = MainParameters.StrucTakeOffParam.Default;
         string[] values;
         int ddlNum = -1;
@@ -618,7 +621,7 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In DDL");
 
-                jointsTemp.nodes = new MainParameters.StrucNodes[fileLines.Length - i - 1];
+                avatarManager.LoadedModels[_avatarIndex].SetJointsNodes(new MainParameters.StrucNodes[fileLines.Length - i - 1]);
                 ddlNum = 0;
 
                 int temp = fileLines.Length - i - 1;
@@ -629,17 +632,17 @@ public class GameManager : MonoBehaviour
             {
                 WriteToLogFile("In ddlNum: " + ddlNum.ToString());
 
-                jointsTemp.nodes[ddlNum].ddl = int.Parse(values[0], CultureInfo.InvariantCulture);
+                avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].ddl = int.Parse(values[0], CultureInfo.InvariantCulture);
 
-                WriteToLogFile("jointsTemp.nodes[ddlNum].ddl: " + jointsTemp.nodes[ddlNum].ddl.ToString());
+                WriteToLogFile("avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].ddl: " + avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].ddl.ToString());
 
-                jointsTemp.nodes[ddlNum].name = values[1];
+                avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].name = values[1];
 
-                WriteToLogFile("jointsTemp.nodes[ddlNum].name: " + jointsTemp.nodes[ddlNum].name);
+                WriteToLogFile("avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].name: " + avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].name);
 
-                jointsTemp.nodes[ddlNum].interpolation = MainParameters.Instance.interpolationDefault;
+                avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].interpolation = MainParameters.Instance.interpolationDefault;
 
-                WriteToLogFile("jointsTemp.nodes[ddlNum].interpolation: " + jointsTemp.nodes[ddlNum].interpolation.type.ToString());
+                WriteToLogFile("avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].interpolation: " + avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].interpolation.type.ToString());
 
                 int indexTQ = 2;
 
@@ -652,27 +655,27 @@ public class GameManager : MonoBehaviour
                     string[] subValues;
                     subValues = Regex.Split(values[2], ",");
                     if (subValues[0].Contains(MainParameters.InterpolationType.CubicSpline.ToString()))
-                        jointsTemp.nodes[ddlNum].interpolation.type = MainParameters.InterpolationType.CubicSpline;
+                        avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].interpolation.type = MainParameters.InterpolationType.CubicSpline;
                     else
-                        jointsTemp.nodes[ddlNum].interpolation.type = MainParameters.InterpolationType.Quintic;
-                    jointsTemp.nodes[ddlNum].interpolation.numIntervals = int.Parse(subValues[1], CultureInfo.InvariantCulture);
-                    jointsTemp.nodes[ddlNum].interpolation.slope[0] = Utils.ToFloat(subValues[2]);
-                    jointsTemp.nodes[ddlNum].interpolation.slope[1] = Utils.ToFloat(subValues[3]);
+                        avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].interpolation.type = MainParameters.InterpolationType.Quintic;
+                    avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].interpolation.numIntervals = int.Parse(subValues[1], CultureInfo.InvariantCulture);
+                    avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].interpolation.slope[0] = Utils.ToFloat(subValues[2]);
+                    avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].interpolation.slope[1] = Utils.ToFloat(subValues[3]);
                     indexTQ++;
                 }
-                jointsTemp.nodes[ddlNum].T = ExtractDataTQ(values[indexTQ]);
+                avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].T = ExtractDataTQ(values[indexTQ]);
 
-                foreach(float a in jointsTemp.nodes[ddlNum].T)
-                    WriteToLogFile("jointsTemp.nodes[ddlNum].T: " + a.ToString());
+                foreach(float a in avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].T)
+                    WriteToLogFile("avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].T: " + a.ToString());
 
-                jointsTemp.nodes[ddlNum].Q = ExtractDataTQ(values[indexTQ + 1]);
+                avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].Q = ExtractDataTQ(values[indexTQ + 1]);
 
-                foreach (float b in jointsTemp.nodes[ddlNum].Q)
-                    WriteToLogFile("jointsTemp.nodes[ddlNum].Q: " + b.ToString());
+                foreach (float b in avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].Q)
+                    WriteToLogFile("avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].Q: " + b.ToString());
 
-                jointsTemp.nodes[ddlNum].ddlOppositeSide = -1;
+                avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].ddlOppositeSide = -1;
 
-                WriteToLogFile("jointsTemp.nodes[ddlNum].ddlOppositeSide: " + jointsTemp.nodes[ddlNum].ddlOppositeSide.ToString());
+                WriteToLogFile("avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].ddlOppositeSide: " + avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].ddlOppositeSide.ToString());
 
                 ddlNum++;
             }
@@ -680,42 +683,40 @@ public class GameManager : MonoBehaviour
 
 
         WriteToLogFile("Assigned drawManager.Joints(0)");
-        if (drawManager.Joints(0).lagrangianModelName == MainParameters.LagrangianModelNames.Sasha23ddl)
+        
+        if (avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModelName == MainParameters.LagrangianModelNames.Sasha23ddl)
         {
             WriteToLogFile("LagrangianModelSasha23ddl()");
-            jointsTemp.lagrangianModel = new LagrangianModelSasha23ddl().GetParameters;
+            avatarManager.LoadedModels[_avatarIndex].SetJointsLagrangianModel(new LagrangianModelSasha23ddl().GetParameters);
         }
         else
         {
             WriteToLogFile("LagrangianModelSimple()");
-            jointsTemp.lagrangianModel = new LagrangianModelSimple().GetParameters;
+            avatarManager.LoadedModels[_avatarIndex].SetJointsLagrangianModel(new LagrangianModelSimple().GetParameters);
         }
 
-        drawManager.SetJoints(0, jointsTemp);
-        MainParameters.StrucJoints joints = drawManager.Joints(0);
-
         int nDDL = 0;
-        MainParameters.StrucNodes[] nodes = new MainParameters.StrucNodes[joints.lagrangianModel.q2.Length];
-        int nNodes = joints.nodes.Length;
-        MainParameters.StrucInterpolation interpolation = joints.nodes[0].interpolation;
+        MainParameters.StrucNodes[] nodes = new MainParameters.StrucNodes[avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.q2.Length];
+        int nNodes = avatarManager.LoadedModels[_avatarIndex].Joints.nodes.Length;
+        MainParameters.StrucInterpolation interpolation = avatarManager.LoadedModels[_avatarIndex].Joints.nodes[0].interpolation;
 
-        WriteToLogFile("For() Start joints.lagrangianModel.q2.Length: " + joints.lagrangianModel.q2.Length.ToString());
+        WriteToLogFile("For() Start avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.q2.Length: " + avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.q2.Length.ToString());
 
-        foreach (int i in joints.lagrangianModel.q2)
+        foreach (int i in avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.q2)
         {
             int j = 0;
-            string ddlname = joints.lagrangianModel.ddlName[i - 1].ToLower();
-            while (j < nNodes && !ddlname.Contains(joints.nodes[j].name.ToLower()))
+            string ddlname = avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.ddlName[i - 1].ToLower();
+            while (j < nNodes && !ddlname.Contains(avatarManager.LoadedModels[_avatarIndex].Joints.nodes[j].name.ToLower()))
                 j++;
             if (j < nNodes)                                 // Articulations défini dans le fichier de données, le conserver
             {
-                nodes[nDDL] = joints.nodes[j];
+                nodes[nDDL] = avatarManager.LoadedModels[_avatarIndex].Joints.nodes[j];
                 nodes[nDDL].ddl = i;
             }
             else                                            // Articulations non défini dans le fichier de données, alors utilisé la définition de défaut selon le modèle Lagrangien
             {
                 nodes[nDDL].ddl = i;
-                nodes[nDDL].name = joints.lagrangianModel.ddlName[i - 1];
+                nodes[nDDL].name = avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.ddlName[i - 1];
                 nodes[nDDL].T = new float[3] { drawManager.Duration * 0.25f, drawManager.Duration * 0.5f, drawManager.Duration * 0.75f };
                 nodes[nDDL].Q = new float[3] { 0, 0, 0 };
                 nodes[nDDL].interpolation = interpolation;
@@ -745,187 +746,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        drawManager.SetJointsNodes(0, nodes);
-
-        return true;
-    }
-
-    private bool ReadDataFileSecond(string fileName)
-    {
-        WriteToLogFile("ReadDataFileSecondTxt()");
-
-        string[] fileLines = System.IO.File.ReadAllLines(fileName);
-
-        if (fileLines[0][0] == '{')
-        {
-            WriteToLogFile("Parse Error [0]: " + fileLines[0][0]);
-            return false;
-        }
-
-        MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
-        jointsTemp.fileName = fileName;
-        jointsTemp.nodes = null;
-        jointsTemp.Duration = 0;
-        jointsTemp.UseGravity = false;
-        jointsTemp.StopOnGround = true;
-        jointsTemp.condition = 0;
-        jointsTemp.takeOffParam.Somersault = 0;
-        jointsTemp.takeOffParam.Tilt = 0;
-        jointsTemp.takeOffParam.Twist = 0;
-        jointsTemp.takeOffParam.HorizontalPosition = 0;
-        jointsTemp.takeOffParam.VerticalPosition = 0;
-        jointsTemp.takeOffParam.SomersaultSpeed = 0;
-        jointsTemp.takeOffParam.TiltSpeed = 0;
-        jointsTemp.takeOffParam.TwistSpeed = 0;
-        jointsTemp.takeOffParam.HorizontalSpeed = 0;
-        jointsTemp.takeOffParam.VerticalSpeed = 0;
-
-        string[] values;
-        int ddlNum = -1;
-
-        WriteToLogFile("For() Start fileLines.Length: " + fileLines.Length.ToString());
-
-        for (int i = 0; i < fileLines.Length; i++)
-        {
-            values = Regex.Split(fileLines[i], ":");
-
-            WriteToLogFile("Regex.Split values: " + values[0]);
-
-            if (values[0].Contains("Duration"))
-            {
-                WriteToLogFile("In Duration");
-
-                jointsTemp.Duration = Utils.ToFloat(values[1]);
-                if (jointsTemp.Duration == -999)
-                    jointsTemp.Duration = MainParameters.Instance.DurationDefault;
-
-                WriteToLogFile("jointsTemp.Duration: " + jointsTemp.Duration.ToString());
-            }
-            else if (values[0].Contains("UseGravity"))
-            {
-                WriteToLogFile("In UseGravity");
-
-                jointsTemp.UseGravity = Utils.ToBool(values[1]);
-                WriteToLogFile("jointsTemp.UseGravity: " + jointsTemp.UseGravity.ToString());
-            }
-            else if (values[0].Contains("StopOnGround"))
-            {
-                WriteToLogFile("In StopOnGround");
-
-                jointsTemp.StopOnGround = Utils.ToBool(values[1]);
-                WriteToLogFile("jointsTemp.StopOnGround: " + jointsTemp.StopOnGround.ToString());
-            }
-            else if (values[0].Contains("Condition"))
-            {
-                WriteToLogFile("In Condition");
-
-                jointsTemp.condition = int.Parse(values[1], CultureInfo.InvariantCulture);
-                if (jointsTemp.condition == -999)
-                    jointsTemp.condition = MainParameters.Instance.conditionDefault;
-
-                WriteToLogFile("jointsTemp.condition: " + jointsTemp.condition.ToString());
-            }
-            else if (values[0].Contains("VerticalSpeed"))
-            {
-                WriteToLogFile("In VerticalSpeed");
-
-                jointsTemp.takeOffParam.VerticalSpeed = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.VerticalSpeed == -999)
-                    jointsTemp.takeOffParam.VerticalSpeed = MainParameters.StrucTakeOffParam.Default.VerticalSpeed;
-
-                WriteToLogFile("jointsTemp.takeOffParam.VerticalSpeed: " + jointsTemp.takeOffParam.VerticalSpeed.ToString());
-            }
-            else if (values[0].Contains("HorizontalSpeed"))
-            {
-                WriteToLogFile("In HorizontalSpeed");
-
-                jointsTemp.takeOffParam.HorizontalSpeed = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.HorizontalSpeed == -999)
-                    jointsTemp.takeOffParam.HorizontalSpeed = MainParameters.StrucTakeOffParam.Default.HorizontalSpeed;
-
-                WriteToLogFile("jointsTemp.takeOffParam.HorizontalSpeed: " + jointsTemp.takeOffParam.HorizontalSpeed.ToString());
-            }
-            else if (values[0].Contains("SomersaultSpeed"))
-            {
-                WriteToLogFile("In SomersaultSpeed");
-
-                jointsTemp.takeOffParam.SomersaultSpeed = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.SomersaultSpeed == -999)
-                    jointsTemp.takeOffParam.SomersaultSpeed = MainParameters.StrucTakeOffParam.Default.SomersaultSpeed;
-
-                WriteToLogFile("jointsTemp.takeOffParam.SomersaultSpeed: " + jointsTemp.takeOffParam.SomersaultSpeed.ToString());
-            }
-            else if (values[0].Contains("TwistSpeed"))
-            {
-                WriteToLogFile("In TwistSpeed");
-
-                jointsTemp.takeOffParam.TwistSpeed = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.TwistSpeed == -999)
-                    jointsTemp.takeOffParam.TwistSpeed = MainParameters.StrucTakeOffParam.Default.TwistSpeed;
-
-                WriteToLogFile("jointsTemp.takeOffParam.TwistSpeed: " + jointsTemp.takeOffParam.TwistSpeed.ToString());
-            }
-            else if (values[0].Contains("Tilt"))
-            {
-                WriteToLogFile("In Tilt");
-
-                jointsTemp.takeOffParam.Tilt = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.Tilt == -999)
-                    jointsTemp.takeOffParam.Tilt = MainParameters.StrucTakeOffParam.Default.Tilt;
-
-                WriteToLogFile("jointsTemp.takeOffParam.Tilt: " + jointsTemp.takeOffParam.Tilt.ToString());
-            }
-            else if (values[0].Contains("Somersault"))
-            {
-                WriteToLogFile("In Somersault");
-
-                jointsTemp.takeOffParam.Somersault = Utils.ToFloat(values[1]);
-                if (jointsTemp.takeOffParam.Somersault == -999)
-                    jointsTemp.takeOffParam.Somersault = MainParameters.StrucTakeOffParam.Default.Somersault;
-
-                WriteToLogFile("jointsTemp.takeOffParam.Somersault: " + jointsTemp.takeOffParam.Somersault.ToString());
-            }
-            else if (values[0].Contains("DDL"))
-            {
-                WriteToLogFile("In DDL");
-
-                jointsTemp.nodes = new MainParameters.StrucNodes[fileLines.Length - i - 1];
-                ddlNum = 0;
-
-                int temp = fileLines.Length - i - 1;
-
-                WriteToLogFile("jointsTemp.nodes: " + temp.ToString());
-            }
-            else if (ddlNum >= 0)
-            {
-                WriteToLogFile("In ddlNum: " + ddlNum.ToString());
-
-                jointsTemp.nodes[ddlNum].ddl = int.Parse(values[0], CultureInfo.InvariantCulture);
-
-                WriteToLogFile("jointsTemp.nodes[ddlNum].ddl: " + jointsTemp.nodes[ddlNum].ddl.ToString());
-
-                jointsTemp.nodes[ddlNum].name = values[1];
-
-                WriteToLogFile("jointsTemp.nodes[ddlNum].name: " + jointsTemp.nodes[ddlNum].name);
-
-                jointsTemp.nodes[ddlNum].interpolation = MainParameters.Instance.interpolationDefault;
-
-                WriteToLogFile("jointsTemp.nodes[ddlNum].interpolation: " + jointsTemp.nodes[ddlNum].interpolation.type.ToString());
-
-                int indexTQ = 2;
-
-                WriteToLogFile("values.Length: " + values.Length.ToString());
-
-                jointsTemp.nodes[ddlNum].T = ExtractDataTQ(values[indexTQ]);
-                jointsTemp.nodes[ddlNum].Q = ExtractDataTQ(values[indexTQ + 1]);
-                jointsTemp.nodes[ddlNum].ddlOppositeSide = -1;
-                ddlNum++;
-            }
-        }
-        jointsTemp.lagrangianModel = (new LagrangianModelSimple()).GetParameters;
-
-        drawManager.SetJoints(1, jointsTemp);
-        WriteToLogFile("Assigned drawManager.Joints(0)");
+        avatarManager.LoadedModels[_avatarIndex].SetJointsNodes(nodes);
 
         return true;
     }
@@ -950,13 +771,13 @@ public class GameManager : MonoBehaviour
 
     public void InterpolationDDL()
     {
-        int n = (int)(drawManager.Joints(0).Duration / drawManager.Joints(0).lagrangianModel.dt)+1;
+        int n = (int)(drawManager.Duration / avatarManager.LoadedModels[0].Joints.lagrangianModel.dt)+1;
         float[] t0 = new float[n];
-        float[,] q0 = new float[drawManager.Joints(0).lagrangianModel.nDDL, n];
+        float[,] q0 = new float[avatarManager.LoadedModels[0].Joints.lagrangianModel.nDDL, n];
 
-        GenerateQ0_s(drawManager.Joints(0), drawManager.Joints(0).Duration, 0, out t0, out q0);
+        GenerateQ0_s(avatarManager.LoadedModels[0].Joints, drawManager.Duration, 0, out t0, out q0);
 
-        drawManager.SetJointsTandQ(0, t0, q0);
+        avatarManager.LoadedModels[0].SetJointsTandQ(t0, q0);
     }
 
     private void GenerateQ0_s(MainParameters.StrucJoints _joints, float tf, int qi, out float[] t0, out float[,] q0)
@@ -997,9 +818,9 @@ public class GameManager : MonoBehaviour
         if (ddl >= 0)
         {
             transform.parent.GetComponentInChildren<AniGraphManager>().DisplayCurveAndNodes(0, ddl, axisRange);
-            if (drawManager.Joints(0).nodes[ddl].ddlOppositeSide >= 0)
+            if (avatarManager.LoadedModels[0].Joints.nodes[ddl].ddlOppositeSide >= 0)
             {
-                transform.parent.GetComponentInChildren<AniGraphManager>().DisplayCurveAndNodes(1, drawManager.Joints(0).nodes[ddl].ddlOppositeSide, true);
+                transform.parent.GetComponentInChildren<AniGraphManager>().DisplayCurveAndNodes(1, avatarManager.LoadedModels[0].Joints.nodes[ddl].ddlOppositeSide, true);
             }
         }
     }

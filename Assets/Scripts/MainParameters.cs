@@ -76,7 +76,9 @@ public class MainParameters
 		}
 	}
 
-    #endregion
+	public float DurationDefault = 1f;
+
+	#endregion
 
 	public enum DataType { Simulation};
 	public enum LagrangianModelNames { Simple, Sasha23ddl};
@@ -312,8 +314,6 @@ public class MainParameters
 		interpolationDefault.type = InterpolationType.Quintic;
 		interpolationDefault.numIntervals = 0;
 		interpolationDefault.slope = new float[] { 0, 0 };
-
-		DurationDefault = 1f;
 
 		// Initialisation des paramètres reliés aux données des angles des articulations.
 

@@ -71,17 +71,19 @@ public class TrainingTooltip : MonoBehaviour
     protected GameObject panelToolTipPrefab;
     public GameObject panelAddRemoveNode;
 
-    protected GameManager gameManager;
-    protected DrawManager drawManager;
-    protected UIManager uiManager;
     protected AniGraphManager aniGraphManager;
+    protected AvatarManager avatarManager;
+    protected DrawManager drawManager;
+    protected GameManager gameManager;
+    protected UIManager uiManager;
 
     private void Start()
     {
-        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
-        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
-        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
         aniGraphManager = ToolBox.GetInstance().GetManager<AniGraphManager>();
+        avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
+        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
 
         gameManager.InitAnimationInfo();
 
@@ -179,7 +181,6 @@ public class TrainingTooltip : MonoBehaviour
         dropDownOptions.Add(languagesUsed.animatorPlaySpeedSlow3);
         dropDownAnimationSpeed.ClearOptions();
         dropDownAnimationSpeed.AddOptions(dropDownOptions);
-
 
         if (languagesUsed.toolTipButtonQuit == "Quit")
         {
@@ -283,7 +284,7 @@ public class TrainingTooltip : MonoBehaviour
     public int FindPreviousNode(int _ddlUsed, float _mousePosSaveX)
     {
         int i = 0;
-        while (i < MainParameters.Instance.joints.nodes[_ddlUsed].T.Length && _mousePosSaveX > MainParameters.Instance.joints.nodes[_ddlUsed].T[i])
+        while (i < avatarManager.LoadedModels[0].Joints.nodes[_ddlUsed].T.Length && _mousePosSaveX > avatarManager.LoadedModels[0].Joints.nodes[_ddlUsed].T[i])
             i++;
         return i - 1;
     }
@@ -296,23 +297,23 @@ public class TrainingTooltip : MonoBehaviour
         gameManager.InterpolationDDL();
         gameManager.DisplayDDL(ddl, true);
 
-        float[] T = new float[MainParameters.Instance.joints.nodes[ddl].T.Length + 1];
-        float[] Q = new float[MainParameters.Instance.joints.nodes[ddl].Q.Length + 1];
+        float[] T = new float[avatarManager.LoadedModels[0].Joints.nodes[ddl].T.Length + 1];
+        float[] Q = new float[avatarManager.LoadedModels[0].Joints.nodes[ddl].Q.Length + 1];
         for (int i = 0; i <= node; i++)
         {
-            T[i] = MainParameters.Instance.joints.nodes[ddl].T[i];
-            Q[i] = MainParameters.Instance.joints.nodes[ddl].Q[i];
+            T[i] = avatarManager.LoadedModels[0].Joints.nodes[ddl].T[i];
+            Q[i] = avatarManager.LoadedModels[0].Joints.nodes[ddl].Q[i];
         }
         T[node + 1] = aniGraphManager.mousePosSaveX;
         Q[node + 1] = aniGraphManager.mousePosSaveY * Mathf.PI / 180;
 
-        for (int i = node + 1; i < MainParameters.Instance.joints.nodes[ddl].T.Length; i++)
+        for (int i = node + 1; i < avatarManager.LoadedModels[0].Joints.nodes[ddl].T.Length; i++)
         {
-            T[i + 1] = MainParameters.Instance.joints.nodes[ddl].T[i];
-            Q[i + 1] = MainParameters.Instance.joints.nodes[ddl].Q[i];
+            T[i + 1] = avatarManager.LoadedModels[0].Joints.nodes[ddl].T[i];
+            Q[i + 1] = avatarManager.LoadedModels[0].Joints.nodes[ddl].Q[i];
         }
-        MainParameters.Instance.joints.nodes[ddl].T = MathFunc.MatrixCopy(T);
-        MainParameters.Instance.joints.nodes[ddl].Q = MathFunc.MatrixCopy(Q);
+        avatarManager.LoadedModels[0].Joints.nodes[ddl].T = MathFunc.MatrixCopy(T);
+        avatarManager.LoadedModels[0].Joints.nodes[ddl].Q = MathFunc.MatrixCopy(Q);
 
         gameManager.InterpolationDDL();
         gameManager.DisplayDDL(ddl, false);
@@ -324,7 +325,7 @@ public class TrainingTooltip : MonoBehaviour
     {
         int ddl = aniGraphManager.ddlUsed;
 
-        if (MainParameters.Instance.joints.nodes[ddl].T.Length < 3 || MainParameters.Instance.joints.nodes[ddl].Q.Length < 3)
+        if (avatarManager.LoadedModels[0].Joints.nodes[ddl].T.Length < 3 || avatarManager.LoadedModels[0].Joints.nodes[ddl].Q.Length < 3)
         {
             aniGraphManager.mouseLeftButtonON = false;
             aniGraphManager.mouseRightButtonON = false;
@@ -334,20 +335,20 @@ public class TrainingTooltip : MonoBehaviour
 
         int node = aniGraphManager.FindNearestNode();
 
-        float[] T = new float[MainParameters.Instance.joints.nodes[ddl].T.Length - 1];
-        float[] Q = new float[MainParameters.Instance.joints.nodes[ddl].Q.Length - 1];
+        float[] T = new float[avatarManager.LoadedModels[0].Joints.nodes[ddl].T.Length - 1];
+        float[] Q = new float[avatarManager.LoadedModels[0].Joints.nodes[ddl].Q.Length - 1];
         for (int i = 0; i < node; i++)
         {
-            T[i] = MainParameters.Instance.joints.nodes[ddl].T[i];
-            Q[i] = MainParameters.Instance.joints.nodes[ddl].Q[i];
+            T[i] = avatarManager.LoadedModels[0].Joints.nodes[ddl].T[i];
+            Q[i] = avatarManager.LoadedModels[0].Joints.nodes[ddl].Q[i];
         }
-        for (int i = node + 1; i < MainParameters.Instance.joints.nodes[ddl].T.Length; i++)
+        for (int i = node + 1; i < avatarManager.LoadedModels[0].Joints.nodes[ddl].T.Length; i++)
         {
-            T[i - 1] = MainParameters.Instance.joints.nodes[ddl].T[i];
-            Q[i - 1] = MainParameters.Instance.joints.nodes[ddl].Q[i];
+            T[i - 1] = avatarManager.LoadedModels[0].Joints.nodes[ddl].T[i];
+            Q[i - 1] = avatarManager.LoadedModels[0].Joints.nodes[ddl].Q[i];
         }
-        MainParameters.Instance.joints.nodes[ddl].T = MathFunc.MatrixCopy(T);
-        MainParameters.Instance.joints.nodes[ddl].Q = MathFunc.MatrixCopy(Q);
+        avatarManager.LoadedModels[0].Joints.nodes[ddl].T = MathFunc.MatrixCopy(T);
+        avatarManager.LoadedModels[0].Joints.nodes[ddl].Q = MathFunc.MatrixCopy(Q);
 
         gameManager.InterpolationDDL();
         gameManager.DisplayDDL(ddl, false);

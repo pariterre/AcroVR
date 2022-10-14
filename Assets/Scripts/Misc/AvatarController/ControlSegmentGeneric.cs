@@ -95,8 +95,8 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
     }
 
     protected float CurrentAngle {
-        get { return MainParameters.Instance.joints.nodes[avatarIndex].Q[node]; } 
-        set { MainParameters.Instance.joints.nodes[avatarIndex].Q[node] = value; }
+        get { return avatarManager.LoadedModels[0].Joints.nodes[avatarIndex].Q[node]; } 
+        set { avatarManager.LoadedModels[0].Joints.nodes[avatarIndex].Q[node] = value; }
     }
 
     void OnMouseDown()

@@ -377,9 +377,9 @@ public class DrawManager : MonoBehaviour
         int[] translationS = MathFunc.Sign(translation);
         for (int i = 0; i < translation.Length; i++) translation[i] = Math.Abs(translation[i]);
 
-        float rotRadians = _joints.takeOffParam.Somersault * (float)Math.PI / 180;
+        float rotRadians = TakeOffParameters.Somersault * (float)Math.PI / 180;
 
-        float tilt = _joints.takeOffParam.Tilt;
+        float tilt = TakeOffParameters.Tilt;
         if (tilt == 90)
             tilt = 90.001f;
         else if (tilt == -90)
@@ -396,16 +396,16 @@ public class DrawManager : MonoBehaviour
         //q0dot[8] = verticalSpeed
         //q0dot[9] = somersaultSpeed
         //q0dot[11] = twistSpeed
-        q0dot[Math.Abs(_joints.lagrangianModel.root_foreward) - 1] = _joints.takeOffParam.HorizontalSpeed;                       // m/s
-        q0dot[Math.Abs(_joints.lagrangianModel.root_upward) - 1] = _joints.takeOffParam.VerticalSpeed;                                // m/s
-        q0dot[Math.Abs(_joints.lagrangianModel.root_somersault) - 1] = _joints.takeOffParam.SomersaultSpeed * 2 * (float)Math.PI;     // radians/s
-        q0dot[Math.Abs(_joints.lagrangianModel.root_twist) - 1] = _joints.takeOffParam.TwistSpeed * 2 * (float)Math.PI;               // radians/s
+        q0dot[Math.Abs(_joints.lagrangianModel.root_foreward) - 1] = TakeOffParameters.HorizontalSpeed;                       // m/s
+        q0dot[Math.Abs(_joints.lagrangianModel.root_upward) - 1] = TakeOffParameters.VerticalSpeed;                                // m/s
+        q0dot[Math.Abs(_joints.lagrangianModel.root_somersault) - 1] = TakeOffParameters.SomersaultSpeed * 2 * (float)Math.PI;     // radians/s
+        q0dot[Math.Abs(_joints.lagrangianModel.root_twist) - 1] = TakeOffParameters.TwistSpeed * 2 * (float)Math.PI;               // radians/s
 
 
         // q0[11] = twist
         // q0dot[10] = tiltSpeed
-        q0[Math.Abs(_joints.lagrangianModel.root_twist) - 1] = _joints.takeOffParam.Twist * (float)Math.PI / 180;
-        q0dot[Math.Abs(_joints.lagrangianModel.root_tilt) - 1] = _joints.takeOffParam.TiltSpeed * 2 * (float)Math.PI;
+        q0[Math.Abs(_joints.lagrangianModel.root_twist) - 1] = TakeOffParameters.Twist * (float)Math.PI / 180;
+        q0dot[Math.Abs(_joints.lagrangianModel.root_tilt) - 1] = TakeOffParameters.TiltSpeed * 2 * (float)Math.PI;
 
 
         double[] Q = new double[_joints.lagrangianModel.nDDL];
@@ -437,8 +437,8 @@ public class DrawManager : MonoBehaviour
             q0dot[translation[i] - 1] = q0dot[translation[i] - 1] * translationS[i];
         }
 
-        q0[Math.Abs(_joints.lagrangianModel.root_foreward) - 1] += _joints.takeOffParam.HorizontalPosition;
-        q0[Math.Abs(_joints.lagrangianModel.root_upward) - 1] += _joints.takeOffParam.VerticalPosition;
+        q0[Math.Abs(_joints.lagrangianModel.root_foreward) - 1] += TakeOffParameters.HorizontalPosition;
+        q0[Math.Abs(_joints.lagrangianModel.root_upward) - 1] += TakeOffParameters.VerticalPosition;
 
         double[] x0 = new double[_joints.lagrangianModel.nDDL * 2];
         for (int i = 0; i < _joints.lagrangianModel.nDDL; i++)
@@ -522,7 +522,7 @@ public class DrawManager : MonoBehaviour
             }
         }
 
-        float numSomersault = MathFunc.MatrixGetColumn(rotAbs, 0).Max() + _joints.takeOffParam.Somersault / 360;
+        float numSomersault = MathFunc.MatrixGetColumn(rotAbs, 0).Max() + TakeOffParameters.Somersault / 360;
         DisplayNewMessage(true, true, string.Format(" {0} = {1:0.00}", MainParameters.Instance.languages.Used.displayMsgNumberSomersaults, numSomersault));
         DisplayNewMessage(false, true, string.Format(" {0} = {1:0.00}", MainParameters.Instance.languages.Used.displayMsgNumberTwists, MathFunc.MatrixGetColumn(rotAbs, 2).Max()));
         DisplayNewMessage(false, true, string.Format(" {0} = {1:0.00}", MainParameters.Instance.languages.Used.displayMsgFinalTwist, _joints.rot[tIndex - 1, 2]));

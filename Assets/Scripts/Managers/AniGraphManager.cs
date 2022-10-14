@@ -10,6 +10,7 @@ using UnityEditor;
 
 public class AniGraphManager : MonoBehaviour
 {
+    protected AvatarManager avatarManager;
     protected DrawManager drawManager;
     protected GameManager gameManager;
     protected UIManager uiManager;
@@ -63,6 +64,7 @@ public class AniGraphManager : MonoBehaviour
 
     void Start()
     {
+        avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
         gameManager = ToolBox.GetInstance().GetManager<GameManager>();
         uiManager = ToolBox.GetInstance().GetManager<UIManager>();
@@ -84,7 +86,7 @@ public class AniGraphManager : MonoBehaviour
 
     void Update()
     {
-        if (drawManager.Joints(0).nodes == null) return;
+        if (avatarManager.LoadedModels[0].Joints.nodes == null) return;
 
         if (graph && uiManager.GetCurrentTab() == 2)
         {
@@ -109,10 +111,10 @@ public class AniGraphManager : MonoBehaviour
             {
                 graph.DataSource.StartBatch();
                 graph.DataSource.ClearCategory(nodesTemp1Category);
-                if (drawManager.Joints(0).nodes[ddlUsed].interpolation.type == MainParameters.InterpolationType.Quintic)
+                if (avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].interpolation.type == MainParameters.InterpolationType.Quintic)
                     graph.DataSource.AddPointToCategory(nodesTemp1Category, mousePosX, mousePosY);
                 else
-                    graph.DataSource.AddPointToCategory(nodesTemp1Category, drawManager.Joints(0).nodes[ddlUsed].T[nodeUsed], mousePosY);
+                    graph.DataSource.AddPointToCategory(nodesTemp1Category, avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[nodeUsed], mousePosY);
                 graph.DataSource.EndBatch();
             }
 
@@ -120,23 +122,23 @@ public class AniGraphManager : MonoBehaviour
             {
                 RemoveNodesTemp();
 
-                if (drawManager.Joints(0).nodes[ddlUsed].interpolation.type == MainParameters.InterpolationType.Quintic)
+                if (avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].interpolation.type == MainParameters.InterpolationType.Quintic)
                 {
-                    if ((nodeUsed <= 0 && mousePosX >= drawManager.Joints(0).nodes[ddlUsed].T[1]) || (nodeUsed >= numNodes - 1 && mousePosX <= drawManager.Joints(0).nodes[ddlUsed].T[nodeUsed - 1]) ||
-                    (nodeUsed > 0 && nodeUsed < numNodes - 1 && (mousePosX <= drawManager.Joints(0).nodes[ddlUsed].T[nodeUsed - 1] || mousePosX >= drawManager.Joints(0).nodes[ddlUsed].T[nodeUsed + 1])))
+                    if ((nodeUsed <= 0 && mousePosX >= avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[1]) || (nodeUsed >= numNodes - 1 && mousePosX <= avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[nodeUsed - 1]) ||
+                    (nodeUsed > 0 && nodeUsed < numNodes - 1 && (mousePosX <= avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[nodeUsed - 1] || mousePosX >= avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[nodeUsed + 1])))
                     {
                         return;
                     }
 
-                    drawManager.Joints(0).nodes[ddlUsed].T[nodeUsed] = (float)mousePosX;
+                    avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[nodeUsed] = (float)mousePosX;
                 }
 
-                drawManager.Joints(0).nodes[ddlUsed].Q[nodeUsed] = (float)mousePosY / Mathf.Rad2Deg;
+                avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].Q[nodeUsed] = (float)mousePosY / Mathf.Rad2Deg;
                 gameManager.InterpolationDDL();
                 gameManager.DisplayDDL(ddlUsed, true);
 
                 drawManager.StartEditing();
-                drawManager.SetCurrrentFrame(0, (int)(drawManager.Joints(0).nodes[ddlUsed].T[nodeUsed] / drawManager.FrameRate));
+                drawManager.SetCurrrentFrame(0, (int)(avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[nodeUsed] / drawManager.FrameRate));
                 drawManager.StopEditing();
             }
         }
@@ -148,11 +150,11 @@ public class AniGraphManager : MonoBehaviour
         graph.DataSource.ClearCategory(nodesTemp1Category);
         graph.DataSource.ClearCategory(nodesTemp2Category);
         graph.DataSource.ClearCategory(nodesCategories[0]);
-        for (int i = 0; i < drawManager.Joints(0).nodes[ddlUsed].T.Length; i++)
+        for (int i = 0; i < avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T.Length; i++)
         {
-            float value = drawManager.Joints(0).nodes[ddlUsed].Q[i] * Mathf.Rad2Deg;
-            if (drawManager.Joints(0).nodes[ddlUsed].T[i] <= axisXmax && value >= axisYmin && value <= axisYmax)
-                graph.DataSource.AddPointToCategory(nodesCategories[0], drawManager.Joints(0).nodes[ddlUsed].T[i], value);
+            float value = avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].Q[i] * Mathf.Rad2Deg;
+            if (avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[i] <= axisXmax && value >= axisYmin && value <= axisYmax)
+                graph.DataSource.AddPointToCategory(nodesCategories[0], avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[i], value);
         }
         graph.DataSource.EndBatch();
         mouseLeftButtonON = false;
@@ -160,8 +162,8 @@ public class AniGraphManager : MonoBehaviour
 
     public void DisplayCurveAndNodes(int curve, int ddl, bool axisRange)
     {
-        if (drawManager.Joints(0).nodes == null) return;
-        if (drawManager.Joints(0).t0 == null) return;
+        if (avatarManager.LoadedModels[0].Joints.nodes == null) return;
+        if (avatarManager.LoadedModels[0].Joints.t0 == null) return;
 
         if (graph == null) return;
 
@@ -172,7 +174,7 @@ public class AniGraphManager : MonoBehaviour
         if (curve <= 0)
         {
             ddlUsed = ddl;
-            numNodes = drawManager.Joints(0).nodes[ddl].T.Length;
+            numNodes = avatarManager.LoadedModels[0].Joints.nodes[ddl].T.Length;
             graph.DataSource.ClearCategory(dataCategories[1]);
             graph.DataSource.ClearCategory(nodesCategories[1]);
         }
@@ -181,25 +183,25 @@ public class AniGraphManager : MonoBehaviour
         float q0Max = -360;
         float value;
 
-        int t0Length = drawManager.Joints(0).t0.Length;
+        int t0Length = avatarManager.LoadedModels[0].Joints.t0.Length;
         for (int i = 0; i < t0Length; i++)
         {
-            value = drawManager.Joints(0).q0[ddl, i] * Mathf.Rad2Deg;
+            value = avatarManager.LoadedModels[0].Joints.q0[ddl, i] * Mathf.Rad2Deg;
             if (!axisRange && value < axisYmin)
                 value = axisYmin;
             if (!axisRange && value > axisYmax)
                 value = axisYmax;
-            if (axisRange || drawManager.Joints(0).t0[i] <= axisXmax)
-                graph.DataSource.AddPointToCategory(dataCategories[curve], drawManager.Joints(0).t0[i], value);
+            if (axisRange || avatarManager.LoadedModels[0].Joints.t0[i] <= axisXmax)
+                graph.DataSource.AddPointToCategory(dataCategories[curve], avatarManager.LoadedModels[0].Joints.t0[i], value);
             if (value < q0Min) q0Min = value;
             if (value > q0Max) q0Max = value;
         }
 
-        for (int i = 0; i < drawManager.Joints(0).nodes[ddl].T.Length; i++)
+        for (int i = 0; i < avatarManager.LoadedModels[0].Joints.nodes[ddl].T.Length; i++)
         {
-            value = drawManager.Joints(0).nodes[ddl].Q[i] * Mathf.Rad2Deg;
-            if (axisRange || (drawManager.Joints(0).nodes[ddl].T[i] <= axisXmax && value >= axisYmin && value <= axisYmax))
-                graph.DataSource.AddPointToCategory(nodesCategories[curve], drawManager.Joints(0).nodes[ddl].T[i], value);
+            value = avatarManager.LoadedModels[0].Joints.nodes[ddl].Q[i] * Mathf.Rad2Deg;
+            if (axisRange || (avatarManager.LoadedModels[0].Joints.nodes[ddl].T[i] <= axisXmax && value >= axisYmin && value <= axisYmax))
+                graph.DataSource.AddPointToCategory(nodesCategories[curve], avatarManager.LoadedModels[0].Joints.nodes[ddl].T[i], value);
         }
 
         MaterialTiling tiling = new MaterialTiling(false, 45.5f);
@@ -221,8 +223,8 @@ public class AniGraphManager : MonoBehaviour
 
         if (axisRange)
         {
-            axisXmin = Mathf.Round(drawManager.Joints(0).t0[0] - 0.5f);
-            axisXmax = Mathf.Round(drawManager.Joints(0).t0[t0Length - 1] + 0.5f);
+            axisXmin = Mathf.Round(avatarManager.LoadedModels[0].Joints.t0[0] - 0.5f);
+            axisXmax = Mathf.Round(avatarManager.LoadedModels[0].Joints.t0[t0Length - 1] + 0.5f);
             axisXmaxDefault = axisXmax;
             graph.DataSource.HorizontalViewOrigin = axisXmin;
             graph.DataSource.HorizontalViewSize = axisXmax - axisXmin;
@@ -274,13 +276,13 @@ public class AniGraphManager : MonoBehaviour
 
         for (int i = 0; i < numNodes; i++)
         {
-            float value = drawManager.Joints(0).nodes[ddlUsed].Q[i] * Mathf.Rad2Deg;
-            if (drawManager.Joints(0).nodes[ddlUsed].T[i] <= axisXmax && value >= axisYmin && value <= axisYmax)
+            float value = avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].Q[i] * Mathf.Rad2Deg;
+            if (avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[i] <= axisXmax && value >= axisYmin && value <= axisYmax)
             {
                 if (i != nodeUsed)
-                    graph.DataSource.AddPointToCategory(nodesCategories[0], drawManager.Joints(0).nodes[ddlUsed].T[i], value);
+                    graph.DataSource.AddPointToCategory(nodesCategories[0], avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[i], value);
                 else
-                    graph.DataSource.AddPointToCategory(nodesTemp2Category, drawManager.Joints(0).nodes[ddlUsed].T[i], value);
+                    graph.DataSource.AddPointToCategory(nodesTemp2Category, avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[i], value);
             }
         }
 
@@ -292,10 +294,10 @@ public class AniGraphManager : MonoBehaviour
         int node = 0;
         float minDistanceToNode = 99999;
 
-        for (int i = 0; i < drawManager.Joints(0).nodes[ddlUsed].T.Length; i++)
+        for (int i = 0; i < avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T.Length; i++)
         {
-            float distanceToNode = Mathf.Pow((mousePosSaveX - drawManager.Joints(0).nodes[ddlUsed].T[i]) * factorGraphRatioX, 2) +
-                Mathf.Pow((mousePosSaveY - drawManager.Joints(0).nodes[ddlUsed].Q[i] * Mathf.Rad2Deg) * factorGraphRatioY, 2);
+            float distanceToNode = Mathf.Pow((mousePosSaveX - avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[i]) * factorGraphRatioX, 2) +
+                Mathf.Pow((mousePosSaveY - avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].Q[i] * Mathf.Rad2Deg) * factorGraphRatioY, 2);
             if (distanceToNode < minDistanceToNode)
             {
                 node = i;

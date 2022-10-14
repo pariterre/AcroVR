@@ -1,21 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using System.Globalization;
+﻿using UnityEngine;
 
 public class TakeOffParamF_s : MonoBehaviour
 {
-    protected GameManager gameManager;
     protected DrawManager drawManager;
+    protected GameManager gameManager;
     protected UIManager uiManager;
 
     public BaseProfile bp;
 
     void Start()
     {
-        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
         uiManager = ToolBox.GetInstance().GetManager<UIManager>();
 
         CheckTakeOffParam();
@@ -23,7 +19,7 @@ public class TakeOffParamF_s : MonoBehaviour
 
     public void DropDownDDLNamesOnValueChanged(int value)
     {
-        MainParameters.Instance.joints.condition = value;
+        drawManager.SetPresetCondition(value);
 
         UpdatePositions(value);
     }

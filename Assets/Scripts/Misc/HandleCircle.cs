@@ -6,12 +6,19 @@ public class HandleCircle : MonoBehaviour
 {
     [HideInInspector] public double[] dof;
 
+    protected AvatarManager avatarManager;
+
     private Vector3 mouseDistance;
     private Vector3 lastPosition;
     private int directionRotate = 0;
     private GameObject girl;
     public GameObject target;
     public int node = 0;
+
+    void Start()
+    {
+        avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
+    }
 
     public void Init(GameObject _girl, GameObject _target, double[] _dof)
     {
@@ -115,7 +122,7 @@ public class HandleCircle : MonoBehaviour
         else
             dof[_dof] = -_value / 30;
 
-        MainParameters.Instance.joints.nodes[_dof].Q[node] = (float)dof[_dof];
+        avatarManager.LoadedModels[0].Joints.nodes[_dof].Q[node] = (float)dof[_dof];
         ToolBox.GetInstance().GetManager<GameManager>().InterpolationDDL();
         ToolBox.GetInstance().GetManager<GameManager>().DisplayDDL(_dof, true);
     }

@@ -17,6 +17,29 @@ public class AvatarManager : MonoBehaviour
 
         public bool IsLoaded { get => gameObject != null; }
 
+        public void SetJointsTandQ(float[] t0, float[,] q0)
+        {
+            // TODO
+            Debug.Log("Make sure this _joints is actually a shallow copy to the actual Joints so 'nodes' changes");
+            var _joints = Joints;
+            _joints.t0 = MathFunc.MatrixCopy(t0);
+            _joints.q0 = MathFunc.MatrixCopy(q0);
+        }
+        public void SetJointsNodes(MainParameters.StrucNodes[] _nodes)
+        {
+            // TODO
+            Debug.Log("Make sure this _joints is actually a shallow copy to the actual Joints so 'nodes' changes");
+            var _joints = Joints;
+            _joints.nodes = _nodes; 
+        }
+        public void SetJointsLagrangianModel(LagrangianModelManager.StrucLagrangianModel _model)
+        {
+            // TODO
+            Debug.Log("Make sure this _joints is actually a shallow copy to the actual Joints so 'nodes' changes");
+            var _joints = Joints;
+            _joints.lagrangianModel = _model;
+        }
+
         // Root
         public GameObject Hip { get; protected set; }
         public void SetHip(GameObject _hip) { Hip = _hip; }
@@ -312,11 +335,3 @@ public class AvatarManager : MonoBehaviour
         }
     }
 }
-
-
-//public void SetJointsTandQ(int _avatarIndex, float[] t0, float[,] q0)
-//{
-//    avatarProperties[_avatarIndex].Joints.t0 = MathFunc.MatrixCopy(t0);
-//    avatarProperties[_avatarIndex].Joints.q0 = MathFunc.MatrixCopy(q0);
-//}
-//public void SetJointsNodes(int _avatarIndex, MainParameters.StrucNodes[] _nodes) { avatarProperties[_avatarIndex].Joints.nodes = _nodes; }
