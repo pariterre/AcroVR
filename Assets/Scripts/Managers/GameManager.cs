@@ -375,9 +375,9 @@ public class GameManager : MonoBehaviour
         AnimationInfo info = new AnimationInfo();
 
         info.Objective = "default";
-        info.Duration = drawManager.Duration;
-        info.UseGravity = drawManager.UseGravity;
-        info.StopOnGround = drawManager.StopOnGround;
+        info.Duration = drawManager.TakeOffParameters.Duration;
+        info.UseGravity = drawManager.TakeOffParameters.UseGravity;
+        info.StopOnGround = drawManager.TakeOffParameters.StopOnGround;
         info.Condition = drawManager.PresetCondition;
         info.Somersault = drawManager.TakeOffParameters.Somersault;
         info.Tilt = drawManager.TakeOffParameters.Tilt;
@@ -409,7 +409,7 @@ public class GameManager : MonoBehaviour
     {
         string fileLines = string.Format(
             "Duration: {0}{1}Condition: {2}{3}VerticalSpeed: {4:0.000}{5}AnteroposteriorSpeed: {6:0.000}{7}SomersaultSpeed: {8:0.000}{9}TwistSpeed: {10:0.000}{11}Tilt: {12:0.000}{13}Rotation: {14:0.000}{15}{16}",
-            drawManager.Duration, System.Environment.NewLine,
+            drawManager.TakeOffParameters.Duration, System.Environment.NewLine,
             drawManager.PresetCondition, System.Environment.NewLine,
             drawManager.TakeOffParameters.Somersault, System.Environment.NewLine,
             drawManager.TakeOffParameters.Tilt, System.Environment.NewLine,
@@ -463,8 +463,6 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
-        // TODO:
-        Debug.Log("Make sure this _joints is actually a shallow copy to the actual Joints so 'nodes' changes");
         MainParameters.StrucTakeOffParam _takeOff = MainParameters.StrucTakeOffParam.Default;
         string[] values;
         int ddlNum = -1;
@@ -483,20 +481,20 @@ public class GameManager : MonoBehaviour
                 var _duration = Utils.ToFloat(values[1]);
                 if (_duration == -999)
                     _duration = MainParameters.StrucTakeOffParam.Default.Duration;
-                drawManager.SetDuration(_duration);
-                WriteToLogFile("jointsTemp.Duration: " + drawManager.Duration.ToString());
+                drawManager.TakeOffParameters.Duration = _duration;
+                WriteToLogFile("jointsTemp.Duration: " + drawManager.TakeOffParameters.Duration.ToString());
             }
             else if (values[0].Contains("UseGravity"))
             {
                 WriteToLogFile("In UseGravity");
-                drawManager.SetUseGravity(Utils.ToBool(values[1]));
-                WriteToLogFile("jointsTemp.UseGravity " + drawManager.UseGravity.ToString());
+                drawManager.TakeOffParameters.UseGravity = Utils.ToBool(values[1]);
+                WriteToLogFile("jointsTemp.UseGravity " + drawManager.TakeOffParameters.UseGravity.ToString());
             }
             else if (values[0].Contains("StopOnGround"))
             {
                 WriteToLogFile("In StopOnGround");
-                drawManager.SetStopOnGround(Utils.ToBool(values[1]));
-                WriteToLogFile("jointsTemp.StopOnGround " + drawManager.StopOnGround.ToString());
+                drawManager.TakeOffParameters.StopOnGround = Utils.ToBool(values[1]);
+                WriteToLogFile("jointsTemp.StopOnGround " + drawManager.TakeOffParameters.StopOnGround.ToString());
             }
             else if (values[0].Contains("Condition"))
             {
@@ -717,7 +715,11 @@ public class GameManager : MonoBehaviour
             {
                 nodes[nDDL].ddl = i;
                 nodes[nDDL].name = avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.ddlName[i - 1];
-                nodes[nDDL].T = new float[3] { drawManager.Duration * 0.25f, drawManager.Duration * 0.5f, drawManager.Duration * 0.75f };
+                nodes[nDDL].T = new float[3] { 
+                    drawManager.TakeOffParameters.Duration * 0.25f, 
+                    drawManager.TakeOffParameters.Duration * 0.5f,
+                    drawManager.TakeOffParameters.Duration * 0.75f 
+                };
                 nodes[nDDL].Q = new float[3] { 0, 0, 0 };
                 nodes[nDDL].interpolation = interpolation;
                 nodes[nDDL].ddlOppositeSide = -1;
@@ -771,11 +773,11 @@ public class GameManager : MonoBehaviour
 
     public void InterpolationDDL()
     {
-        int n = (int)(drawManager.Duration / avatarManager.LoadedModels[0].Joints.lagrangianModel.dt)+1;
+        int n = (int)(drawManager.TakeOffParameters.Duration / avatarManager.LoadedModels[0].Joints.lagrangianModel.dt)+1;
         float[] t0 = new float[n];
         float[,] q0 = new float[avatarManager.LoadedModels[0].Joints.lagrangianModel.nDDL, n];
 
-        GenerateQ0_s(avatarManager.LoadedModels[0].Joints, drawManager.Duration, 0, out t0, out q0);
+        GenerateQ0_s(avatarManager.LoadedModels[0].Joints, drawManager.TakeOffParameters.Duration, 0, out t0, out q0);
 
         avatarManager.LoadedModels[0].SetJointsTandQ(t0, q0);
     }

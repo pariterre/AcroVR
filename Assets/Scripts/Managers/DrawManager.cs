@@ -56,13 +56,6 @@ public class DrawManager : MonoBehaviour
     public float timeFrame = 0;
     float timeStarted = 0;
     float factorPlaySpeed = 1f;
-    public float Duration { get; protected set; } = 0f;
-    public void SetDuration(float _value) { Duration = _value; }
-    public bool StopOnGround { get; protected set; } = true;
-    public void SetStopOnGround(bool _value) { StopOnGround = _value; }
-
-    public bool UseGravity { get; protected set; } = false;
-    public void SetUseGravity(bool _value) { UseGravity = _value; }
 
     public int PresetCondition { get; protected set; } = 0;
     public void SetPresetCondition(int _value) { PresetCondition = _value; }
@@ -72,7 +65,7 @@ public class DrawManager : MonoBehaviour
     string playMode = MainParameters.Instance.languages.Used.animatorPlayModeSimulation;
     
     public void Pause() { avatarProperties[0].IsPaused = true; avatarProperties[1].IsPaused = true; }
-    public bool IsPaused { get => avatarProperties[0].IsPaused || avatarProperties[1].IsPaused; }
+    public bool IsPaused { get => avatarProperties[0].IsPaused; }
     public void Resume(){ avatarProperties[0].IsPaused = false; avatarProperties[1].IsPaused = false; }
     public bool IsEditing { get; protected set; } = false;
 
@@ -136,8 +129,9 @@ public class DrawManager : MonoBehaviour
             pauseStart = 0;
         }
 
-        AdvanceTime(0);
-        AdvanceTime(1);
+        for (int i=0; i<2; ++i)
+            AdvanceTime(i);
+    
     }
 
     void AdvanceTime(int _avatarIndex)
@@ -163,7 +157,7 @@ public class DrawManager : MonoBehaviour
 
         if (
             avatarProperties[_avatarIndex].CurrentFrame != 0 
-            && StopOnGround && 
+            && TakeOffParameters.StopOnGround && 
             !IsGestureMode && 
             avatarManager.FeetHeight() < avatarProperties[_avatarIndex].InitialFeetHeight
         ) 
@@ -227,7 +221,7 @@ public class DrawManager : MonoBehaviour
 
     public void ShowGround(){
         if (Ground != null)
-            Ground.SetActive(StopOnGround);
+            Ground.SetActive(TakeOffParameters.StopOnGround);
     }
 
     public void SetAnimationSpeed(float speed)
@@ -300,7 +294,7 @@ public class DrawManager : MonoBehaviour
             if (joints.tc > 0)                          // Il y a eu contact avec le sol, alors seulement une partie des données sont utilisé
                 timeFrame = joints.tc / (NumberFrames - 1);
             else                                        // Aucun contact avec le sol, alors toutes les données sont utilisé
-                timeFrame = Duration / (NumberFrames - 1);
+                timeFrame = TakeOffParameters.Duration / (NumberFrames - 1);
         }
         else
             timeFrame = 0;
@@ -451,9 +445,9 @@ public class DrawManager : MonoBehaviour
 
         Options options = new Options();
         options.InitialStep = _joints.lagrangianModel.dt;
-        var sol = Ode.RK547M(_joints, 0, Duration + _joints.lagrangianModel.dt, new Vector(x0), ShortDynamics, options);
+        var sol = Ode.RK547M(_joints, 0, TakeOffParameters.Duration + _joints.lagrangianModel.dt, new Vector(x0), ShortDynamics, options);
 
-        var points = sol.SolveFromToStep(0, Duration + _joints.lagrangianModel.dt, _joints.lagrangianModel.dt).ToArray();
+        var points = sol.SolveFromToStep(0, TakeOffParameters.Duration + _joints.lagrangianModel.dt, _joints.lagrangianModel.dt).ToArray();
 
         // test0 = point[51]
         // test1 = point[251]
@@ -485,7 +479,7 @@ public class DrawManager : MonoBehaviour
             avatarManager.EvaluateTags(qq, out tagX, out tagY, out tagZ);
 
             // Cut the trial when the feet crosses the ground (vertical axis = 0)
-            if (!IsGestureMode && i > 0 && StopOnGround && UseGravity && tagZ.Min() < avatarProperties[_avatarIndex].InitialFeetHeight)
+            if (!IsGestureMode && i > 0 && TakeOffParameters.StopOnGround && TakeOffParameters.UseGravity && tagZ.Min() < avatarProperties[_avatarIndex].InitialFeetHeight)
             {
                 _joints.tc = (float)t[i];
                 break;
@@ -554,7 +548,7 @@ public class DrawManager : MonoBehaviour
         NLEffects1Simple nlEffects1Simple = new NLEffects1Simple();
         n1 = nlEffects1Simple.NLEffects1(q, qdot);
 
-        if (!UseGravity)
+        if (!TakeOffParameters.UseGravity)
         {
             double[] n1zero;
             n1zero = nlEffects1Simple.NLEffects1(q, new double[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });

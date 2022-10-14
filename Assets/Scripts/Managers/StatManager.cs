@@ -109,9 +109,9 @@ public class StatManager : MonoBehaviour
         replayInfo.player = info;
 
         replayInfo.replay.Objective = "default";
-        replayInfo.replay.Duration = drawManager.Duration;
-        replayInfo.replay.UseGravity = drawManager.UseGravity;
-        replayInfo.replay.StopOnGround = drawManager.StopOnGround;
+        replayInfo.replay.Duration = drawManager.TakeOffParameters.Duration;
+        replayInfo.replay.UseGravity = drawManager.TakeOffParameters.UseGravity;
+        replayInfo.replay.StopOnGround = drawManager.TakeOffParameters.StopOnGround;
 
         replayInfo.replay.Somersault = drawManager.TakeOffParameters.Somersault;
         replayInfo.replay.Tilt = drawManager.TakeOffParameters.Tilt;

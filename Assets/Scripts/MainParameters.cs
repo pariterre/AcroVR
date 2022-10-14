@@ -85,7 +85,7 @@ public class MainParameters
 
     #region Joints
     /// <summary> Description de la structure contenant les données des angles des articulations (DDL). </summary>
-    public struct StrucJoints
+    public class StrucJoints
 	{
 		/// <summary> Nom du fichier de données utilisé. </summary>
 		public string fileName;

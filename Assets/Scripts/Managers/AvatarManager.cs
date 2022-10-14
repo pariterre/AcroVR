@@ -23,25 +23,16 @@ public class AvatarManager : MonoBehaviour
 
         public void SetJointsTandQ(float[] t0, float[,] q0)
         {
-            // TODO
-            Debug.Log("Make sure this _joints is actually a shallow copy to the actual Joints so 'nodes' changes");
-            var _joints = Joints;
-            _joints.t0 = MathFunc.MatrixCopy(t0);
-            _joints.q0 = MathFunc.MatrixCopy(q0);
+            Joints.t0  = MathFunc.MatrixCopy(t0);
+            Joints.q0 = MathFunc.MatrixCopy(q0);
         }
         public void SetJointsNodes(MainParameters.StrucNodes[] _nodes)
         {
-            // TODO
-            Debug.Log("Make sure this _joints is actually a shallow copy to the actual Joints so 'nodes' changes");
-            var _joints = Joints;
-            _joints.nodes = _nodes; 
+            Joints.nodes = _nodes; 
         }
         public void SetJointsLagrangianModel(LagrangianModelManager.StrucLagrangianModel _model)
         {
-            // TODO
-            Debug.Log("Make sure this _joints is actually a shallow copy to the actual Joints so 'nodes' changes");
-            var _joints = Joints;
-            _joints.lagrangianModel = _model;
+            Joints.lagrangianModel = _model;
         }
 
         // Root

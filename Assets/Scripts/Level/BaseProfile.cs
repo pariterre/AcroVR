@@ -292,8 +292,8 @@ public class BaseProfile : LevelBase
         float t = (drawManager.NumberFrames - 1) * 0.02f;
         endFrameText.text = t + " sec";
 
-        if (t < drawManager.Duration) 
-            drawManager.SetDuration(t);
+        if (t < drawManager.TakeOffParameters.Duration)
+            drawManager.TakeOffParameters.Duration = t;
 
         gameManager.InterpolationDDL();
         gameManager.DisplayDDL(0, true);
