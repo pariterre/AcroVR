@@ -19,14 +19,14 @@ public class TakeOffParamF_s : MonoBehaviour
 
     public void DropDownDDLNamesOnValueChanged(int value)
     {
-        drawManager.SetPresetCondition(value);
+        gameManager.SetSelectedPresetCondition(value);
 
         UpdatePositions(value);
     }
 
     public void UpdatePositions(int value)
     {
-        uiManager.userInputs.SetPositions(gameManager.listCondition.conditions[value].userInputsValues);
+        uiManager.userInputs.SetPositions(gameManager.PresetConditions.conditions[value].userInputsValues);
 
         ApplyAvatar();
     }

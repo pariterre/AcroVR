@@ -57,9 +57,6 @@ public class DrawManager : MonoBehaviour
     float timeStarted = 0;
     float factorPlaySpeed = 1f;
 
-    public int PresetCondition { get; protected set; } = 0;
-    public void SetPresetCondition(int _value) { PresetCondition = _value; }
-
     public MainParameters.StrucTakeOffParam TakeOffParameters;
 
     string playMode = MainParameters.Instance.languages.Used.animatorPlayModeSimulation;

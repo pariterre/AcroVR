@@ -407,7 +407,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdateAllPropertiesFromDropdown(bool _skipSpeedColumn = false){
         if (userInputs == null || userInputs.PresetConditions == null) return;
-        var values = gameManager.listCondition.conditions[userInputs.PresetConditions.value].userInputsValues;
+        var values = gameManager.PresetConditions.conditions[userInputs.PresetConditions.value].userInputsValues;
         userInputs.SetAll(values, true, true, !_skipSpeedColumn);
     }
 

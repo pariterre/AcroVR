@@ -151,18 +151,18 @@ public class TrainingTooltip : MonoBehaviour
 
     public void NameCondition()
     {
-        ConditionName.text = gameManager.listCondition.conditions[uiManager.userInputs.PresetConditions.value].name;
+        ConditionName.text = gameManager.PresetConditions.conditions[uiManager.userInputs.PresetConditions.value].name;
     }
 
     public void UpdateDropDownNames()
     {
         uiManager.userInputs.PresetConditions.options.Clear();
 
-        for (int i = 0; i < gameManager.listCondition.count; i++)
+        for (int i = 0; i < gameManager.PresetConditions.count; i++)
         {
             uiManager.userInputs.PresetConditions.options.Add(new Dropdown.OptionData()
             {
-                text = gameManager.listCondition.conditions[i].name
+                text = gameManager.PresetConditions.conditions[i].name
             });
         }
 

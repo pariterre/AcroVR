@@ -131,8 +131,10 @@ public class ConditionInfo
 public class GameManager : MonoBehaviour
 {
     protected BaseProfile profile;
+
     protected AvatarManager avatarManager;
     protected DrawManager drawManager;
+    protected GameManager gameManager;
     protected MissionManager missionManager;
     protected UIManager uiManager;
     public MissionInfo mission;
@@ -141,7 +143,9 @@ public class GameManager : MonoBehaviour
 	public string pathUserDocumentsFiles;
 	public string pathUserSystemFiles;
 
-    public ConditionList listCondition;
+    public int SelectedPresetCondition { get; protected set; } = 0;
+    public void SetSelectedPresetCondition(int _value) { SelectedPresetCondition = _value; }
+    public ConditionList PresetConditions { get; protected set; }
 
 	string conditionJsonFileName;				// Répertoire et nom du fichier des conditions
 
@@ -149,6 +153,7 @@ public class GameManager : MonoBehaviour
     {
         avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
         missionManager = ToolBox.GetInstance().GetManager<MissionManager>();
         uiManager = ToolBox.GetInstance().GetManager<UIManager>();
 
@@ -325,19 +330,19 @@ public class GameManager : MonoBehaviour
         n.name = name;
         n.userInputsValues.SetAll(uiManager.userInputs);
 
-        listCondition.conditions.Add(n);
-        listCondition.count++;
+        PresetConditions.conditions.Add(n);
+        PresetConditions.count++;
 
-        string jsonData = JsonUtility.ToJson(listCondition, true);
+        string jsonData = JsonUtility.ToJson(PresetConditions, true);
         File.WriteAllText(conditionJsonFileName, jsonData);
     }
 
     public void RemoveCondition(int index)
     {
-        listCondition.conditions.RemoveAt(index);
-        listCondition.count--;
+        PresetConditions.conditions.RemoveAt(index);
+        PresetConditions.count--;
 
-        string jsonData = JsonUtility.ToJson(listCondition, true);
+        string jsonData = JsonUtility.ToJson(PresetConditions, true);
         File.WriteAllText(conditionJsonFileName, jsonData);
     }
 
@@ -351,7 +356,7 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
-        listCondition = JsonUtility.FromJson<ConditionList>(dataAsJson);
+        PresetConditions = JsonUtility.FromJson<ConditionList>(dataAsJson);
         return true;
     }
 
@@ -378,7 +383,7 @@ public class GameManager : MonoBehaviour
         info.Duration = drawManager.TakeOffParameters.Duration;
         info.UseGravity = drawManager.TakeOffParameters.UseGravity;
         info.StopOnGround = drawManager.TakeOffParameters.StopOnGround;
-        info.Condition = drawManager.PresetCondition;
+        info.Condition = gameManager.SelectedPresetCondition;
         info.Somersault = drawManager.TakeOffParameters.Somersault;
         info.Tilt = drawManager.TakeOffParameters.Tilt;
         info.Twist = drawManager.TakeOffParameters.Twist;
@@ -410,7 +415,7 @@ public class GameManager : MonoBehaviour
         string fileLines = string.Format(
             "Duration: {0}{1}Condition: {2}{3}VerticalSpeed: {4:0.000}{5}AnteroposteriorSpeed: {6:0.000}{7}SomersaultSpeed: {8:0.000}{9}TwistSpeed: {10:0.000}{11}Tilt: {12:0.000}{13}Rotation: {14:0.000}{15}{16}",
             drawManager.TakeOffParameters.Duration, System.Environment.NewLine,
-            drawManager.PresetCondition, System.Environment.NewLine,
+            gameManager.SelectedPresetCondition, System.Environment.NewLine,
             drawManager.TakeOffParameters.Somersault, System.Environment.NewLine,
             drawManager.TakeOffParameters.Tilt, System.Environment.NewLine,
             drawManager.TakeOffParameters.Twist, System.Environment.NewLine,
@@ -503,9 +508,9 @@ public class GameManager : MonoBehaviour
                 var _presetCondition = int.Parse(values[1], CultureInfo.InvariantCulture);
                 if (_presetCondition == -999)
                     _presetCondition = MainParameters.StrucTakeOffParam.Default.PresetCondition;
-                drawManager.SetPresetCondition(_presetCondition);
+                SetSelectedPresetCondition(_presetCondition);
 
-                WriteToLogFile("jointsTemp.condition: " + drawManager.PresetCondition.ToString());
+                WriteToLogFile("jointsTemp.condition: " + PresetConditions.ToString());
             }
             else if (values[0].Contains("Somersault"))
             {

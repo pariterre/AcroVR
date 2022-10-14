@@ -278,7 +278,7 @@ public class BaseProfile : LevelBase
         TakeOffOn();
         InitDropdownDDLNames(0);
 
-        dropDownCondition.value = drawManager.PresetCondition;
+        dropDownCondition.value = gameManager.SelectedPresetCondition;
 
         drawManager.Pause();
         drawManager.MakeSimulationFrame(0);
