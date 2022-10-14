@@ -80,7 +80,11 @@ public class MissionList
 public struct MissionNodes
 {
     public float[] T;
-    public float[,] Q;
+    public float[] SerializedQ;
+    public float[,] Q {
+        get => Utils.To2D(SerializedQ, T.Length); 
+        set { SerializedQ = Utils.Flat(value); } 
+    }
 }
 
 [System.Serializable]
