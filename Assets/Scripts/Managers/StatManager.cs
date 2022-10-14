@@ -127,7 +127,6 @@ public class StatManager : MonoBehaviour
         for (int i = 0; i < avatarManager.LoadedModels[0].Joints.nodes.Length; i++)
         {
             Nodes n = new Nodes();
-            n.Name = avatarManager.LoadedModels[0].Joints.nodes[i].name;
             n.T = avatarManager.LoadedModels[0].Joints.nodes[i].T;
             n.Q = avatarManager.LoadedModels[0].Joints.nodes[i].Q;
 

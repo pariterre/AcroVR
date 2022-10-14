@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using ChartAndGraph;
 #if UNITY_EDITOR 
-using UnityEditor;
 #endif
 //using System.Drawing;
 //using System.Drawing.Imaging;

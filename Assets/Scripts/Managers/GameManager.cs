@@ -79,18 +79,13 @@ public class MissionList
 [System.Serializable]
 public struct MissionNodes
 {
-    public float[] T;
-    public float[] SerializedQ;
-    public float[,] Q {
-        get => Utils.To2D(SerializedQ, T.Length); 
-        set { SerializedQ = Utils.Flat(value); } 
-    }
+    public Nodes Min;
+    public Nodes Max;
 }
 
 [System.Serializable]
 public struct Nodes
 {
-    public string Name;
     public float[] T;
     public float[] Q;
 }
@@ -314,7 +309,6 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < info.nodes.Count; i++)
         {
             jointsTemp.nodes[i].ddl = i + 1;
-            jointsTemp.nodes[i].name = info.nodes[i].Name;
             jointsTemp.nodes[i].interpolation = MainParameters.Instance.interpolationDefault;
             jointsTemp.nodes[i].T = info.nodes[i].T;
             jointsTemp.nodes[i].Q = info.nodes[i].Q;
@@ -403,7 +397,6 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < _joints.nodes.Length; i++)
         {
             Nodes n = new Nodes();
-            n.Name = _joints.nodes[i].name;
             n.T = _joints.nodes[i].T;
             n.Q = _joints.nodes[i].Q;
 

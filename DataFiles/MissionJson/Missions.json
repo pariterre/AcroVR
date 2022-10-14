@@ -19,13 +19,7 @@
 				"VerticalSpeed": false
 			},
 			"Solution": {
-				"HorizontalSpeed": [2.0],
-				"Nodes": {
-					"HipFlexion": {
-						"T": [0,1],
-						"SerializedQ": [0,0, 125,135]
-					}
-				}
+				"HorizontalSpeed": [2.0]
 			}
 		},
 		{
@@ -374,12 +368,18 @@
 				"VerticalSpeed": false
 			},
 			"Solution": {
-				"Somersault" : [1, 1.7],
-				"SomersaultSpeed": [1.0],
-				"Nodes":{
+				"Somersault": [ 1, 1.7 ],
+				"SomersaultSpeed": [ 1.0 ],
+				"Nodes": {
 					"HipFlexion": {
-						"T": [0,1],
-						"SerializedQ": [0,0, 125,135]
+						"Min": {
+							"T": [ 0, 1 ],
+							"Q": [ 0, 125 ]
+						},
+						"Max": {
+							"T": [ 0, 1 ],
+							"Q": [ 0, 135 ]
+						}
 					}
 				}
 			}
@@ -402,14 +402,20 @@
 				"VerticalSpeed": false
 			},
 			"Solution": {
-				"Somersault" : [0, 1],
-				"SomersaultSpeed": [1.0],
-				"Nodes":{
+				"Somersault": [ 0, 1 ],
+				"SomersaultSpeed": [ 1.0 ],
+				"Nodes": {
 					"HipFlexion": {
-						"T": [0,1],
-						"Q": [85,95, 0,90]
+						"Min": {
+							"T": [ 0, 1 ],
+							"Q": [ 85, 0 ]
+						},
+						"Max": {
+							"T": [ 0, 1 ],
+							"Q": [ 95, 90 ]
+						}
 					}
-				}	
+				}
 			},
 			"Hint": "Pour faire < 1 salto, il faut réduire la vitesse de rotation durant la simulation. Pour cela, il faut augmenter le moment d'inertie.\nSi on réduit le moment d'inertie en ramenant les hanches vers le corps, on peut augmenter le moment d'inertie en les éloignant."
 		},
@@ -431,12 +437,18 @@
 				"VerticalSpeed": false
 			},
 			"Solution": {
-				"Somersault" : [0.9 , 1.1],
-				"SomersaultSpeed": [1.0],
+				"Somersault": [ 0.9, 1.1 ],
+				"SomersaultSpeed": [ 1.0 ],
 				"Nodes": {
 					"HipFlexion": {
-						"T": [0,1],
-						"Q": [0,130, 0,130]
+						"Min": {
+							"T": [ 0, 1 ],
+							"Q": [ 0, 0 ]
+						},
+						"Max": {
+							"T": [ 0, 1 ],
+							"Q": [ 130, 130 ]
+						}
 					}
 				}
 			},

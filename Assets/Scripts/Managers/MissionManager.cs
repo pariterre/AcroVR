@@ -119,14 +119,14 @@ public class MissionManager : MonoBehaviour
         return CheckMinMax(_value, _minAccepted, _maxAccepted) ? Result.SUCCESS : Result.FAIL;
     }
 
-    protected Result IsSuccess(MainParameters.StrucNodes[] _avatarNodes, AllMissionNodes _constraints){
-        // public MissionNodes HipFlexion;
-        // public MissionNodes KneeFlexion;
-        // public MissionNodes RightArmFlexion;
-        // public MissionNodes RightArmAbduction;
-        // public MissionNodes LeftArmFlexion;
-        // public MissionNodes LeftArmAbduction;
-        Debug.Log(_avatarNodes);
+    protected Result IsSuccess(MainParameters.StrucNodes _jointNodes, MissionNodes _constraints){
+        for (int _timeIndex=0; _timeIndex<_jointNodes.T.Length; ++_timeIndex)
+        {
+            if (_jointNodes.T[_timeIndex] < _constraints.Min.T[_timeIndex]) return Result.FAIL;
+            if (_jointNodes.Q[_timeIndex] * 180 / Mathf.PI < _constraints.Min.Q[_timeIndex]) return Result.FAIL;
+            if (_jointNodes.T[_timeIndex] > _constraints.Max.T[_timeIndex]) return Result.FAIL;
+            if (_jointNodes.Q[_timeIndex] * 180 / Mathf.PI > _constraints.Max.Q[_timeIndex]) return Result.FAIL;
+        }
         return Result.SUCCESS;
     }
     
@@ -151,7 +151,12 @@ public class MissionManager : MonoBehaviour
         var _verticalSpeed = Utils.ToFloat(uiManager.userInputs.VerticalSpeed.text);
 
         // Get the angles applied to the model
-        var _jointsAngles = avatarManager.LoadedModels[0].Joints.nodes;
+        var _hips = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].ThighControl.avatarIndex];
+        var _knee = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].LegControl.avatarIndex];
+        var _leftArmAbd = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].LeftArmControlAbd.avatarIndex];
+        var _leftArmFlexion = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].LeftArmControlFlexion.avatarIndex];
+        var _rightArmAbd = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].RightArmControlAbd.avatarIndex];
+        var _rightArmFlexion = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].RightArmControlFlexion.avatarIndex];
 
         // Get computed results
         var _travelDistance = drawManager.TravelDistance;
@@ -172,9 +177,15 @@ public class MissionManager : MonoBehaviour
                 && IsSuccess(_twistSpeed, mission.Solution.TwistSpeed) == Result.SUCCESS 
                 && IsSuccess(_horizontalSpeed, mission.Solution.HorizontalSpeed) == Result.SUCCESS 
                 && IsSuccess(_verticalSpeed, mission.Solution.VerticalSpeed) == Result.SUCCESS 
-                && IsSuccess(_travelDistance, mission.Solution.TravelDistance) == Result.SUCCESS 
-                && IsSuccess(_horizontalDistance, mission.Solution.HorizontalTravelDistance) == Result.SUCCESS 
-                && IsSuccess(_jointsAngles, mission.Solution.Nodes) == Result.SUCCESS 
+                && IsSuccess(_travelDistance, mission.Solution.TravelDistance) == Result.SUCCESS
+                && IsSuccess(_horizontalDistance, mission.Solution.HorizontalTravelDistance) == Result.SUCCESS
+                && IsSuccess(_verticalDistance, mission.Solution.VerticalTravelDistance) == Result.SUCCESS
+                && IsSuccess(_hips, mission.Solution.Nodes.HipFlexion) == Result.SUCCESS
+                && IsSuccess(_knee, mission.Solution.Nodes.KneeFlexion) == Result.SUCCESS
+                && IsSuccess(_leftArmAbd, mission.Solution.Nodes.LeftArmAbduction) == Result.SUCCESS
+                && IsSuccess(_leftArmFlexion, mission.Solution.Nodes.LeftArmFlexion) == Result.SUCCESS
+                && IsSuccess(_rightArmAbd, mission.Solution.Nodes.RightArmAbduction) == Result.SUCCESS
+                && IsSuccess(_rightArmFlexion, mission.Solution.Nodes.RightArmFlexion) == Result.SUCCESS
             )
             ? Result.SUCCESS 
             : Result.FAIL;
