@@ -13,6 +13,7 @@ public enum Result
 
 public class MissionManager : MonoBehaviour
 {
+    protected AvatarManager avatarManager;
     protected DrawManager drawManager;
     protected GameManager gameManager;
     protected UIManager uiManager;
@@ -33,6 +34,7 @@ public class MissionManager : MonoBehaviour
         }
         return _hasAtLeastOne;
     }
+
     public void SetMissions(string _dataAsJson) { 
         AllMissions = JsonUtility.FromJson<MissionList>(_dataAsJson);
 
@@ -57,6 +59,7 @@ public class MissionManager : MonoBehaviour
 
     void Start()
     {
+        avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
         gameManager = ToolBox.GetInstance().GetManager<GameManager>();
         uiManager = ToolBox.GetInstance().GetManager<UIManager>();
@@ -106,17 +109,29 @@ public class MissionManager : MonoBehaviour
         uiManager.userInputs.SetAllFromUI(_status);
     }
 
+    protected Result IsSuccess(float _value, float[] _contraint){
+        bool CheckMinMax(float input, float min, float max) => input >= min && input <= max;
+        
+        if (_contraint == null) return Result.SUCCESS;  // If no constraint was applied
+        
+        var _minAccepted = _contraint[0];
+        var _maxAccepted = _contraint.Length > 1 ? _contraint[1] : _contraint[0];
+        return CheckMinMax(_value, _minAccepted, _maxAccepted) ? Result.SUCCESS : Result.FAIL;
+    }
+
+    protected Result IsSuccess(MainParameters.StrucNodes[] _avatarNodes, AllMissionNodes _constraints){
+        // public MissionNodes HipFlexion;
+        // public MissionNodes KneeFlexion;
+        // public MissionNodes RightArmFlexion;
+        // public MissionNodes RightArmAbduction;
+        // public MissionNodes LeftArmFlexion;
+        // public MissionNodes LeftArmAbduction;
+        Debug.Log(_avatarNodes);
+        return Result.SUCCESS;
+    }
+    
     public void CheckMissionResult()
     {
-        Result IsSuccess(float _value, float[] _contraint){
-            bool CheckMinMax(float input, float min, float max) => input >= min && input <= max;
-            
-            if (_contraint == null) return Result.SUCCESS;  // If no constraint was applied
-            
-            var _minAccepted = _contraint[0];
-            var _maxAccepted = _contraint.Length > 1 ? _contraint[1] : _contraint[0];
-            return CheckMinMax(_value, _minAccepted, _maxAccepted) ? Result.SUCCESS : Result.FAIL;
-        }
 
         if (CurrentMissionIndex < 0) return;
         MissionInfo mission = AllMissions.missions[CurrentMissionIndex];
@@ -136,9 +151,7 @@ public class MissionManager : MonoBehaviour
         var _verticalSpeed = Utils.ToFloat(uiManager.userInputs.VerticalSpeed.text);
 
         // Get the angles applied to the model
-        var _allQ = drawManager.AllQ;
-        //var _startPoint = MathFunc.MatrixGetRow(AllQ, MainParameters.Instance.joints.);
-        var _hipFlexion = _allQ;
+        var _jointsAngles = avatarManager.LoadedModels[0].Joints.nodes;
 
         // Get computed results
         var _travelDistance = drawManager.TravelDistance;
@@ -161,7 +174,7 @@ public class MissionManager : MonoBehaviour
                 && IsSuccess(_verticalSpeed, mission.Solution.VerticalSpeed) == Result.SUCCESS 
                 && IsSuccess(_travelDistance, mission.Solution.TravelDistance) == Result.SUCCESS 
                 && IsSuccess(_horizontalDistance, mission.Solution.HorizontalTravelDistance) == Result.SUCCESS 
-                && IsSuccess(_verticalDistance, mission.Solution.VerticalTravelDistance) == Result.SUCCESS 
+                && IsSuccess(_jointsAngles, mission.Solution.Nodes) == Result.SUCCESS 
             )
             ? Result.SUCCESS 
             : Result.FAIL;

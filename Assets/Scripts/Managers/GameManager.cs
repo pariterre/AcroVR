@@ -782,10 +782,8 @@ public class GameManager : MonoBehaviour
 
     public void InterpolationDDL()
     {
-        int n = (int)(drawManager.TakeOffParameters.Duration / avatarManager.LoadedModels[0].Joints.lagrangianModel.dt)+1;
-        float[] t0 = new float[n];
-        float[,] q0 = new float[avatarManager.LoadedModels[0].Joints.lagrangianModel.nDDL, n];
-
+        float[] t0;
+        float[,] q0;
         GenerateQ0_s(avatarManager.LoadedModels[0].Joints, drawManager.TakeOffParameters.Duration, 0, out t0, out q0);
 
         avatarManager.LoadedModels[0].SetJointsTandQ(t0, q0);

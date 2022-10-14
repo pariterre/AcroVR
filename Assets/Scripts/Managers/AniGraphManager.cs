@@ -86,7 +86,7 @@ public class AniGraphManager : MonoBehaviour
 
     void Update()
     {
-        if (avatarManager.LoadedModels[0].Joints.nodes == null) return;
+        if (!avatarManager.LoadedModels[0].IsLoaded) return;
 
         if (graph && uiManager.GetCurrentTab() == 2)
         {
