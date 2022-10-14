@@ -14,6 +14,10 @@ public class AvatarManager : MonoBehaviour
 
     public class Avatar {
         public GameObject gameObject;
+        public Avatar()
+        {
+            ResetJoints();
+        }
 
         public bool IsLoaded { get => gameObject != null; }
 
@@ -78,7 +82,10 @@ public class AvatarManager : MonoBehaviour
         {
             MainParameters.StrucJoints _joints = MainParameters.StrucJoints.Default;
             _joints.lagrangianModel = new LagrangianModelSimple().GetParameters;
-            for (int i = 0; i < 6; i++)
+            if (_joints.nodes.Length != 6)
+                throw new NotImplementedException("The node model is not implemented yet");
+
+            for (int i = 0; i < _joints.nodes.Length; i++)
             {
                 _joints.nodes[i].ddl = i + 1;
 

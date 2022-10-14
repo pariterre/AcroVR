@@ -115,7 +115,7 @@ public class MainParameters
                 StrucJoints _out = new StrucJoints()
                 {
                     fileName = "",
-                    nodes = null,
+                    nodes = new StrucNodes[6],
                     t0 = null,
                     q0 = null,
                     dataType = DataType.Simulation,

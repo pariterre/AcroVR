@@ -353,7 +353,7 @@ public class DrawManager : MonoBehaviour
 
     private float[,] MakeSimulation(int _avatarIndex)
     {
-        if (avatarManager.LoadedModels[_avatarIndex].Joints.nodes == null) return new float[0,0];
+        if (!avatarManager.LoadedModels[_avatarIndex].IsLoaded) return new float[0,0];
 
         MainParameters.StrucJoints _joints = avatarManager.LoadedModels[_avatarIndex].Joints;
         float[] q0 = new float[_joints.lagrangianModel.nDDL];
