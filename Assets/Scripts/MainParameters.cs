@@ -95,6 +95,10 @@ public class MainParameters
 		public float[] t0;
 		/// <summary> Liste de tous les angles interpolés pour chacune des articulations. [m,n]: m = DDL, n = Frames. </summary>
 		public float[,] q0;
+		/// <summary> Index mapping from the avatar to Q </summary>
+		public int[] IndexAvatarToQ;
+		/// <summary> Index mapping from the avatar to Q </summary>
+		public int[] IndexQToAvatar;
 		/// <summary> Type de données utilisée. </summary>
 		public DataType dataType;
 		/// <summary> Nom du modèle Lagrangien utilisée. </summary>
@@ -118,7 +122,9 @@ public class MainParameters
                     nodes = new StrucNodes[6],
                     t0 = null,
                     q0 = null,
-                    dataType = DataType.Simulation,
+					IndexAvatarToQ = new int[] { 0, 1, 3, 2, 5, 4, },
+					IndexQToAvatar = new int[] { 0, 1, 3, 2, 5, 4, },
+					dataType = DataType.Simulation,
                     lagrangianModelName = LagrangianModelNames.Simple,
                     lagrangianModel = new LagrangianModelManager.StrucLagrangianModel(),
                     tc = 0,

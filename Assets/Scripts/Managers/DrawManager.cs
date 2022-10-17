@@ -174,7 +174,7 @@ public class DrawManager : MonoBehaviour
 
     public void MakeSimulationFrame(int _avatarIndex)
     {
-        if (avatarManager.LoadedModels[_avatarIndex].Joints.nodes == null) return;
+        if (!avatarManager.LoadedModels[_avatarIndex].IsLoaded) return;
 
         avatarProperties[_avatarIndex].Q = MakeSimulation(_avatarIndex);
     }
@@ -190,7 +190,7 @@ public class DrawManager : MonoBehaviour
     public void ShowAvatar(int _avatarIndex)
     {
         MakeSimulationFrame(_avatarIndex);
-        if (avatarManager.LoadedModels[_avatarIndex].Joints.nodes == null) return;
+        if (!avatarManager.LoadedModels[_avatarIndex].IsLoaded) return;
 
         CenterAvatar(_avatarIndex);
         Play(_avatarIndex, avatarProperties[_avatarIndex].Q, 0, avatarProperties[_avatarIndex].Q.GetUpperBound(1) + 1, true);
@@ -334,7 +334,7 @@ public class DrawManager : MonoBehaviour
         for (int i = 0; i < _joints.nodes.Length; i++)
         {
             int ii = qi[i] - _joints.lagrangianModel.q2[0];
-            MainParameters.StrucNodes nodes = _joints.nodes[ii];
+            MainParameters.StrucNodes nodes = _joints.nodes[_joints.IndexAvatarToQ[ii]];
 
             int j = 1;
             while (j < nodes.T.Length - 1 && t > nodes.T[j]) j++;
@@ -355,8 +355,7 @@ public class DrawManager : MonoBehaviour
 
         for (int i = 0; i < _joints.nodes.Length; i++)
         {
-            MainParameters.StrucNodes nodes = _joints.nodes[i];
-            q0[i] = nodes.Q[0];
+            q0[i] = _joints.nodes[avatarManager.LoadedModels[_avatarIndex].Joints.IndexAvatarToQ[i]].Q[0];
         }
 
         // Beginning Pose

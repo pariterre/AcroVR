@@ -23,12 +23,12 @@ public class AvatarManager : MonoBehaviour
 
         public void SetJointsTandQ(float[] t0, float[,] q0)
         {
-            Joints.t0  = MathFunc.MatrixCopy(t0);
+            Joints.t0 = MathFunc.MatrixCopy(t0);
             Joints.q0 = MathFunc.MatrixCopy(q0);
         }
         public void SetJointsNodes(MainParameters.StrucNodes[] _nodes)
         {
-            Joints.nodes = _nodes; 
+            Joints.nodes = _nodes;
         }
         public void SetJointsLagrangianModel(LagrangianModelManager.StrucLagrangianModel _model)
         {
@@ -241,7 +241,6 @@ public class AvatarManager : MonoBehaviour
     public void SetLeftArmAbduction(int _avatarIndex, float _value)
     {
         if (!LoadedModels[_avatarIndex].IsLoaded) return;
-
         Q[LoadedModels[_avatarIndex].LeftArmControlAbd.qIndex] = _value;
         SetLeftArm(_avatarIndex);
     }

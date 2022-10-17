@@ -183,7 +183,7 @@ public class AniGraphManager : MonoBehaviour
         int t0Length = avatarManager.LoadedModels[0].Joints.t0.Length;
         for (int i = 0; i < t0Length; i++)
         {
-            value = avatarManager.LoadedModels[0].Joints.q0[ddl, i] * Mathf.Rad2Deg;
+            value = avatarManager.LoadedModels[0].Joints.q0[avatarManager.LoadedModels[0].Joints.IndexQToAvatar[ddl], i] * Mathf.Rad2Deg;
             if (!axisRange && value < axisYmin)
                 value = axisYmin;
             if (!axisRange && value > axisYmax)
