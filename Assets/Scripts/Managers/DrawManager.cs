@@ -193,9 +193,9 @@ public class DrawManager : MonoBehaviour
             ? new Vector3(0f, 0f, 0f) 
             : new Vector3(0f, -avatarProperties[_avatarIndex].FloorHeight * _scaling.y, 0f);
         var _hipRotations = new Vector3(0f, 0f, 0f);
-        if (IsSimulationMode && avatarManager.Q != null)
+        if (IsSimulationMode && avatarManager.LoadedModels[_avatarIndex].Q != null)
         {
-            var _q = avatarManager.Q;
+            var _q = avatarManager.LoadedModels[_avatarIndex].Q;
             _hipTranslations += new Vector3((float)_q[6] * _scaling.x, (float)_q[8] * _scaling.y, (float)_q[7] * _scaling.z);
             _hipRotations += new Vector3((float)_q[9] * Mathf.Rad2Deg, (float)_q[10] * Mathf.Rad2Deg, (float)_q[11] * Mathf.Rad2Deg);
         }
@@ -337,7 +337,7 @@ public class DrawManager : MonoBehaviour
         float[] q0 = new float[_joints.lagrangianModel.nDDL];
         float[] q0dot = new float[_joints.lagrangianModel.nDDL];
         if (Double.IsNaN(avatarProperties[_avatarIndex].FloorHeight)){
-            avatarProperties[_avatarIndex].FloorHeight = avatarManager.FeetHeight(q0);
+            avatarProperties[_avatarIndex].FloorHeight = avatarManager.LoadedModels[_avatarIndex].FeetHeight(q0);
         }
 
         for (int i = 0; i < _joints.nodes.Length; i++)
@@ -388,7 +388,7 @@ public class DrawManager : MonoBehaviour
         double[] Q = new double[_joints.lagrangianModel.nDDL];
         for (int i = 0; i < _joints.lagrangianModel.nDDL; i++)
             Q[i] = q0[i];
-        avatarManager.EvaluateTags(Q, out float[] tagX, out float[] tagY, out float[] tagZ);
+        avatarManager.LoadedModels[_avatarIndex].EvaluateTags(Q, out float[] tagX, out float[] tagY, out float[] tagZ);
 
         // Q[12]
         // tagX[26], tagY[26], tagZ[26]
@@ -459,7 +459,7 @@ public class DrawManager : MonoBehaviour
             double[] qq = new double[_joints.lagrangianModel.nDDL];
             for (int j = 0; j < _joints.lagrangianModel.nDDL; j++)
                 qq[j] = q[j, i];
-            avatarManager.EvaluateTags(qq, out tagX, out tagY, out tagZ);
+            avatarManager.LoadedModels[_avatarIndex].EvaluateTags(qq, out tagX, out tagY, out tagZ);
             var _lowestBodyPart = tagZ.Min();
 
             // Cut the trial when the feet crosses the ground (vertical axis = 0)

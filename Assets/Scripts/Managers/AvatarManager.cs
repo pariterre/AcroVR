@@ -35,6 +35,9 @@ public class AvatarManager : MonoBehaviour
             Joints.lagrangianModel = _model;
         }
 
+        public double[] Q { get; protected set; }
+        public void SetQ(double[] _q) { Q = _q; }
+
         // Root
         public GameObject Hip { get; protected set; }
         public void SetHip(GameObject _hip) { Hip = _hip; }
@@ -94,10 +97,58 @@ public class AvatarManager : MonoBehaviour
             }
             Joints = _joints;
         }
+
+        public float FeetHeight()
+        {
+            return (float)FeetHeight(Q);
+        }
+        public float FeetHeight(float[] q)
+        {
+            double[] qDouble = new double[q.Length];
+            for (int i = 0; i < q.Length; ++i)
+                qDouble[i] = q[i];
+
+            return (float)FeetHeight(qDouble);
+        }
+        public double FeetHeight(double[] q)
+        {
+            float[] tagX;
+            float[] tagY;
+            float[] tagZ;
+            EvaluateTags(q, out tagX, out tagY, out tagZ);
+            return Math.Min(
+                tagZ[Joints.lagrangianModel.feet[0] - 1],
+                tagZ[Joints.lagrangianModel.feet[1] - 1]
+            );
+        }
+
+        public void EvaluateTags(double[] q, out float[] tagX, out float[] tagY, out float[] tagZ)
+        {
+            // q[12]
+
+            double[] tag1;
+            TagsSimple tagsSimple = new TagsSimple();
+            tag1 = tagsSimple.Tags(q);
+
+            // tag1[78]
+
+            int newTagLength = tag1.Length / 3;
+
+            // newTagLength = 26;
+
+            tagX = new float[newTagLength];
+            tagY = new float[newTagLength];
+            tagZ = new float[newTagLength];
+            for (int i = 0; i < newTagLength; i++)
+            {
+                tagX[i] = (float)tag1[i];
+                tagY[i] = (float)tag1[i + newTagLength];
+                tagZ[i] = (float)tag1[i + newTagLength * 2];
+            }
+        }
     }
 
     protected DrawManager drawManager;
-    public double[] Q { get; protected set; }
 
     void Start(){
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
@@ -119,12 +170,12 @@ public class AvatarManager : MonoBehaviour
         if (SelectedAvatarModel == AvatarManager.Model.SingleFemale || SelectedAvatarModel == AvatarManager.Model.DoubleFemale)
         {
             NamePrefab[0] = "girl1_control";
-            NamePrefab[1] = "girl1";
+            NamePrefab[1] = "girl1_control";
         }
         else if (SelectedAvatarModel == AvatarManager.Model.SingleMale || SelectedAvatarModel == AvatarManager.Model.DoubleMale)
         {
             NamePrefab[0] = "man1_control";
-            NamePrefab[1] = "man1";
+            NamePrefab[1] = "man1_control";
         }
     }
 
@@ -138,8 +189,6 @@ public class AvatarManager : MonoBehaviour
         LoadAvatarControls(_index);
 
         LoadedModels[_index].gameObject.SetActive(true);
-        if (_index > 0)
-            LoadedModels[_index].gameObject.SetActive((int)SelectedAvatarModel > 1);
     }
     
     protected void LoadAvatarControls(int _index)
@@ -198,7 +247,7 @@ public class AvatarManager : MonoBehaviour
     {
         if (!LoadedModels[_avatarIndex].IsLoaded) return;
 
-        Q = _q;
+        LoadedModels[_avatarIndex].SetQ(_q);
         drawManager.CenterAvatar(_avatarIndex);
         SetThigh(_avatarIndex);
         SetShin(_avatarIndex);
@@ -210,7 +259,7 @@ public class AvatarManager : MonoBehaviour
     {
         if (!LoadedModels[_avatarIndex].IsLoaded) return;
 
-        Q[LoadedModels[_avatarIndex].ThighControl.qIndex] = _value;
+        LoadedModels[_avatarIndex].Q[LoadedModels[_avatarIndex].ThighControl.qIndex] = _value;
         SetThigh(_avatarIndex);
     }
     protected void SetThigh(int _avatarIndex)
@@ -218,15 +267,15 @@ public class AvatarManager : MonoBehaviour
         if (!LoadedModels[_avatarIndex].IsLoaded) return;
 
         int _ddl = LoadedModels[_avatarIndex].ThighControl.qIndex;
-        LoadedModels[_avatarIndex].LeftThigh.transform.localEulerAngles = new Vector3(-(float)Q[_ddl], 0f, 0f) * Mathf.Rad2Deg;
-        LoadedModels[_avatarIndex].RightThigh.transform.localEulerAngles = new Vector3(-(float)Q[_ddl], 0f, 0f) * Mathf.Rad2Deg;
+        LoadedModels[_avatarIndex].LeftThigh.transform.localEulerAngles = new Vector3(-(float)LoadedModels[_avatarIndex].Q[_ddl], 0f, 0f) * Mathf.Rad2Deg;
+        LoadedModels[_avatarIndex].RightThigh.transform.localEulerAngles = new Vector3(-(float)LoadedModels[_avatarIndex].Q[_ddl], 0f, 0f) * Mathf.Rad2Deg;
     }
 
     public void SetShin(int _avatarIndex, float _value)
     {
         if (!LoadedModels[_avatarIndex].IsLoaded) return;
 
-        Q[LoadedModels[_avatarIndex].LegControl.qIndex] = _value;
+        LoadedModels[_avatarIndex].Q[LoadedModels[_avatarIndex].LegControl.qIndex] = _value;
         SetShin(_avatarIndex);
     }
     protected void SetShin(int _avatarIndex)
@@ -234,21 +283,21 @@ public class AvatarManager : MonoBehaviour
         if (!LoadedModels[_avatarIndex].IsLoaded) return;
 
         int ddl = LoadedModels[_avatarIndex].LegControl.qIndex;
-        LoadedModels[_avatarIndex].LeftLeg.transform.localEulerAngles = new Vector3((float)Q[ddl], 0f, 0f) * Mathf.Rad2Deg;
-        LoadedModels[_avatarIndex].RightLeg.transform.localEulerAngles = new Vector3((float)Q[ddl], 0f, 0f) * Mathf.Rad2Deg;
+        LoadedModels[_avatarIndex].LeftLeg.transform.localEulerAngles = new Vector3((float)LoadedModels[_avatarIndex].Q[ddl], 0f, 0f) * Mathf.Rad2Deg;
+        LoadedModels[_avatarIndex].RightLeg.transform.localEulerAngles = new Vector3((float)LoadedModels[_avatarIndex].Q[ddl], 0f, 0f) * Mathf.Rad2Deg;
     }
 
     public void SetLeftArmAbduction(int _avatarIndex, float _value)
     {
         if (!LoadedModels[_avatarIndex].IsLoaded) return;
-        Q[LoadedModels[_avatarIndex].LeftArmControlAbd.qIndex] = _value;
+        LoadedModels[_avatarIndex].Q[LoadedModels[_avatarIndex].LeftArmControlAbd.qIndex] = _value;
         SetLeftArm(_avatarIndex);
     }
     public void SetLeftArmFlexion(int _avatarIndex, float _value)
     {
         if (!LoadedModels[_avatarIndex].IsLoaded) return;
 
-        Q[LoadedModels[_avatarIndex].LeftArmControlFlexion.qIndex] = _value;
+        LoadedModels[_avatarIndex].Q[LoadedModels[_avatarIndex].LeftArmControlFlexion.qIndex] = _value;
         SetLeftArm(_avatarIndex);
     }
     protected void SetLeftArm(int _avatarIndex)
@@ -257,21 +306,21 @@ public class AvatarManager : MonoBehaviour
 
         int ddlAbduction = LoadedModels[_avatarIndex].LeftArmControlAbd.qIndex;
         int ddlFlexion = LoadedModels[_avatarIndex].LeftArmControlFlexion.qIndex;
-        LoadedModels[_avatarIndex].LeftArm.transform.localEulerAngles = new Vector3((float)Q[ddlFlexion], 0, (float)Q[ddlAbduction]) * Mathf.Rad2Deg;
+        LoadedModels[_avatarIndex].LeftArm.transform.localEulerAngles = new Vector3((float)LoadedModels[_avatarIndex].Q[ddlFlexion], 0, (float)LoadedModels[_avatarIndex].Q[ddlAbduction]) * Mathf.Rad2Deg;
     }
 
     public void SetRightArmAbduction(int _avatarIndex, float _value)
     {
         if (!LoadedModels[_avatarIndex].IsLoaded) return;
 
-        Q[LoadedModels[_avatarIndex].RightArmControlAbd.qIndex] = _value;
+        LoadedModels[_avatarIndex].Q[LoadedModels[_avatarIndex].RightArmControlAbd.qIndex] = _value;
         SetRightArm(_avatarIndex);
     }
     public void SetRightArmFlexion(int _avatarIndex, float _value)
     {
         if (!LoadedModels[_avatarIndex].IsLoaded) return;
 
-        Q[LoadedModels[_avatarIndex].RightArmControlFlexion.qIndex] = _value;
+        LoadedModels[_avatarIndex].Q[LoadedModels[_avatarIndex].RightArmControlFlexion.qIndex] = _value;
         SetRightArm(_avatarIndex);
     }
     protected void SetRightArm(int _avatarIndex)
@@ -280,55 +329,7 @@ public class AvatarManager : MonoBehaviour
 
         int ddlAbduction = LoadedModels[_avatarIndex].RightArmControlAbd.qIndex;
         int ddlFlexion = LoadedModels[_avatarIndex].RightArmControlFlexion.qIndex;
-        LoadedModels[_avatarIndex].RightArm.transform.localEulerAngles = new Vector3((float)Q[ddlFlexion], 0, (float)Q[ddlAbduction]) * Mathf.Rad2Deg;
+        LoadedModels[_avatarIndex].RightArm.transform.localEulerAngles = new Vector3((float)LoadedModels[_avatarIndex].Q[ddlFlexion], 0, (float)LoadedModels[_avatarIndex].Q[ddlAbduction]) * Mathf.Rad2Deg;
     }
 
-    public float FeetHeight()
-    {
-        return (float)FeetHeight(Q);
-    }
-    public float FeetHeight(float[] q)
-    {
-        double[] qDouble = new double[q.Length];
-        for (int i = 0; i < q.Length; ++i)
-            qDouble[i] = q[i];
-
-        return (float)FeetHeight(qDouble);
-    }
-    public double FeetHeight(double[] q)
-    {
-        float[] tagX;
-        float[] tagY;
-        float[] tagZ;
-        EvaluateTags(q, out tagX, out tagY, out tagZ);
-        return Math.Min(
-            tagZ[LoadedModels[0].Joints.lagrangianModel.feet[0] - 1],
-            tagZ[LoadedModels[0].Joints.lagrangianModel.feet[1] - 1]
-        );
-    }
-
-    public void EvaluateTags(double[] q, out float[] tagX, out float[] tagY, out float[] tagZ)
-    {
-        // q[12]
-
-        double[] tag1;
-        TagsSimple tagsSimple = new TagsSimple();
-        tag1 = tagsSimple.Tags(q);
-
-        // tag1[78]
-
-        int newTagLength = tag1.Length / 3;
-
-        // newTagLength = 26;
-
-        tagX = new float[newTagLength];
-        tagY = new float[newTagLength];
-        tagZ = new float[newTagLength];
-        for (int i = 0; i < newTagLength; i++)
-        {
-            tagX[i] = (float)tag1[i];
-            tagY[i] = (float)tag1[i + newTagLength];
-            tagZ[i] = (float)tag1[i + newTagLength * 2];
-        }
-    }
 }

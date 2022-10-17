@@ -48,7 +48,7 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
         gameManager = ToolBox.GetInstance().GetManager<GameManager>();
         statManager = ToolBox.GetInstance().GetManager<StatManager>();
 
-        angle = (float)avatarManager.Q[qIndex];
+        angle = (float)avatarManager.LoadedModels[0].Q[qIndex];
 
         if (!arrow)
         {
