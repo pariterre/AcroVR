@@ -65,8 +65,8 @@ public class LagrangianModelSimple : LagrangianModelManager
 			lagrangianModel.root_foreward = 8;
 			lagrangianModel.root_upward = 9;
 			lagrangianModel.root_somersault = -10;
-			lagrangianModel.root_tilt = 11;
-			lagrangianModel.root_twist = 12;
+			lagrangianModel.root_tilt = 12;
+			lagrangianModel.root_twist = 11;
 			lagrangianModel.ddlName = new string[6];
 			lagrangianModel.ddlName[0] = "Hip_Flexion";
 			lagrangianModel.ddlName[1] = "Knee_Flexion";
