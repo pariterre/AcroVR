@@ -122,10 +122,10 @@ public class MissionManager : MonoBehaviour
     protected Result IsSuccess(MainParameters.StrucNodes _jointNodes, MissionNodes _constraints){
         for (int _timeIndex=0; _timeIndex<_jointNodes.T.Length; ++_timeIndex)
         {
-            if (_jointNodes.T[_timeIndex] < _constraints.Min.T[_timeIndex]) return Result.FAIL;
-            if (_jointNodes.Q[_timeIndex] * 180 / Mathf.PI < _constraints.Min.Q[_timeIndex]) return Result.FAIL;
-            if (_jointNodes.T[_timeIndex] > _constraints.Max.T[_timeIndex]) return Result.FAIL;
-            if (_jointNodes.Q[_timeIndex] * 180 / Mathf.PI > _constraints.Max.Q[_timeIndex]) return Result.FAIL;
+            if (_constraints.Min.T != null && _jointNodes.T[_timeIndex] < _constraints.Min.T[_timeIndex]) return Result.FAIL;
+            if (_constraints.Min.Q != null && _jointNodes.Q[_timeIndex] * 180 / Mathf.PI < _constraints.Min.Q[_timeIndex]) return Result.FAIL;
+            if (_constraints.Max.T != null && _jointNodes.T[_timeIndex] > _constraints.Max.T[_timeIndex]) return Result.FAIL;
+            if (_constraints.Max.Q != null && _jointNodes.Q[_timeIndex] * 180 / Mathf.PI > _constraints.Max.Q[_timeIndex]) return Result.FAIL;
         }
         return Result.SUCCESS;
     }
