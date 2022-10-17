@@ -133,29 +133,32 @@ public class DrawManager : MonoBehaviour
             pauseStart = 0;
         }
 
-        for (int i=0; i<2; ++i)
-            AdvanceTime(i);
+        AdvanceTime();
     
     }
 
-    void AdvanceTime(int _avatarIndex)
+    void AdvanceTime()
     {
-        if (avatarProperties[_avatarIndex].CurrentFrame <= 0 && !avatarProperties[_avatarIndex].IsPaused) 
+        if (avatarProperties[0].CurrentFrame <= 0 && !avatarProperties[0].IsPaused) 
             timeStarted = Time.time;
 
-        if (Time.time - (timeStarted + pauseTime) >= (timeFrame * avatarProperties[_avatarIndex].CurrentFrame) * factorPlaySpeed)
+        if (Time.time - (timeStarted + pauseTime) >= (timeFrame * avatarProperties[0].CurrentFrame) * factorPlaySpeed)
         {
-            if (!avatarProperties[_avatarIndex].IsPaused)
-                timeElapsed = Time.time - (timeStarted + pauseTime);
 
-            if (ShouldContinuePlaying(_avatarIndex))
-                PlayOneFrame(_avatarIndex);
-            else
-                PlayEnd();
+            for (int _avatarIndex = 0; _avatarIndex < 2; ++_avatarIndex)
+            {
+                if (avatarProperties[_avatarIndex].IsPaused) return;
+
+                timeElapsed = Time.time - (timeStarted + pauseTime);
+                if (ShouldContinuePlaying(_avatarIndex))
+                    PlayOneFrame(_avatarIndex);
+                else
+                    PlayEnd();
+            }
         }
     }
 
-    public bool ShouldContinuePlaying(int _avatarIndex) => avatarProperties[_avatarIndex].CurrentFrame<NumberFrames - 1;
+    public bool ShouldContinuePlaying(int _avatarIndex) => avatarProperties[_avatarIndex].CurrentFrame < NumberFrames - 1;
 
     public void UpdateFullKinematics(bool restartToZero)
     {
@@ -620,12 +623,14 @@ public class DrawManager : MonoBehaviour
 
     public void PlayOneFrame(int _avatarIndex)
     {
-        if (!IsEditing && avatarProperties[_avatarIndex].Q != null)
+        var _Q = avatarProperties[_avatarIndex].Q;
+        if (!IsEditing && _Q != null && _Q.GetLength(1) > avatarProperties[_avatarIndex].CurrentFrame)
         {
-            var _q = MathFunc.MatrixGetColumnD(avatarProperties[_avatarIndex].Q, firstFrame + avatarProperties[_avatarIndex].CurrentFrame);
+            var _q = MathFunc.MatrixGetColumnD(_Q, firstFrame + avatarProperties[_avatarIndex].CurrentFrame);
             if (playMode == MainParameters.Instance.languages.Used.animatorPlayModeGesticulation)
                 for (int i = 0; i < avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.q1.Length; i++)
                     _q[avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.q1[i] - 1] = 0;
+            
             avatarManager.SetAllDof(_avatarIndex, _q);
             
             if (!avatarProperties[_avatarIndex].IsPaused) SetCurrrentFrame(_avatarIndex, avatarProperties[_avatarIndex].CurrentFrame + 1);

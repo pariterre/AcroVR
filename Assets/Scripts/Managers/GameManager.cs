@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using System.IO;
 using System.Text.RegularExpressions;
 using Crosstales.FB;
@@ -107,7 +106,7 @@ public class AnimationInfo
     public float TwistSpeed;
     public float HorizontalSpeed;
     public float VerticalSpeed;
-    public int Condition;
+    public int PresetCondition;
 
 
     public List<Nodes> nodes = new List<Nodes>();
@@ -281,7 +280,6 @@ public class GameManager : MonoBehaviour
         }
 
         AnimationInfo info = JsonUtility.FromJson<AnimationInfo>(dataAsJson);
-        Debug.Log("Deal with the info");
 
         var _jointsTemp = new MainParameters.StrucJoints();
 
@@ -292,7 +290,7 @@ public class GameManager : MonoBehaviour
         drawManager.SetDuration(_avatarIndex, info.Duration);
         drawManager.avatarProperties[_avatarIndex].TakeOffParameters.UseGravity = info.UseGravity;
         drawManager.avatarProperties[_avatarIndex].TakeOffParameters.StopOnGround = info.StopOnGround;
-        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.PresetCondition = info.Condition;
+        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.PresetCondition = info.PresetCondition;
         drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Somersault = info.Somersault;
         drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Tilt = info.Tilt;
         drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Twist = info.Twist;
@@ -381,7 +379,7 @@ public class GameManager : MonoBehaviour
         info.Duration = _takeOffParameters.Duration;
         info.UseGravity = _takeOffParameters.UseGravity;
         info.StopOnGround = _takeOffParameters.StopOnGround;
-        info.Condition = gameManager.SelectedPresetCondition;
+        info.PresetCondition = gameManager.SelectedPresetCondition;
         info.Somersault = _takeOffParameters.Somersault;
         info.Tilt = _takeOffParameters.Tilt;
         info.Twist = _takeOffParameters.Twist;
