@@ -139,8 +139,8 @@ public class ChangeLanguage : MonoBehaviour
         languages.french.Language = "Langue";
         languages.english.Tooltip = "Tool tips";
         languages.french.Tooltip = "Info-bulles";
-        languages.english.MaleFemale = "Male&Female";
-        languages.french.MaleFemale = "Homme&Femme";
+        languages.english.MaleFemale = "Avatar";
+        languages.french.MaleFemale = "Avatar";
 
         languages.english.ChooseLanguage = "Select your language";
         languages.french.ChooseLanguage = "Sélectionnez votre langue";
@@ -158,8 +158,8 @@ public class ChangeLanguage : MonoBehaviour
         languages.english.No = "No";
         languages.french.No = "Non";
 
-        languages.english.MaleFemaleTitle = "Male & Female";
-        languages.french.MaleFemaleTitle = "Homme & Femme";
+        languages.english.MaleFemaleTitle = "Avatar";
+        languages.french.MaleFemaleTitle = "Avatar";
         languages.english.ChooseTooltipMaleFemale = "Choose 3D avatar";
         languages.french.ChooseTooltipMaleFemale = "Choisissez l'avatar 3D";
         languages.english.Male = "Male";

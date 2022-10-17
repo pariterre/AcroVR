@@ -2188,7 +2188,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Male & Female
+  m_Text: Avatar
 --- !u!222 &348400299
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5049,7 +5049,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Male&Female
+  m_Text: 'Avatar
+
+'
 --- !u!222 &946637179
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6871,7 +6873,7 @@ GameObject:
   - component: {fileID: 1235116777}
   - component: {fileID: 1235116776}
   m_Layer: 5
-  m_Name: Male&Female
+  m_Name: Avatar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9651,19 +9653,23 @@ MonoBehaviour:
   TutorialObject: {fileID: 0}
   missionBanner: {fileID: 0}
   NodeNameObject: {fileID: 0}
+  userUiInputs:
+    Duration: {fileID: 0}
+    Somersault: {fileID: 0}
+    Tilt: {fileID: 0}
+    Twist: {fileID: 0}
+    HorizontalPosition: {fileID: 0}
+    VerticalPosition: {fileID: 0}
+    SomersaultSpeed: {fileID: 0}
+    TiltSpeed: {fileID: 0}
+    TwistSpeed: {fileID: 0}
+    HorizontalSpeed: {fileID: 0}
+    VerticalSpeed: {fileID: 0}
+    PresetConditions: {fileID: 0}
+    UseGravity: {fileID: 0}
+    StopOnGround: {fileID: 0}
   endFrameText: {fileID: 0}
   cameraList: []
-  somersaultPosition: {fileID: 0}
-  tiltPosition: {fileID: 0}
-  twistPosition: {fileID: 0}
-  horizontalPosition: {fileID: 0}
-  verticalPosition: {fileID: 0}
-  somersaultSpeed: {fileID: 0}
-  tiltSpeed: {fileID: 0}
-  twistSpeed: {fileID: 0}
-  horizontalSpeed: {fileID: 0}
-  verticalSpeed: {fileID: 0}
-  simulationDuration: {fileID: 0}
   sliderPlay: {fileID: 0}
   fireworks: {fileID: 0}
   Floor: {fileID: 0}
@@ -13194,7 +13200,7 @@ GameObject:
   - component: {fileID: 1847983110}
   - component: {fileID: 1847983109}
   m_Layer: 5
-  m_Name: MaleFemale
+  m_Name: Avatar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14644,7 +14650,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Male&Female
+  m_Text: Avatar
 --- !u!222 &2094331049
 CanvasRenderer:
   m_ObjectHideFlags: 0
