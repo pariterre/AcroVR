@@ -22,7 +22,7 @@ public class DrawManager : MonoBehaviour
         public float FrameRate;
         public float CurrentTime(float _frameRate) => CurrentFrame * _frameRate;
 
-        public float InitialFeetHeight = (float)Double.NaN;
+        public float FloorHeight = (float)Double.NaN;
         public float[,] Q;  // q1
     }
 
@@ -148,20 +148,7 @@ public class DrawManager : MonoBehaviour
         }
     }
 
-    public bool ShouldContinuePlaying(int _avatarIndex)
-    {
-        if (avatarProperties[_avatarIndex].CurrentFrame >= NumberFrames - 1) return false;
-
-        if (
-            avatarProperties[_avatarIndex].CurrentFrame != 0 
-            && TakeOffParameters.StopOnGround && 
-            !IsGestureMode && 
-            avatarManager.FeetHeight() < avatarProperties[_avatarIndex].InitialFeetHeight
-        ) 
-            return false;
-        
-        return true;
-    }
+    public bool ShouldContinuePlaying(int _avatarIndex) => avatarProperties[_avatarIndex].CurrentFrame<NumberFrames - 1;
 
     public void UpdateFullKinematics(bool restartToZero)
     {
@@ -202,9 +189,9 @@ public class DrawManager : MonoBehaviour
         if (!_model.IsLoaded) return;
 
         Vector3 _scaling = _model.gameObject.transform.localScale;
-        var _hipTranslations = Double.IsNaN(avatarProperties[_avatarIndex].InitialFeetHeight) 
+        var _hipTranslations = Double.IsNaN(avatarProperties[_avatarIndex].FloorHeight) 
             ? new Vector3(0f, 0f, 0f) 
-            : new Vector3(0f, -avatarProperties[_avatarIndex].InitialFeetHeight * _scaling.y, 0f);
+            : new Vector3(0f, -avatarProperties[_avatarIndex].FloorHeight * _scaling.y, 0f);
         var _hipRotations = new Vector3(0f, 0f, 0f);
         if (IsSimulationMode && avatarManager.Q != null)
         {
@@ -349,8 +336,8 @@ public class DrawManager : MonoBehaviour
         MainParameters.StrucJoints _joints = avatarManager.LoadedModels[_avatarIndex].Joints;
         float[] q0 = new float[_joints.lagrangianModel.nDDL];
         float[] q0dot = new float[_joints.lagrangianModel.nDDL];
-        if (Double.IsNaN(avatarProperties[_avatarIndex].InitialFeetHeight)){
-            avatarProperties[_avatarIndex].InitialFeetHeight = avatarManager.FeetHeight(q0);
+        if (Double.IsNaN(avatarProperties[_avatarIndex].FloorHeight)){
+            avatarProperties[_avatarIndex].FloorHeight = avatarManager.FeetHeight(q0);
         }
 
         for (int i = 0; i < _joints.nodes.Length; i++)
@@ -473,9 +460,10 @@ public class DrawManager : MonoBehaviour
             for (int j = 0; j < _joints.lagrangianModel.nDDL; j++)
                 qq[j] = q[j, i];
             avatarManager.EvaluateTags(qq, out tagX, out tagY, out tagZ);
+            var _lowestBodyPart = tagZ.Min();
 
             // Cut the trial when the feet crosses the ground (vertical axis = 0)
-            if (!IsGestureMode && i > 0 && TakeOffParameters.StopOnGround && TakeOffParameters.UseGravity && tagZ.Min() < avatarProperties[_avatarIndex].InitialFeetHeight)
+            if (!IsGestureMode && i > 0 && TakeOffParameters.StopOnGround && TakeOffParameters.UseGravity && _lowestBodyPart < avatarProperties[_avatarIndex].FloorHeight)
             {
                 _joints.tc = (float)t[i];
                 break;
