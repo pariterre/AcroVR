@@ -1,10 +1,9 @@
 Known bugs:
     - Tooltips "on" (Look in UIManager.cs) seem to do nothing
+	- "Compare" moves the camera to first position
 
 
 TODO: 
-	- Si possible
-		- Bouton Comparer : Je suis à peu près sûr que c'est complètement cassé, réparer?
 	- Add music so it is less boring
 	- Add Success music when mission is acheived
 

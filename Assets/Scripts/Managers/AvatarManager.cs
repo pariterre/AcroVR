@@ -229,7 +229,8 @@ public class AvatarManager : MonoBehaviour
         _model.SetLeftArm(_model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.L/zero_upper_arm.L/upper_arm.L").gameObject);
         _model.SetRightArm(_model.gameObject.transform.Find(_rootDirectory + "/hips/spine/chest/chest1/shoulder.R/zero_upper_arm.R/upper_arm.R").gameObject);
 
-        drawManager.SetFirstView(_model.gameObject.transform.Find(_rootDirectory + "/hips/FirstViewPoint").gameObject);
+        if (_index == 0)
+            drawManager.SetFirstView(_model.gameObject.transform.Find(_rootDirectory + "/hips/FirstViewPoint").gameObject);
 
         // set to zero position
         _model.gameObject.transform.position = Vector3.zero;
