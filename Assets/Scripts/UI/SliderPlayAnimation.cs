@@ -61,16 +61,9 @@ public class SliderPlayAnimation : MonoBehaviour
         
         slider.maxValue = (float)drawManager.NumberFrames - 1;
         var _currentFrame = (int)slider.value;
-        drawManager.SetCurrrentFrame(0, _currentFrame);
+        for (int i = 0; i < avatarManager.NumberOfLoadedAvatars; i++)
+            drawManager.SetCurrrentFrame(0, _currentFrame);
         textChrono.text = drawManager.CurrentTime + " s";
-
-        if (avatarManager.NumberOfLoadedAvatars > 1)
-        {
-            var secondCurrentFrame = _currentFrame;
-            if (secondCurrentFrame >= drawManager.secondNumberFrames)
-                secondCurrentFrame = drawManager.secondNumberFrames - 1;
-            drawManager.SetCurrrentFrame(1, secondCurrentFrame);
-        }
 
         if (!drawManager.IsPaused && ((int)slider.value == 0 || (int)slider.value == (int)slider.maxValue || !drawManager.ShouldContinuePlaying(0)) )
         {
@@ -82,10 +75,8 @@ public class SliderPlayAnimation : MonoBehaviour
         {
             ShowPlayButton();
             drawManager.Pause();
-            drawManager.PlayOneFrame(0);
-
-            if (avatarManager.NumberOfLoadedAvatars > 1)
-                drawManager.secondPaused = true;
+            for (int i = 0; i < avatarManager.NumberOfLoadedAvatars; i++)
+                drawManager.PlayOneFrame(i);
         }
     }
 

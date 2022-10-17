@@ -116,7 +116,7 @@ public class BaseProfile : LevelBase
         if (camView != CameraView.FirstPOV){
             FirstPOVCamera();
         } else {
-            FrontCameraPOV(drawManager.CheckPositionAvatar());
+            FrontCameraPOV(drawManager.CheckPositionAvatar(0));
         }
 
     }
@@ -139,7 +139,7 @@ public class BaseProfile : LevelBase
         if (camView == CameraView.FirstPOV)
             FirstPOVCamera();
         else
-            FrontCameraPOV(drawManager.CheckPositionAvatar());
+            FrontCameraPOV(drawManager.CheckPositionAvatar(0));
     }
 
     public void FrontCameraPOV(float _v)
@@ -284,7 +284,7 @@ public class BaseProfile : LevelBase
         drawManager.MakeSimulationFrame(0);
         drawManager.StopEditing();
 
-        FrontCameraPOV(drawManager.CheckPositionAvatar());
+        FrontCameraPOV(drawManager.CheckPositionAvatar(0));
 
         TutorialMessage();
         aniGraphManager.cntAvatar = 0;
@@ -443,7 +443,7 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        FrontCameraPOV(drawManager.CheckPositionAvatar());
+        FrontCameraPOV(drawManager.CheckPositionAvatar(0));
     }
 
     public void PlayAvatar()

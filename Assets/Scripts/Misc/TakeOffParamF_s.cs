@@ -40,8 +40,8 @@ public class TakeOffParamF_s : MonoBehaviour
     private void ApplyAvatar()
     {
         drawManager.ShowAvatar(0);
-        drawManager.InitPoseAvatar();
+        drawManager.InitPoseAvatar(0);
         gameManager.InterpolationDDL();
-        bp.FrontCameraPOV(drawManager.CheckPositionAvatar());
+        bp.FrontCameraPOV(drawManager.CheckPositionAvatar(0));
     }
 }

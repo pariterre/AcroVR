@@ -39,11 +39,10 @@ public class DrawManager : MonoBehaviour
 
     private GameObject firstView;
     public bool canResumeAnimation { get; protected set; } = false;
-    public void SetCanResumeAnimation(bool value) { canResumeAnimation = value; }
+    public void SetCanResumeAnimation(bool _value) { canResumeAnimation = _value; }
 
-    public float[,] AllQ { get; protected set; } 
-    public void SetCurrrentFrame(int _avatarIndex, int value) {
-        avatarProperties[_avatarIndex].CurrentFrame = value;
+    public void SetCurrrentFrame(int _avatarIndex, int _value) {
+        avatarProperties[_avatarIndex].CurrentFrame = _value;
         
         if (_avatarIndex == 0 && sliderAnimation) sliderAnimation.SetSlider(avatarProperties[_avatarIndex].CurrentFrame);
     }
@@ -78,8 +77,6 @@ public class DrawManager : MonoBehaviour
     GameObject Ground;
     public void SetGround(GameObject _floor) { Ground = _floor; }
 
-    public int secondNumberFrames = 0;
-    public bool secondPaused = false;
     public List<string> secondResultMessages = new List<string>();
 
 
@@ -262,7 +259,6 @@ public class DrawManager : MonoBehaviour
     {
         MainParameters.StrucJoints joints = avatarManager.LoadedModels[_avatarIndex].Joints;
 
-        AllQ = MathFunc.MatrixCopy(qq);
         if (restartToZero)
             SetCurrrentFrame(_avatarIndex, 0);
         firstFrame = frFrame;
@@ -580,39 +576,37 @@ public class DrawManager : MonoBehaviour
         return new Vector(xdot);
     }
 
-    public float TravelDistance { 
-        get {
-            var _startPoint = MathFunc.MatrixGetColumnD(AllQ, 1);
-            var _endPoint = MathFunc.MatrixGetColumnD(AllQ, NumberFrames - 1);
-            return Vector3.Distance(
-                new Vector3((float)_startPoint[6], (float)_startPoint[8], (float)_startPoint[7]),
-                new Vector3((float)_endPoint[6], (float)_endPoint[8], (float)_endPoint[7])
-            );
-        }
+    public float TravelDistance(int _avatarIndex) { 
+        var _startPoint = MathFunc.MatrixGetColumnD(avatarProperties[_avatarIndex].Q, 1);
+        var _endPoint = MathFunc.MatrixGetColumnD(avatarProperties[_avatarIndex].Q, NumberFrames - 1);
+        return Vector3.Distance(
+            new Vector3((float)_startPoint[6], (float)_startPoint[8], (float)_startPoint[7]),
+            new Vector3((float)_endPoint[6], (float)_endPoint[8], (float)_endPoint[7])
+        );
     }
 
-    public float HorizontalTravelDistance {
-        get => Mathf.Max((float)MathFunc.MatrixGetColumnD(AllQ,1)[7], (float)MathFunc.MatrixGetColumnD(AllQ, NumberFrames - 1)[7]);
+    public float HorizontalTravelDistance(int _avatarIndex) { 
+        return Mathf.Max((float)MathFunc.MatrixGetColumnD(avatarProperties[_avatarIndex].Q, 1)[7], (float)MathFunc.MatrixGetColumnD(avatarProperties[_avatarIndex].Q, NumberFrames - 1)[7]);
     }
     
-    public float VerticalTravelDistance {
-        get => Mathf.Max((float)MathFunc.MatrixGetColumnD(AllQ, 1)[8], (float)MathFunc.MatrixGetColumnD(AllQ, NumberFrames - 1)[8]);
+    public float VerticalTravelDistance(int _avatarIndex) {
+        return Mathf.Max((float)MathFunc.MatrixGetColumnD(avatarProperties[_avatarIndex].Q, 1)[8], (float)MathFunc.MatrixGetColumnD(avatarProperties[_avatarIndex].Q, NumberFrames - 1)[8]);
     }
 
-    public float CheckPositionAvatar()
+    public float CheckPositionAvatar(int _avatarIndex)
     {
-        if (IsGestureMode || AllQ == null || AllQ.GetUpperBound(1) == 0) return 0;
+        if (IsGestureMode || avatarProperties[_avatarIndex].Q == null || avatarProperties[_avatarIndex].Q.GetUpperBound(1) == 0) return 0;
 
-        float _max = Mathf.Max(VerticalTravelDistance, HorizontalTravelDistance);
+        float _max = Mathf.Max(VerticalTravelDistance(_avatarIndex), HorizontalTravelDistance(_avatarIndex));
 
         return _max;
     }
 
     public void PlayOneFrame(int _avatarIndex)
     {
-        if (!IsEditing && AllQ != null)
+        if (!IsEditing && avatarProperties[_avatarIndex].Q != null)
         {
-            var _q = MathFunc.MatrixGetColumnD(AllQ, firstFrame + avatarProperties[_avatarIndex].CurrentFrame);
+            var _q = MathFunc.MatrixGetColumnD(avatarProperties[_avatarIndex].Q, firstFrame + avatarProperties[_avatarIndex].CurrentFrame);
             if (playMode == MainParameters.Instance.languages.Used.animatorPlayModeGesticulation)
                 for (int i = 0; i < avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.q1.Length; i++)
                     _q[avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.q1[i] - 1] = 0;
@@ -622,9 +616,9 @@ public class DrawManager : MonoBehaviour
         }
     }
 
-    public void InitPoseAvatar()
+    public void InitPoseAvatar(int _avatarIndex)
     {
-        avatarManager.SetAllDof(0, MathFunc.MatrixGetColumnD(AllQ, 1));
+        avatarManager.SetAllDof(0, MathFunc.MatrixGetColumnD(avatarProperties[_avatarIndex].Q, 1));
     }
 
 

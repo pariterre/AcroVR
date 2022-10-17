@@ -159,9 +159,9 @@ public class MissionManager : MonoBehaviour
         var _rightArmFlexion = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].RightArmControlFlexion.avatarIndex];
 
         // Get computed results
-        var _travelDistance = drawManager.TravelDistance;
-        var _horizontalDistance = drawManager.HorizontalTravelDistance;
-        var _verticalDistance = drawManager.VerticalTravelDistance;
+        var _travelDistance = drawManager.TravelDistance(0);
+        var _horizontalDistance = drawManager.HorizontalTravelDistance(0);
+        var _verticalDistance = drawManager.VerticalTravelDistance(0);
 
         // All condition must be SUCCESS to declare the result to be valid
         MissionResult = 
