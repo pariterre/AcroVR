@@ -183,8 +183,15 @@ public class AvatarManager : MonoBehaviour
     public List<Avatar> LoadedModels { get; protected set; } = new List<Avatar>(2);
     public int NumberOfLoadedAvatars { get => Convert.ToInt32(LoadedModels[0].IsLoaded) + Convert.ToInt32(LoadedModels[1].IsLoaded); }
     
+    public void DestroyAvatar(int _index)
+    {
+        if (!LoadedModels[_index].IsLoaded) return;
+
+        Destroy(LoadedModels[_index].gameObject);
+    }
     public void LoadAvatar(int _index)
     {
+        DestroyAvatar(_index);
         LoadPrefab(_index);
         LoadAvatarControls(_index);
 

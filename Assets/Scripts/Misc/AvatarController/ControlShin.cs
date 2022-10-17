@@ -3,7 +3,7 @@
 public class ControlShin : ControlSegmentGeneric
 {
     public override string dofName { get { return "KneeFlexion"; } }
-    public override int avatarIndex { get { return 1; } }
+    public override int avatarIndexDDL { get { return 1; } }
     public override int jointSubIndex { get { return 0; } }
     public override int qIndex { get { return 1; } }
     protected override DrawingCallback drawingCallback { get {return avatarManager.SetShin;} }

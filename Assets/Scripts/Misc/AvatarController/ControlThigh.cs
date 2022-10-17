@@ -3,7 +3,7 @@
 public class ControlThigh : ControlSegmentGeneric
 {
     public override string dofName { get { return "HipFlexion"; } }
-    public override int avatarIndex { get { return 0; } }
+    public override int avatarIndexDDL { get { return 0; } }
     public override int jointSubIndex { get { return 0; } }
     public override int qIndex { get { return 0; } }
     protected override DrawingCallback drawingCallback { get {return avatarManager.SetThigh;} }

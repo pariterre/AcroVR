@@ -3,8 +3,6 @@ Known bugs:
 
 
 TODO: 
-	- Mission : 
-        - Fix all the solutions
 	- Si possible
 		- Bouton Comparer : Je suis à peu près sûr que c'est complètement cassé, réparer?
 	- Add music so it is less boring

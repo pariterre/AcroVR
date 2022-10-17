@@ -151,12 +151,12 @@ public class MissionManager : MonoBehaviour
         var _verticalSpeed = Utils.ToFloat(uiManager.userInputs.VerticalSpeed.text);
 
         // Get the angles applied to the model
-        var _hips = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].ThighControl.avatarIndex];
-        var _knee = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].LegControl.avatarIndex];
-        var _leftArmAbd = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].LeftArmControlAbd.avatarIndex];
-        var _leftArmFlexion = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].LeftArmControlFlexion.avatarIndex];
-        var _rightArmAbd = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].RightArmControlAbd.avatarIndex];
-        var _rightArmFlexion = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].RightArmControlFlexion.avatarIndex];
+        var _hips = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].ThighControl.avatarIndexDDL];
+        var _knee = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].LegControl.avatarIndexDDL];
+        var _leftArmAbd = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].LeftArmControlAbd.avatarIndexDDL];
+        var _leftArmFlexion = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].LeftArmControlFlexion.avatarIndexDDL];
+        var _rightArmAbd = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].RightArmControlAbd.avatarIndexDDL];
+        var _rightArmFlexion = avatarManager.LoadedModels[0].Joints.nodes[avatarManager.LoadedModels[0].RightArmControlFlexion.avatarIndexDDL];
 
         // Get computed results
         var _travelDistance = drawManager.TravelDistance(0);

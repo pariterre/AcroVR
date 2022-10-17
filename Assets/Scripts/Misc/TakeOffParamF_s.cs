@@ -21,27 +21,29 @@ public class TakeOffParamF_s : MonoBehaviour
     {
         gameManager.SetSelectedPresetCondition(value);
 
-        UpdatePositions(value);
+        int _avatarIndex = 0;
+        UpdatePositions(_avatarIndex, value);
     }
 
-    public void UpdatePositions(int value)
+    public void UpdatePositions(int _avatarIndex, int value)
     {
         uiManager.userInputs.SetPositions(gameManager.PresetConditions.conditions[value].userInputsValues);
 
-        ApplyAvatar();
+        ApplyAvatar(_avatarIndex);
     }
 
     public void CheckTakeOffParam()
     {
+        int _avatarIndex = 0;
         uiManager.userInputs.SetAllFromUI();    
-        ApplyAvatar();
+        ApplyAvatar(_avatarIndex);
     }
 
-    private void ApplyAvatar()
+    private void ApplyAvatar(int _avatarIndex)
     {
-        drawManager.ShowAvatar(0);
-        drawManager.InitPoseAvatar(0);
-        gameManager.InterpolationDDL();
-        bp.FrontCameraPOV(drawManager.CheckPositionAvatar(0));
+        drawManager.ShowAvatar(_avatarIndex);
+        drawManager.InitPoseAvatar(_avatarIndex);
+        gameManager.InterpolationDDL(_avatarIndex);
+        bp.FrontCameraPOV(drawManager.CheckPositionAvatar(_avatarIndex));
     }
 }

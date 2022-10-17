@@ -13,73 +13,73 @@ public class UserUIInputs
     public InputField Duration;
     public void SetDuration(float _value, bool _activateField = true) {
         SetInput(Duration, _value, _activateField);
-        ToolBox.GetInstance().GetManager<DrawManager>().TakeOffParameters.Duration = _value;
+        ToolBox.GetInstance().GetManager<DrawManager>().SetDuration(0, _value);
     }
 
     public InputField Somersault;
     public void SetSomersault(float _value, bool _activateField = true) {
         SetInput(Somersault, _value, _activateField);
-        ToolBox.GetInstance().GetManager<DrawManager>().TakeOffParameters.Somersault = _value;
+        ToolBox.GetInstance().GetManager<DrawManager>().avatarProperties[0].TakeOffParameters.Somersault = _value;
     }
 
     public InputField Tilt;
     public void SetTilt(float _value, bool _activateField = true) {
         SetInput(Tilt, _value, _activateField);
-        ToolBox.GetInstance().GetManager<DrawManager>().TakeOffParameters.Tilt = _value;
+        ToolBox.GetInstance().GetManager<DrawManager>().avatarProperties[0].TakeOffParameters.Tilt = _value;
     }
 
     public InputField Twist;
     public void SetTwist(float _value, bool _activateField = true) {
         SetInput(Twist, _value, _activateField);
-        ToolBox.GetInstance().GetManager<DrawManager>().TakeOffParameters.Twist = _value;
+        ToolBox.GetInstance().GetManager<DrawManager>().avatarProperties[0].TakeOffParameters.Twist = _value;
     }
 
     public InputField HorizontalPosition;
     public void SetHorizontalPosition(float _value, bool _activateField = true) {
         SetInput(HorizontalPosition, _value, _activateField);
-        ToolBox.GetInstance().GetManager<DrawManager>().TakeOffParameters.HorizontalPosition = _value;
+        ToolBox.GetInstance().GetManager<DrawManager>().avatarProperties[0].TakeOffParameters.HorizontalPosition = _value;
     }
 
     public InputField VerticalPosition;
     public void SetVerticalPosition(float _value, bool _activateField = true) {
         SetInput(VerticalPosition, _value, _activateField);
-        ToolBox.GetInstance().GetManager<DrawManager>().TakeOffParameters.VerticalPosition = _value;
+        ToolBox.GetInstance().GetManager<DrawManager>().avatarProperties[0].TakeOffParameters.VerticalPosition = _value;
     }
 
     public InputField SomersaultSpeed;
     public void SetSomersaultSpeed(float _value, bool _activateField = true) {
         SetInput(SomersaultSpeed, _value, _activateField);
-        ToolBox.GetInstance().GetManager<DrawManager>().TakeOffParameters.SomersaultSpeed = _value;
+        ToolBox.GetInstance().GetManager<DrawManager>().avatarProperties[0].TakeOffParameters.SomersaultSpeed = _value;
     }
 
     public InputField TiltSpeed;
     public void SetTiltSpeed(float _value, bool _activateField = true) {
         SetInput(TiltSpeed, _value, _activateField);
-        ToolBox.GetInstance().GetManager<DrawManager>().TakeOffParameters.TiltSpeed = _value;
+        ToolBox.GetInstance().GetManager<DrawManager>().avatarProperties[0].TakeOffParameters.TiltSpeed = _value;
     }
 
     public InputField TwistSpeed;
     public void SetTwistSpeed(float _value, bool _activateField = true) {
         SetInput(TwistSpeed, _value, _activateField);
-        ToolBox.GetInstance().GetManager<DrawManager>().TakeOffParameters.TwistSpeed = _value;
+        ToolBox.GetInstance().GetManager<DrawManager>().avatarProperties[0].TakeOffParameters.TwistSpeed = _value;
     }
 
     public InputField HorizontalSpeed;
     public void SetHorizontalSpeed(float _value, bool _activateField = true) {
         SetInput(HorizontalSpeed, _value, _activateField);
-        ToolBox.GetInstance().GetManager<DrawManager>().TakeOffParameters.HorizontalSpeed = _value;
+        ToolBox.GetInstance().GetManager<DrawManager>().avatarProperties[0].TakeOffParameters.HorizontalSpeed = _value;
     }
 
     public InputField VerticalSpeed;
     public void SetVerticalSpeed(float _value, bool _activateField = true) {
         SetInput(VerticalSpeed, _value, _activateField);
-        ToolBox.GetInstance().GetManager<DrawManager>().TakeOffParameters.VerticalSpeed = _value;
+        ToolBox.GetInstance().GetManager<DrawManager>().avatarProperties[0].TakeOffParameters.VerticalSpeed = _value;
     }
 
     public Dropdown PresetConditions;
     public void SetPresetConditions(int _value, bool _activateField = true) {
         SetInput(PresetConditions, _value, _activateField);
-        ToolBox.GetInstance().GetManager<DrawManager>().TakeOffParameters.PresetCondition = _value;
+        ToolBox.GetInstance().GetManager<DrawManager>().avatarProperties[0].TakeOffParameters.PresetCondition = _value;
         if (PresetConditions != null)
             PlayerPrefs.SetInt("PresetConditions", PresetConditions.value);
     }
@@ -87,7 +87,7 @@ public class UserUIInputs
     public Toggle UseGravity;
     public void SetUseGravity(bool _value, bool _activateField = true) {
         SetInput(UseGravity, _value, _activateField);
-        ToolBox.GetInstance().GetManager<DrawManager>().TakeOffParameters.UseGravity = _value;  // TODO Change this to drawManager.Joints(0)
+        ToolBox.GetInstance().GetManager<DrawManager>().avatarProperties[0].TakeOffParameters.UseGravity = _value;
         if (UseGravity != null)
             ToolBox.GetInstance().GetManager<DrawManager>().ForceFullUpdate(0);
     }
@@ -95,7 +95,7 @@ public class UserUIInputs
     public Toggle StopOnGround;
     public void SetStopOnGround(bool _value, bool _activateField = true) {
         SetInput(StopOnGround, _value, _activateField);
-        ToolBox.GetInstance().GetManager<DrawManager>().TakeOffParameters.StopOnGround = _value;
+        ToolBox.GetInstance().GetManager<DrawManager>().avatarProperties[0].TakeOffParameters.StopOnGround = _value;
         if (StopOnGround != null)
             ToolBox.GetInstance().GetManager<DrawManager>().ForceFullUpdate(0);
     }

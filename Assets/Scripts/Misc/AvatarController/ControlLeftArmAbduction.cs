@@ -3,7 +3,7 @@
 public class ControlLeftArmAbduction : ControlSegmentGeneric
 {
     public override string dofName { get { return "LeftArmAbduction"; } }
-    public override int avatarIndex { get { return 5; } }
+    public override int avatarIndexDDL { get { return 5; } }
     public override int jointSubIndex { get { return 1; } }
     public override int qIndex { get { return 4; } }
     protected override DrawingCallback drawingCallback { get {return avatarManager.SetLeftArmAbduction;} }

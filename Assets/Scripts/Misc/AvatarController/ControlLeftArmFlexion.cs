@@ -3,7 +3,7 @@ using UnityEngine;
 public class ControlLeftArmFlexion : ControlSegmentGeneric
 {
     public override string dofName { get { return "LeftArmFlexion"; } }
-    public override int avatarIndex { get { return 4; } }
+    public override int avatarIndexDDL { get { return 4; } }
     public override int jointSubIndex { get { return 0; } }
     public override int qIndex { get { return 5; } }
     protected override DrawingCallback drawingCallback { get { return avatarManager.SetLeftArmFlexion; } }

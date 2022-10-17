@@ -56,14 +56,15 @@ public class HandleCircle : MonoBehaviour
         Vector3 newPosition = Input.mousePosition;
         mouseDistance += newPosition - lastPosition;
 
+        int _avatarIndex = 0;
         if (target.name == "shin.L" || target.name == "shin.R")
         {
-            HandleDof(1, mouseDistance.x);
+            HandleDof(_avatarIndex, 1, mouseDistance.x);
             ToolBox.GetInstance().GetManager<StatManager>().dofName = "KneeFlexion";
         }
         else if (target.name == "thigh.L" || target.name == "thigh.R")
         {
-            HandleDof(0, -mouseDistance.x);
+            HandleDof(_avatarIndex, 0, -mouseDistance.x);
             ToolBox.GetInstance().GetManager<StatManager>().dofName = "HipFlexion";
         }
         else if (target.name == "upper_arm.L")
@@ -75,12 +76,12 @@ public class HandleCircle : MonoBehaviour
             }
             else if (directionRotate == 1)
             {
-                HandleDof(3, mouseDistance.x);
+                HandleDof(_avatarIndex, 3, mouseDistance.x);
                 ToolBox.GetInstance().GetManager<StatManager>().dofName = "LeftArmAbduction";
             }
             else if (directionRotate == 2)
             {
-                HandleDof(2, mouseDistance.y);
+                HandleDof(_avatarIndex, 2, mouseDistance.y);
                 ToolBox.GetInstance().GetManager<StatManager>().dofName = "LeftArmFlexion";
             }
         }
@@ -93,12 +94,12 @@ public class HandleCircle : MonoBehaviour
             }
             else if (directionRotate == 1)
             {
-                HandleDof(5, mouseDistance.x);
+                HandleDof(_avatarIndex, 5, mouseDistance.x);
                 ToolBox.GetInstance().GetManager<StatManager>().dofName = "RightArmAbduction";
             }
             else if (directionRotate == 2)
             {
-                HandleDof(4, mouseDistance.y);
+                HandleDof(_avatarIndex, 4, mouseDistance.y);
                 ToolBox.GetInstance().GetManager<StatManager>().dofName = "RightArmFlexion";
             }
         }
@@ -112,7 +113,7 @@ public class HandleCircle : MonoBehaviour
         directionRotate = 0;
     }
 
-    void HandleDof(int _dof, float _value)
+    void HandleDof(int _avatarIndex, int _dof, float _value)
     {
         if (directionRotate == 2) transform.rotation = Quaternion.Euler(-_value, 0, 0);
         else transform.rotation = Quaternion.Euler(0, -_value, 0);
@@ -123,7 +124,7 @@ public class HandleCircle : MonoBehaviour
             dof[_dof] = -_value / 30;
 
         avatarManager.LoadedModels[0].Joints.nodes[_dof].Q[node] = (float)dof[_dof];
-        ToolBox.GetInstance().GetManager<GameManager>().InterpolationDDL();
+        ToolBox.GetInstance().GetManager<GameManager>().InterpolationDDL(_avatarIndex);
         ToolBox.GetInstance().GetManager<GameManager>().DisplayDDL(_dof, true);
     }
 }

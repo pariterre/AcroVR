@@ -246,6 +246,8 @@ public class BaseProfile : LevelBase
 
     public void MissionLoad()
     {
+        int _avatarIndex = 0;
+
         gameManager.WriteToLogFile("Load Button Click");
         int ret = gameManager.MissionLoad();
 
@@ -273,10 +275,10 @@ public class BaseProfile : LevelBase
         gameManager.WriteToLogFile("Success to load a file");
 
         fileName.text = Path.GetFileName(avatarManager.LoadedModels[0].Joints.fileName);
-        avatarManager.LoadAvatar(0);
+        avatarManager.LoadAvatar(_avatarIndex);
 
         TakeOffOn();
-        InitDropdownDDLNames(0);
+        InitDropdownDDLNames(_avatarIndex);
 
         dropDownCondition.value = gameManager.SelectedPresetCondition;
 
@@ -292,10 +294,10 @@ public class BaseProfile : LevelBase
         float t = (drawManager.NumberFrames - 1) * 0.02f;
         endFrameText.text = t + " sec";
 
-        if (t < drawManager.TakeOffParameters.Duration)
-            drawManager.TakeOffParameters.Duration = t;
+        if (t < drawManager.avatarProperties[0].TakeOffParameters.Duration)
+            drawManager.SetDuration(0, t);
 
-        gameManager.InterpolationDDL();
+        gameManager.InterpolationDDL(_avatarIndex);
         gameManager.DisplayDDL(0, true);
 
     }
@@ -619,9 +621,10 @@ public class BaseProfile : LevelBase
 
         if(aniGraphManager.isTutorial == 0)
         {
+            int _avatarIndex = 0;
             TakeOffOn();
-            InitDropdownDDLNames(0);
-            gameManager.InterpolationDDL();
+            InitDropdownDDLNames(_avatarIndex);
+            gameManager.InterpolationDDL(_avatarIndex);
             gameManager.DisplayDDL(0, true);
 
             aniGraphManager.isTutorial++;

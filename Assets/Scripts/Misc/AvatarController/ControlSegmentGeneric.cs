@@ -22,7 +22,7 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
 
     // Abstract getter
     public abstract string dofName { get; }
-    public abstract int avatarIndex { get; }
+    public abstract int avatarIndexDDL { get; }
     public abstract int jointSubIndex { get; }
     public abstract int qIndex { get; }
     protected abstract DrawingCallback drawingCallback { get; }
@@ -37,11 +37,11 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
 
     // Delegate
     protected delegate void DrawingCallback(int _avatarIndex, float value);
-    public delegate int GetNodeCallback(int index);
+    public delegate int GetNodeCallback(int _avatarIndex, int index);
 
-    public virtual void Init(GetNodeCallback getNodeCallback)
+    public virtual void Init(int _avatarIndex, GetNodeCallback getNodeCallback)
     {
-        node = getNodeCallback(avatarIndex);
+        node = getNodeCallback(_avatarIndex, avatarIndexDDL);
 
         avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
@@ -95,8 +95,8 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
     }
 
     protected float CurrentAngle {
-        get { return avatarManager.LoadedModels[0].Joints.nodes[avatarIndex].Q[node]; } 
-        set { avatarManager.LoadedModels[0].Joints.nodes[avatarIndex].Q[node] = value; }
+        get { return avatarManager.LoadedModels[0].Joints.nodes[avatarIndexDDL].Q[node]; } 
+        set { avatarManager.LoadedModels[0].Joints.nodes[avatarIndexDDL].Q[node] = value; }
     }
 
     void OnMouseDown()
@@ -123,7 +123,8 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
             Vector3 newPosition = Input.mousePosition;
             mouseDistance += newPosition - lastPosition;
 
-            HandleDof(mouseDistance.x / 30);
+            int _avatarIndex = 0;
+            HandleDof(_avatarIndex, mouseDistance.x / 30);
             lastPosition = newPosition;
         }
     }
@@ -140,15 +141,15 @@ public abstract class ControlSegmentGeneric : MonoBehaviour
         }
     }
 
-    protected virtual void HandleDof(float _nextAngle)
+    protected virtual void HandleDof(int _avatarIndex, float _nextAngle)
     {
         if (!isInitialized) return;
         if (statManager.currentJointSubIdx != jointSubIndex) return;
         if (angle == _nextAngle) return;
 
         CurrentAngle = _nextAngle / avatarRotationDragSpeed + initAngle;
-        gameManager.InterpolationDDL();
-        gameManager.DisplayDDL(avatarIndex, true);
+        gameManager.InterpolationDDL(_avatarIndex);
+        gameManager.DisplayDDL(avatarIndexDDL, true);
 
         drawingCallback(0, CurrentAngle);
     }

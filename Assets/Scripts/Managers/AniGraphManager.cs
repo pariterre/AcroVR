@@ -83,7 +83,9 @@ public class AniGraphManager : MonoBehaviour
 
     void Update()
     {
-        if (!avatarManager.LoadedModels[0].IsLoaded) return;
+        int _avatarIndex = 0;
+
+        if (!avatarManager.LoadedModels[_avatarIndex].IsLoaded) return;
 
         if (graph && uiManager.GetCurrentTab() == 2)
         {
@@ -108,7 +110,7 @@ public class AniGraphManager : MonoBehaviour
             {
                 graph.DataSource.StartBatch();
                 graph.DataSource.ClearCategory(nodesTemp1Category);
-                if (avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].interpolation.type == MainParameters.InterpolationType.Quintic)
+                if (avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlUsed].interpolation.type == MainParameters.InterpolationType.Quintic)
                     graph.DataSource.AddPointToCategory(nodesTemp1Category, mousePosX, mousePosY);
                 else
                     graph.DataSource.AddPointToCategory(nodesTemp1Category, avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[nodeUsed], mousePosY);
@@ -119,7 +121,7 @@ public class AniGraphManager : MonoBehaviour
             {
                 RemoveNodesTemp();
 
-                if (avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].interpolation.type == MainParameters.InterpolationType.Quintic)
+                if (avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlUsed].interpolation.type == MainParameters.InterpolationType.Quintic)
                 {
                     if ((nodeUsed <= 0 && mousePosX >= avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[1]) || (nodeUsed >= numNodes - 1 && mousePosX <= avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[nodeUsed - 1]) ||
                     (nodeUsed > 0 && nodeUsed < numNodes - 1 && (mousePosX <= avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[nodeUsed - 1] || mousePosX >= avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[nodeUsed + 1])))
@@ -127,15 +129,15 @@ public class AniGraphManager : MonoBehaviour
                         return;
                     }
 
-                    avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[nodeUsed] = (float)mousePosX;
+                    avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlUsed].T[nodeUsed] = (float)mousePosX;
                 }
 
-                avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].Q[nodeUsed] = (float)mousePosY / Mathf.Rad2Deg;
-                gameManager.InterpolationDDL();
+                avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlUsed].Q[nodeUsed] = (float)mousePosY / Mathf.Rad2Deg;
+                gameManager.InterpolationDDL(_avatarIndex);
                 gameManager.DisplayDDL(ddlUsed, true);
 
                 drawManager.StartEditing();
-                drawManager.SetCurrrentFrame(0, (int)(avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[nodeUsed] / drawManager.FrameRate));
+                drawManager.SetCurrrentFrame(_avatarIndex, (int)(avatarManager.LoadedModels[0].Joints.nodes[ddlUsed].T[nodeUsed] / drawManager.FrameRate));
                 drawManager.StopEditing();
             }
         }

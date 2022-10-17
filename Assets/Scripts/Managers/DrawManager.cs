@@ -23,7 +23,8 @@ public class DrawManager : MonoBehaviour
         public float CurrentTime(float _frameRate) => CurrentFrame * _frameRate;
 
         public float FloorHeight = (float)Double.NaN;
-        public float[,] Q;  // q1
+        public MainParameters.StrucTakeOffParam TakeOffParameters;
+        public float[,] Q; 
     }
 
     protected AvatarManager avatarManager;
@@ -33,7 +34,7 @@ public class DrawManager : MonoBehaviour
     protected SliderPlayAnimation sliderAnimation;
     protected DisplayResultGraphicS resultGraphics;
 
-    protected List<AvatarProperties> avatarProperties = new List<AvatarProperties>();
+    public List<AvatarProperties> avatarProperties { get; protected set; } = new List<AvatarProperties>();
     public float FrameRate { get; } = 0.02f;
     public GameObject girl2;
 
@@ -42,7 +43,10 @@ public class DrawManager : MonoBehaviour
     public void SetCanResumeAnimation(bool _value) { canResumeAnimation = _value; }
 
     public void SetCurrrentFrame(int _avatarIndex, int _value) {
-        avatarProperties[_avatarIndex].CurrentFrame = _value;
+        if (_avatarIndex != 0) return;  // Only move the time when we try to change the time on the main avatar
+
+        for (int i=0; i<avatarProperties.Count; i++)
+            avatarProperties[i].CurrentFrame = _value;
         
         if (_avatarIndex == 0 && sliderAnimation) sliderAnimation.SetSlider(avatarProperties[_avatarIndex].CurrentFrame);
     }
@@ -50,13 +54,19 @@ public class DrawManager : MonoBehaviour
     int firstFrame = 0;
     public int CurrentFrame { get => avatarProperties[0].CurrentFrame; }
     public float CurrentTime { get => avatarProperties[0].CurrentTime(FrameRate); }
+    public void SetDuration(int _avatarIndex, float _value)
+    {
+        if (_avatarIndex != 0) return;  // Only set duration when we try to change the time on the main avatar
+
+        for (int i = 0; i < avatarProperties.Count; i++)
+            avatarProperties[i].TakeOffParameters.Duration = _value;
+    }
     public int NumberFrames = 0;
     public float timeElapsed = 0;
     public float timeFrame = 0;
     float timeStarted = 0;
     float factorPlaySpeed = 1f;
 
-    public MainParameters.StrucTakeOffParam TakeOffParameters;
 
     string playMode = MainParameters.Instance.languages.Used.animatorPlayModeSimulation;
     
@@ -166,7 +176,7 @@ public class DrawManager : MonoBehaviour
     public void ForceFullUpdate(int _avatarIndex)
     {
         ShowAvatar(_avatarIndex);
-        ShowGround();
+        ShowGround(_avatarIndex);
         PlayOneFrame(_avatarIndex);
         SetCurrrentFrame(_avatarIndex, avatarProperties[_avatarIndex].CurrentFrame);
     }
@@ -200,9 +210,10 @@ public class DrawManager : MonoBehaviour
         _model.Hip.transform.localEulerAngles = _hipRotations;
     }
 
-    public void ShowGround(){
+    public void ShowGround(int _avatarIndex)
+    {
         if (Ground != null)
-            Ground.SetActive(TakeOffParameters.StopOnGround);
+            Ground.SetActive(avatarProperties[_avatarIndex].TakeOffParameters.StopOnGround);
     }
 
     public void SetAnimationSpeed(float speed)
@@ -274,7 +285,7 @@ public class DrawManager : MonoBehaviour
             if (joints.tc > 0)                          // Il y a eu contact avec le sol, alors seulement une partie des données sont utilisé
                 timeFrame = joints.tc / (NumberFrames - 1);
             else                                        // Aucun contact avec le sol, alors toutes les données sont utilisé
-                timeFrame = TakeOffParameters.Duration / (NumberFrames - 1);
+                timeFrame = avatarProperties[_avatarIndex].TakeOffParameters.Duration / (NumberFrames - 1);
         }
         else
             timeFrame = 0;
@@ -329,9 +340,12 @@ public class DrawManager : MonoBehaviour
     {
         if (!avatarManager.LoadedModels[_avatarIndex].IsLoaded) return new float[0,0];
 
-        MainParameters.StrucJoints _joints = avatarManager.LoadedModels[_avatarIndex].Joints;
+        var _joints = avatarManager.LoadedModels[_avatarIndex].Joints;
+        var _properties = avatarProperties[_avatarIndex];
+
         float[] q0 = new float[_joints.lagrangianModel.nDDL];
         float[] q0dot = new float[_joints.lagrangianModel.nDDL];
+
         if (Double.IsNaN(avatarProperties[_avatarIndex].FloorHeight)){
             avatarProperties[_avatarIndex].FloorHeight = avatarManager.LoadedModels[_avatarIndex].FeetHeight(q0);
         }
@@ -350,9 +364,9 @@ public class DrawManager : MonoBehaviour
         int[] translationS = MathFunc.Sign(translation);
         for (int i = 0; i < translation.Length; i++) translation[i] = Math.Abs(translation[i]);
 
-        float rotRadians = TakeOffParameters.Somersault * (float)Math.PI / 180;
+        float rotRadians = _properties.TakeOffParameters.Somersault * (float)Math.PI / 180;
 
-        float tilt = TakeOffParameters.Tilt;
+        float tilt = _properties.TakeOffParameters.Tilt;
         if (tilt == 90)
             tilt = 90.001f;
         else if (tilt == -90)
@@ -369,16 +383,16 @@ public class DrawManager : MonoBehaviour
         //q0dot[8] = verticalSpeed
         //q0dot[9] = somersaultSpeed
         //q0dot[11] = twistSpeed
-        q0dot[Math.Abs(_joints.lagrangianModel.root_foreward) - 1] = TakeOffParameters.HorizontalSpeed;                       // m/s
-        q0dot[Math.Abs(_joints.lagrangianModel.root_upward) - 1] = TakeOffParameters.VerticalSpeed;                                // m/s
-        q0dot[Math.Abs(_joints.lagrangianModel.root_somersault) - 1] = TakeOffParameters.SomersaultSpeed * 2 * (float)Math.PI;     // radians/s
-        q0dot[Math.Abs(_joints.lagrangianModel.root_twist) - 1] = TakeOffParameters.TwistSpeed * 2 * (float)Math.PI;               // radians/s
+        q0dot[Math.Abs(_joints.lagrangianModel.root_foreward) - 1] = _properties.TakeOffParameters.HorizontalSpeed;                       // m/s
+        q0dot[Math.Abs(_joints.lagrangianModel.root_upward) - 1] = _properties.TakeOffParameters.VerticalSpeed;                                // m/s
+        q0dot[Math.Abs(_joints.lagrangianModel.root_somersault) - 1] = _properties.TakeOffParameters.SomersaultSpeed * 2 * (float)Math.PI;     // radians/s
+        q0dot[Math.Abs(_joints.lagrangianModel.root_twist) - 1] = _properties.TakeOffParameters.TwistSpeed * 2 * (float)Math.PI;               // radians/s
 
 
         // q0[11] = twist
         // q0dot[10] = tiltSpeed
-        q0[Math.Abs(_joints.lagrangianModel.root_twist) - 1] = TakeOffParameters.Twist * (float)Math.PI / 180;
-        q0dot[Math.Abs(_joints.lagrangianModel.root_tilt) - 1] = TakeOffParameters.TiltSpeed * 2 * (float)Math.PI;
+        q0[Math.Abs(_joints.lagrangianModel.root_twist) - 1] = _properties.TakeOffParameters.Twist * (float)Math.PI / 180;
+        q0dot[Math.Abs(_joints.lagrangianModel.root_tilt) - 1] = _properties.TakeOffParameters.TiltSpeed * 2 * (float)Math.PI;
 
 
         double[] Q = new double[_joints.lagrangianModel.nDDL];
@@ -410,8 +424,8 @@ public class DrawManager : MonoBehaviour
             q0dot[translation[i] - 1] = q0dot[translation[i] - 1] * translationS[i];
         }
 
-        q0[Math.Abs(_joints.lagrangianModel.root_foreward) - 1] += TakeOffParameters.HorizontalPosition;
-        q0[Math.Abs(_joints.lagrangianModel.root_upward) - 1] += TakeOffParameters.VerticalPosition;
+        q0[Math.Abs(_joints.lagrangianModel.root_foreward) - 1] += _properties.TakeOffParameters.HorizontalPosition;
+        q0[Math.Abs(_joints.lagrangianModel.root_upward) - 1] += _properties.TakeOffParameters.VerticalPosition;
 
         double[] x0 = new double[_joints.lagrangianModel.nDDL * 2];
         for (int i = 0; i < _joints.lagrangianModel.nDDL; i++)
@@ -424,9 +438,9 @@ public class DrawManager : MonoBehaviour
 
         Options options = new Options();
         options.InitialStep = _joints.lagrangianModel.dt;
-        var sol = Ode.RK547M(_joints, 0, TakeOffParameters.Duration + _joints.lagrangianModel.dt, new Vector(x0), ShortDynamics, options);
+        var sol = Ode.RK547M(0, _properties.TakeOffParameters.Duration + _joints.lagrangianModel.dt, new Vector(x0), delegate(double _t, Vector x) { return ShortDynamics(_avatarIndex, _t, x); }, options);
 
-        var points = sol.SolveFromToStep(0, TakeOffParameters.Duration + _joints.lagrangianModel.dt, _joints.lagrangianModel.dt).ToArray();
+        var points = sol.SolveFromToStep(0, _properties.TakeOffParameters.Duration + _joints.lagrangianModel.dt, _joints.lagrangianModel.dt).ToArray();
 
         // test0 = point[51]
         // test1 = point[251]
@@ -459,7 +473,7 @@ public class DrawManager : MonoBehaviour
             var _lowestBodyPart = tagZ.Min();
 
             // Cut the trial when the feet crosses the ground (vertical axis = 0)
-            if (!IsGestureMode && i > 0 && TakeOffParameters.StopOnGround && TakeOffParameters.UseGravity && _lowestBodyPart < avatarProperties[_avatarIndex].FloorHeight)
+            if (!IsGestureMode && i > 0 && _properties.TakeOffParameters.StopOnGround && _properties.TakeOffParameters.UseGravity && _lowestBodyPart < avatarProperties[_avatarIndex].FloorHeight)
             {
                 _joints.tc = (float)t[i];
                 break;
@@ -496,7 +510,7 @@ public class DrawManager : MonoBehaviour
             }
         }
 
-        float numSomersault = MathFunc.MatrixGetColumn(rotAbs, 0).Max() + TakeOffParameters.Somersault / 360;
+        float numSomersault = MathFunc.MatrixGetColumn(rotAbs, 0).Max() + _properties.TakeOffParameters.Somersault / 360;
         DisplayNewMessage(true, true, string.Format(" {0} = {1:0.00}", MainParameters.Instance.languages.Used.displayMsgNumberSomersaults, numSomersault));
         DisplayNewMessage(false, true, string.Format(" {0} = {1:0.00}", MainParameters.Instance.languages.Used.displayMsgNumberTwists, MathFunc.MatrixGetColumn(rotAbs, 2).Max()));
         DisplayNewMessage(false, true, string.Format(" {0} = {1:0.00}", MainParameters.Instance.languages.Used.displayMsgFinalTwist, _joints.rot[tIndex - 1, 2]));
@@ -506,8 +520,10 @@ public class DrawManager : MonoBehaviour
         return qOut;
     }
 
-    protected Vector ShortDynamics(MainParameters.StrucJoints _joints, double t, Vector x)
+    protected Vector ShortDynamics(int _avatarIndex, double t, Vector x)
     {
+        var _joints = avatarManager.LoadedModels[_avatarIndex].Joints;
+        var _parameters = avatarProperties[_avatarIndex];
         int nDDL = _joints.lagrangianModel.nDDL;
 
         double[] q = new double[nDDL];
@@ -528,7 +544,7 @@ public class DrawManager : MonoBehaviour
         NLEffects1Simple nlEffects1Simple = new NLEffects1Simple();
         n1 = nlEffects1Simple.NLEffects1(q, qdot);
 
-        if (!TakeOffParameters.UseGravity)
+        if (!_parameters.TakeOffParameters.UseGravity)
         {
             double[] n1zero;
             n1zero = nlEffects1Simple.NLEffects1(q, new double[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });

@@ -291,10 +291,11 @@ public class TrainingTooltip : MonoBehaviour
 
     public void AddNode()
     {
+        int _avatarIndex = 0;
         int ddl = aniGraphManager.ddlUsed;
         int node = FindPreviousNode(ddl, aniGraphManager.mousePosSaveX);
 
-        gameManager.InterpolationDDL();
+        gameManager.InterpolationDDL(_avatarIndex);
         gameManager.DisplayDDL(ddl, true);
 
         float[] T = new float[avatarManager.LoadedModels[0].Joints.nodes[ddl].T.Length + 1];
@@ -315,7 +316,7 @@ public class TrainingTooltip : MonoBehaviour
         avatarManager.LoadedModels[0].Joints.nodes[ddl].T = MathFunc.MatrixCopy(T);
         avatarManager.LoadedModels[0].Joints.nodes[ddl].Q = MathFunc.MatrixCopy(Q);
 
-        gameManager.InterpolationDDL();
+        gameManager.InterpolationDDL(_avatarIndex);
         gameManager.DisplayDDL(ddl, false);
 
         aniGraphManager.mouseRightButtonON = false;
@@ -323,6 +324,7 @@ public class TrainingTooltip : MonoBehaviour
 
     public void RemoveNode()
     {
+        int _avatarIndex = 0;
         int ddl = aniGraphManager.ddlUsed;
 
         if (avatarManager.LoadedModels[0].Joints.nodes[ddl].T.Length < 3 || avatarManager.LoadedModels[0].Joints.nodes[ddl].Q.Length < 3)
@@ -350,7 +352,7 @@ public class TrainingTooltip : MonoBehaviour
         avatarManager.LoadedModels[0].Joints.nodes[ddl].T = MathFunc.MatrixCopy(T);
         avatarManager.LoadedModels[0].Joints.nodes[ddl].Q = MathFunc.MatrixCopy(Q);
 
-        gameManager.InterpolationDDL();
+        gameManager.InterpolationDDL(_avatarIndex);
         gameManager.DisplayDDL(ddl, false);
 
         aniGraphManager.mouseRightButtonON = false;

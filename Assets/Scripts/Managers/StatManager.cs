@@ -105,24 +105,25 @@ public class StatManager : MonoBehaviour
     public void ProfileReplaySave(string fileName)
     {
         PlayerReplayInfo replayInfo = new PlayerReplayInfo();
+        var _takeOffParameters = drawManager.avatarProperties[0].TakeOffParameters;
 
         replayInfo.player = info;
 
         replayInfo.replay.Objective = "default";
-        replayInfo.replay.Duration = drawManager.TakeOffParameters.Duration;
-        replayInfo.replay.UseGravity = drawManager.TakeOffParameters.UseGravity;
-        replayInfo.replay.StopOnGround = drawManager.TakeOffParameters.StopOnGround;
+        replayInfo.replay.Duration = _takeOffParameters.Duration;
+        replayInfo.replay.UseGravity = _takeOffParameters.UseGravity;
+        replayInfo.replay.StopOnGround = _takeOffParameters.StopOnGround;
 
-        replayInfo.replay.Somersault = drawManager.TakeOffParameters.Somersault;
-        replayInfo.replay.Tilt = drawManager.TakeOffParameters.Tilt;
-        replayInfo.replay.Twist = drawManager.TakeOffParameters.Twist;
-        replayInfo.replay.HorizontalPosition = drawManager.TakeOffParameters.HorizontalPosition;
-        replayInfo.replay.VerticalPosition = drawManager.TakeOffParameters.VerticalPosition;
-        replayInfo.replay.SomersaultSpeed = drawManager.TakeOffParameters.SomersaultSpeed;
-        replayInfo.replay.TiltSpeed = drawManager.TakeOffParameters.TiltSpeed;
-        replayInfo.replay.TwistSpeed = drawManager.TakeOffParameters.TwistSpeed;
-        replayInfo.replay.HorizontalSpeed = drawManager.TakeOffParameters.HorizontalSpeed;
-        replayInfo.replay.VerticalSpeed = drawManager.TakeOffParameters.VerticalSpeed;
+        replayInfo.replay.Somersault = _takeOffParameters.Somersault;
+        replayInfo.replay.Tilt = _takeOffParameters.Tilt;
+        replayInfo.replay.Twist = _takeOffParameters.Twist;
+        replayInfo.replay.HorizontalPosition = _takeOffParameters.HorizontalPosition;
+        replayInfo.replay.VerticalPosition = _takeOffParameters.VerticalPosition;
+        replayInfo.replay.SomersaultSpeed = _takeOffParameters.SomersaultSpeed;
+        replayInfo.replay.TiltSpeed = _takeOffParameters.TiltSpeed;
+        replayInfo.replay.TwistSpeed = _takeOffParameters.TwistSpeed;
+        replayInfo.replay.HorizontalSpeed = _takeOffParameters.HorizontalSpeed;
+        replayInfo.replay.VerticalSpeed = _takeOffParameters.VerticalSpeed;
 
         for (int i = 0; i < avatarManager.LoadedModels[0].Joints.nodes.Length; i++)
         {
@@ -178,7 +179,8 @@ public class StatManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1) && hasHit)
         {
-            HandleJointClick();
+            int _avatarIndex = 0;
+            HandleJointClick(_avatarIndex);
         }
     }
 
@@ -192,7 +194,7 @@ public class StatManager : MonoBehaviour
         currentJointSubIdx = -1;
     }
 
-    void HandleJointClick() {
+    void HandleJointClick(int _avatarIndex) {
         if (!uiManager.IsInEditingTab){
             // Prevent from changing avantar position if not in modification tab
             return;
@@ -218,9 +220,9 @@ public class StatManager : MonoBehaviour
 
         currentJointSubIdx = _nextJointSubIdx;
         currentControlSegment = _controlSegment[currentJointSubIdx];
-        currentControlSegment.Init(AddNode);
+        currentControlSegment.Init(_avatarIndex, AddNode);
 
-        baseProfile.InitDropdownDDLNames(currentControlSegment.avatarIndex);
+        baseProfile.InitDropdownDDLNames(currentControlSegment.avatarIndexDDL);
         baseProfile.NodeName(currentControlSegment.dofName);
     }
 
@@ -243,9 +245,9 @@ public class StatManager : MonoBehaviour
         return i - 1;
     }
 
-    public int AddNode(int _dof)
+    public int AddNode(int _avatarIndex, int _dof)
     {
-        gameManager.InterpolationDDL();
+        gameManager.InterpolationDDL(_avatarIndex);
         gameManager.DisplayDDL(_dof, true);
 
         int node = FindPreviousNode(_dof);
@@ -273,7 +275,7 @@ public class StatManager : MonoBehaviour
         avatarManager.LoadedModels[0].Joints.nodes[_dof].T = MathFunc.MatrixCopy(T);
         avatarManager.LoadedModels[0].Joints.nodes[_dof].Q = MathFunc.MatrixCopy(Q);
 
-        gameManager.InterpolationDDL();
+        gameManager.InterpolationDDL(_avatarIndex);
         gameManager.DisplayDDL(_dof, true);
 
         return node + 1;

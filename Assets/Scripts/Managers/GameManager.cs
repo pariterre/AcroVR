@@ -281,43 +281,42 @@ public class GameManager : MonoBehaviour
         }
 
         AnimationInfo info = JsonUtility.FromJson<AnimationInfo>(dataAsJson);
-        // TODO: Deal with these extra information
         Debug.Log("Deal with the info");
-        //jointsTemp.Duration = info.Duration;
-        //jointsTemp.UseGravity = info.UseGravity;
-        //jointsTemp.StopOnGround = info.StopOnGround;
 
-        MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
-        jointsTemp.fileName = fileName;
-        jointsTemp.nodes = null;
-        //jointsTemp.condition = info.Condition;
-        //jointsTemp.takeOffParam.Somersault = info.Somersault;
-        //jointsTemp.takeOffParam.Tilt = info.Tilt;
-        //jointsTemp.takeOffParam.Twist = info.Twist;
-        //jointsTemp.takeOffParam.HorizontalPosition = info.HorizontalPosition;
-        //jointsTemp.takeOffParam.VerticalPosition = info.VerticalPosition;
-        //jointsTemp.takeOffParam.SomersaultSpeed = info.SomersaultSpeed;
-        //jointsTemp.takeOffParam.TiltSpeed = info.TiltSpeed;
-        //jointsTemp.takeOffParam.TwistSpeed = info.TwistSpeed;
-        //jointsTemp.takeOffParam.HorizontalSpeed = info.HorizontalSpeed;
-        //jointsTemp.takeOffParam.VerticalSpeed = info.VerticalSpeed;
+        var _jointsTemp = new MainParameters.StrucJoints();
 
-        jointsTemp.nodes = new MainParameters.StrucNodes[info.nodes.Count];
+        _jointsTemp.fileName = fileName;
 
         WriteToLogFile("For() Start info.nodes.Count: " + info.nodes.Count.ToString());
 
+        drawManager.SetDuration(_avatarIndex, info.Duration);
+        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.UseGravity = info.UseGravity;
+        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.StopOnGround = info.StopOnGround;
+        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.PresetCondition = info.Condition;
+        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Somersault = info.Somersault;
+        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Tilt = info.Tilt;
+        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Twist = info.Twist;
+        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.HorizontalPosition = info.HorizontalPosition;
+        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.VerticalPosition = info.VerticalPosition;
+        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.SomersaultSpeed = info.SomersaultSpeed;
+        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.TiltSpeed = info.TiltSpeed;
+        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.TwistSpeed = info.TwistSpeed;
+        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.HorizontalSpeed = info.HorizontalSpeed;
+        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.VerticalSpeed = info.VerticalSpeed;
+
+        _jointsTemp.nodes = new MainParameters.StrucNodes[info.nodes.Count];
         for (int i = 0; i < info.nodes.Count; i++)
         {
-            jointsTemp.nodes[i].ddl = i + 1;
-            jointsTemp.nodes[i].interpolation = MainParameters.Instance.interpolationDefault;
-            jointsTemp.nodes[i].T = info.nodes[i].T;
-            jointsTemp.nodes[i].Q = info.nodes[i].Q;
-            jointsTemp.nodes[i].ddlOppositeSide = -1;
+            _jointsTemp.nodes[i].ddl = i + 1;
+            _jointsTemp.nodes[i].interpolation = MainParameters.Instance.interpolationDefault;
+            _jointsTemp.nodes[i].T = info.nodes[i].T;
+            _jointsTemp.nodes[i].Q = info.nodes[i].Q;
+            _jointsTemp.nodes[i].ddlOppositeSide = -1;
         }
 
-        jointsTemp.lagrangianModel = new LagrangianModelSimple().GetParameters;
+        _jointsTemp.lagrangianModel = new LagrangianModelSimple().GetParameters;
 
-        avatarManager.LoadedModels[_avatarIndex].SetJoints(jointsTemp);
+        avatarManager.LoadedModels[_avatarIndex].SetJoints(_jointsTemp);
 
         return true;
     }
@@ -376,22 +375,23 @@ public class GameManager : MonoBehaviour
     private void WriteDataToJSON(string fileName)
     {
         AnimationInfo info = new AnimationInfo();
+        var _takeOffParameters = drawManager.avatarProperties[0].TakeOffParameters;
 
         info.Objective = "default";
-        info.Duration = drawManager.TakeOffParameters.Duration;
-        info.UseGravity = drawManager.TakeOffParameters.UseGravity;
-        info.StopOnGround = drawManager.TakeOffParameters.StopOnGround;
+        info.Duration = _takeOffParameters.Duration;
+        info.UseGravity = _takeOffParameters.UseGravity;
+        info.StopOnGround = _takeOffParameters.StopOnGround;
         info.Condition = gameManager.SelectedPresetCondition;
-        info.Somersault = drawManager.TakeOffParameters.Somersault;
-        info.Tilt = drawManager.TakeOffParameters.Tilt;
-        info.Twist = drawManager.TakeOffParameters.Twist;
-        info.HorizontalPosition = drawManager.TakeOffParameters.HorizontalPosition;
-        info.VerticalPosition = drawManager.TakeOffParameters.VerticalPosition;
-        info.SomersaultSpeed = drawManager.TakeOffParameters.SomersaultSpeed;
-        info.TiltSpeed = drawManager.TakeOffParameters.TiltSpeed;
-        info.TwistSpeed = drawManager.TakeOffParameters.TwistSpeed;
-        info.HorizontalSpeed = drawManager.TakeOffParameters.HorizontalSpeed;
-        info.VerticalSpeed = drawManager.TakeOffParameters.VerticalSpeed;
+        info.Somersault = _takeOffParameters.Somersault;
+        info.Tilt = _takeOffParameters.Tilt;
+        info.Twist = _takeOffParameters.Twist;
+        info.HorizontalPosition = _takeOffParameters.HorizontalPosition;
+        info.VerticalPosition = _takeOffParameters.VerticalPosition;
+        info.SomersaultSpeed = _takeOffParameters.SomersaultSpeed;
+        info.TiltSpeed = _takeOffParameters.TiltSpeed;
+        info.TwistSpeed = _takeOffParameters.TwistSpeed;
+        info.HorizontalSpeed = _takeOffParameters.HorizontalSpeed;
+        info.VerticalSpeed = _takeOffParameters.VerticalSpeed;
 
         MainParameters.StrucJoints _joints = avatarManager.LoadedModels[0].Joints;
         for (int i = 0; i < _joints.nodes.Length; i++)
@@ -409,20 +409,22 @@ public class GameManager : MonoBehaviour
 
     public void WriteDataFiles_s(string fileName)
     {
+        var _takeOffParameters = drawManager.avatarProperties[0].TakeOffParameters;
+
         string fileLines = string.Format(
             "Duration: {0}{1}Condition: {2}{3}VerticalSpeed: {4:0.000}{5}AnteroposteriorSpeed: {6:0.000}{7}SomersaultSpeed: {8:0.000}{9}TwistSpeed: {10:0.000}{11}Tilt: {12:0.000}{13}Rotation: {14:0.000}{15}{16}",
-            drawManager.TakeOffParameters.Duration, System.Environment.NewLine,
+            _takeOffParameters.Duration, System.Environment.NewLine,
             gameManager.SelectedPresetCondition, System.Environment.NewLine,
-            drawManager.TakeOffParameters.Somersault, System.Environment.NewLine,
-            drawManager.TakeOffParameters.Tilt, System.Environment.NewLine,
-            drawManager.TakeOffParameters.Twist, System.Environment.NewLine,
-            drawManager.TakeOffParameters.HorizontalPosition, System.Environment.NewLine,
-            drawManager.TakeOffParameters.VerticalPosition, System.Environment.NewLine,
-            drawManager.TakeOffParameters.SomersaultSpeed, System.Environment.NewLine,
-            drawManager.TakeOffParameters.TiltSpeed, System.Environment.NewLine,
-            drawManager.TakeOffParameters.TwistSpeed, System.Environment.NewLine,
-            drawManager.TakeOffParameters.HorizontalSpeed, System.Environment.NewLine,
-            drawManager.TakeOffParameters.VerticalSpeed, System.Environment.NewLine
+            _takeOffParameters.Somersault, System.Environment.NewLine,
+            _takeOffParameters.Tilt, System.Environment.NewLine,
+            _takeOffParameters.Twist, System.Environment.NewLine,
+            _takeOffParameters.HorizontalPosition, System.Environment.NewLine,
+            _takeOffParameters.VerticalPosition, System.Environment.NewLine,
+            _takeOffParameters.SomersaultSpeed, System.Environment.NewLine,
+            _takeOffParameters.TiltSpeed, System.Environment.NewLine,
+            _takeOffParameters.TwistSpeed, System.Environment.NewLine,
+            _takeOffParameters.HorizontalSpeed, System.Environment.NewLine,
+            _takeOffParameters.VerticalSpeed, System.Environment.NewLine
         );
 
         fileLines = string.Format("{0}Nodes{1}DDL, name, interpolation (type, numIntervals, slopes), T, Q{2}", fileLines, System.Environment.NewLine, System.Environment.NewLine);
@@ -456,7 +458,6 @@ public class GameManager : MonoBehaviour
         WriteToLogFile("ReadDataFilesTxT()");
 
         // TODO Fix the file to read
-        Debug.Log("Fix the file to read");
         string[] fileLines = System.IO.File.ReadAllLines(fileName);
 
         if(fileLines[0][0] == '{')
@@ -483,20 +484,20 @@ public class GameManager : MonoBehaviour
                 var _duration = Utils.ToFloat(values[1]);
                 if (_duration == -999)
                     _duration = MainParameters.StrucTakeOffParam.Default.Duration;
-                drawManager.TakeOffParameters.Duration = _duration;
-                WriteToLogFile("jointsTemp.Duration: " + drawManager.TakeOffParameters.Duration.ToString());
+                _takeOff.Duration = _duration;
+                WriteToLogFile("_takeOff.Duration: " + _takeOff.Duration.ToString());
             }
             else if (values[0].Contains("UseGravity"))
             {
                 WriteToLogFile("In UseGravity");
-                drawManager.TakeOffParameters.UseGravity = Utils.ToBool(values[1]);
-                WriteToLogFile("jointsTemp.UseGravity " + drawManager.TakeOffParameters.UseGravity.ToString());
+                _takeOff.UseGravity = Utils.ToBool(values[1]);
+                WriteToLogFile("_takeOff.UseGravity " + _takeOff.UseGravity.ToString());
             }
             else if (values[0].Contains("StopOnGround"))
             {
                 WriteToLogFile("In StopOnGround");
-                drawManager.TakeOffParameters.StopOnGround = Utils.ToBool(values[1]);
-                WriteToLogFile("jointsTemp.StopOnGround " + drawManager.TakeOffParameters.StopOnGround.ToString());
+                _takeOff.StopOnGround = Utils.ToBool(values[1]);
+                WriteToLogFile("_takeOff.StopOnGround " + _takeOff.StopOnGround.ToString());
             }
             else if (values[0].Contains("Condition"))
             {
@@ -717,10 +718,10 @@ public class GameManager : MonoBehaviour
             {
                 nodes[nDDL].ddl = i;
                 nodes[nDDL].name = avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.ddlName[i - 1];
-                nodes[nDDL].T = new float[3] { 
-                    drawManager.TakeOffParameters.Duration * 0.25f, 
-                    drawManager.TakeOffParameters.Duration * 0.5f,
-                    drawManager.TakeOffParameters.Duration * 0.75f 
+                nodes[nDDL].T = new float[3] {
+                    _takeOff.Duration * 0.25f,
+                    _takeOff.Duration * 0.5f,
+                    _takeOff.Duration * 0.75f 
                 };
                 nodes[nDDL].Q = new float[3] { 0, 0, 0 };
                 nodes[nDDL].interpolation = interpolation;
@@ -773,11 +774,11 @@ public class GameManager : MonoBehaviour
         return data;
     }
 
-    public void InterpolationDDL()
+    public void InterpolationDDL(int _avatarIndex)
     {
         float[] t0;
         float[,] q0;
-        GenerateQ0_s(avatarManager.LoadedModels[0].Joints, drawManager.TakeOffParameters.Duration, 0, out t0, out q0);
+        GenerateQ0_s(avatarManager.LoadedModels[_avatarIndex].Joints, drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Duration, 0, out t0, out q0);
 
         avatarManager.LoadedModels[0].SetJointsTandQ(t0, q0);
     }
