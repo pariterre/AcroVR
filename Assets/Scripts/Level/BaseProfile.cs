@@ -31,6 +31,8 @@ public class BaseProfile : LevelBase
     protected GameObject CurrentTabContent;
     public Toggle ToggleSimulationButton;
     public Toggle ToggleGestureButton;
+    public Button CompareButton;
+    public Button StopCompareButton;
 
     public UserUIInputs userUiInputs;
     protected UserUIInputsValues userUiInputsDefaultValues = new UserUIInputsValues();
@@ -331,6 +333,27 @@ public class BaseProfile : LevelBase
         drawManager.PlayOneFrame(_avatarIndex);  // Force the avatar to conform to its first frame
 
         aniGraphManager.cntAvatar = 1;
+
+        CompareButton.gameObject.SetActive(false);
+        StopCompareButton.gameObject.SetActive(true);
+        StartCoroutine(WaitThenForceUpdate());
+    }
+
+    public void RemoveCompareAvatar(){
+        int _avatarIndex = 1;
+        avatarManager.DestroyAvatar(_avatarIndex);
+        aniGraphManager.cntAvatar = 1;
+
+        CompareButton.gameObject.SetActive(true);
+        StopCompareButton.gameObject.SetActive(false);
+
+        StartCoroutine(WaitThenForceUpdate());
+    }
+
+    IEnumerator WaitThenForceUpdate(){
+        // Wait a full frame to make sure everything that should be clean is actually cleaned
+        yield return null;
+        drawManager.ForceFullUpdate();
         drawManager.ForceResultShowUpdate();
     }
 

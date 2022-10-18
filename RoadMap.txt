@@ -5,5 +5,4 @@ Known bugs:
 TODO: 
 	- Add music so it is less boring
 	- Add Success music when mission is acheived
-	- Add a remove button for the compare avatar
-
+    - OpenFile instead of OpenBrowser

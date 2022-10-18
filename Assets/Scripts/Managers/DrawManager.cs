@@ -191,8 +191,8 @@ public class DrawManager : MonoBehaviour
 
     public void ShowAvatar(int _avatarIndex)
     {
-        MakeSimulationFrame(_avatarIndex);
         if (!avatarManager.LoadedModels[_avatarIndex].IsLoaded) return;
+        MakeSimulationFrame(_avatarIndex);
 
         CenterAvatar(_avatarIndex);
         Play(_avatarIndex, avatarProperties[_avatarIndex].Q, 0, avatarProperties[_avatarIndex].Q.GetUpperBound(1) + 1, true);
@@ -220,8 +220,12 @@ public class DrawManager : MonoBehaviour
 
     public void ShowGround(int _avatarIndex)
     {
-        if (Ground != null)
+        if (!avatarManager.LoadedModels[_avatarIndex].IsLoaded) return;
+        if (Ground != null){    
+            if (_avatarIndex != 0 && Ground.activeSelf) return;  // Do not remove ground if 0 asked
+
             Ground.SetActive(avatarProperties[_avatarIndex].TakeOffParameters.StopOnGround);
+        }
     }
 
     public void SetAnimationSpeed(float speed)
@@ -628,6 +632,8 @@ public class DrawManager : MonoBehaviour
 
     public void PlayOneFrame(int _avatarIndex)
     {
+        if (!avatarManager.LoadedModels[_avatarIndex].IsLoaded) return;
+
         var _Q = avatarProperties[_avatarIndex].Q;
         if (!IsEditing && _Q != null && _Q.GetLength(1) > avatarProperties[_avatarIndex].CurrentFrame)
         {
