@@ -5,4 +5,4 @@ Known bugs:
 TODO: 
 	- Add music so it is less boring
 	- Add Success music when mission is acheived
-    - OpenFile instead of OpenBrowser
+    - Moved json files as Conditions

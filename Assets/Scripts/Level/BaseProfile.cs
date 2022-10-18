@@ -270,7 +270,7 @@ public class BaseProfile : LevelBase
 
         gameManager.WriteToLogFile("Success to load a file");
 
-        fileName.text = Path.GetFileName(avatarManager.LoadedModels[0].Joints.fileName);
+        fileName.text = Path.GetFileName(avatarManager.LoadedModels[_avatarIndex].Joints.fileName);
         StartCoroutine(WaitThenForceUpdate());
     }
 
