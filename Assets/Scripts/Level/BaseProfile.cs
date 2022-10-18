@@ -29,6 +29,8 @@ public class BaseProfile : LevelBase
     public MissionBanner missionBanner;
     public GameObject NodeNameObject;
     protected GameObject CurrentTabContent;
+    public Toggle ToggleSimulationButton;
+    public Toggle ToggleGestureButton;
 
     public UserUIInputs userUiInputs;
     protected UserUIInputsValues userUiInputsDefaultValues = new UserUIInputsValues();
@@ -507,10 +509,20 @@ public class BaseProfile : LevelBase
         CurrentTabContent.SetActive(true);
         
         _properties.BackgroundImage.sprite = _properties.BackgroundSprite;
-        if (_properties.IsAGestureMode)
-            SetGestureMode();
-        else
-            SetSimulationMode();
+        if (_properties.IsAGestureMode){
+            // We have to trigger the button that calls themselves the method SetGestureMode
+            // Otherwise the button won't update. If you put this isOn inside the method, then
+            // we get a circular call
+            ToggleSimulationButton.isOn = false;
+            ToggleGestureButton.isOn = true;
+        }
+        else {
+            // We have to trigger the button that calls themselves the method SetSimulationMode
+            // Otherwise the button won't update. If you put this isOn inside the method, then
+            // we get a circular call
+            ToggleGestureButton.isOn = false;
+            ToggleSimulationButton.isOn = true;
+        }
 
         drawManager.ForceFullUpdate();
         SwitchCameraView();
@@ -558,14 +570,12 @@ public class BaseProfile : LevelBase
     public void SetSimulationMode()
     {
         gameManager.WriteToLogFile("ActivateSimulationMode()");
-
         drawManager.ActivateSimulationMode();
     }
 
     public void SetGestureMode()
     {
         gameManager.WriteToLogFile("ActivateGestureMode()");
-
         drawManager.ActivateGestureMode();
     }
 
