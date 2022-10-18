@@ -173,7 +173,7 @@ public class GameManager : MonoBehaviour
         LoadMissions(string.Format(@"{0}/MissionJson/Missions.json", pathDataFiles));
 	}
 
-    public int MissionLoad()
+    public int AnimationLoad(int _avatarIndex)
     {
         string[] extensions = new[]
         {
@@ -195,44 +195,10 @@ public class GameManager : MonoBehaviour
         WriteToLogFile(fileName);
         WriteToLogFile("CultureInfo.CurrentCulture.Name: " + CultureInfo.CurrentCulture.Name);
 
-        if (!ReadAniFromJson(0, fileName))
+        if (!ReadAniFromJson(_avatarIndex, fileName))
             return -3;
 
         return 1;
-    }
-
-    public int LoadSimulationSecond()
-    {
-        string[] extensions = new[]
-        {
-            MainParameters.Instance.languages.Used.movementLoadDataFileTxtFile,
-            "json",
-        };
-
-		string dirSimulationFiles = $"{pathDataFiles}/SimulationJson";
-        string fileName = EditorUtility.OpenFilePanelWithFilters(
-            MainParameters.Instance.languages.Used.movementLoadDataFileTitle, 
-            dirSimulationFiles, 
-            extensions
-        );
-
-        if (fileName.Length <= 0)
-        {
-            WriteToLogFile("fileName.Length false: " + fileName.Length.ToString());
-            return -1;
-        }
-        WriteToLogFile(fileName);
-        WriteToLogFile("CultureInfo.CurrentCulture.Name: " + CultureInfo.CurrentCulture.Name);
-
-        if (!ReadAniFromJson(1, fileName))
-            return -3;
-
-        return 1;
-    }
-
-    private string GetSimpleExtension(string fileName)
-    {
-        return Path.GetExtension(fileName).Replace(".", "");
     }
 
     public void ReadDataFromJSON(string fileName)

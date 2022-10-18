@@ -244,12 +244,12 @@ public class BaseProfile : LevelBase
         levelManager.GotoScreen("BaseLevel1");
     }
 
-    public void MissionLoad()
+    public void AnimationLoad()
     {
         int _avatarIndex = 0;
 
         gameManager.WriteToLogFile("Load Button Click");
-        int ret = gameManager.MissionLoad();
+        int ret = gameManager.AnimationLoad(_avatarIndex);
 
         gameManager.WriteToLogFile("Load return value: " + ret.ToString());
 
@@ -274,14 +274,14 @@ public class BaseProfile : LevelBase
         StartCoroutine(WaitThenForceUpdate());
     }
 
-    public void MissionLoad2()
+    public void CompareLoad()
     {
         int _avatarIndex = 1;
         gameManager.WriteToLogFile("Load Two avatar Button Click");
 
         avatarManager.LoadAvatar(_avatarIndex);
         SwitchCameraView();  // For some reason, the camera moves to first person. So we reset the settings to whatever it was already
-        int ret = gameManager.LoadSimulationSecond();
+        int ret = gameManager.AnimationLoad(_avatarIndex);
 
         if (ret < 0)
         {
