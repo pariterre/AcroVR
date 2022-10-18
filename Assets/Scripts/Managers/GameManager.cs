@@ -4,7 +4,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
+using SFB;
 
 
 [System.Serializable]
@@ -165,15 +165,18 @@ public class GameManager : MonoBehaviour
 
     public int AnimationLoad(int _avatarIndex)
     {
-        string[] extensions = new[]
-        { MainParameters.Instance.languages.Used.movementLoadDataFileTxtFile, "json" };
+        ExtensionFilter[] extensions = new[] 
+        { 
+            new ExtensionFilter(MainParameters.Instance.languages.Used.movementLoadDataFileTxtFile, "json"), 
+        }; 
 
 		string dirAnimationFiles = $"{TargetConfigFolder}/Animations/";
-        string fileName = EditorUtility.OpenFilePanelWithFilters(
+        string fileName = StandaloneFileBrowser.OpenFilePanel(
             MainParameters.Instance.languages.Used.movementLoadDataFileTitle, 
             dirAnimationFiles, 
-            extensions
-        );
+            extensions, 
+            false
+        )[0];
         if (fileName.Length <= 0) return -1;
 
         if (!ReadAniFromJson(_avatarIndex, fileName))
@@ -387,7 +390,7 @@ public class GameManager : MonoBehaviour
     public void SaveFile()
     {
         string dirSimulationFiles = $"{TargetConfigFolder}/Animations";
-        string fileName = EditorUtility.SaveFilePanel(
+        string fileName = StandaloneFileBrowser.SaveFilePanel(
             MainParameters.Instance.languages.Used.movementSaveDataFileTitle, 
             dirSimulationFiles, 
             "CustomSimulation",
