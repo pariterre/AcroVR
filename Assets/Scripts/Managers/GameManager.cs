@@ -296,11 +296,10 @@ public class GameManager : MonoBehaviour
         _jointsTemp.lagrangianModel = new LagrangianModelSimple().GetParameters;
 
         avatarManager.LoadedModels[_avatarIndex].SetJoints(_jointsTemp);
-        Debug.Log("Joints = " + avatarManager.LoadedModels[_avatarIndex].Joints.nodes[4].Q[0]);
+        
         InterpolationDDL(_avatarIndex);
         for (int ddl=0; ddl==_jointsTemp.nodes.Length; ++ddl)
-            DisplayDDL(ddl, true);
-        Debug.Log("Joints = " + avatarManager.LoadedModels[_avatarIndex].Joints.nodes[4].Q[0]);
+            DisplayDDL(ddl, true);  // In the event it was loaded while we were in the graph panel
 
         //SwitchCameraView();  // For some reason, the camera moves to first person. So we reset the settings to whatever it was already
         drawManager.PlayOneFrame(1);  // Force the avatar 1 to conform to its first frame

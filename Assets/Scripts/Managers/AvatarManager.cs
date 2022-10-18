@@ -298,6 +298,7 @@ public class AvatarManager : MonoBehaviour
     public void SetLeftArmAbduction(int _avatarIndex, float _value)
     {
         if (!LoadedModels[_avatarIndex].IsLoaded) return;
+        
         LoadedModels[_avatarIndex].Q[LoadedModels[_avatarIndex].LeftArmControlAbd.qIndex] = _value;
         SetLeftArm(_avatarIndex);
     }

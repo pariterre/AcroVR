@@ -271,14 +271,7 @@ public class BaseProfile : LevelBase
         gameManager.WriteToLogFile("Success to load a file");
 
         fileName.text = Path.GetFileName(avatarManager.LoadedModels[0].Joints.fileName);
-        avatarManager.LoadAvatar(_avatarIndex);
-
-        drawManager.Pause();
-        drawManager.MakeSimulationFrame(0);
-        drawManager.PlayOneFrame(_avatarIndex);  // Force the avatar to conform to its first frame
-
         StartCoroutine(WaitThenForceUpdate());
-
     }
 
     public void MissionLoad2()
@@ -286,6 +279,8 @@ public class BaseProfile : LevelBase
         int _avatarIndex = 1;
         gameManager.WriteToLogFile("Load Two avatar Button Click");
 
+        avatarManager.LoadAvatar(_avatarIndex);
+        SwitchCameraView();  // For some reason, the camera moves to first person. So we reset the settings to whatever it was already
         int ret = gameManager.LoadSimulationSecond();
 
         if (ret < 0)
@@ -303,8 +298,6 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        avatarManager.LoadAvatar(_avatarIndex);
-        SwitchCameraView();  // For some reason, the camera moves to first person. So we reset the settings to whatever it was already
         gameManager.WriteToLogFile("Success to load two");
 
         drawManager.Pause();
