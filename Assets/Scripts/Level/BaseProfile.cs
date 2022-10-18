@@ -34,6 +34,8 @@ public class BaseProfile : LevelBase
     public Button CompareButton;
     public Button StopCompareButton;
 
+    public Text ConditionName;
+    
     public UserUIInputs userUiInputs;
     protected UserUIInputsValues userUiInputsDefaultValues = new UserUIInputsValues();
 
@@ -88,6 +90,7 @@ public class BaseProfile : LevelBase
                 SaveLoadCompareMenu.SetActive(!missionManager.HasActiveMission);
             
             FrontCameraPOV(0);
+            gameManager.UpdateDropDownNames();
         }
     }
 
@@ -195,8 +198,6 @@ public class BaseProfile : LevelBase
 
     public void BackToMenu()
     {
-        gameManager.WriteToLogFile("Back Button Click: BackToMenu()");
-
         gameManager.InitAnimationInfo();
         drawManager.StopEditing();
         aniGraphManager.cntAvatar = 0;
@@ -225,8 +226,6 @@ public class BaseProfile : LevelBase
 
     public void ToQuit()
     {
-        gameManager.WriteToLogFile("End!");
-
         if (Application.isEditor)
         {
 #if UNITY_EDITOR
@@ -247,11 +246,7 @@ public class BaseProfile : LevelBase
     public void AnimationLoad()
     {
         int _avatarIndex = 0;
-
-        gameManager.WriteToLogFile("Load Button Click");
         int ret = gameManager.AnimationLoad(_avatarIndex);
-
-        gameManager.WriteToLogFile("Load return value: " + ret.ToString());
 
         if (ret < 0)
         {
@@ -268,8 +263,6 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        gameManager.WriteToLogFile("Success to load a file");
-
         fileName.text = Path.GetFileName(avatarManager.LoadedModels[_avatarIndex].Joints.fileName);
         StartCoroutine(WaitThenForceUpdate());
     }
@@ -277,7 +270,6 @@ public class BaseProfile : LevelBase
     public void CompareLoad()
     {
         int _avatarIndex = 1;
-        gameManager.WriteToLogFile("Load Two avatar Button Click");
 
         avatarManager.LoadAvatar(_avatarIndex);
         SwitchCameraView();  // For some reason, the camera moves to first person. So we reset the settings to whatever it was already
@@ -297,9 +289,6 @@ public class BaseProfile : LevelBase
             ErrorMessage(errorMessage);
             return;
         }
-
-        gameManager.WriteToLogFile("Success to load two");
-
         drawManager.Pause();
         drawManager.MakeSimulationFrame(_avatarIndex);
         drawManager.PlayOneFrame(_avatarIndex);  // Force the avatar to conform to its first frame
@@ -331,15 +320,11 @@ public class BaseProfile : LevelBase
 
     public void SaveFile()
     {
-        gameManager.WriteToLogFile("SaveFile()");
-
         gameManager.SaveFile();
     }
 
     public void TakeOffOn()
     {
-        gameManager.WriteToLogFile("GraphOn");
-
         aniGraphManager.GraphOn();
     }
 
@@ -364,8 +349,6 @@ public class BaseProfile : LevelBase
             }
             return;
         }
-
-        gameManager.WriteToLogFile("InitDropdownDDLNames() ddl: " + ddl.ToString());
 
         List<string> dropDownOptions = new List<string>();
         for (int i = 0; i < 6; i++)
@@ -425,8 +408,6 @@ public class BaseProfile : LevelBase
 
     public void PlayAvatar()
     {
-        gameManager.WriteToLogFile("PlayAvatar()");
-
         if (Avatar == null)
         {
             if (MainParameters.Instance.languages.current == Language.English)
@@ -529,48 +510,36 @@ public class BaseProfile : LevelBase
 
     public void SetFrench()
     {
-        gameManager.WriteToLogFile("SetFrench()");
         MainParameters.Instance.SetLanguage(Language.French);
-        
     }
 
     public void SetEnglish()
     {
-        gameManager.WriteToLogFile("SetEnglish()");
-
         MainParameters.Instance.SetLanguage(Language.English);
     }
 
     public void SetTooltip(bool _flag)
     {
-        gameManager.WriteToLogFile("SetTooltip() _flag: " + _flag.ToString());
-
         uiManager.SetTooltip(_flag);
     }
 
     public void SetMaleAvatar()
     {
-        gameManager.WriteToLogFile("SetMaleAvatar()");
-
         avatarManager.SelectAvatar(AvatarManager.Model.SingleMale);
     }
 
     public void SetFemaleAvatar()
     {
-        gameManager.WriteToLogFile("SetFemaleAvatar()");
-
         avatarManager.SelectAvatar(AvatarManager.Model.SingleFemale);
     }
 
     public void SetSimulationMode()
     {
-        gameManager.WriteToLogFile("ActivateSimulationMode()");
         drawManager.ActivateSimulationMode();
     }
 
     public void SetGestureMode()
     {
-        gameManager.WriteToLogFile("ActivateGestureMode()");
         drawManager.ActivateGestureMode();
     }
 
@@ -643,5 +612,23 @@ public class BaseProfile : LevelBase
     public void SelectPresetCondition(){
         uiManager.SetDropDownPresetCondition(uiManager.userInputs.PresetConditions.value);
         uiManager.UpdateAllPropertiesFromDropdown();
+    }
+
+    public void AddPresetCondition(Text name)
+    {
+        if (name.text != "")
+        {
+            gameManager.SaveCondition(name.text);
+        }
+    }
+
+    public void DeletePresetCondition()
+    {
+        gameManager.RemoveCondition(uiManager.userInputs.PresetConditions.value);
+    }
+
+    public void NamePresetCondition()
+    {
+        ConditionName.text = gameManager.PresetConditions.conditions[uiManager.userInputs.PresetConditions.value].name;
     }
 }

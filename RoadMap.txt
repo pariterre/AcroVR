@@ -1,8 +1,7 @@
 Known bugs:
-    - Tooltips "on" (Look in UIManager.cs) seem to do nothing
+    - PresetConditions adding and removing creates overflow if not reloaded
 
 
 TODO: 
 	- Add music so it is less boring
 	- Add Success music when mission is acheived
-    - Moved json files as Conditions

@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEditor;
 
 
@@ -132,15 +133,12 @@ public class GameManager : MonoBehaviour
     protected UIManager uiManager;
     public MissionInfo mission;
 
-	public string pathDataFiles;
-	public string pathUserDocumentsFiles;
-	public string pathUserSystemFiles;
+	public string TargetConfigFolder;
+	public string SourceConfigFolder;
 
     public int SelectedPresetCondition { get; protected set; } = 0;
     public void SetSelectedPresetCondition(int _value) { SelectedPresetCondition = _value; }
     public ConditionList PresetConditions { get; protected set; }
-
-	string conditionJsonFileName;				// Répertoire et nom du fichier des conditions
 
 	private void Start()
     {
@@ -156,44 +154,27 @@ public class GameManager : MonoBehaviour
 
 		GetPathForDataFiles();
 
-		// Copier le fichier des conditions dans un répertoire que l'utilisateur peut accéder en mode "Write".
-		// Si utilisez via un fichier d'installation, alors le logiciel va s'installer dans un répertoire où l'utilisateur n'aura probablement pas d'accès "Write" (C:\Program Files).
+        // Make a copy of the config folder so the user can safely modify them
+        CopyJsonToTarget("Animations");
+        CopyJsonToTarget("PresetConditions");
+        CopyJsonToTarget("Missions");
 
-		conditionJsonFileName = string.Format(@"{0}/Conditions.json", pathUserSystemFiles);
-		try
-		{
-			File.Copy(string.Format(@"{0}/ConditionJson/Conditions.json", pathDataFiles), conditionJsonFileName, false);
-		}
-		catch (IOException e)
-		{
-			if (!e.Message.Contains("already exists"))
-				Debug.Log("Erreur GameManager(Start): " + e.Message);
-		}
-		LoadConditions(conditionJsonFileName);
-        LoadMissions(string.Format(@"{0}/MissionJson/Missions.json", pathDataFiles));
+		LoadConditions($"{TargetConfigFolder}/PresetConditions/PresetConditions.json");
+        LoadMissions($"{SourceConfigFolder}/Missions/Missions.json");
 	}
 
     public int AnimationLoad(int _avatarIndex)
     {
         string[] extensions = new[]
-        {
-            MainParameters.Instance.languages.Used.movementLoadDataFileTxtFile,
-            "json",
-        };
+        { MainParameters.Instance.languages.Used.movementLoadDataFileTxtFile, "json" };
 
-		string dirSimulationFiles = $"{pathDataFiles}/SimulationJson";
+		string dirAnimationFiles = $"{TargetConfigFolder}/Animations/";
         string fileName = EditorUtility.OpenFilePanelWithFilters(
             MainParameters.Instance.languages.Used.movementLoadDataFileTitle, 
-            dirSimulationFiles, 
+            dirAnimationFiles, 
             extensions
         );
-        if (fileName.Length <= 0)
-        {
-            WriteToLogFile("fileName.Length false: " + fileName.Length.ToString());
-            return -1;
-        }
-        WriteToLogFile(fileName);
-        WriteToLogFile("CultureInfo.CurrentCulture.Name: " + CultureInfo.CurrentCulture.Name);
+        if (fileName.Length <= 0) return -1;
 
         if (!ReadAniFromJson(_avatarIndex, fileName))
             return -3;
@@ -203,8 +184,6 @@ public class GameManager : MonoBehaviour
 
     public void ReadDataFromJSON(string fileName)
     {
-        WriteToLogFile("ReadDataFromJSON()");
-
         string dataAsJson = File.ReadAllText(fileName);
         mission = JsonUtility.FromJson<MissionInfo>(dataAsJson);
     }
@@ -216,23 +195,16 @@ public class GameManager : MonoBehaviour
 
     protected bool ReadAniFromJson(int _avatarIndex, string fileName)
     {
-        WriteToLogFile("ReadAniFromJSON()");
 
         string dataAsJson = File.ReadAllText(fileName);
 
-        if (dataAsJson[0] != '{')
-        {
-            WriteToLogFile("Parse Error [0]: " + dataAsJson[0]);
-            return false;
-        }
+        if (dataAsJson[0] != '{') return false;
 
         AnimationInfo info = JsonUtility.FromJson<AnimationInfo>(dataAsJson);
 
         var _jointsTemp = avatarManager.LoadedModels[_avatarIndex].Joints;
 
         _jointsTemp.fileName = fileName;
-
-        WriteToLogFile("For() Start info.nodes.Count: " + info.nodes.Count.ToString());
 
         drawManager.SetDuration(_avatarIndex, info.Duration);
         drawManager.avatarProperties[_avatarIndex].TakeOffParameters.UseGravity = info.UseGravity;
@@ -271,6 +243,22 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
+    public void UpdateDropDownNames()
+    {
+        if (uiManager.userInputs == null) return;
+
+        uiManager.userInputs.PresetConditions.options.Clear();
+        for (int i = 0; i < PresetConditions.count; i++)
+        {
+            uiManager.userInputs.PresetConditions.options.Add(new Dropdown.OptionData()
+            {
+                text = PresetConditions.conditions[i].name
+            });
+        }
+
+        uiManager.UpdateAllPropertiesFromDropdown();
+    }
+
     public void SaveCondition(string name)
     {
         ConditionInfo n = new ConditionInfo();
@@ -281,7 +269,8 @@ public class GameManager : MonoBehaviour
         PresetConditions.count++;
 
         string jsonData = JsonUtility.ToJson(PresetConditions, true);
-        File.WriteAllText(conditionJsonFileName, jsonData);
+        File.WriteAllText($"{TargetConfigFolder}/PresetConditions/PresetConditions.json", jsonData);
+        UpdateDropDownNames();
     }
 
     public void RemoveCondition(int index)
@@ -290,20 +279,18 @@ public class GameManager : MonoBehaviour
         PresetConditions.count--;
 
         string jsonData = JsonUtility.ToJson(PresetConditions, true);
-        File.WriteAllText(conditionJsonFileName, jsonData);
+        File.WriteAllText($"{TargetConfigFolder}/PresetConditions/PresetConditions.json", jsonData);
+        UpdateDropDownNames();
     }
 
     public bool LoadConditions(string fileName)
     {
 		string dataAsJson = File.ReadAllText(fileName);
 
-        if (dataAsJson[0] != '{')
-        {
-            WriteToLogFile("Parse Error [0]: " + dataAsJson[0]);
-            return false;
-        }
-
+        if (dataAsJson[0] != '{') return false;
+        
         PresetConditions = JsonUtility.FromJson<ConditionList>(dataAsJson);
+        UpdateDropDownNames();
         return true;
     }
 
@@ -311,11 +298,7 @@ public class GameManager : MonoBehaviour
     {
         string dataAsJson = File.ReadAllText(fileName);
 
-        if (dataAsJson[0] != '{')
-        {
-            WriteToLogFile("Parse Error [0]: " + dataAsJson[0]);
-            return false;
-        }
+        if (dataAsJson[0] != '{') return false;
 
         missionManager.SetMissions(dataAsJson);
 
@@ -403,7 +386,7 @@ public class GameManager : MonoBehaviour
 
     public void SaveFile()
     {
-        string dirSimulationFiles = $"{pathUserDocumentsFiles}/SimulationJson";
+        string dirSimulationFiles = $"{TargetConfigFolder}/Animations";
         string fileName = EditorUtility.SaveFilePanel(
             MainParameters.Instance.languages.Used.movementSaveDataFileTitle, 
             dirSimulationFiles, 
@@ -480,75 +463,31 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void WriteToLogFile(string msg)
-    {
-#if UNITY_EDITOR 
-        using (System.IO.StreamWriter logFile = new System.IO.StreamWriter(@".\LogFile.txt", true))
-        {
-            System.DateTime dt = System.DateTime.Now;
-            logFile.WriteLine(dt.ToString("yyyy-MM-dd HH:mm:ss") +": " + msg);
-        }
-#endif
-    }
-
 	// =================================================================================================================================================================
 	/// <summary> Configuration des répertoires utilisés pour accéder aux différents fichiers de données, selon que la plateforme d'Unity utilisée (OSX, Windows, Editor). </summary>
 
 	void GetPathForDataFiles()
 	{
-#if UNITY_STANDALONE_OSX                       // À modifier quand la plateforme OSX sera configuré, pas fait pour le moment
-		//string dirSimulationFiles;
-		//int n = Application.dataPath.IndexOf("/AcroVR.app");
-		//if (n > 0)
-		//	dirSimulationFiles = string.Format("{0}/SimulationFiles", Application.dataPath.Substring(0, n));
-		//else
-		//	dirSimulationFiles = string.Format("{0}/Documents", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
-		//Debug.Log(string.Format("Mac: dirSimulationFiles = {0}", dirSimulationFiles));
-
-		//string dirCheckFileName = string.Format("{0}/Documents/AcroVR/Lib", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
-		//string checkFileName = string.Format("{0}/AcroVR.dll", dirCheckFileName);
-
-		//string dirSimulationFiles = string.Format("{0}/Documents/AcroVR", Environment.GetFolderPath(Environment.SpecialFolder.Personal));
-
-#elif UNITY_EDITOR
-
-		pathDataFiles = string.Format(@"{0}/DataFiles", Application.dataPath);
-		int i = pathDataFiles.IndexOf("/Assets");
-		if (i >= 0)
-			pathDataFiles = pathDataFiles.Remove(i, 7);
-		if (!System.IO.Directory.Exists(pathDataFiles))
-		{
-			pathDataFiles = string.Format(@"{0}\S2M\AcroVR\DataFiles", System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles));
-			if (!System.IO.Directory.Exists(pathDataFiles))
-			{
-				pathDataFiles = string.Format(@"{0}\S2M\AcroVR\DataFiles", System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFilesX86));
-				if (!System.IO.Directory.Exists(pathDataFiles))
-					pathDataFiles = "";
-			}
-		}
-
-		pathUserSystemFiles = Application.persistentDataPath;
-		pathUserDocumentsFiles = System.Environment.ExpandEnvironmentVariables(@"%UserProfile%\Documents\AcroVR");
-#else
-		pathDataFiles = string.Format(@"{0}\S2M\AcroVR\DataFiles", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
-		if (!System.IO.Directory.Exists(pathDataFiles))
-		{
-			pathDataFiles = string.Format(@"{0}\S2M\AcroVR\DataFiles", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86));
-			if (!System.IO.Directory.Exists(pathDataFiles))
-			{
-				int i = Application.dataPath.IndexOf("/Build");
-				if (i >= 0)
-				{
-					pathDataFiles = string.Format(@"{0}/DataFiles", Application.dataPath.Remove(i));
-					if (!System.IO.Directory.Exists(pathDataFiles))
-						pathDataFiles = "";
-				}
-				else
-					pathDataFiles = "";
-			}
-		}
-		pathUserSystemFiles = Application.persistentDataPath;
-		pathUserDocumentsFiles = System.Environment.ExpandEnvironmentVariables(@"%UserProfile%\Documents\AcroVR");
-#endif
+		SourceConfigFolder = Application.streamingAssetsPath;
+		TargetConfigFolder = Application.persistentDataPath;
 	}
+
+    protected void CopyJsonToTarget(string _subfolder)
+    {
+        var _sourcePath = $"{SourceConfigFolder}/{_subfolder}/";
+        var _targetPath = $"{TargetConfigFolder}/{_subfolder}/";
+
+        // Create all of the directories
+        Directory.CreateDirectory(_targetPath);
+
+        // Copy all the files if they don't already exist
+        foreach (string newPath in Directory.GetFiles(_sourcePath, "*.json"))
+        {
+            try {
+                File.Copy(newPath, newPath.Replace(_sourcePath, _targetPath), false);
+            } catch (IOException){
+                // If the file already exists, do nothing
+            }
+        }
+    }
 }

@@ -59,7 +59,6 @@ public class TrainingTooltip : MonoBehaviour
     public Dropdown dropDownAnimationSpeed;
    
     public Text ConditionPreset;
-    public Text ConditionName;
 
     public Text TextGravity;
     public Text TextIsStopAtGround;
@@ -132,41 +131,6 @@ public class TrainingTooltip : MonoBehaviour
 
         ChangedLanguage();
         SetTooltip();
-    }
-
-    public void AddCondition(Text name)
-    {
-        if (name.text != "")
-        {
-            gameManager.SaveCondition(name.text);
-            UpdateDropDownNames();
-        }
-    }
-
-    public void DeleteCondition()
-    {
-        gameManager.RemoveCondition(uiManager.userInputs.PresetConditions.value);
-        UpdateDropDownNames();
-    }
-
-    public void NameCondition()
-    {
-        ConditionName.text = gameManager.PresetConditions.conditions[uiManager.userInputs.PresetConditions.value].name;
-    }
-
-    public void UpdateDropDownNames()
-    {
-        uiManager.userInputs.PresetConditions.options.Clear();
-
-        for (int i = 0; i < gameManager.PresetConditions.count; i++)
-        {
-            uiManager.userInputs.PresetConditions.options.Add(new Dropdown.OptionData()
-            {
-                text = gameManager.PresetConditions.conditions[i].name
-            });
-        }
-
-        uiManager.UpdateAllPropertiesFromDropdown();
     }
 
     private void ChangedLanguage()

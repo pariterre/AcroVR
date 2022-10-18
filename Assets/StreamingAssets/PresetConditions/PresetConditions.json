@@ -1,0 +1,185 @@
+{
+  "count": 10,
+  "conditions": [
+    {
+      "name": "Sans condition",
+      "userInputsValues": {
+        "Duration": 1.0,
+        "UseGravity": false, 
+        "StopOnGround": false,
+        "Somersault": 0.0,
+        "Tilt": 0.0,
+        "Twist": 0.0,
+        "HorizontalPosition": 0.0,
+        "VerticalPosition": 0.0,
+        "SomersaultSpeed": 0.0,
+        "TiltSpeed": 0.0,
+        "TwistSpeed": 0.0,
+        "HorizontalSpeed": 0.0,
+        "VerticalSpeed": 0.0
+      }
+    },
+    {
+        "name": "Trampoline",
+        "userInputsValues": {
+          "Duration": 1.0,
+          "UseGravity": true, 
+          "StopOnGround": true,
+          "Somersault": 0.0,
+          "Tilt": 0.0,
+          "Twist": 0.0,
+          "HorizontalPosition": 0.0,
+          "VerticalPosition": 0.0,
+          "SomersaultSpeed": 0.0,
+          "TiltSpeed": 0.0,
+          "TwistSpeed": 0.0,
+          "HorizontalSpeed": 0.0,
+          "VerticalSpeed": 0.0
+      }
+    },
+    {
+        "name": "Chute",
+        "userInputsValues": {
+          "Duration": 10.0,
+          "UseGravity": true, 
+          "StopOnGround": true,
+          "Somersault": 0.0,
+          "Tilt": 0.0,
+          "Twist": 0.0,
+          "HorizontalPosition": 0.0,
+          "VerticalPosition": 0.0,
+          "SomersaultSpeed": 0.0,
+          "TiltSpeed": 0.0,
+          "TwistSpeed": 0.0,
+          "HorizontalSpeed": 0.0,
+          "VerticalSpeed": 0.0
+      }
+    },
+    {
+        "name": "Plongeon 1 m",
+        "userInputsValues": {
+          "Duration": 10.0,
+          "UseGravity": true, 
+          "StopOnGround": true,
+          "Somersault": 0.0,
+          "Tilt": 0.0,
+          "Twist": 0.0,
+          "HorizontalPosition": 0.0,
+          "VerticalPosition": 1.0,
+          "SomersaultSpeed": 0.0,
+          "TiltSpeed": 0.0,
+          "TwistSpeed": 0.0,
+          "HorizontalSpeed": 0.0,
+          "VerticalSpeed": 0.0
+      }
+    },
+    {
+        "name": "Plongeon 3 m",
+        "userInputsValues": {
+          "Duration": 10.0,
+          "UseGravity": true, 
+          "StopOnGround": true,
+          "Somersault": 0.0,
+          "Tilt": 0.0,
+          "Twist": 0.0,
+          "HorizontalPosition": 0.0,
+          "VerticalPosition": 3.0,
+          "SomersaultSpeed": 0.0,
+          "TiltSpeed": 0.0,
+          "TwistSpeed": 0.0,
+          "HorizontalSpeed": 0.0,
+          "VerticalSpeed": 0.0
+      }
+    },
+    {
+        "name": "Plongeon 5 m",
+        "userInputsValues": {
+          "Duration": 10.0,
+          "UseGravity": true, 
+          "StopOnGround": true,
+          "Somersault": 0.0,
+          "Tilt": 0.0,
+          "Twist": 0.0,
+          "HorizontalPosition": 0.0,
+          "VerticalPosition": 5.0,
+          "SomersaultSpeed": 0.0,
+          "TiltSpeed": 0.0,
+          "TwistSpeed": 0.0,
+          "HorizontalSpeed": 0.0,
+          "VerticalSpeed": 0.0
+      }
+    },
+    {
+        "name": "Plongeon 10 m",
+        "userInputsValues": {
+          "Duration": 10.0,
+          "UseGravity": true, 
+          "StopOnGround": true,
+          "Somersault": 0.0,
+          "Tilt": 0.0,
+          "Twist": 0.0,
+          "HorizontalPosition": 0.0,
+          "VerticalPosition": 10.0,
+          "SomersaultSpeed": 0.0,
+          "TiltSpeed": 0.0,
+          "TwistSpeed": 0.0,
+          "HorizontalSpeed": 0.0,
+          "VerticalSpeed": 0.0
+      }
+    },
+    {
+        "name": "Barre fixe",
+        "userInputsValues": {
+          "Duration": 10.0,
+          "UseGravity": true, 
+          "StopOnGround": true,
+          "Somersault": 0.0,
+          "Tilt": 0.0,
+          "Twist": 0.0,
+          "HorizontalPosition": 0.0,
+          "VerticalPosition": 2.5,
+          "SomersaultSpeed": 0.0,
+          "TiltSpeed": 0.0,
+          "TwistSpeed": 0.0,
+          "HorizontalSpeed": 0.0,
+          "VerticalSpeed": 0.0
+      }
+    },
+    {
+        "name": "Barres asymétriques",
+        "userInputsValues": {
+          "Duration": 10.0,
+          "UseGravity": true, 
+          "StopOnGround": true,
+          "Somersault": 0.0,
+          "Tilt": 0.0,
+          "Twist": 0.0,
+          "HorizontalPosition": 0.0,
+          "VerticalPosition": 2.2,
+          "SomersaultSpeed": 0.0,
+          "TiltSpeed": 0.0,
+          "TwistSpeed": 0.0,
+          "HorizontalSpeed": 0.0,
+          "VerticalSpeed": 0.0
+      }
+    },
+    {
+        "name": "Saut à la perche",
+        "userInputsValues": {
+          "Duration": 10.0,
+          "UseGravity": true, 
+          "StopOnGround": true,
+          "Somersault": 0.0,
+          "Tilt": 0.0,
+          "Twist": 0.0,
+          "HorizontalPosition": 0.0,
+          "VerticalPosition": 1.05,
+          "SomersaultSpeed": 0.0,
+          "TiltSpeed": 0.0,
+          "TwistSpeed": 0.0,
+          "HorizontalSpeed": 0.0,
+          "VerticalSpeed": 0.0
+      }
+    }
+  ]
+}
