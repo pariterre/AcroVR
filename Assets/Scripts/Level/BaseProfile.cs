@@ -277,6 +277,7 @@ public class BaseProfile : LevelBase
 
         if (ret < 0)
         {
+            avatarManager.DestroyAvatar(_avatarIndex);
             string errorMessage;
             if (ret == -1)
                 errorMessage = MainParameters.Instance.languages.current == Language.English
