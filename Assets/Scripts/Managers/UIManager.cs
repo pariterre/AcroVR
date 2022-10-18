@@ -89,7 +89,7 @@ public class UserUIInputs
         SetInput(UseGravity, _value, _activateField);
         ToolBox.GetInstance().GetManager<DrawManager>().avatarProperties[0].TakeOffParameters.UseGravity = _value;
         if (UseGravity != null)
-            ToolBox.GetInstance().GetManager<DrawManager>().ForceFullUpdate(0);
+            ToolBox.GetInstance().GetManager<DrawManager>().ForceFullUpdate();
     }
 
     public Toggle StopOnGround;
@@ -97,7 +97,7 @@ public class UserUIInputs
         SetInput(StopOnGround, _value, _activateField);
         ToolBox.GetInstance().GetManager<DrawManager>().avatarProperties[0].TakeOffParameters.StopOnGround = _value;
         if (StopOnGround != null)
-            ToolBox.GetInstance().GetManager<DrawManager>().ForceFullUpdate(0);
+            ToolBox.GetInstance().GetManager<DrawManager>().ForceFullUpdate();
     }
 
     public void SetParameters(UserUIInputsValues _values){

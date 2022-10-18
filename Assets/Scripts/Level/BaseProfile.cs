@@ -300,6 +300,7 @@ public class BaseProfile : LevelBase
 
     public void MissionLoad2()
     {
+        int _avatarIndex = 1;
         gameManager.WriteToLogFile("Load Two avatar Button Click");
 
         int ret = gameManager.LoadSimulationSecond();
@@ -319,23 +320,16 @@ public class BaseProfile : LevelBase
             return;
         }
 
-        gameManager.WriteToLogFile("Success to load one");
-        avatarManager.LoadAvatar(1);
-        
+        avatarManager.LoadAvatar(_avatarIndex);
+        SwitchCameraView();  // For some reason, the camera moves to first person. So we reset the settings to whatever it was already
         gameManager.WriteToLogFile("Success to load two");
 
-        TakeOffOn();
-        InitDropdownDDLNames(0);
-
         drawManager.Pause();
-        drawManager.MakeSimulationFrame(1);
-        drawManager.StopEditing();
+        drawManager.MakeSimulationFrame(_avatarIndex);
+        drawManager.PlayOneFrame(_avatarIndex);  // Force the avatar to conform to its first frame
 
         aniGraphManager.cntAvatar = 1;
-
-        SwitchCameraView();  // For some reason, the camera moves to first person. So we reset the settings to whatever it was already
-        drawManager.PlayOneFrame(1);  // Force the avatar 1 to conform to its first frame
-        gameManager.WriteToLogFile("Success to load one");
+        drawManager.ForceResultShowUpdate();
     }
 
     public void SaveFile()
@@ -518,7 +512,7 @@ public class BaseProfile : LevelBase
         else
             SetSimulationMode();
 
-        drawManager.ForceFullUpdate(0);
+        drawManager.ForceFullUpdate();
         SwitchCameraView();
 
         if (_properties.HasTutorial)

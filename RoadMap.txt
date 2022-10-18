@@ -1,9 +1,10 @@
 Known bugs:
     - Tooltips "on" (Look in UIManager.cs) seem to do nothing
-	- "Compare" moves the camera to first position
 
 
 TODO: 
 	- Add music so it is less boring
 	- Add Success music when mission is acheived
+	- Gesticulation should be selected when getting to second tab
+	- Add a remove button for the compare avatar
 

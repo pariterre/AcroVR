@@ -36,7 +36,6 @@ public class DrawManager : MonoBehaviour
 
     public List<AvatarProperties> avatarProperties { get; protected set; } = new List<AvatarProperties>();
     public float FrameRate { get; } = 0.02f;
-    public GameObject girl2;
 
     private GameObject firstView;
     public bool canResumeAnimation { get; protected set; } = false;
@@ -111,6 +110,10 @@ public class DrawManager : MonoBehaviour
     {
         resultGraphics = null;
     }
+    public void ForceResultShowUpdate(){
+        if (resultGraphics != null) 
+            resultGraphics.UpdateResults();
+    }
 
     public void RegisterSliderAnimation(SliderPlayAnimation _newSliderAnimation)
     {
@@ -176,12 +179,14 @@ public class DrawManager : MonoBehaviour
         avatarProperties[_avatarIndex].Q = MakeSimulation(_avatarIndex);
     }
 
-    public void ForceFullUpdate(int _avatarIndex)
+    public void ForceFullUpdate()
     {
-        ShowAvatar(_avatarIndex);
-        ShowGround(_avatarIndex);
-        PlayOneFrame(_avatarIndex);
-        SetCurrrentFrame(_avatarIndex, avatarProperties[_avatarIndex].CurrentFrame);
+        for (int _avatarIndex = 0; _avatarIndex < avatarProperties.Count; _avatarIndex++){
+            ShowAvatar(_avatarIndex);
+            ShowGround(_avatarIndex);
+            PlayOneFrame(_avatarIndex);
+            SetCurrrentFrame(_avatarIndex, avatarProperties[_avatarIndex].CurrentFrame);
+        }
     }
 
     public void ShowAvatar(int _avatarIndex)

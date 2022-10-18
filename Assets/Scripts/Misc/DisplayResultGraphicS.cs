@@ -141,23 +141,6 @@ public class DisplayResultGraphicS : MonoBehaviour
     {
         if(aniGraphManager.cntAvatar == 1)
         {
-            if (drawManager.girl2 == null)
-            {
-                graph.DataSource.StartBatch();
-
-                graph.DataSource.ClearCategory("Data1");
-                graph.DataSource.ClearCategory("Data2");
-                graph.DataSource.ClearCategory("Data3");
-
-                graph.DataSource.ClearCategory("Data4");
-                graph.DataSource.ClearCategory("Data5");
-                graph.DataSource.ClearCategory("Data6");
-
-                graph.DataSource.EndBatch();
-
-                return;
-            }
-
             switch (_v)
             {
                 case 0:
@@ -167,7 +150,7 @@ public class DisplayResultGraphicS : MonoBehaviour
                         avatarManager.LoadedModels[0].Joints.rot,
                         avatarManager.LoadedModels[1].Joints.t,
                         avatarManager.LoadedModels[1].Joints.rot
-                        );
+                    );
                     break;
                 case 1:
                     aniGraphManager.DisplayCurves(
