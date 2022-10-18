@@ -255,20 +255,16 @@ public class BaseProfile : LevelBase
 
         if (ret < 0)
         {
+            string errorMessage;
             if (ret == -1)
-            {
-                if (MainParameters.Instance.languages.current == Language.English)
-                    ErrorMessage("Please load files first");
-                else
-                    ErrorMessage("SVP charger d'abord les fichiers");
-            }
+                errorMessage = MainParameters.Instance.languages.current == Language.English
+                    ? "Please load files first"
+                    : "SVP charger d'abord les fichiers";
             else
-            {
-                if (MainParameters.Instance.languages.current == Language.English)
-                    ErrorMessage("Loaded incorrect Simulation files:  " + ret.ToString());
-                else
-                    ErrorMessage("Fichiers de simulation incorrects chargés:  " + ret.ToString());
-            }
+                errorMessage = MainParameters.Instance.languages.current == Language.English
+                    ? "Loaded incorrect Simulation files:  " + ret.ToString()
+                    : "Fichiers de simulation incorrects chargés:  " + ret.ToString();
+            ErrorMessage(errorMessage);
             return;
         }
 
@@ -277,28 +273,11 @@ public class BaseProfile : LevelBase
         fileName.text = Path.GetFileName(avatarManager.LoadedModels[0].Joints.fileName);
         avatarManager.LoadAvatar(_avatarIndex);
 
-        TakeOffOn();
-        InitDropdownDDLNames(_avatarIndex);
-
-        dropDownCondition.value = gameManager.SelectedPresetCondition;
-
         drawManager.Pause();
         drawManager.MakeSimulationFrame(0);
-        drawManager.StopEditing();
+        drawManager.PlayOneFrame(_avatarIndex);  // Force the avatar to conform to its first frame
 
-        FrontCameraPOV(drawManager.CheckPositionAvatar(0));
-
-        TutorialMessage();
-        aniGraphManager.cntAvatar = 0;
-
-        float t = (drawManager.NumberFrames - 1) * 0.02f;
-        endFrameText.text = t + " sec";
-
-        if (t < drawManager.avatarProperties[0].TakeOffParameters.Duration)
-            drawManager.SetDuration(0, t);
-
-        gameManager.InterpolationDDL(_avatarIndex);
-        gameManager.DisplayDDL(0, true);
+        StartCoroutine(WaitThenForceUpdate());
 
     }
 
@@ -342,7 +321,7 @@ public class BaseProfile : LevelBase
     public void RemoveCompareAvatar(){
         int _avatarIndex = 1;
         avatarManager.DestroyAvatar(_avatarIndex);
-        aniGraphManager.cntAvatar = 1;
+        aniGraphManager.cntAvatar = 0;
 
         CompareButton.gameObject.SetActive(true);
         StopCompareButton.gameObject.SetActive(false);

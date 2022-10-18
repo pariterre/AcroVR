@@ -291,6 +291,7 @@ public class TrainingTooltip : MonoBehaviour
 
     public void AddNode()
     {
+        // TODO: This should be moved to AniGraphManager
         int _avatarIndex = 0;
         int ddl = aniGraphManager.ddlUsed;
         int node = FindPreviousNode(ddl, aniGraphManager.mousePosSaveX);
@@ -324,6 +325,7 @@ public class TrainingTooltip : MonoBehaviour
 
     public void RemoveNode()
     {
+        // TODO: This should be moved to AniGraphManager
         int _avatarIndex = 0;
         int ddl = aniGraphManager.ddlUsed;
 

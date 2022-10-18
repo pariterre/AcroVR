@@ -335,7 +335,6 @@ public class DrawManager : MonoBehaviour
         }
 
         int n = qi.Length;
-
         // n=6, 6Node (HipFlexion, KneeFlexion ...)
         for (int i = 0; i < _joints.nodes.Length; i++)
         {
@@ -343,7 +342,8 @@ public class DrawManager : MonoBehaviour
             MainParameters.StrucNodes nodes = _joints.nodes[_joints.IndexAvatarToQ[ii]];
 
             int j = 1;
-            while (j < nodes.T.Length - 1 && t > nodes.T[j]) j++;
+            while (j < nodes.T.Length - 1 && t > nodes.T[j])
+                j++;
             Quintic(t, nodes.T[j - 1], nodes.T[j], nodes.Q[j - 1], nodes.Q[j], out qd[ii], out qdotd[ii], out qddotd[ii]);
         }
     }

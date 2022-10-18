@@ -376,8 +376,8 @@ public class MainParameters
 		languages.english.movementButtonRemoveNode = "Remove node";
 		languages.french.movementButtonCancelChanges = "Annuler modif.";
 		languages.english.movementButtonCancelChanges = "Cancel changes";
-		languages.french.movementLoadDataFileTitle = "Ouvrir un Fichier de Simulation";
-		languages.english.movementLoadDataFileTitle = "Open a Simulation File";
+		languages.french.movementLoadDataFileTitle = "Sélectionner le fichier à ouvrir";
+		languages.english.movementLoadDataFileTitle = "Select the file to load";
 		languages.french.movementLoadDataFileTxtFile = "Fichiers txt";
 		languages.english.movementLoadDataFileTxtFile = "Txt files";
 		languages.french.movementLoadDataFileAllFiles = "Tous les fichiers";

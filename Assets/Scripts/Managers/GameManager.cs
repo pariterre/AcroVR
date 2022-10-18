@@ -1,9 +1,10 @@
+using Crosstales.FB;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
-using Crosstales.FB;
-using System.Globalization;
+using UnityEngine;
+using UnityEditor;
 
 
 [System.Serializable]
@@ -106,8 +107,6 @@ public class AnimationInfo
     public float TwistSpeed;
     public float HorizontalSpeed;
     public float VerticalSpeed;
-    public int PresetCondition;
-
 
     public List<Nodes> nodes = new List<Nodes>();
 }
@@ -128,11 +127,8 @@ public class ConditionInfo
 
 public class GameManager : MonoBehaviour
 {
-    protected BaseProfile profile;
-
     protected AvatarManager avatarManager;
     protected DrawManager drawManager;
-    protected GameManager gameManager;
     protected MissionManager missionManager;
     protected UIManager uiManager;
     public MissionInfo mission;
@@ -151,7 +147,6 @@ public class GameManager : MonoBehaviour
     {
         avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
         drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
-        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
         missionManager = ToolBox.GetInstance().GetManager<MissionManager>();
         uiManager = ToolBox.GetInstance().GetManager<UIManager>();
 
@@ -181,70 +176,57 @@ public class GameManager : MonoBehaviour
 
     public int MissionLoad()
     {
-        ExtensionFilter[] extensions = new[]
+        string[] extensions = new[]
         {
-            new ExtensionFilter(MainParameters.Instance.languages.Used.movementLoadDataFileAllFiles, "*" ),
+            MainParameters.Instance.languages.Used.movementLoadDataFileTxtFile,
+            "json",
         };
 
-		string dirSimulationFiles = string.Format(@"{0}/SimulationJson", pathDataFiles);
-
-		string fileName = FileBrowser.OpenSingleFile(MainParameters.Instance.languages.Used.movementLoadDataFileTitle, dirSimulationFiles, extensions);
+		string dirSimulationFiles = $"{pathDataFiles}/SimulationJson";
+        string fileName = EditorUtility.OpenFilePanelWithFilters(
+            MainParameters.Instance.languages.Used.movementLoadDataFileTitle, 
+            dirSimulationFiles, 
+            extensions
+        );
         if (fileName.Length <= 0)
         {
             WriteToLogFile("fileName.Length false: " + fileName.Length.ToString());
             return -1;
         }
-
         WriteToLogFile(fileName);
         WriteToLogFile("CultureInfo.CurrentCulture.Name: " + CultureInfo.CurrentCulture.Name);
 
-        string extension = GetSimpleExtension(fileName);
-        if (extension == "txt")
-        {
-            if(!ReadDataFiles(0, fileName))
-                return -2;
-        }
-        else
-        {
-            if (!ReadAniFromJson(0, fileName))
-                return -3;
-        }
+        if (!ReadAniFromJson(0, fileName))
+            return -3;
 
         return 1;
     }
 
     public int LoadSimulationSecond()
     {
-        ExtensionFilter[] extensions = new[]
+        string[] extensions = new[]
         {
-            new ExtensionFilter(MainParameters.Instance.languages.Used.movementLoadDataFileTxtFile, "*"),
-            new ExtensionFilter(MainParameters.Instance.languages.Used.movementLoadDataFileAllFiles, "*" ),
+            MainParameters.Instance.languages.Used.movementLoadDataFileTxtFile,
+            "json",
         };
 
 		string dirSimulationFiles = $"{pathDataFiles}/SimulationJson";
+        string fileName = EditorUtility.OpenFilePanelWithFilters(
+            MainParameters.Instance.languages.Used.movementLoadDataFileTitle, 
+            dirSimulationFiles, 
+            extensions
+        );
 
-		string fileName = FileBrowser.OpenSingleFile(MainParameters.Instance.languages.Used.movementLoadDataFileTitle, dirSimulationFiles, extensions);
         if (fileName.Length <= 0)
         {
             WriteToLogFile("fileName.Length false: " + fileName.Length.ToString());
             return -1;
         }
-
         WriteToLogFile(fileName);
-
         WriteToLogFile("CultureInfo.CurrentCulture.Name: " + CultureInfo.CurrentCulture.Name);
 
-        string extension = GetSimpleExtension(fileName);
-        if (extension == "txt")
-        {
-            if (!ReadDataFiles(1, fileName))
-                return -2;
-        }
-        else
-        {
-            if (!ReadAniFromJson(1, fileName))
-                return -3;
-        }
+        if (!ReadAniFromJson(1, fileName))
+            return -3;
 
         return 1;
     }
@@ -281,7 +263,7 @@ public class GameManager : MonoBehaviour
 
         AnimationInfo info = JsonUtility.FromJson<AnimationInfo>(dataAsJson);
 
-        var _jointsTemp = new MainParameters.StrucJoints();
+        var _jointsTemp = avatarManager.LoadedModels[_avatarIndex].Joints;
 
         _jointsTemp.fileName = fileName;
 
@@ -290,7 +272,6 @@ public class GameManager : MonoBehaviour
         drawManager.SetDuration(_avatarIndex, info.Duration);
         drawManager.avatarProperties[_avatarIndex].TakeOffParameters.UseGravity = info.UseGravity;
         drawManager.avatarProperties[_avatarIndex].TakeOffParameters.StopOnGround = info.StopOnGround;
-        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.PresetCondition = info.PresetCondition;
         drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Somersault = info.Somersault;
         drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Tilt = info.Tilt;
         drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Twist = info.Twist;
@@ -315,7 +296,14 @@ public class GameManager : MonoBehaviour
         _jointsTemp.lagrangianModel = new LagrangianModelSimple().GetParameters;
 
         avatarManager.LoadedModels[_avatarIndex].SetJoints(_jointsTemp);
+        Debug.Log("Joints = " + avatarManager.LoadedModels[_avatarIndex].Joints.nodes[4].Q[0]);
+        InterpolationDDL(_avatarIndex);
+        for (int ddl=0; ddl==_jointsTemp.nodes.Length; ++ddl)
+            DisplayDDL(ddl, true);
+        Debug.Log("Joints = " + avatarManager.LoadedModels[_avatarIndex].Joints.nodes[4].Q[0]);
 
+        //SwitchCameraView();  // For some reason, the camera moves to first person. So we reset the settings to whatever it was already
+        drawManager.PlayOneFrame(1);  // Force the avatar 1 to conform to its first frame
         return true;
     }
 
@@ -379,7 +367,6 @@ public class GameManager : MonoBehaviour
         info.Duration = _takeOffParameters.Duration;
         info.UseGravity = _takeOffParameters.UseGravity;
         info.StopOnGround = _takeOffParameters.StopOnGround;
-        info.PresetCondition = gameManager.SelectedPresetCondition;
         info.Somersault = _takeOffParameters.Somersault;
         info.Tilt = _takeOffParameters.Tilt;
         info.Twist = _takeOffParameters.Twist;
@@ -412,7 +399,6 @@ public class GameManager : MonoBehaviour
         string fileLines = string.Format(
             "Duration: {0}{1}Condition: {2}{3}VerticalSpeed: {4:0.000}{5}AnteroposteriorSpeed: {6:0.000}{7}SomersaultSpeed: {8:0.000}{9}TwistSpeed: {10:0.000}{11}Tilt: {12:0.000}{13}Rotation: {14:0.000}{15}{16}",
             _takeOffParameters.Duration, System.Environment.NewLine,
-            gameManager.SelectedPresetCondition, System.Environment.NewLine,
             _takeOffParameters.Somersault, System.Environment.NewLine,
             _takeOffParameters.Tilt, System.Environment.NewLine,
             _takeOffParameters.Twist, System.Environment.NewLine,
@@ -451,312 +437,16 @@ public class GameManager : MonoBehaviour
         System.IO.File.WriteAllText(fileName, fileLines);
     }
 
-    protected bool ReadDataFiles(int _avatarIndex, string fileName)
-    {
-        WriteToLogFile("ReadDataFilesTxT()");
-
-        // TODO Fix the file to read
-        string[] fileLines = System.IO.File.ReadAllLines(fileName);
-
-        if(fileLines[0][0] == '{')
-        {
-            WriteToLogFile("Parse Error [0]: " + fileLines[0][0]);
-            return false;
-        }
-
-        MainParameters.StrucTakeOffParam _takeOff = MainParameters.StrucTakeOffParam.Default;
-        string[] values;
-        int ddlNum = -1;
-
-        WriteToLogFile("For() Start fileLines.Length: " + fileLines.Length.ToString());
-
-        for (int i = 0; i < fileLines.Length; i++)
-        {
-            values = Regex.Split(fileLines[i], ":");
-
-            WriteToLogFile("Regex.Split values: " + values[0]);
-
-            if (values[0].Contains("Duration"))
-            {
-                WriteToLogFile("In Duration");
-                var _duration = Utils.ToFloat(values[1]);
-                if (_duration == -999)
-                    _duration = MainParameters.StrucTakeOffParam.Default.Duration;
-                _takeOff.Duration = _duration;
-                WriteToLogFile("_takeOff.Duration: " + _takeOff.Duration.ToString());
-            }
-            else if (values[0].Contains("UseGravity"))
-            {
-                WriteToLogFile("In UseGravity");
-                _takeOff.UseGravity = Utils.ToBool(values[1]);
-                WriteToLogFile("_takeOff.UseGravity " + _takeOff.UseGravity.ToString());
-            }
-            else if (values[0].Contains("StopOnGround"))
-            {
-                WriteToLogFile("In StopOnGround");
-                _takeOff.StopOnGround = Utils.ToBool(values[1]);
-                WriteToLogFile("_takeOff.StopOnGround " + _takeOff.StopOnGround.ToString());
-            }
-            else if (values[0].Contains("Condition"))
-            {
-                WriteToLogFile("In Condition");
-
-                var _presetCondition = int.Parse(values[1], CultureInfo.InvariantCulture);
-                if (_presetCondition == -999)
-                    _presetCondition = MainParameters.StrucTakeOffParam.Default.PresetCondition;
-                SetSelectedPresetCondition(_presetCondition);
-
-                WriteToLogFile("jointsTemp.condition: " + PresetConditions.ToString());
-            }
-            else if (values[0].Contains("Somersault"))
-            {
-                WriteToLogFile("In Somerssault");
-
-                var _somersault = Utils.ToFloat(values[1]);
-                if (_somersault == -999)
-                    _somersault = MainParameters.StrucTakeOffParam.Default.Somersault;
-                _takeOff.Somersault = _somersault;
-
-                WriteToLogFile("_takeOff.Somersault: " + _takeOff.Somersault.ToString());
-            }
-            else if (values[0].Contains("Tilt"))
-            {
-                WriteToLogFile("In Tilt");
-
-                var _tilt = Utils.ToFloat(values[1]);
-                if (_tilt == -999)
-                    _tilt = MainParameters.StrucTakeOffParam.Default.Tilt;
-                _takeOff.Tilt = _tilt;
-
-                WriteToLogFile("_takeOff.Tilt: " + _takeOff.Tilt.ToString());
-            }
-            else if (values[0].Contains("Twist"))
-            {
-                WriteToLogFile("In Twist");
-
-                var _twist = Utils.ToFloat(values[1]);
-                if (_twist == -999)
-                    _twist = MainParameters.StrucTakeOffParam.Default.Twist;
-                _takeOff.Twist = _twist;
-
-                WriteToLogFile("_takeOff.Twist: " + _takeOff.Twist.ToString());
-            }
-            else if (values[0].Contains("HorizontalPosition"))
-            {
-                WriteToLogFile("In HorizontalPosition");
-
-                var _hPosition = Utils.ToFloat(values[1]);
-                if (_hPosition == -999)
-                    _hPosition = MainParameters.StrucTakeOffParam.Default.HorizontalPosition;
-                _takeOff.HorizontalPosition = _hPosition;
-
-                WriteToLogFile("_takeOff.HorizontalPosition: " + _takeOff.HorizontalPosition.ToString());
-            }
-            else if (values[0].Contains("VerticalPosition"))
-            {
-                WriteToLogFile("In VerticalPosition");
-                var _vPosition = Utils.ToFloat(values[1]);
-                if (_vPosition == -999)
-                    _vPosition = MainParameters.StrucTakeOffParam.Default.VerticalPosition;
-                _takeOff.VerticalPosition = _vPosition;
-
-                WriteToLogFile("_takeOff.VerticalPosition: " + _takeOff.VerticalPosition.ToString());
-            }
-            else if (values[0].Contains("SomersaultSpeed"))
-            {
-                WriteToLogFile("In SomersaultSpeed");
-
-                var _somersaultSpeed = Utils.ToFloat(values[1]);
-                if (_somersaultSpeed == -999)
-                    _somersaultSpeed = MainParameters.StrucTakeOffParam.Default.SomersaultSpeed;
-                _takeOff.SomersaultSpeed = _somersaultSpeed;
-
-                WriteToLogFile("_takeOff.SomersaultSpeed: " + _takeOff.SomersaultSpeed.ToString());
-            }
-            else if (values[0].Contains("TiltSpeed"))
-            {
-                WriteToLogFile("In TiltSpeed");
-
-                var _tiltSpeed = Utils.ToFloat(values[1]);
-                if (_tiltSpeed == -999)
-                    _tiltSpeed = MainParameters.StrucTakeOffParam.Default.TiltSpeed;
-                _takeOff.TiltSpeed = _tiltSpeed;
-
-                WriteToLogFile("_takeOff.TiltSpeed: " + _takeOff.TiltSpeed.ToString());
-            }
-            else if (values[0].Contains("TwistSpeed"))
-            {
-                WriteToLogFile("In TwistSpeed");
-
-                var _twistSpeed = Utils.ToFloat(values[1]);
-                if (_twistSpeed == -999)
-                    _twistSpeed = MainParameters.StrucTakeOffParam.Default.TwistSpeed;
-                _takeOff.TwistSpeed = _twistSpeed;
-
-                WriteToLogFile("_takeOff.TwistSpeed: " + _takeOff.TwistSpeed.ToString());
-            }
-            else if (values[0].Contains("HorizontalSpeed"))
-            {
-                WriteToLogFile("In HorizontalSpeed");
-
-                var _hSpeed = Utils.ToFloat(values[1]);
-                if (_hSpeed == -999)
-                    _hSpeed = MainParameters.StrucTakeOffParam.Default.HorizontalSpeed;
-                _takeOff.HorizontalSpeed = _hSpeed;
-
-                WriteToLogFile("_takeOff.HorizontalSpeed: " + _takeOff.HorizontalSpeed.ToString());
-            }
-            else if (values[0].Contains("VerticalSpeed"))
-            {
-                WriteToLogFile("In VerticalSpeed");
-                var _vSpeed = Utils.ToFloat(values[1]);
-                if (_vSpeed == -999)
-                    _vSpeed = MainParameters.StrucTakeOffParam.Default.VerticalSpeed;
-                _takeOff.VerticalSpeed = _vSpeed;
-
-                WriteToLogFile("_takeOff.VerticalSpeed: " + _takeOff.VerticalSpeed.ToString());
-            }
-            else if (values[0].Contains("DDL"))
-            {
-                WriteToLogFile("In DDL");
-
-                avatarManager.LoadedModels[_avatarIndex].SetJointsNodes(new MainParameters.StrucNodes[fileLines.Length - i - 1]);
-                ddlNum = 0;
-
-                int temp = fileLines.Length - i - 1;
-
-                WriteToLogFile("jointsTemp.nodes: " + temp.ToString());
-            }
-            else if (ddlNum >= 0)
-            {
-                WriteToLogFile("In ddlNum: " + ddlNum.ToString());
-
-                avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].ddl = int.Parse(values[0], CultureInfo.InvariantCulture);
-
-                WriteToLogFile("avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].ddl: " + avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].ddl.ToString());
-
-                avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].name = values[1];
-
-                WriteToLogFile("avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].name: " + avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].name);
-
-                avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].interpolation = MainParameters.Instance.interpolationDefault;
-
-                WriteToLogFile("avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].interpolation: " + avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].interpolation.type.ToString());
-
-                int indexTQ = 2;
-
-                WriteToLogFile("values.Length: " + values.Length.ToString());
-
-                if (values.Length > 5)
-                {
-                    WriteToLogFile("In values.Length > 5");
-
-                    string[] subValues;
-                    subValues = Regex.Split(values[2], ",");
-                    if (subValues[0].Contains(MainParameters.InterpolationType.CubicSpline.ToString()))
-                        avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].interpolation.type = MainParameters.InterpolationType.CubicSpline;
-                    else
-                        avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].interpolation.type = MainParameters.InterpolationType.Quintic;
-                    avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].interpolation.numIntervals = int.Parse(subValues[1], CultureInfo.InvariantCulture);
-                    avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].interpolation.slope[0] = Utils.ToFloat(subValues[2]);
-                    avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].interpolation.slope[1] = Utils.ToFloat(subValues[3]);
-                    indexTQ++;
-                }
-                avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].T = ExtractDataTQ(values[indexTQ]);
-
-                foreach(float a in avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].T)
-                    WriteToLogFile("avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].T: " + a.ToString());
-
-                avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].Q = ExtractDataTQ(values[indexTQ + 1]);
-
-                foreach (float b in avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].Q)
-                    WriteToLogFile("avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].Q: " + b.ToString());
-
-                avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].ddlOppositeSide = -1;
-
-                WriteToLogFile("avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].ddlOppositeSide: " + avatarManager.LoadedModels[_avatarIndex].Joints.nodes[ddlNum].ddlOppositeSide.ToString());
-
-                ddlNum++;
-            }
-        }
-
-
-        WriteToLogFile("Assigned drawManager.Joints(0)");
-        
-        if (avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModelName == MainParameters.LagrangianModelNames.Sasha23ddl)
-        {
-            WriteToLogFile("LagrangianModelSasha23ddl()");
-            avatarManager.LoadedModels[_avatarIndex].SetJointsLagrangianModel(new LagrangianModelSasha23ddl().GetParameters);
-        }
-        else
-        {
-            WriteToLogFile("LagrangianModelSimple()");
-            avatarManager.LoadedModels[_avatarIndex].SetJointsLagrangianModel(new LagrangianModelSimple().GetParameters);
-        }
-
-        int nDDL = 0;
-        MainParameters.StrucNodes[] nodes = new MainParameters.StrucNodes[avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.q2.Length];
-        int nNodes = avatarManager.LoadedModels[_avatarIndex].Joints.nodes.Length;
-        MainParameters.StrucInterpolation interpolation = avatarManager.LoadedModels[_avatarIndex].Joints.nodes[0].interpolation;
-
-        WriteToLogFile("For() Start avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.q2.Length: " + avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.q2.Length.ToString());
-
-        foreach (int i in avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.q2)
-        {
-            int j = 0;
-            string ddlname = avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.ddlName[i - 1].ToLower();
-            while (j < nNodes && !ddlname.Contains(avatarManager.LoadedModels[_avatarIndex].Joints.nodes[j].name.ToLower()))
-                j++;
-            if (j < nNodes)                                 // Articulations défini dans le fichier de données, le conserver
-            {
-                nodes[nDDL] = avatarManager.LoadedModels[_avatarIndex].Joints.nodes[j];
-                nodes[nDDL].ddl = i;
-            }
-            else                                            // Articulations non défini dans le fichier de données, alors utilisé la définition de défaut selon le modèle Lagrangien
-            {
-                nodes[nDDL].ddl = i;
-                nodes[nDDL].name = avatarManager.LoadedModels[_avatarIndex].Joints.lagrangianModel.ddlName[i - 1];
-                nodes[nDDL].T = new float[3] {
-                    _takeOff.Duration * 0.25f,
-                    _takeOff.Duration * 0.5f,
-                    _takeOff.Duration * 0.75f 
-                };
-                nodes[nDDL].Q = new float[3] { 0, 0, 0 };
-                nodes[nDDL].interpolation = interpolation;
-                nodes[nDDL].ddlOppositeSide = -1;
-            }
-            nDDL++;
-        }
-
-        WriteToLogFile("For() Start nodes.Length: " + nodes.Length.ToString());
-
-        for (int i = 0; i < nodes.Length; i++)
-        {
-            string nameOppSide = "";
-            string name = nodes[i].name.ToLower();
-            if (name.Contains("left") || name.Contains("right"))
-            {
-                if (name.Contains("left"))
-                    nameOppSide = "right" + name.Substring(name.IndexOf("left") + 4);
-                else
-                    nameOppSide = "left" + name.Substring(name.IndexOf("right") + 5);
-                for (int j = 0; j < nodes.Length; j++)
-                {
-                    name = nodes[j].name.ToLower();
-                    if (name.Contains(nameOppSide))
-                        nodes[i].ddlOppositeSide = j;
-                }
-            }
-        }
-
-        avatarManager.LoadedModels[_avatarIndex].SetJointsNodes(nodes);
-
-        return true;
-    }
-
     public void SaveFile()
     {
-		string fileName = FileBrowser.SaveFile(MainParameters.Instance.languages.Used.movementSaveDataFileTitle, pathUserDocumentsFiles, "DefaultFile", "json");
+        string dirSimulationFiles = $"{pathUserDocumentsFiles}/SimulationJson";
+        string fileName = EditorUtility.SaveFilePanel(
+            MainParameters.Instance.languages.Used.movementSaveDataFileTitle, 
+            dirSimulationFiles, 
+            "CustomSimulation",
+            "json"
+        );
+
         if (fileName.Length <= 0)
             return;
 
