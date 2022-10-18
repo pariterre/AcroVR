@@ -221,7 +221,7 @@ public class GameManager : MonoBehaviour
             new ExtensionFilter(MainParameters.Instance.languages.Used.movementLoadDataFileAllFiles, "*" ),
         };
 
-		string dirSimulationFiles = string.Format(@"{0}\SimulationJson", pathDataFiles);
+		string dirSimulationFiles = $"{pathDataFiles}/SimulationJson";
 
 		string fileName = FileBrowser.OpenSingleFile(MainParameters.Instance.languages.Used.movementLoadDataFileTitle, dirSimulationFiles, extensions);
         if (fileName.Length <= 0)

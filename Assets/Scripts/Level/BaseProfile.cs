@@ -125,14 +125,10 @@ public class BaseProfile : LevelBase
     {
         if (Avatar == null)
         {
-            if (MainParameters.Instance.languages.current == Language.English)
-            {
-                ErrorMessage("Please load files first");
-            }
-            else
-            {
-                ErrorMessage("SVP charger d'abord les fichiers");
-            }
+            string errorMessage = MainParameters.Instance.languages.current == Language.English 
+                ? "Please load files first" 
+                : "SVP charger d'abord les fichiers";
+            ErrorMessage(errorMessage);
             return;
         }
 
@@ -310,28 +306,16 @@ public class BaseProfile : LevelBase
 
         if (ret < 0)
         {
+            string errorMessage;
             if (ret == -1)
-            {
-                if (MainParameters.Instance.languages.current == Language.English)
-                {
-                    ErrorMessage("Please load files first");
-                }
-                else
-                {
-                    ErrorMessage("SVP charger d'abord les fichiers");
-                }
-            }
+                errorMessage = MainParameters.Instance.languages.current == Language.English
+                    ? "Please load files first" 
+                    : "SVP charger d'abord les fichiers";
             else
-            {
-                if (MainParameters.Instance.languages.current == Language.English)
-                {
-                    ErrorMessage("Loaded incorrect Simulation files:  " + ret.ToString());
-                }
-                else
-                {
-                    ErrorMessage("Fichiers de simulation incorrects chargés:  " + ret.ToString());
-                }
-            }
+                errorMessage = MainParameters.Instance.languages.current == Language.English
+                    ? "Loaded incorrect Simulation files:  " + ret.ToString()
+                    : "Fichiers de simulation incorrects chargés:  " + ret.ToString();
+            ErrorMessage(errorMessage);
             return;
         }
 
@@ -347,10 +331,10 @@ public class BaseProfile : LevelBase
         drawManager.MakeSimulationFrame(1);
         drawManager.StopEditing();
 
-        TutorialMessage();
-
         aniGraphManager.cntAvatar = 1;
 
+        SwitchCameraView();  // For some reason, the camera moves to first person. So we reset the settings to whatever it was already
+        drawManager.PlayOneFrame(1);  // Force the avatar 1 to conform to its first frame
         gameManager.WriteToLogFile("Success to load one");
     }
 
