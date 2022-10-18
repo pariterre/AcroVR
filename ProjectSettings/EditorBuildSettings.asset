@@ -6,17 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/AcroVR/Logo.unity
-    guid: b2cb7fe666e54004fabcd69d257c2a8a
-  - enabled: 1
     path: Assets/Scenes/AcroVR/MainMenu.unity
     guid: 3ec81a203b227904ca280d53345a30d0
-  - enabled: 0
-    path: Assets/Scenes/AcroVR/BaseLevel1.unity
-    guid: b0854f547d37231469e5229f4965d329
-  - enabled: 0
-    path: Assets/Scenes/AcroVR/Profile.unity
-    guid: a16bd194d444dc049a324b8b04a53b16
   - enabled: 1
     path: Assets/Scenes/AcroVR/Training.unity
     guid: 7220051149f955c41a5c847a73a3c1d0
