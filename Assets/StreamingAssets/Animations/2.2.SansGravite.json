@@ -1,81 +1,86 @@
 {
-    "Objective": "2.2.SansGravite",
-    "Duration": 5.0,
-    "Condition": 0,
-    "VerticalSpeed": 0.0,
-    "AnteroposteriorSpeed": 0.0,
-    "SomersaultSpeed": 0.0,
-    "TwistSpeed": 0.0,
-    "Tilt": 0.0,
-    "Rotation": 0.0,
-    "nodes": [
-        {
-            "Name": "Hip_Flexion",
-            "T": [
-                0.009856,
-                1.501155
-            ],
-            "Q": [
-                -0.001260,
-                0.005009
-            ]
-        },
-        {
-            "Name": "Knee_Flexion",
-            "T": [
-                0.000000,
-                5.000000
-            ],
-            "Q": [
-                0.000000,
-                0.000000
-			]
-        },
-        {
-            "Name": "Right_Arm_Flexion",
-            "T": [
-                0.000000,
-                5.000000
-            ],
-            "Q": [
-                0.000000,
-                0.000000
-            ]
-        },
-        {
-            "Name": "Right_Arm_Abduction",
-            "T": [
-                0.294855,
-                0.681293
-            ],
-            "Q": [
-                -0.009412,
-                -0.009999
-            ]
-        },
-        {
-            "Name": "Left_Arm_Flexion",
-            "T": [
-                0.000000,
-                5.000000
-            ],
-            "Q": [
-                0.000000,
-                0.000000
-            ]
-        },
-        {
-            "Name": "Left_Arm_Abduction",
-            "T": [
-                0.015794,
-                0.496730,
-				2.070163
-            ],
-            "Q": [
-                -0.007387,
-                -0.018817,
-				-0.007387
-            ]
-        }
-    ]
+  "Objective": "2.2.SansGravite",
+  "Duration": 5.0,
+  "UseGravity": false,
+  "StopOnGround": false,
+  "Somersault": 0,
+  "Tilt": 0,
+  "Twist": 0,
+  "HorizontalPosition": 0.0,
+  "VerticalPosition": 0.0,
+  "SomersaultSpeed": 0,
+  "TiltSpeed": 0,
+  "TwistSpeed": 0,
+  "HorizontalSpeed": 0.0,
+  "VerticalSpeed": 0.0,
+  "nodes": [
+    {
+      // HipFlexion
+      "T": [
+        0.009856,
+        1.501155
+      ],
+      "Q": [
+        -0.001260,
+        0.005009
+      ]
+    },
+    {
+      // KneeFlexion
+      "T": [
+        0.000000,
+        5.000000
+      ],
+      "Q": [
+        0.000000,
+        0.000000
+      ]
+    },
+    {
+      // RightArmFlexion
+      "T": [
+        0.000000,
+        5.000000
+      ],
+      "Q": [
+        0.000000,
+        0.000000
+      ]
+    },
+    {
+      // RightArmAbduction
+      "T": [
+        0.294855,
+        0.681293
+      ],
+      "Q": [
+        -0.009412,
+        -0.009999
+      ]
+    },
+    {
+      // LeftArmFlexion
+      "T": [
+        0.000000,
+        5.000000
+      ],
+      "Q": [
+        0.000000,
+        0.000000
+      ]
+    },
+    {
+      // LeftArmAbduction
+      "T": [
+        0.015794,
+        0.496730,
+        2.070163
+      ],
+      "Q": [
+        -0.007387,
+        -0.018817,
+        -0.007387
+      ]
+    }
+  ]
 }
