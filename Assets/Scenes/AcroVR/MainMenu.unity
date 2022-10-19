@@ -4526,7 +4526,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -15}
+  m_AnchoredPosition: {x: 79, y: -516}
   m_SizeDelta: {x: 210, y: 30}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &892175942
@@ -8259,7 +8259,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 46, y: -465}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1479221872
@@ -8293,7 +8293,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Version: 2020-10-16'
+  m_Text: 'Version: 1.0.0'
 --- !u!222 &1479221873
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9653,6 +9653,11 @@ MonoBehaviour:
   TutorialObject: {fileID: 0}
   missionBanner: {fileID: 0}
   NodeNameObject: {fileID: 0}
+  ToggleSimulationButton: {fileID: 0}
+  ToggleGestureButton: {fileID: 0}
+  CompareButton: {fileID: 0}
+  StopCompareButton: {fileID: 0}
+  ConditionName: {fileID: 0}
   userUiInputs:
     Duration: {fileID: 0}
     Somersault: {fileID: 0}
@@ -11726,7 +11731,7 @@ PrefabInstance:
     - target: {fileID: 340874657715015188, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 7.0350037
+      value: 7.034973
       objectReference: {fileID: 0}
     - target: {fileID: 340874657715015188, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
@@ -12405,6 +12410,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 550238437106395656, guid: 62907b904771b5143b55737d0ea468a3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 550482918645021974, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}
       propertyPath: m_IsActive
@@ -12843,6 +12853,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_IntArgument
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7468038713142244203, guid: 62907b904771b5143b55737d0ea468a3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7625851472673318022, guid: 62907b904771b5143b55737d0ea468a3,
         type: 3}

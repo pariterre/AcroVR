@@ -90,8 +90,8 @@ public class TrainingTooltip : MonoBehaviour
         languages.english.Tab1Title = "1. Take Off";
         languages.french.Tab2Title = "2. Mouvement";
         languages.english.Tab2Title = "2. Movement";
-        languages.french.Tab4Title = "4. Résultat";
-        languages.english.Tab4Title = "4. Result";
+        languages.french.Tab4Title = "3. Résultat";
+        languages.english.Tab4Title = "3. Result";
 
         languages.french.loadButton = "Charger";
         languages.english.loadButton = "Load";
