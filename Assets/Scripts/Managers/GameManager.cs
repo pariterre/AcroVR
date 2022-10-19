@@ -171,15 +171,15 @@ public class GameManager : MonoBehaviour
         }; 
 
 		string dirAnimationFiles = $"{TargetConfigFolder}/Animations/";
-        string fileName = StandaloneFileBrowser.OpenFilePanel(
+        string[] fileNames = StandaloneFileBrowser.OpenFilePanel(
             MainParameters.Instance.languages.Used.movementLoadDataFileTitle, 
             dirAnimationFiles, 
             extensions, 
             false
-        )[0];
-        if (fileName.Length <= 0) return -1;
+        );
+        if (fileNames.Length == 0) return -1;
 
-        if (!ReadAniFromJson(_avatarIndex, fileName))
+        if (!ReadAniFromJson(_avatarIndex, fileNames[0]))
             return -3;
 
         return 1;
