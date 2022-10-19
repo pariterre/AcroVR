@@ -209,19 +209,42 @@ public class GameManager : MonoBehaviour
 
         _jointsTemp.fileName = fileName;
 
-        drawManager.SetDuration(_avatarIndex, info.Duration);
-        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.UseGravity = info.UseGravity;
-        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.StopOnGround = info.StopOnGround;
-        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Somersault = info.Somersault;
-        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Tilt = info.Tilt;
-        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Twist = info.Twist;
-        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.HorizontalPosition = info.HorizontalPosition;
-        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.VerticalPosition = info.VerticalPosition;
-        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.SomersaultSpeed = info.SomersaultSpeed;
-        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.TiltSpeed = info.TiltSpeed;
-        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.TwistSpeed = info.TwistSpeed;
-        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.HorizontalSpeed = info.HorizontalSpeed;
-        drawManager.avatarProperties[_avatarIndex].TakeOffParameters.VerticalSpeed = info.VerticalSpeed;
+        if (_avatarIndex == 0)
+        {
+            UserUIInputsValues _inputs = new UserUIInputsValues();
+            _inputs.Duration = info.Duration;
+            _inputs.UseGravity = info.UseGravity;
+            _inputs.StopOnGround = info.StopOnGround;
+            _inputs.Somersault = info.Somersault;
+            _inputs.Tilt = info.Tilt;
+            _inputs.Twist = info.Twist;
+            _inputs.HorizontalPosition = info.HorizontalPosition;
+            _inputs.VerticalPosition = info.VerticalPosition;
+            _inputs.SomersaultSpeed = info.SomersaultSpeed;
+            _inputs.TiltSpeed = info.TiltSpeed;
+            _inputs.TwistSpeed = info.TwistSpeed;
+            _inputs.HorizontalSpeed = info.HorizontalSpeed;
+            _inputs.VerticalSpeed = info.VerticalSpeed;
+            uiManager.userInputs.SetAll(_inputs);
+
+        }
+        else
+        {
+            drawManager.SetDuration(_avatarIndex, info.Duration);
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.UseGravity = info.UseGravity;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.StopOnGround = info.StopOnGround;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Somersault = info.Somersault;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Tilt = info.Tilt;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Twist = info.Twist;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.HorizontalPosition = info.HorizontalPosition;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.VerticalPosition = info.VerticalPosition;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.SomersaultSpeed = info.SomersaultSpeed;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.TiltSpeed = info.TiltSpeed;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.TwistSpeed = info.TwistSpeed;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.HorizontalSpeed = info.HorizontalSpeed;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.VerticalSpeed = info.VerticalSpeed;
+        }
+
 
         _jointsTemp.nodes = new MainParameters.StrucNodes[info.nodes.Count];
         for (int i = 0; i < info.nodes.Count; i++)
@@ -241,8 +264,8 @@ public class GameManager : MonoBehaviour
         for (int ddl=0; ddl==_jointsTemp.nodes.Length; ++ddl)
             DisplayDDL(ddl, true);  // In the event it was loaded while we were in the graph panel
 
-        //SwitchCameraView();  // For some reason, the camera moves to first person. So we reset the settings to whatever it was already
         drawManager.PlayOneFrame(1);  // Force the avatar 1 to conform to its first frame
+
         return true;
     }
 
