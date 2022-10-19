@@ -15,7 +15,7 @@
   "VerticalSpeed": 5.1,
   "nodes": [
     {
-      // HipFlexion
+      "Name": "HipFlexion",
       "T": [
         0.027669,
         0.146418,
@@ -30,7 +30,7 @@
       ]
     },
     {
-      // KneeFlexion
+      "Name": "KneeFlexion",
       "T": [
         0.027669,
         0.170168,
@@ -45,7 +45,7 @@
       ]
     },
     {
-      // RightArmFlexion
+      "Name": "RightArmFlexion",
       "T": [
         0.069231,
         0.490792
@@ -56,7 +56,7 @@
       ]
     },
     {
-      // RightArmAbduction
+      "Name": "RightArmAbduction",
       "T": [
         0.027669,
         0.490792,
@@ -71,7 +71,7 @@
       ]
     },
     {
-      // LeftArmFlexion
+      "Name": "LeftArmFlexion",
       "T": [
         0.069231,
         0.496730
@@ -82,7 +82,7 @@
       ]
     },
     {
-      // LeftArmAbduction
+      "Name": "LeftArmAbduction",
       "T": [
         0.039544,
         0.496730,
