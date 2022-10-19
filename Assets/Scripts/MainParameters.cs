@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+public enum Language{
+	French = 0, 
+	English = 1,
+}
+
 // =================================================================================================================================================================
 /// <summary>
 /// Cette classe contient les paramètres généraux et globaux utilisés dans le logiciel.
@@ -45,24 +50,42 @@ public class MainParameters
 	/// <summary> Description de la structure contenant les paramètres de décollage. </summary>
 	public struct StrucTakeOffParam
 	{
-		public float verticalSpeed;					// en m/s
-		public float anteroposteriorSpeed;			// en m/s
-		public float somersaultSpeed;				// en rév/s
-		public float twistSpeed;					// en rév/s
-		public float tilt;							// en degrés
-		public float rotation;						// en degrés
+		public float Duration;
+		public bool UseGravity;
+		public bool StopOnGround;
+		public int PresetCondition;
+
+		public float Somersault;
+		public float Tilt;
+		public float Twist;
+		public float HorizontalPosition;
+		public float VerticalPosition;
+		public float SomersaultSpeed;
+		public float TiltSpeed;
+		public float TwistSpeed;
+		public float HorizontalSpeed;
+		public float VerticalSpeed;
+
+		static public StrucTakeOffParam Default 
+		{ 
+			get {
+				StrucTakeOffParam _out = new StrucTakeOffParam();
+				_out.Duration = 1f;
+				return _out; 
+			} 
+		}
 	}
 
-    /// <summary> Structure contenant les valeurs de défaut pour les paramètres de décollage. </summary>
-    public StrucTakeOffParam takeOffParamDefault;
-    #endregion
+	public float DurationDefault = 1f;
+
+	#endregion
 
 	public enum DataType { Simulation};
 	public enum LagrangianModelNames { Simple, Sasha23ddl};
 
     #region Joints
     /// <summary> Description de la structure contenant les données des angles des articulations (DDL). </summary>
-    public struct StrucJoints
+    public class StrucJoints
 	{
 		/// <summary> Nom du fichier de données utilisé. </summary>
 		public string fileName;
@@ -72,15 +95,10 @@ public class MainParameters
 		public float[] t0;
 		/// <summary> Liste de tous les angles interpolés pour chacune des articulations. [m,n]: m = DDL, n = Frames. </summary>
 		public float[,] q0;
-		/// <summary> Durée de la figure (en secondes). </summary>
-		public float duration;
-		/// <summary> Structure contenant les données relatifs aux paramètres initiaux d'envol. </summary>
-		public StrucTakeOffParam takeOffParam;
-		/// <summary>
-		/// <para>Condition utilisée pour exécuter la figure. </para>
-		/// (0 = Sans gravité, 1 = Trampoline, 2 = Chute, 3 = Plongeon 1m, 4 = Plongeon 3m, 5 = Plongeon 5m, 6 = Plongeon 10m, 7 = Barre fixe, 8 = Barres asymétriques, 9 = Saut à la perche).
-		/// </summary>
-		public int condition;
+		/// <summary> Index mapping from the avatar to Q </summary>
+		public int[] IndexAvatarToQ;
+		/// <summary> Index mapping from the avatar to Q </summary>
+		public int[] IndexQToAvatar;
 		/// <summary> Type de données utilisée. </summary>
 		public DataType dataType;
 		/// <summary> Nom du modèle Lagrangien utilisée. </summary>
@@ -95,16 +113,33 @@ public class MainParameters
 		public float[,] rot;
 		/// <summary> Liste des vitesses des angles interpolés pour les articulations de rotation (périlleux, inclinaison et torsion), jusqu'au contact avec le sol. [m,n]: m = 3, n = Frames. </summary>
 		public float[,] rotdot;
+
+		static public StrucJoints Default { get
+			{
+                StrucJoints _out = new StrucJoints()
+                {
+                    fileName = "",
+                    nodes = new StrucNodes[6],
+                    t0 = null,
+                    q0 = null,
+					IndexAvatarToQ = new int[] { 0, 1, 3, 2, 5, 4, },
+					IndexQToAvatar = new int[] { 0, 1, 3, 2, 5, 4, },
+					dataType = DataType.Simulation,
+                    lagrangianModelName = LagrangianModelNames.Simple,
+                    lagrangianModel = new LagrangianModelManager.StrucLagrangianModel(),
+                    tc = 0,
+                    t = null,
+                    rot = null,
+                    rotdot = null
+                };
+                return _out;
+			}
+		}
 	}
 
 	/// <summary> Structure contenant les données des angles des articulations (DDL). </summary>
-	public StrucJoints joints;
+	//public StrucJoints joints;
 
-    /// <summary> Valeur de défaut pour la durée de la figure. </summary>
-    public float durationDefault;
-
-    /// <summary> Valeur de défaut pour la condition utilisée pour exécuter la figure. </summary>
-    public int conditionDefault;
 	#endregion
 
 	#region ScrollViewMessages
@@ -250,11 +285,16 @@ public class MainParameters
 		public string toolTipGraphSettingsDefaultValues;
 		public string toolTipGraphSettingsCancel;
 		public string toolTipGraphSettingsOK;
+
+		public string missionSuccess;
+		public string missionFailed;
+		public string missionTryAgain;
 	}
 
 	/// <summary> Description de la structure contenant la liste des messages utilisés en français et en anglais. </summary>
 	public struct StrucLanguages
 	{
+		public Language current;
 		public StrucMessageLists Used;
 		public StrucMessageLists french;
 		public StrucMessageLists english;
@@ -280,31 +320,25 @@ public class MainParameters
 		interpolationDefault.type = InterpolationType.Quintic;
 		interpolationDefault.numIntervals = 0;
 		interpolationDefault.slope = new float[] { 0, 0 };
-		takeOffParamDefault.verticalSpeed = 0;
-        takeOffParamDefault.anteroposteriorSpeed = 0;
-        takeOffParamDefault.somersaultSpeed = 0;
-        takeOffParamDefault.twistSpeed = 0;
-        takeOffParamDefault.tilt = 0;
-        takeOffParamDefault.rotation = 0;
-		durationDefault = 0;
-		conditionDefault = 0;
 
 		// Initialisation des paramètres reliés aux données des angles des articulations.
 
-		joints.fileName = "";
-		joints.nodes = null;
-		joints.t0 = null;
-		joints.q0 = null;
-		joints.duration = durationDefault;
-		joints.takeOffParam = takeOffParamDefault;
-		joints.condition = conditionDefault;
-		joints.dataType = DataType.Simulation;
-		joints.lagrangianModelName = LagrangianModelNames.Simple;
-		joints.lagrangianModel = new LagrangianModelManager.StrucLagrangianModel();
-		joints.tc = 0;
-		joints.t = null;
-		joints.rot = null;
-		joints.rotdot = null;
+		//joints.fileName = "";
+		//joints.nodes = null;
+		//joints.t0 = null;
+		//joints.q0 = null;
+		//joints.Duration = 0;
+		//joints.UseGravity = false;
+		//joints.StopOnGround = true;
+		//joints.takeOffParam = new StrucTakeOffParam();
+		//joints.condition = 0;
+		//joints.dataType = DataType.Simulation;
+		//joints.lagrangianModelName = LagrangianModelNames.Simple;
+		//joints.lagrangianModel = new LagrangianModelManager.StrucLagrangianModel();
+		//joints.tc = 0;
+		//joints.t = null;
+		//joints.rot = null;
+		//joints.rotdot = null;
 
 		// Initialisation de la liste des messages, utilisé pour la boîte des messages.
 
@@ -342,8 +376,8 @@ public class MainParameters
 		languages.english.movementButtonRemoveNode = "Remove node";
 		languages.french.movementButtonCancelChanges = "Annuler modif.";
 		languages.english.movementButtonCancelChanges = "Cancel changes";
-		languages.french.movementLoadDataFileTitle = "Ouvrir un Fichier de Simulation";
-		languages.english.movementLoadDataFileTitle = "Open a Simulation File";
+		languages.french.movementLoadDataFileTitle = "Sélectionner le fichier à ouvrir";
+		languages.english.movementLoadDataFileTitle = "Select the file to load";
 		languages.french.movementLoadDataFileTxtFile = "Fichiers txt";
 		languages.english.movementLoadDataFileTxtFile = "Txt files";
 		languages.french.movementLoadDataFileAllFiles = "Tous les fichiers";
@@ -582,7 +616,15 @@ public class MainParameters
 		languages.french.toolTipButtonGraph = "Afficher les graphiques résultats";
 		languages.english.toolTipButtonGraph = "Display result graphics";
 
-		languages.Used = languages.french;
+		languages.french.missionSuccess = "Mission réussie, capitaine!";
+		languages.english.missionSuccess = "Mission completed, captain!";
+		languages.french.missionFailed = "Malheureusement, la mission n'a pas été complétée avec une précision suffisante.";
+		languages.english.missionFailed = "Unfortunately, the mission was not completed with a sufficient precision.";
+		languages.french.missionTryAgain = "Essayez de nouveau, ou revenez-y plus tard...";
+		languages.english.missionTryAgain = "Try again, or have another try later...";
+
+		SetLanguage((Language)PlayerPrefs.GetInt("Language", (int)Language.French));
+
 	}
 
 	// =================================================================================================================================================================
@@ -596,4 +638,14 @@ public class MainParameters
 		}
 	}
 	#endregion
+
+	public void SetLanguage(Language _language){
+		if (_language == Language.English)
+			languages.Used = languages.english;
+		else
+			languages.Used = languages.french;
+		
+		languages.current = _language;
+		PlayerPrefs.SetInt("Language", (int)languages.current);
+	}
 }

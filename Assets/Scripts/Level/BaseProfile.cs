@@ -1,15 +1,63 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using Cinemachine;
+
 
 public class BaseProfile : LevelBase
 {
+    protected AvatarManager avatarManager;
+    protected LevelManager levelManager;
+    protected GameManager gameManager;
+    protected DrawManager drawManager;
+    protected AniGraphManager aniGraphManager;
+    protected UIManager uiManager;
+    protected MissionManager missionManager;
+
+    public GameObject Avatar { get => avatarManager.LoadedModels[0].gameObject; }
+    public GameObject SaveLoadCompareMenu;
+    public Dropdown dropDownCondition;
     public Dropdown dropDownDDLNames;
-    public Text resultText;
-    public GameObject anchorSidePOV = null;
-    public GameObject anchorThirdPOV = null;
     public Camera AvatarCamera;
+
+    public Dropdown dropDownPlaySpeed;
+
+    public GameObject ErrorObject;
+    public GameObject TutorialObject;
+    public MissionBanner missionBanner;
+    public GameObject NodeNameObject;
+    protected GameObject CurrentTabContent;
+    public Toggle ToggleSimulationButton;
+    public Toggle ToggleGestureButton;
+    public Button CompareButton;
+    public Button StopCompareButton;
+
+    public Text ConditionName;
+    
+    public UserUIInputs userUiInputs;
+    protected UserUIInputsValues userUiInputsDefaultValues = new UserUIInputsValues();
+
+    public Text endFrameText;
+
+    public GameObject[] cameraList;
+
+    public SliderPlayAnimation sliderPlay;
+
+    public Fireworks fireworks;
+
+    public GameObject Floor;
+
+    public Text fileName;
+
+    public enum CameraView
+    {
+        FirstPOV,
+        FrontPOV,
+    }
+
+    public CameraView camView;
 
     public override void SetPrefab(GameObject _prefab)
     {
@@ -19,98 +67,299 @@ public class BaseProfile : LevelBase
     {
     }
 
+    void Start()
+    {
+        avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
+        levelManager = ToolBox.GetInstance().GetManager<LevelManager>();
+        gameManager = ToolBox.GetInstance().GetManager<GameManager>();
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        aniGraphManager = ToolBox.GetInstance().GetManager<AniGraphManager>();
+        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
+        missionManager = ToolBox.GetInstance().GetManager<MissionManager>();
+
+        // Fill some important informations
+        if (cameraList.Length != 0){  // cameraList.Length is 0 if we are in the menu
+            userUiInputsDefaultValues.SetAll(userUiInputs);
+            avatarManager.LoadAvatar(0);
+            drawManager.Pause();
+                
+            // Give some handler to relevant scripts
+            drawManager.SetGround(Floor);
+            PrepareMissionManager();
+            if (SaveLoadCompareMenu != null)
+                SaveLoadCompareMenu.SetActive(!missionManager.HasActiveMission);
+            
+            FrontCameraPOV(0);
+            gameManager.UpdateDropDownNames();
+        }
+    }
+
+    protected void PrepareMissionManager()
+    {
+        uiManager.SetUserInputs(userUiInputs, userUiInputsDefaultValues);
+        missionManager.SetupFireworks(fireworks);
+        missionManager.SetInformationBanner(missionBanner);
+        missionManager.SetAndShowCurrentMission();
+    }
+
+    public void CheckMissionResult()
+    {
+        missionManager.CheckMissionResult();
+    }
+
+    private void Update()
+    {
+        if (aniGraphManager.isTutorial == 1)
+        {
+            if (Input.anyKeyDown)
+            {
+                aniGraphManager.isTutorial++;
+                TutorialObject.GetComponent<Animator>().Play("Panel Out");
+            }
+        }
+    }
+
+    public void ToggleCameraFirstOrThird(){
+        if (camView != CameraView.FirstPOV){
+            FirstPOVCamera();
+        } else {
+            FrontCameraPOV(drawManager.CheckPositionAvatar(0));
+        }
+
+    }
+
+    public void SwitchCameraView()
+    {
+        if (Avatar == null)
+        {
+            string errorMessage = MainParameters.Instance.languages.current == Language.English 
+                ? "Please load files first" 
+                : "SVP charger d'abord les fichiers";
+            ErrorMessage(errorMessage);
+            return;
+        }
+
+        if (camView == CameraView.FirstPOV)
+            FirstPOVCamera();
+        else
+            FrontCameraPOV(drawManager.CheckPositionAvatar(0));
+    }
+
+    public void FrontCameraPOV(float _v)
+    {
+        if (cameraList == null || cameraList.Length < 16) return;
+
+        if(cameraList[15] == null)
+            cameraList[15] = drawManager.GetFirstViewTransform();
+
+        for (int i = 0; i < cameraList.Length; i++)
+        {
+            cameraList[i].gameObject.SetActive(false);
+
+            if(cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt == null)
+            {
+                if(Avatar != null)
+                    cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt = Avatar.transform.Find("Petra.002/hips").gameObject.transform;
+            }
+        }
+
+
+        if(_v >= 0 && _v < 2)
+            cameraList[0].gameObject.SetActive(true);
+        else if(_v >= 2 && _v < 4)
+            cameraList[1].gameObject.SetActive(true);
+        else if(_v >= 4 && _v < 6)
+            cameraList[2].gameObject.SetActive(true);
+        else if (_v >= 6 && _v < 8)
+            cameraList[3].gameObject.SetActive(true);
+        else
+            cameraList[4].gameObject.SetActive(true);
+
+        camView = CameraView.FrontPOV;
+    }
+
+    public void FirstPOVCamera()
+    {
+        for (int i = 0; i < cameraList.Length; i++)
+        {
+            cameraList[i].gameObject.SetActive(false);
+
+            if (cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt == null)
+            {
+                if (Avatar != null)
+                    cameraList[i].GetComponent<CinemachineVirtualCamera>().LookAt = Avatar.transform.Find("Petra.002/hips").gameObject.transform;
+            }
+        }
+
+        cameraList[15].gameObject.SetActive(true);
+
+        camView = CameraView.FirstPOV;
+    }
+
     public void BackToMenu()
     {
-        ToolBox.GetInstance().GetManager<LevelManager>().GotoScreen("MainMenu");
+        gameManager.InitAnimationInfo();
+        drawManager.StopEditing();
+        aniGraphManager.cntAvatar = 0;
+        drawManager.Pause();
+        drawManager.ResetFrame();
+        aniGraphManager.isTutorial = 0;
+        missionManager.UnloadMission();
+
+        levelManager.GotoScreen("MainMenu");
     }
 
     public void ToProfile()
     {
-        ToolBox.GetInstance().GetManager<LevelManager>().GotoScreen("Profile");
+        levelManager.GotoScreen("Profile");
     }
 
     public void ToTraining()
     {
-        ToolBox.GetInstance().GetManager<LevelManager>().GotoScreen("Training");
+        levelManager.GotoScreen("Training");
     }
 
     public void ToNextLevel()
     {
-        ToolBox.GetInstance().GetManager<LevelManager>().NextLevel();
+        levelManager.NextLevel();
     }
 
     public void ToQuit()
     {
-        Application.Quit();
-    }
-
-    public void ShowResultGraph()
-    {
-        ToolBox.GetInstance().GetManager<AniGraphManager>().ResultGraphOn();
+        if (Application.isEditor)
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#endif
+        }
+        else
+        {
+            Application.Quit();
+        }
     }
 
     public void ToBaseLevel1()
     {
-        ToolBox.GetInstance().GetManager<LevelManager>().GotoScreen("BaseLevel1");
+        levelManager.GotoScreen("BaseLevel1");
     }
 
-    public void MissionLoad()
+    public void AnimationLoad()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().MissionLoad();
+        int _avatarIndex = 0;
+        int ret = gameManager.AnimationLoad(_avatarIndex);
 
-        if(ToolBox.GetInstance().GetManager<DrawManager>().setAvatar == DrawManager.AvatarMode.SingleFemale)
-            ToolBox.GetInstance().GetManager<DrawManager>().LoadAvatar(DrawManager.AvatarMode.SingleFemale);
-        else
-            ToolBox.GetInstance().GetManager<DrawManager>().LoadAvatar(DrawManager.AvatarMode.SingleMale);
+        if (ret < 0)
+        {
+            string errorMessage;
+            if (ret == -1)
+                errorMessage = MainParameters.Instance.languages.current == Language.English
+                    ? "Please load files first"
+                    : "SVP charger d'abord les fichiers";
+            else
+                errorMessage = MainParameters.Instance.languages.current == Language.English
+                    ? "Loaded incorrect Simulation files:  " + ret.ToString()
+                    : "Fichiers de simulation incorrects chargés:  " + ret.ToString();
+            ErrorMessage(errorMessage);
+            return;
+        }
 
-        TakeOffOn();
-        InitDropdownDDLNames(0);
-
+        fileName.text = Path.GetFileName(avatarManager.LoadedModels[_avatarIndex].Joints.fileName);
+        StartCoroutine(WaitThenForceUpdate());
     }
 
-    public void MissionLoad2()
+    public void CompareLoad()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().MissionLoad();
-        ToolBox.GetInstance().GetManager<DrawManager>().LoadAvatar(DrawManager.AvatarMode.DoubleFemale);
+        int _avatarIndex = 1;
 
-        TakeOffOn();
-        InitDropdownDDLNames(0);
+        avatarManager.LoadAvatar(_avatarIndex);
+        SwitchCameraView();  // For some reason, the camera moves to first person. So we reset the settings to whatever it was already
+        int ret = gameManager.AnimationLoad(_avatarIndex);
+
+        if (ret < 0)
+        {
+            avatarManager.DestroyAvatar(_avatarIndex);
+            string errorMessage;
+            if (ret == -1)
+                errorMessage = MainParameters.Instance.languages.current == Language.English
+                    ? "Please load files first" 
+                    : "SVP charger d'abord les fichiers";
+            else
+                errorMessage = MainParameters.Instance.languages.current == Language.English
+                    ? "Loaded incorrect Simulation files:  " + ret.ToString()
+                    : "Fichiers de simulation incorrects chargés:  " + ret.ToString();
+            ErrorMessage(errorMessage);
+            return;
+        }
+        drawManager.Pause();
+        drawManager.MakeSimulationFrame(_avatarIndex);
+        drawManager.PlayOneFrame(_avatarIndex);  // Force the avatar to conform to its first frame
+
+        aniGraphManager.cntAvatar = 1;
+
+        CompareButton.gameObject.SetActive(false);
+        StopCompareButton.gameObject.SetActive(true);
+        StartCoroutine(WaitThenForceUpdate());
+    }
+
+    public void RemoveCompareAvatar(){
+        int _avatarIndex = 1;
+        avatarManager.DestroyAvatar(_avatarIndex);
+        aniGraphManager.cntAvatar = 0;
+
+        CompareButton.gameObject.SetActive(true);
+        StopCompareButton.gameObject.SetActive(false);
+
+        StartCoroutine(WaitThenForceUpdate());
+    }
+
+    IEnumerator WaitThenForceUpdate(){
+        // Wait a full frame to make sure everything that should be clean is actually cleaned
+        yield return null;
+        drawManager.ForceFullUpdate();
+        drawManager.ForceResultShowUpdate();
     }
 
     public void SaveFile()
     {
-        ToolBox.GetInstance().GetManager<GameManager>().SaveFile();
+        gameManager.SaveFile();
     }
 
     public void TakeOffOn()
     {
-        ToolBox.GetInstance().GetManager<AniGraphManager>().GraphOn();
+        aniGraphManager.GraphOn();
     }
 
     public void TakeOffOff()
     {
-        ToolBox.GetInstance().GetManager<AniGraphManager>().TaskOffGraphOff();
+        aniGraphManager.TaskOffGraphOff();
     }
 
     public void InitDropdownDDLNames(int ddl)
     {
-        List<string> dropDownOptions = new List<string>();
-        for (int i = 0; i < MainParameters.Instance.joints.nodes.Length; i++)
+        if (uiManager.GetCurrentTab() != 2) return;
+
+        if (Avatar == null)
         {
-            if (MainParameters.Instance.joints.nodes[i].name.ToLower() == MainParameters.Instance.languages.english.movementDDLHipFlexion.ToLower())
-                dropDownOptions.Add(MainParameters.Instance.languages.Used.movementDDLHipFlexion);
-            else if (MainParameters.Instance.joints.nodes[i].name.ToLower() == MainParameters.Instance.languages.english.movementDDLKneeFlexion.ToLower())
-                dropDownOptions.Add(MainParameters.Instance.languages.Used.movementDDLKneeFlexion);
-            else if (MainParameters.Instance.joints.nodes[i].name.ToLower() == MainParameters.Instance.languages.english.movementDDLLeftArmFlexion.ToLower())
-                dropDownOptions.Add(MainParameters.Instance.languages.Used.movementDDLLeftArmFlexion);
-            else if (MainParameters.Instance.joints.nodes[i].name.ToLower() == MainParameters.Instance.languages.english.movementDDLLeftArmAbduction.ToLower())
-                dropDownOptions.Add(MainParameters.Instance.languages.Used.movementDDLLeftArmAbduction);
-            else if (MainParameters.Instance.joints.nodes[i].name.ToLower() == MainParameters.Instance.languages.english.movementDDLRightArmFlexion.ToLower())
-                dropDownOptions.Add(MainParameters.Instance.languages.Used.movementDDLRightArmFlexion);
-            else if (MainParameters.Instance.joints.nodes[i].name.ToLower() == MainParameters.Instance.languages.english.movementDDLRightArmAbduction.ToLower())
-                dropDownOptions.Add(MainParameters.Instance.languages.Used.movementDDLRightArmAbduction);
+            if (MainParameters.Instance.languages.current == Language.English)
+            {
+                ErrorMessage("Please load files first");
+            }
             else
-                dropDownOptions.Add(MainParameters.Instance.joints.nodes[i].name);
+            {
+                ErrorMessage("SVP charger d'abord les fichiers");
+            }
+            return;
+        }
+
+        List<string> dropDownOptions = new List<string>();
+        for (int i = 0; i < 6; i++)
+        {
+            if (i == 0) dropDownOptions.Add("Hanche_Flexion");
+            else if (i == 1) dropDownOptions.Add("Genou_Flexion");
+            else if (i == 2) dropDownOptions.Add("Bras_Droit_Flexion");
+            else if (i == 3) dropDownOptions.Add("Bras_Droit_Abduction");
+            else if (i == 4) dropDownOptions.Add("Bras_Gauche_Flexion");
+            else if (i == 5) dropDownOptions.Add("Bras_Gauche_Abduction");
         }
         dropDownDDLNames.ClearOptions();
         dropDownDDLNames.AddOptions(dropDownOptions);
@@ -122,12 +371,14 @@ public class BaseProfile : LevelBase
 
     public void DisplayDDL(int ddl, bool axisRange)
     {
+        if (avatarManager.LoadedModels[0].Joints.nodes == null) return;
+
         if (ddl >= 0)
         {
-            ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurveAndNodes(0, ddl, axisRange);
-            if (MainParameters.Instance.joints.nodes[ddl].ddlOppositeSide >= 0)
+            aniGraphManager.DisplayCurveAndNodes(0, ddl, axisRange);
+            if (avatarManager.LoadedModels[0].Joints.nodes[ddl].ddlOppositeSide >= 0)
             {
-                ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurveAndNodes(1, MainParameters.Instance.joints.nodes[ddl].ddlOppositeSide, axisRange);
+                aniGraphManager.DisplayCurveAndNodes(1, avatarManager.LoadedModels[0].Joints.nodes[ddl].ddlOppositeSide, axisRange);
             }
         }
     }
@@ -137,61 +388,248 @@ public class BaseProfile : LevelBase
         DisplayDDL(value, true);
     }
 
-    public void ShowResult()
-    {
-        resultText.text = ToolBox.GetInstance().GetManager<DrawManager>().DisplayMessage();
-    }
-
-    public void FirstPOVCamera()
-    {
-        AvatarCamera.transform.position = ToolBox.GetInstance().GetManager<DrawManager>().GetFirstViewTransform().transform.position;
-        AvatarCamera.transform.rotation = ToolBox.GetInstance().GetManager<DrawManager>().GetFirstViewTransform().transform.rotation;
-    }
 
     public void ThirdPOVCamera()
     {
-        AvatarCamera.transform.position = anchorThirdPOV.transform.position;
-        AvatarCamera.transform.rotation = anchorThirdPOV.transform.rotation;
-    }
+        if (Avatar == null)
+        {
+            if (MainParameters.Instance.languages.current == Language.English)
+            {
+                ErrorMessage("Please load files first");
+            }
+            else
+            {
+                ErrorMessage("SVP charger d'abord les fichiers");
+            }
+            return;
+        }
 
-    public void SidePOVCamera()
-    {
-        AvatarCamera.transform.position = anchorSidePOV.transform.position;
-        AvatarCamera.transform.rotation = anchorSidePOV.transform.rotation;
+        FrontCameraPOV(drawManager.CheckPositionAvatar(0));
     }
 
     public void PlayAvatar()
     {
-        ToolBox.GetInstance().GetManager<DrawManager>().ShowAvatar();
+        if (Avatar == null)
+        {
+            if (MainParameters.Instance.languages.current == Language.English)
+            {
+                ErrorMessage("Please load files first");
+            }
+            else
+            {
+                ErrorMessage("SVP charger d'abord les fichiers");
+            }
+            return;
+        }
+
+        drawManager.ShowAvatar(0);
     }
 
-    public void SetTab(int _num)
+    public void PlayAvatarButton()
     {
-        ToolBox.GetInstance().GetManager<UIManager>().SetCurrentTab(_num);
+        if (drawManager.canResumeAnimation)
+        {
+            PauseAvatarButton();
+            return;
+        }
+
+        drawManager.Resume();
+
+        if (Avatar == null || !Avatar.activeSelf)
+        {
+            return;
+        }
+
+        string playSpeed = dropDownPlaySpeed.captionText.text;
+        if (playSpeed == MainParameters.Instance.languages.Used.animatorPlaySpeedSlow3)
+            drawManager.SetAnimationSpeed(10);
+        else if (playSpeed == MainParameters.Instance.languages.Used.animatorPlaySpeedSlow2)
+            drawManager.SetAnimationSpeed(3);
+        else if (playSpeed == MainParameters.Instance.languages.Used.animatorPlaySpeedSlow1)
+            drawManager.SetAnimationSpeed(1.5f);
+        else if (playSpeed == MainParameters.Instance.languages.Used.animatorPlaySpeedNormal)
+            drawManager.SetAnimationSpeed(1);
+        else if (playSpeed == MainParameters.Instance.languages.Used.animatorPlaySpeedFast)
+            drawManager.SetAnimationSpeed(0.8f);
+
+        drawManager.StopEditing();
+        drawManager.PlayAvatar(0);
+
+        SwitchCameraView();
+
+        TakeOffOn();
+
+        sliderPlay.ShowPauseButton();
+    }
+
+    public void PauseAvatarButton()
+    {
+        if (!drawManager.PauseAvatar(0)) 
+            return;
+        if (drawManager.IsPaused)
+        {
+            sliderPlay.ShowPlayButton();
+        } 
+        else
+        {
+            sliderPlay.ShowPauseButton();
+        }
+    }
+
+    public void SetTab(TabProperties _properties)
+    {
+        uiManager.SetCurrentTab(_properties.TabIndex);
+        
+        if (CurrentTabContent != null)
+            CurrentTabContent.SetActive(false);
+        CurrentTabContent = _properties.Content;
+        CurrentTabContent.SetActive(true);
+        
+        _properties.BackgroundImage.sprite = _properties.BackgroundSprite;
+        if (_properties.IsAGestureMode){
+            // We have to trigger the button that calls themselves the method SetGestureMode
+            // Otherwise the button won't update. If you put this isOn inside the method, then
+            // we get a circular call
+            ToggleSimulationButton.isOn = false;
+            ToggleGestureButton.isOn = true;
+        }
+        else {
+            // We have to trigger the button that calls themselves the method SetSimulationMode
+            // Otherwise the button won't update. If you put this isOn inside the method, then
+            // we get a circular call
+            ToggleGestureButton.isOn = false;
+            ToggleSimulationButton.isOn = true;
+        }
+
+        drawManager.ForceFullUpdate();
+        SwitchCameraView();
+
+        if (_properties.HasTutorial)
+            TutorialMessage();
+
     }
 
     public void SetFrench()
     {
-        MainParameters.Instance.languages.Used = MainParameters.Instance.languages.french;
+        MainParameters.Instance.SetLanguage(Language.French);
     }
 
     public void SetEnglish()
     {
-        MainParameters.Instance.languages.Used = MainParameters.Instance.languages.english;
+        MainParameters.Instance.SetLanguage(Language.English);
     }
 
     public void SetTooltip(bool _flag)
     {
-        ToolBox.GetInstance().GetManager<UIManager>().SetTooltip(_flag);
+        uiManager.SetTooltip(_flag);
     }
 
     public void SetMaleAvatar()
     {
-        ToolBox.GetInstance().GetManager<DrawManager>().setAvatar = DrawManager.AvatarMode.SingleMale;
+        avatarManager.SelectAvatar(AvatarManager.Model.SingleMale);
     }
 
     public void SetFemaleAvatar()
     {
-        ToolBox.GetInstance().GetManager<DrawManager>().setAvatar = DrawManager.AvatarMode.SingleFemale;
+        avatarManager.SelectAvatar(AvatarManager.Model.SingleFemale);
+    }
+
+    public void SetSimulationMode()
+    {
+        drawManager.ActivateSimulationMode();
+    }
+
+    public void SetGestureMode()
+    {
+        drawManager.ActivateGestureMode();
+    }
+
+    public void ErrorMessage(string _msg)
+    {
+        ErrorObject.GetComponent<Animator>().Play("Panel In");
+        ErrorObject.GetComponentInChildren<Text>().text = _msg;
+        Invoke("CloseMsg", 0.5f);
+    }
+
+    private void CloseMsg()
+    {
+        ErrorObject.GetComponent<Animator>().Play("Panel Out");
+    }
+
+    public void NodeName(string _msg)
+    {
+        NodeNameObject.GetComponent<Animator>().Play("Panel In");
+        NodeNameObject.GetComponentInChildren<Text>().text = _msg;
+        Invoke("CloseNodeName", 0.5f);
+    }
+
+    private void CloseNodeName()
+    {
+        NodeNameObject.GetComponent<Animator>().Play("Panel Out");
+    }
+
+    public void TutorialMessage()
+    {
+        if (Avatar == null) return;
+
+        if(aniGraphManager.isTutorial == 0)
+        {
+            int _avatarIndex = 0;
+            TakeOffOn();
+            InitDropdownDDLNames(_avatarIndex);
+            gameManager.InterpolationDDL(_avatarIndex);
+            gameManager.DisplayDDL(0, true);
+
+            aniGraphManager.isTutorial++;
+            TutorialObject.GetComponent<Animator>().Play("Panel In");
+
+            if (MainParameters.Instance.languages.current == Language.English)
+            {
+                TutorialObject.GetComponentInChildren<Text>().text = "1. Mouse Right Button: On/Off Rotation Modifier\n" +
+                    "2. Each shoulder can be clicked twice(x and y)\n" +
+                    "3. Shift + Mouse Left Button: Rotate 3D avatar\n" +
+                    "4. Mouse Drag: Change Node value";
+            }
+            else
+            {
+                TutorialObject.GetComponentInChildren<Text>().text = "1. Bouton droit de la souris: modificateur de rotation On/Off\n" +
+                    "2. Chaque épaule peut être cliquée deux fois (x et y)\n" +
+                    "3. Shift + Bouton gauche de la souris: faire pivoter l'avatar 3D\n" +
+                    "4. Glisser la souris: modifier la valeur du noeud";
+            }
+        }
+    }
+
+    public void ToggleGravity()
+    {
+        uiManager.ToggleGravity();
+    }
+
+    public void ToggleStopAtGround()
+    {
+        uiManager.ToggleStopOnGround();
+    }
+
+    public void SelectPresetCondition(){
+        uiManager.SetDropDownPresetCondition(uiManager.userInputs.PresetConditions.value);
+        uiManager.UpdateAllPropertiesFromDropdown();
+    }
+
+    public void AddPresetCondition(Text name)
+    {
+        if (name.text != "")
+        {
+            gameManager.SaveCondition(name.text);
+        }
+    }
+
+    public void DeletePresetCondition()
+    {
+        gameManager.RemoveCondition(uiManager.userInputs.PresetConditions.value);
+    }
+
+    public void NamePresetCondition()
+    {
+        ConditionName.text = gameManager.PresetConditions.conditions[uiManager.userInputs.PresetConditions.value].name;
     }
 }

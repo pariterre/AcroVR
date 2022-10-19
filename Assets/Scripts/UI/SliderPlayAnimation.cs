@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
+using System.Globalization;
 
 /// <summary>
 ///	 
@@ -7,54 +8,90 @@ using UnityEngine.UI;
 
 public class SliderPlayAnimation : MonoBehaviour
 {
-	// Variables
-	DrawManager drawManager;
-	public Slider slider;
-	public PlayController playController;
+    protected AvatarManager avatarManager;
+    protected DrawManager drawManager;
+    protected UIManager uiManager;
+    public Slider slider;
 
-	public GameObject result;
-	public GameObject worldCanvas;
+    public Text textChrono;
+    public Button playButton;
+    public Button pauseButton;
 
-	void Awake()
-	{
+    void Start()
+    {
+        avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
+        slider.minValue = 0f;
 
-	}
+        drawManager.RegisterSliderAnimation(this);
+    }
 
-	void Start()
-	{
+    void Destroy()
+    {
+        drawManager.UnregisterSliderAnimation();
+    }
 
-		drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
-		//slider.onValueChanged.AddListener(delegate { ValueChangeCheck(); });
+    void Update()
+    {
+        if (drawManager.timeElapsed > 0 && !drawManager.IsPaused)
+            textChrono.text = drawManager.CurrentTime + " s";
+    }
 
-		//isPaused = !isPaused;
-		//ToolBox.GetInstance().GetManager<DrawManager>().PauseAvatar(isPaused);
-	}
+    public void SetSlider(int value)
+    {
+        slider.value = value;
+    }
 
-	void Update()
-	{
-		slider.value = drawManager.frameN;
+    public void ShowPlayButton()
+    {
+        playButton.gameObject.SetActive(true);
+        pauseButton.gameObject.SetActive(false);
+    }
 
-/*		if (slider.value > 100)
-		{
-//			worldCanvas.SetActive(false);
-			result.SetActive(true);
-			result.GetComponent<Animator>().Play("Panel In");
-			ToolBox.GetInstance().GetManager<DrawManager>().PlayEnd();
-		}*/
-	}
+    public void ShowPauseButton()
+    {
+        playButton.gameObject.SetActive(false);
+        pauseButton.gameObject.SetActive(true);
+    }
+    
+    public void OnPlayAnimationSlider()
+    {
+        if (drawManager.IsEditing) return;
+        
+        slider.maxValue = (float)drawManager.NumberFrames - 1;
+        var _currentFrame = (int)slider.value;
+        for (int i = 0; i < avatarManager.NumberOfLoadedAvatars; i++)
+            drawManager.SetCurrrentFrame(0, _currentFrame);
+        textChrono.text = drawManager.CurrentTime + " s";
 
+        if (!drawManager.IsPaused && ((int)slider.value == 0 || (int)slider.value == (int)slider.maxValue || !drawManager.ShouldContinuePlaying(0)) )
+        {
+            drawManager.SetCanResumeAnimation(false);
+            ShowPlayButton();
+        }
 
-	///===///  OnClick() functions
-	#region		<-- TOP
+        if (Input.GetMouseButton(0))
+        {
+            ShowPlayButton();
+            drawManager.Pause();
+            for (int i = 0; i < avatarManager.NumberOfLoadedAvatars; i++)
+                drawManager.PlayOneFrame(i);
+        }
+    }
 
-	public void OnPlayAnimationSlider()
-	{
-		slider.minValue = 1f;
-		slider.maxValue = (float)drawManager.numberFrames;
+    public void EnableSlider()
+    {
+        slider.interactable = true;
+        playButton.interactable = true;
+        pauseButton.interactable = true;
+    }
 
-		drawManager.frameN = (int)slider.value;
-	}
-
-	#endregion		<-- BOTTOM
+    public void DisableSlider()
+    {
+        slider.interactable = false;
+        playButton.interactable = false;
+        pauseButton.interactable = false;
+    }
 
 }

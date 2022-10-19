@@ -40,18 +40,10 @@ public class TabButtonMenu : MonoBehaviour
 	void Start()
 	{
 		CreateTabList();
-		//		DeveloperTool();
-		//		ProfileCheckOnStart();
 
 		Tab2();
 
 	}
-
-	// Update
-	//void Update()
-	//{
-
-	//}
 
 	public void GetManagerFunctions()
 	{

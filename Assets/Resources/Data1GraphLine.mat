@@ -4,8 +4,9 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: Data1GraphLine
   m_Shader: {fileID: 4800000, guid: 818b0e872599e3948b6cceff71a30540, type: 3}
   m_ShaderKeywords: _EMISSION
@@ -80,7 +81,7 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 0}
+    - _Color: {r: 1, g: 0, b: 0, a: 1}
     - _ColorFrom: {r: 0, g: 0.27450982, b: 1, a: 1}
     - _ColorTo: {r: 0, g: 0.27450982, b: 1, a: 1}
     - _Combine: {r: 0, g: 0.27450982, b: 1, a: 1}

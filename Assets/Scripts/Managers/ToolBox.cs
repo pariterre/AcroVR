@@ -9,9 +9,9 @@ using UnityEngine;
 public class ToolBox : MonoBehaviour {
 
     /// Must be static
-    private static ToolBox _instance;
+    public static ToolBox _instance;
 
-    Dictionary<string, GameObject> dict = new Dictionary<string, GameObject>();
+	Dictionary<string, GameObject> dict = new Dictionary<string, GameObject>();
 
     /// Manager called and create logic. Must be static
     public static ToolBox GetInstance()
@@ -42,13 +42,14 @@ public class ToolBox : MonoBehaviour {
         }
 
         /// Manager Listing. Must have a .cs script with name
+        CreateManager<AvatarManager>();
         CreateManager<AniGraphManager>();
         CreateManager<GameManager>();
         CreateManager<StatManager>();
         CreateManager<DrawManager>();
         CreateManager<LevelManager>();
         CreateManager<UIManager>();
-        //        CreateManager<LoadSceneManager>();
+        CreateManager<MissionManager>();
     }
 
     /// Create GameObject. Add new Managers in CreateAllManagers()

@@ -1,13 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using ChartAndGraph;
 
-// =================================================================================================================================================================
-/// <summary> Permet d'afficher un graphique des résultats. </summary>
-
 public class DisplayResultGraphicS : MonoBehaviour
 {
+    protected AvatarManager avatarManager;
+    protected DrawManager drawManager;
+    protected AniGraphManager aniGraphManager;
+
 	public Dropdown dropDownGraphicName;
 	public GraphChart graph;
 	public int panelGraphicNumber;
@@ -19,22 +21,18 @@ public class DisplayResultGraphicS : MonoBehaviour
 	public Text textLegendCurveName2;
     public Text textLegendCurveName3;
 
-	bool calledFromScript;      // Mode de modification d'un contrôle de la scène, false = via l'utilisateur (OnValueChange) ou true = via un script
+    public Text resultText;
+    public Text resultText2;
 
-	// =================================================================================================================================================================
-	/// <summary> Initialisation du script. </summary>
-
-	void Start()
+	void Awake()
 	{
-		calledFromScript = false;
+        avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        aniGraphManager = ToolBox.GetInstance().GetManager<AniGraphManager>();
 	}
-
-	// =================================================================================================================================================================
-	/// <summary> Fonction exécuté quand le script est activé. </summary>
 
 	void OnEnable()
 	{
-		calledFromScript = true;
 		List<string> dropDownOptions = new List<string>();
 		dropDownOptions.Add(MainParameters.Instance.languages.Used.resultsGraphicsSelectionRotationsVsTime);
 		dropDownOptions.Add(MainParameters.Instance.languages.Used.resultsGraphicsSelectionTiltVsTime);
@@ -46,75 +44,177 @@ public class DisplayResultGraphicS : MonoBehaviour
 		dropDownGraphicName.AddOptions(dropDownOptions);
 		dropDownGraphicName.value = MainParameters.Instance.resultsGraphicsUsed[panelGraphicNumber - 1];
 
-		calledFromScript = false;
+        DropDownGraphicNameOnValueChanged(MainParameters.Instance.resultsGraphicsUsed[panelGraphicNumber - 1]);
 
-//        if(ToolBox.GetInstance().GetManager<AniGraphManager>().bDraw)
-            DropDownGraphicNameOnValueChanged(MainParameters.Instance.resultsGraphicsUsed[panelGraphicNumber - 1]);
-	}
-
-	// =================================================================================================================================================================
-	/// <summary> Liste déroulante Nom de l'articulation a été modifié. </summary>
+        drawManager.RegisterResultShow(this);
+    }
 
     public void CloseBox()
     {
-        ToolBox.GetInstance().GetManager<AniGraphManager>().ResultGraphOff();
+        drawManager.UnregisterResultShow();
     }
 
+    public void ShowResult()
+    {
+        if (avatarManager.LoadedModels[0].Joints.q0 == null) return;
+
+        if (aniGraphManager.cntAvatar == 1)
+        {
+            resultText.text = drawManager.DisplayMessage();
+            resultText2.text = drawManager.DisplayMessageSecond();
+        }
+        else
+        {
+            resultText.text = drawManager.DisplayMessage();
+            resultText2.text = "";
+        }
+    }
+
+    public void DropDownAvatarChanged(int value)
+    {
+        if (avatarManager.LoadedModels[0].Joints.q0 == null) return;
+
+        aniGraphManager.cntAvatar = value;
+        DropDownGraphicNameOnValueChanged(MainParameters.Instance.resultsGraphicsUsed[panelGraphicNumber - 1]);
+        ShowResult();
+    }
+        
     public void DropDownGraphicNameOnValueChanged(int value)
-	{
-		if (calledFromScript) return;
+    {
+        if (avatarManager.LoadedModels[0].Joints.q0 == null) return;
+        if (avatarManager.LoadedModels[0].Joints.rot == null) return;
 
         MainParameters.Instance.resultsGraphicsUsed[panelGraphicNumber - 1] = value;
-		switch (value)
-		{
-			case 0:                                                                                                                                             // Rotations vs temps
-//				GraphManager.Instance.DisplayCurves(graph, MainParameters.Instance.joints.t, MainParameters.Instance.joints.rot);
-                ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MainParameters.Instance.joints.t, MainParameters.Instance.joints.rot);
-				textLabelAxisX.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisTime;
-				textLabelAxisY.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisRotation;
-				panelLegend.SetActive(true);
-				textLegendCurveName1.text = MainParameters.Instance.languages.Used.resultsGraphicsLegendCurveNameSomersault;
-				textLegendCurveName2.text = MainParameters.Instance.languages.Used.resultsGraphicsLegendCurveNameTilt;
-				textLegendCurveName3.text = MainParameters.Instance.languages.Used.resultsGraphicsLegendCurveNameTwist;
-				break;
-			case 1:                                                                                                                                             // Inclinaison vs temps
-//				GraphManager.Instance.DisplayCurves(graph, MainParameters.Instance.joints.t, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
-                ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MainParameters.Instance.joints.t, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
-				textLabelAxisX.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisTime;
-				textLabelAxisY.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisTilt;
-				panelLegend.SetActive(false);
-				break;
-			case 2:                                                                                                                                             // Inclinaison vs salto
-//				GraphManager.Instance.DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
-                ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
-				textLabelAxisX.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisSomersault;
-				textLabelAxisY.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisTilt;
-				panelLegend.SetActive(false);
-				break;
-			case 3:                                                                                                                                             // Inclinaison vs vrille
-//				GraphManager.Instance.DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
-                ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 1));
-				textLabelAxisX.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisTwist;
-				textLabelAxisY.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisTilt;
-				panelLegend.SetActive(false);
-				break;
-			case 4:                                                                                                                                             // Vrille vs salto
-//				GraphManager.Instance.DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2));
-                ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 0), MathFunc.MatrixGetColumn(MainParameters.Instance.joints.rot, 2));
-				textLabelAxisX.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisSomersault;
-				textLabelAxisY.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisTwist;
-				panelLegend.SetActive(false);
-				break;
-			case 5:                                                                                                                                             // Vitesse angulaire vs temps
-//				GraphManager.Instance.DisplayCurves(graph, MainParameters.Instance.joints.t, MainParameters.Instance.joints.rotdot);
-                ToolBox.GetInstance().GetManager<AniGraphManager>().DisplayCurves(graph, MainParameters.Instance.joints.t, MainParameters.Instance.joints.rotdot);
-				textLabelAxisX.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisTime;
-				textLabelAxisY.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisAngularSpeed;
-				panelLegend.SetActive(true);
-				textLegendCurveName1.text = MainParameters.Instance.languages.Used.resultsGraphicsLegendCurveNameSomersault;
-				textLegendCurveName2.text = MainParameters.Instance.languages.Used.resultsGraphicsLegendCurveNameTilt;
-				textLegendCurveName3.text = MainParameters.Instance.languages.Used.resultsGraphicsLegendCurveNameTwist;
-				break;
-		}
-	}
+
+        ShowResultGraph(value);
+
+        switch (value)
+        {
+            case 0:
+                textLabelAxisX.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisTime;
+                textLabelAxisY.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisRotation;
+                panelLegend.SetActive(true);
+                textLegendCurveName1.text = MainParameters.Instance.languages.Used.resultsGraphicsLegendCurveNameSomersault;
+                textLegendCurveName2.text = MainParameters.Instance.languages.Used.resultsGraphicsLegendCurveNameTilt;
+                textLegendCurveName3.text = MainParameters.Instance.languages.Used.resultsGraphicsLegendCurveNameTwist;
+                break;
+            case 1:
+                textLabelAxisX.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisTime;
+                textLabelAxisY.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisTilt;
+                panelLegend.SetActive(false);
+                break;
+            case 2:
+                textLabelAxisX.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisSomersault;
+                textLabelAxisY.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisTilt;
+                panelLegend.SetActive(false);
+                break;
+            case 3:
+                textLabelAxisX.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisTwist;
+                textLabelAxisY.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisTilt;
+                panelLegend.SetActive(false);
+                break;
+            case 4:
+                textLabelAxisX.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisSomersault;
+                textLabelAxisY.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisTwist;
+                panelLegend.SetActive(false);
+                break;
+            case 5:
+                textLabelAxisX.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisTime;
+                textLabelAxisY.text = MainParameters.Instance.languages.Used.resultsGraphicsLabelAxisAngularSpeed;
+                panelLegend.SetActive(true);
+                textLegendCurveName1.text = MainParameters.Instance.languages.Used.resultsGraphicsLegendCurveNameSomersault;
+                textLegendCurveName2.text = MainParameters.Instance.languages.Used.resultsGraphicsLegendCurveNameTilt;
+                textLegendCurveName3.text = MainParameters.Instance.languages.Used.resultsGraphicsLegendCurveNameTwist;
+                break;
+        }
+
+        ShowResult();
+    }
+
+    public void UpdateResults()
+    {
+        ShowResultGraph(MainParameters.Instance.resultsGraphicsUsed[panelGraphicNumber - 1]);
+        ShowResult();
+    }
+
+    private void ShowResultGraph(int _v)
+    {
+        if(aniGraphManager.cntAvatar == 1)
+        {
+            switch (_v)
+            {
+                case 0:
+                    aniGraphManager.DisplayCurves(
+                        graph, 
+                        avatarManager.LoadedModels[0].Joints.t,
+                        avatarManager.LoadedModels[0].Joints.rot,
+                        avatarManager.LoadedModels[1].Joints.t,
+                        avatarManager.LoadedModels[1].Joints.rot
+                    );
+                    break;
+                case 1:
+                    aniGraphManager.DisplayCurves(
+                        graph,
+                        avatarManager.LoadedModels[0].Joints.t,
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 1), 
+                        avatarManager.LoadedModels[1].Joints.t, 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[1].Joints.rot, 1)
+                    );
+                    break;
+                case 2:
+                    aniGraphManager.DisplayCurves(
+                        graph, 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 0), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 1), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[1].Joints.rot, 0), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[1].Joints.rot, 1)
+                    );
+                    break;
+                case 3:
+                    aniGraphManager.DisplayCurves(
+                        graph, 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 2), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 1), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[1].Joints.rot, 2), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[1].Joints.rot, 1)
+                    );
+                    break;
+                case 4:
+                    aniGraphManager.DisplayCurves(
+                        graph, 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 0), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 2), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[1].Joints.rot, 0), 
+                        MathFunc.MatrixGetColumn(avatarManager.LoadedModels[1].Joints.rot, 2)
+                    );
+                    break;
+                case 5:
+                    aniGraphManager.DisplayCurves(
+                        graph, 
+                        avatarManager.LoadedModels[0].Joints.t, 
+                        avatarManager.LoadedModels[0].Joints.rotdot, 
+                        avatarManager.LoadedModels[1].Joints.t, 
+                        avatarManager.LoadedModels[1].Joints.rotdot
+                    );
+                    break;
+            }
+        }
+        else
+        {
+            if (_v == 0)
+                aniGraphManager.DisplayCurves(graph, avatarManager.LoadedModels[0].Joints.t, avatarManager.LoadedModels[0].Joints.rot);
+            else if (_v == 1)
+                aniGraphManager.DisplayCurves(graph, avatarManager.LoadedModels[0].Joints.t, MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 1));
+            else if (_v == 2)
+                aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 0), MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 1));
+            else if (_v == 3)
+                aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 2), MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 1));
+            else if (_v == 4)
+                aniGraphManager.DisplayCurves(graph, MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 0), MathFunc.MatrixGetColumn(avatarManager.LoadedModels[0].Joints.rot, 2));
+            else if (_v == 5)
+                aniGraphManager.DisplayCurves(graph, avatarManager.LoadedModels[0].Joints.t, avatarManager.LoadedModels[0].Joints.rotdot);
+            else
+                throw new ArgumentException("Wrong _v");
+        }
+    }
 }

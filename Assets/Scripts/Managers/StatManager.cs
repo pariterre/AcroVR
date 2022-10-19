@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using UnityEngine.UI;
 
 [System.Serializable]
 public struct InputData
@@ -29,21 +30,62 @@ public struct PlayerReplayInfo
 
 public class StatManager : MonoBehaviour
 {
-    public PlayerInfo info;
-    private GameObject circlePrefab;
-    private GameObject circlePrefab_shoulder;
-    private GameObject circle;
-    RaycastHit hit;
+    AvatarManager avatarManager;
+    DrawManager drawManager;
+    GameManager gameManager;
+    LevelManager levelManager;
+    UIManager uiManager;
 
-    private int previousFrameN = 0;
-    public int previousFrameN2 = 0;
+    public PlayerInfo info;
+    protected GameObject selectedJoint;
+    protected ControlSegmentGeneric currentControlSegment;
+    protected bool isRotating = false;
+    protected Vector3 initPosition;
+    public int currentJointSubIdx;
+    RaycastHit hit;
 
     public string dofName;
 
+    Camera _avatarCameraInternal;
+    Ray mouseRay { get {
+            if (_avatarCameraInternal == null)
+            {
+                var tp = GameObject.Find("AvatarCamera"); 
+                if (tp == null) return new Ray();
+                _avatarCameraInternal = tp.GetComponent<Camera>();
+            }
+            return _avatarCameraInternal.ScreenPointToRay(Input.mousePosition);
+    }}
+    Color colorBlue;
+    Color colorWhite;
+
+    GameObject arrow;
+
+    GameObject error;
+    BaseProfile _baseProfileInternal;
+    BaseProfile baseProfile { get {
+        if (error == null) error = GameObject.Find("Training");
+        if (_baseProfileInternal == null) _baseProfileInternal = error.GetComponent<BaseProfile>();
+        return _baseProfileInternal;}
+    }
+
+
     void Start()
     {
-        circlePrefab = (GameObject)Resources.Load("HandleCircle", typeof(GameObject));
-        circlePrefab_shoulder = (GameObject)Resources.Load("HandleCircle_shoulder", typeof(GameObject));
+        avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        gameManager = transform.parent.GetComponentInChildren<GameManager>();
+        levelManager = transform.parent.GetComponentInChildren<LevelManager>();
+        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
+
+        error = GameObject.Find("Training");
+
+        colorBlue = Color.blue;
+        colorBlue.a = 0.5f;
+
+        colorWhite = Color.white;
+        colorWhite.a = 0.5f;
+
     }
 
     public void ProfileLoad(string fileName)
@@ -59,65 +101,35 @@ public class StatManager : MonoBehaviour
         }
     }
 
-    private void ProfileReplayLoad(string fileName)
-    {
-        string dataAsJson = File.ReadAllText(fileName);
-        PlayerReplayInfo replayInfo = JsonUtility.FromJson<PlayerReplayInfo>(dataAsJson);
-
-        info = replayInfo.player;
-
-        MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
-        jointsTemp.fileName = fileName;
-        jointsTemp.nodes = null;
-        jointsTemp.duration = replayInfo.replay.Duration;
-        jointsTemp.condition = replayInfo.replay.Condition;
-        jointsTemp.takeOffParam.verticalSpeed = replayInfo.replay.VerticalSpeed;
-        jointsTemp.takeOffParam.anteroposteriorSpeed = replayInfo.replay.AnteroposteriorSpeed;
-        jointsTemp.takeOffParam.somersaultSpeed = replayInfo.replay.SomersaultSpeed;
-        jointsTemp.takeOffParam.twistSpeed = replayInfo.replay.TwistSpeed;
-        jointsTemp.takeOffParam.tilt = replayInfo.replay.Tilt;
-        jointsTemp.takeOffParam.rotation = replayInfo.replay.Rotation;
-
-        jointsTemp.nodes = new MainParameters.StrucNodes[replayInfo.replay.nodes.Count];
-
-        for (int i = 0; i < replayInfo.replay.nodes.Count; i++)
-        {
-            jointsTemp.nodes[i].ddl = i + 1;
-            jointsTemp.nodes[i].name = replayInfo.replay.nodes[i].Name;
-            jointsTemp.nodes[i].interpolation = MainParameters.Instance.interpolationDefault;
-            jointsTemp.nodes[i].T = replayInfo.replay.nodes[i].T;
-            jointsTemp.nodes[i].Q = replayInfo.replay.nodes[i].Q;
-            jointsTemp.nodes[i].ddlOppositeSide = -1;
-        }
-
-        MainParameters.Instance.joints = jointsTemp;
-
-        LagrangianModelSimple lagrangianModelSimple = new LagrangianModelSimple();
-        MainParameters.Instance.joints.lagrangianModel = lagrangianModelSimple.GetParameters;
-    }
 
     public void ProfileReplaySave(string fileName)
     {
         PlayerReplayInfo replayInfo = new PlayerReplayInfo();
+        var _takeOffParameters = drawManager.avatarProperties[0].TakeOffParameters;
 
         replayInfo.player = info;
 
-        replayInfo.replay.Objective = "defalut";
-        replayInfo.replay.Duration = MainParameters.Instance.joints.duration;
-        replayInfo.replay.Condition = MainParameters.Instance.joints.condition;
-        replayInfo.replay.VerticalSpeed = MainParameters.Instance.joints.takeOffParam.verticalSpeed;
-        replayInfo.replay.AnteroposteriorSpeed = MainParameters.Instance.joints.takeOffParam.anteroposteriorSpeed;
-        replayInfo.replay.SomersaultSpeed = MainParameters.Instance.joints.takeOffParam.somersaultSpeed;
-        replayInfo.replay.TwistSpeed = MainParameters.Instance.joints.takeOffParam.twistSpeed;
-        replayInfo.replay.Tilt = MainParameters.Instance.joints.takeOffParam.tilt;
-        replayInfo.replay.Rotation = MainParameters.Instance.joints.takeOffParam.rotation;
+        replayInfo.replay.Objective = "default";
+        replayInfo.replay.Duration = _takeOffParameters.Duration;
+        replayInfo.replay.UseGravity = _takeOffParameters.UseGravity;
+        replayInfo.replay.StopOnGround = _takeOffParameters.StopOnGround;
 
-        for (int i = 0; i < MainParameters.Instance.joints.nodes.Length; i++)
+        replayInfo.replay.Somersault = _takeOffParameters.Somersault;
+        replayInfo.replay.Tilt = _takeOffParameters.Tilt;
+        replayInfo.replay.Twist = _takeOffParameters.Twist;
+        replayInfo.replay.HorizontalPosition = _takeOffParameters.HorizontalPosition;
+        replayInfo.replay.VerticalPosition = _takeOffParameters.VerticalPosition;
+        replayInfo.replay.SomersaultSpeed = _takeOffParameters.SomersaultSpeed;
+        replayInfo.replay.TiltSpeed = _takeOffParameters.TiltSpeed;
+        replayInfo.replay.TwistSpeed = _takeOffParameters.TwistSpeed;
+        replayInfo.replay.HorizontalSpeed = _takeOffParameters.HorizontalSpeed;
+        replayInfo.replay.VerticalSpeed = _takeOffParameters.VerticalSpeed;
+
+        for (int i = 0; i < avatarManager.LoadedModels[0].Joints.nodes.Length; i++)
         {
             Nodes n = new Nodes();
-            n.Name = MainParameters.Instance.joints.nodes[i].name;
-            n.T = MainParameters.Instance.joints.nodes[i].T;
-            n.Q = MainParameters.Instance.joints.nodes[i].Q;
+            n.T = avatarManager.LoadedModels[0].Joints.nodes[i].T;
+            n.Q = avatarManager.LoadedModels[0].Joints.nodes[i].Q;
 
             replayInfo.replay.nodes.Add(n);
         }
@@ -140,305 +152,131 @@ public class StatManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (levelManager.currentState != SceneState.Training) return;
+
+        bool hasHit = Physics.Raycast(mouseRay, out hit);
+
+        if (Input.GetMouseButton(0))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            if (Physics.Raycast(ray, out hit))
+            if (isRotating)
             {
-                if (!circle)
-                {
-                    transform.parent.GetComponentInChildren<DrawManager>().isEditing = true;
-                    circle = Instantiate(circlePrefab, hit.collider.transform.position, Quaternion.identity);
-                    circle.GetComponent<HandleCircle>().Init(transform.parent.GetComponentInChildren<DrawManager>().girl1, hit.collider.gameObject, transform.parent.GetComponentInChildren<DrawManager>().qf);
-                    CameraRotate(hit.collider.gameObject.name);
-                    AddNodeInDof();
-                }
-                else
-                {
-                    if (circle.transform.position == hit.collider.transform.position)
-                    {
-                        if (circle.GetComponent<HandleCircle>().target.name == "upper_arm.L")
-                        {
-                            if (transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation.eulerAngles.y != 90)
-                            {
-                                transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Euler(Vector3.up * 90);
-                                circle.transform.position = transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.L/upper_arm.L").gameObject.transform.position;
-//                                circle.GetComponent<HandleCircle>().rotateTarget = true;
-                            }
-                            else
-                            {
-                                DestroyHandleCircle();
-                                transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.identity;
-                            }
-                        }
-                        else if (circle.GetComponent<HandleCircle>().target.name == "upper_arm.R")
-                        {
-                            if (transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation.eulerAngles.y != 270)
-                            {
-                                transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Euler(Vector3.up * -90);
-                                circle.transform.position = transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.Find("Petra.002/hips/spine/chest/chest1/shoulder.R/upper_arm.R").gameObject.transform.position;
-//                                circle.GetComponent<HandleCircle>().rotateTarget = true;
-                            }
-                            else
-                            {
-                                DestroyHandleCircle();
-                                transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.identity;
-                            }
-                        }
-                        else
-                        {
-                            DestroyHandleCircle();
-                            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.identity;
-                        }
-                    }
-                    else
-                    {
-                        DestroyHandleCircle();
-                        transform.parent.GetComponentInChildren<DrawManager>().isEditing = true;
-
-                        circle = Instantiate(circlePrefab, hit.collider.transform.position, Quaternion.identity);
-                        circle.GetComponent<HandleCircle>().Init(transform.parent.GetComponentInChildren<DrawManager>().girl1, hit.collider.gameObject, transform.parent.GetComponentInChildren<DrawManager>().qf);
-                        AddNodeInDof();
-                    }
-                }
+                Vector3 newPosition = Input.mousePosition;
+                Vector3 mouseDistance = newPosition - initPosition;
+                avatarManager.LoadedModels[0].gameObject.transform.Rotate(Vector3.up * -mouseDistance.x / 5f);
+                initPosition = newPosition;
             }
+            if (avatarManager.LoadedModels[0].IsLoaded && !drawManager.IsEditing && !isRotating && hasHit)
+            {
+                initPosition = Input.mousePosition;
+                isRotating = true;
+            }
+
+        }
+        else
+        {
+            isRotating = false;
         }
 
-        if (Input.GetMouseButton(2))
+        if (Input.GetMouseButtonDown(1) && hasHit)
         {
-            if (transform.parent.GetComponentInChildren<DrawManager>().girl1 != null)
-            {
-                transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.Rotate(Vector3.up * 100f * Time.deltaTime);
-                if (circle)
-                    circle.transform.position = hit.collider.gameObject.transform.position;
-            }
+            int _avatarIndex = 0;
+            HandleJointClick(_avatarIndex);
         }
     }
 
-    private IEnumerator RotateLerp(float _goal, float _speed)
-    {
-        float curr = 0;
-        while (_goal > curr)
-        {
-            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Lerp(Quaternion.identity, Quaternion.Euler(Vector3.up * _goal), _speed * Time.time);
-            curr = transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation.eulerAngles.y;
-            yield return new WaitForEndOfFrame();
-        }
+    public void ResetTemporaries(){
+        if (!drawManager.IsEditing) return;
+
+        if (currentControlSegment)
+            currentControlSegment.DestroyCircle();
+        currentControlSegment = null;
+        selectedJoint = null;
+        currentJointSubIdx = -1;
     }
 
-    void CameraRotate(string _n)
-    {
-        if (_n == "shin.L" || _n == "thigh.L")
-        {
- //            StartCoroutine(RotateLerp(90, 0.2f));
-            //            circle.transform.position = transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.Find("Petra.002/hips/thigh.L/shin.L").gameObject.transform.position;
-            //            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Lerp(Quaternion.identity, Quaternion.Euler(Vector3.up * 90), 0.2f * Time.time);                                                                                                                                                                                                              //            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Euler(Vector3.up * 90);
-            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Euler(Vector3.up * 90);
-            circle.transform.position = transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.Find("Petra.002/hips/thigh.L/shin.L").gameObject.transform.position;
-            for (int i = 0; i < 16; i++)
-            {
-                float angle = i * Mathf.PI * 2f / 16;
-                Vector3 newPos = new Vector3(Mathf.Cos(angle) * 0.2f, 0, Mathf.Sin(angle) * 0.2f);
-                GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = circle.transform;
-            }
+    void HandleJointClick(int _avatarIndex) {
+        if (!uiManager.IsInEditingTab){
+            // Prevent from changing avantar position if not in modification tab
+            return;
         }
-        else if (_n == "shin.R" || _n == "thigh.R")
-        {
-            //            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Lerp(Quaternion.identity, Quaternion.Euler(Vector3.up * -90), 0.2f * Time.time);
-            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Euler(Vector3.up * -90);
-            circle.transform.position = transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.Find("Petra.002/hips/thigh.R/shin.R").gameObject.transform.position;
-            for (int i = 0; i < 16; i++)
-            {
-                float angle = i * Mathf.PI * 2f / 16;
-                Vector3 newPos = new Vector3(Mathf.Cos(angle) * 0.2f, 0, Mathf.Sin(angle) * 0.2f);
-                GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = circle.transform;
-            }
-        }
-        else if (_n == "upper_arm.L")
-        {
-            for (int i = 0; i < 16; i++)
-            {
-                float angle = i * Mathf.PI * 2f / 16;
-                Vector3 newPos = new Vector3(Mathf.Cos(angle) * 0.2f, 0, Mathf.Sin(angle) * 0.2f);
-                GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = circle.transform;
-            }
-            for (int i = 0; i < 16; i++)
-            {
-                float angle = i * Mathf.PI * 2f / 16;
-                Vector3 newPos = new Vector3(0, Mathf.Cos(angle) * 0.2f, Mathf.Sin(angle) * 0.2f);
-                GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = circle.transform;
-            }
+        
+        var _previousTp = selectedJoint;
+        var _nextJointSubIdx = currentJointSubIdx + 1;  // Assume for now same joint
+        ResetTemporaries();
 
-            //            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Euler(Vector3.up * 90);
-        }
-        else if (_n == "upper_arm.R")
-        {
-            for (int i = 0; i < 16; i++)
-            {
-                float angle = i * Mathf.PI * 2f / 16;
-                Vector3 newPos = new Vector3(Mathf.Cos(angle) * 0.2f, 0, Mathf.Sin(angle) * 0.2f);
-                GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = circle.transform;
+        selectedJoint = hit.collider.gameObject;
+        ControlSegmentGeneric[] _controlSegment = selectedJoint.GetComponents<ControlSegmentGeneric>();
+        if (selectedJoint != _previousTp){
+            // If not the same joint, reset to 0
+            _nextJointSubIdx = 0;
+        } else {
+            // If we reached the end, joint is unselected
+            if (_nextJointSubIdx >= _controlSegment.Length){
+                drawManager.StopEditing();
+                return;
             }
-            for (int i = 0; i < 16; i++)
-            {
-                float angle = i * Mathf.PI * 2f / 16;
-                Vector3 newPos = new Vector3(0, Mathf.Cos(angle) * 0.2f, Mathf.Sin(angle) * 0.2f);
-                GameObject go = Instantiate(circlePrefab_shoulder, hit.collider.transform.position + newPos, Quaternion.identity);
-                go.transform.parent = circle.transform;
-            }
-
-            //            transform.parent.GetComponentInChildren<DrawManager>().girl1.transform.rotation = Quaternion.Euler(Vector3.up * -90);
         }
-    }
+        drawManager.StartEditing();
 
-    public void DestroyHandleCircle()
-    {
-        transform.parent.GetComponentInChildren<DrawManager>().isEditing = false;
+        currentJointSubIdx = _nextJointSubIdx;
+        currentControlSegment = _controlSegment[currentJointSubIdx];
+        currentControlSegment.Init(_avatarIndex, AddNode);
 
-        if (circle != null)
-        {
-            Destroy(circle.gameObject);
-        }
+        baseProfile.InitDropdownDDLNames(currentControlSegment.avatarIndexDDL);
+        baseProfile.NodeName(currentControlSegment.dofName);
     }
 
     public int FindPreviousNode(int _dof)
     {
+        int last = avatarManager.LoadedModels[0].Joints.nodes[_dof].T.Length - 1;
+        if (drawManager.CurrentFrame == 0) 
+            return 0;
+        else if (drawManager.CurrentTime == avatarManager.LoadedModels[0].Joints.nodes[_dof].T[last]) 
+            return last;
+
         int i = 0;
-        while (i < MainParameters.Instance.joints.nodes[_dof].T.Length && transform.parent.GetComponentInChildren<DrawManager>().frameN*0.02 > MainParameters.Instance.joints.nodes[_dof].T[i])
+        while (
+                i < avatarManager.LoadedModels[0].Joints.nodes[_dof].T.Length
+                && drawManager.CurrentTime >= avatarManager.LoadedModels[0].Joints.nodes[_dof].T[i]
+            )
+        {
             i++;
+        }
         return i - 1;
     }
 
-    private void ModifyNode(int _dof)
+    public int AddNode(int _avatarIndex, int _dof)
     {
-        int node = FindPreviousNode(_dof);
-        MainParameters.Instance.joints.nodes[_dof].Q[node] = (float)circle.GetComponent<HandleCircle>().dof[_dof];
-
-        transform.parent.GetComponentInChildren<DrawManager>().isEditing = false;
-        transform.parent.GetComponentInChildren<DrawManager>().frameN = (int)(MainParameters.Instance.joints.nodes[_dof].T[node] / 0.02f);
-        transform.parent.GetComponentInChildren<DrawManager>().PlayOneFrame();
-
-        transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-        transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(_dof, true);
-        transform.parent.GetComponentInChildren<DrawManager>().isEditing = true;
-    }
-
-    private void AddNodeInDof()
-    {
-        if (circle.GetComponent<HandleCircle>().target.name == "shin.L" || circle.GetComponent<HandleCircle>().target.name == "shin.R")
-        {
-            int node = AddNode(1);
-            circle.GetComponent<HandleCircle>().node = node;
-//                           ModifyNode(1);
-            //                MainParameters.Instance.joints.nodes[1].Q[AddNode(1)] = (float)circle.GetComponent<HandleCircle>().dof[1];
-            //                print(MainParameters.Instance.joints.nodes[1].Q[AddNode(1)]);
-            //                print((-(float)circle.GetComponent<HandleCircle>().dof[1]* Mathf.Rad2Deg + 180)* Mathf.PI / 180);
-            //                transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-            //                transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(1, true);
-        }
-        else if (circle.GetComponent<HandleCircle>().target.name == "thigh.L" || circle.GetComponent<HandleCircle>().target.name == "thigh.R")
-        {
-            int node = AddNode(0);
-            circle.GetComponent<HandleCircle>().node = node;
-//            ModifyNode(0);
-            //                MainParameters.Instance.joints.nodes[0].Q[AddNode(0)] = (float)circle.GetComponent<HandleCircle>().dof[0];
-            //                transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-            //                transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(0, true);
-        }
-        else if (circle.GetComponent<HandleCircle>().target.name == "upper_arm.L")
-        {
-//            circle.GetComponent<HandleCircle>().node = AddNode(2);
-            //                mouseDistance.x = (float)dof[3] * 30f;
-            //                mouseDistance.y = (float)dof[2] * 30f;
-            //            transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-            //            transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(2, true);
-        }
-        else if (circle.GetComponent<HandleCircle>().target.name == "upper_arm.R")
-        {
-//            circle.GetComponent<HandleCircle>().node = AddNode(4);
-            //                mouseDistance.x = (float)dof[5] * 30f;
-            //                mouseDistance.y = (float)dof[4] * 30f;
-            //            transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-            //            transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(4, true);
-        }
-    }
-
-    public int AddNode(int _dof)
-    {
-        transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-        transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(_dof, true);
+        gameManager.InterpolationDDL(_avatarIndex);
+        gameManager.DisplayDDL(_dof, true);
 
         int node = FindPreviousNode(_dof);
-
-        if (previousFrameN == transform.parent.GetComponentInChildren<DrawManager>().frameN)
-        {
+        if (avatarManager.LoadedModels[0].Joints.nodes[_dof].T[node] == drawManager.CurrentTime)
             return node;
-        }
-        previousFrameN = transform.parent.GetComponentInChildren<DrawManager>().frameN;
 
-        float[] T = new float[MainParameters.Instance.joints.nodes[_dof].T.Length + 1];
-        float[] Q = new float[MainParameters.Instance.joints.nodes[_dof].Q.Length + 1];
+
+        float[] T = new float[avatarManager.LoadedModels[0].Joints.nodes[_dof].T.Length + 1];
+        float[] Q = new float[avatarManager.LoadedModels[0].Joints.nodes[_dof].Q.Length + 1];
+
         for (int i = 0; i <= node; i++)
         {
-            T[i] = MainParameters.Instance.joints.nodes[_dof].T[i];
-            Q[i] = MainParameters.Instance.joints.nodes[_dof].Q[i];
+            T[i] = avatarManager.LoadedModels[0].Joints.nodes[_dof].T[i];
+            Q[i] = avatarManager.LoadedModels[0].Joints.nodes[_dof].Q[i];
         }
 
-        T[node + 1] = transform.parent.GetComponentInChildren<DrawManager>().frameN * 0.02f;
-        Q[node + 1] = (float)circle.GetComponent<HandleCircle>().dof[_dof];
-        for (int i = node + 1; i < MainParameters.Instance.joints.nodes[_dof].T.Length; i++)
+        T[node + 1] = drawManager.CurrentTime;
+        Q[node + 1] = currentControlSegment.angle;
+
+        for (int i = node + 1; i < avatarManager.LoadedModels[0].Joints.nodes[_dof].T.Length; i++)
         {
-            T[i + 1] = MainParameters.Instance.joints.nodes[_dof].T[i];
-            Q[i + 1] = MainParameters.Instance.joints.nodes[_dof].Q[i];
+            T[i + 1] = avatarManager.LoadedModels[0].Joints.nodes[_dof].T[i];
+            Q[i + 1] = avatarManager.LoadedModels[0].Joints.nodes[_dof].Q[i];
         }
-        MainParameters.Instance.joints.nodes[_dof].T = MathFunc.MatrixCopy(T);
-        MainParameters.Instance.joints.nodes[_dof].Q = MathFunc.MatrixCopy(Q);
+        avatarManager.LoadedModels[0].Joints.nodes[_dof].T = MathFunc.MatrixCopy(T);
+        avatarManager.LoadedModels[0].Joints.nodes[_dof].Q = MathFunc.MatrixCopy(Q);
 
-        transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-        transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(_dof, true);
-
-        return node + 1;
-    }
-
-    public int AddNode2(int _dof)
-    {
-        transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-        transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(_dof, true);
-
-        int node = FindPreviousNode(_dof);
-
-        if (previousFrameN2 == transform.parent.GetComponentInChildren<DrawManager>().frameN)
-        {
-            return node;
-        }
-        previousFrameN2 = transform.parent.GetComponentInChildren<DrawManager>().frameN;
-
-        float[] T = new float[MainParameters.Instance.joints.nodes[_dof].T.Length + 1];
-        float[] Q = new float[MainParameters.Instance.joints.nodes[_dof].Q.Length + 1];
-        for (int i = 0; i <= node; i++)
-        {
-            T[i] = MainParameters.Instance.joints.nodes[_dof].T[i];
-            Q[i] = MainParameters.Instance.joints.nodes[_dof].Q[i];
-        }
-
-        T[node + 1] = transform.parent.GetComponentInChildren<DrawManager>().frameN * 0.02f;
-        Q[node + 1] = (float)circle.GetComponent<HandleCircle>().dof[_dof];
-        for (int i = node + 1; i < MainParameters.Instance.joints.nodes[_dof].T.Length; i++)
-        {
-            T[i + 1] = MainParameters.Instance.joints.nodes[_dof].T[i];
-            Q[i + 1] = MainParameters.Instance.joints.nodes[_dof].Q[i];
-        }
-        MainParameters.Instance.joints.nodes[_dof].T = MathFunc.MatrixCopy(T);
-        MainParameters.Instance.joints.nodes[_dof].Q = MathFunc.MatrixCopy(Q);
-
-        transform.parent.GetComponentInChildren<GameManager>().InterpolationDDL();
-        transform.parent.GetComponentInChildren<GameManager>().DisplayDDL(_dof, true);
+        gameManager.InterpolationDDL(_avatarIndex);
+        gameManager.DisplayDDL(_dof, true);
 
         return node + 1;
     }

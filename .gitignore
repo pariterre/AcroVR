@@ -35,8 +35,14 @@ sysinfo.txt
 # OS generated #
 # ============ #
 *.Trashes
-*Thumbs.db
+*Thumbs.db*
 
 Library
 NuiDatabase
 /Assets/donnes
+
+.vscode/
+
+*LogFile.txt
+
+.vs/

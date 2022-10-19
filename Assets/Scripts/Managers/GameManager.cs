@@ -1,36 +1,91 @@
-﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
-using Crosstales.FB;
+using UnityEngine;
+using UnityEngine.UI;
+using SFB;
+
 
 [System.Serializable]
-public struct Goal
+public struct AllMissionNodes
 {
-    public float Distance;
-    public float Duration;
+    public MissionNodes HipFlexion;
+    public MissionNodes KneeFlexion;
+    public MissionNodes RightArmFlexion;
+    public MissionNodes RightArmAbduction;
+    public MissionNodes LeftArmFlexion;
+    public MissionNodes LeftArmAbduction;
 }
 
 [System.Serializable]
-public struct Solution
+public struct MissionSolution
 {
-    public float Velocity;
+    // For each of the item, if it is null, then this item is ignored.
+    // If the array is one element, then answer must equal the solution's value. 
+    // If the array is two elements, then answer must be comprised between solution[0] and solution[1].
+
+    // Solution on general parameters
+    public float[] Duration;
+    public bool[] UseGravity;
+    public bool[] StopOnGround;
+
+    // Solution on take off parameters
+    public float[] Somersault;
+    public float[] Tilt;
+    public float[] Twist;
+    public float[] HorizontalPosition;
+    public float[] VerticalPosition;
+    public float[] SomersaultSpeed;
+    public float[] TiltSpeed;
+    public float[] TwistSpeed;
+    public float[] HorizontalSpeed;
+    public float[] VerticalSpeed;
+    
+    // Solution on resulting computation
+    public float[] TravelDistance; 
+    public float[] HorizontalTravelDistance; 
+    public float[] VerticalTravelDistance; 
+
+    // Solution on angle nodes
+    public AllMissionNodes Nodes;
 }
 
 [System.Serializable]
 public struct MissionInfo
 {
     public string Name;
-    public Goal goal;
-    public Solution solution;
+    public int Level;
+
+    public int PresetCondition;
+    public UserUIInputsIsActive EnabledInputs;
+    public AllMissionNodes StartingPositions;
+
+    public MissionSolution Solution;
+    public string Hint;
+
+    public string ToHash(){
+        return Hash128.Compute(Name).ToString();
+    }
+}
+
+[System.Serializable]
+public class MissionList
+{
+    public int count;
+    public List<MissionInfo> missions = new List<MissionInfo>();
+}
+
+[System.Serializable]
+public struct MissionNodes
+{
+    public Nodes Min;
+    public Nodes Max;
 }
 
 [System.Serializable]
 public struct Nodes
 {
-    public string Name;
     public float[] T;
     public float[] Q;
 }
@@ -40,146 +95,268 @@ public class AnimationInfo
 {
     public string Objective;
     public float Duration;
-    public int Condition;
-    public float VerticalSpeed;
-    public float AnteroposteriorSpeed;
-    public float SomersaultSpeed;
-    public float TwistSpeed;
+    public bool UseGravity;
+    public bool StopOnGround;
+    public float Somersault;
     public float Tilt;
-    public float Rotation;
+    public float Twist;
+    public float HorizontalPosition;
+    public float VerticalPosition;
+    public float SomersaultSpeed;
+    public float TiltSpeed;
+    public float TwistSpeed;
+    public float HorizontalSpeed;
+    public float VerticalSpeed;
+
     public List<Nodes> nodes = new List<Nodes>();
+}
+
+[System.Serializable]
+public class ConditionList
+{
+    public int count;
+    public List<ConditionInfo> conditions = new List<ConditionInfo>();
+}
+
+[System.Serializable]
+public class ConditionInfo
+{
+    public string name;
+    public UserUIInputsValues userInputsValues = new UserUIInputsValues();
 }
 
 public class GameManager : MonoBehaviour
 {
-    private MissionInfo mission;
+    protected AvatarManager avatarManager;
+    protected DrawManager drawManager;
+    protected MissionManager missionManager;
+    protected UIManager uiManager;
+    public MissionInfo mission;
 
-    public void MissionLoad()
+	public string TargetConfigFolder;
+	public string SourceConfigFolder;
+
+    public int SelectedPresetCondition { get; protected set; } = 0;
+    public void SetSelectedPresetCondition(int _value) { SelectedPresetCondition = _value; }
+    public ConditionList PresetConditions { get; protected set; }
+
+	private void Start()
     {
-        //        InitAnimationInfo();
-        //        ReadDataFromJSON(fileName);
-        //        missionName.text = mission.Name;
+        avatarManager = ToolBox.GetInstance().GetManager<AvatarManager>();
+        drawManager = ToolBox.GetInstance().GetManager<DrawManager>();
+        missionManager = ToolBox.GetInstance().GetManager<MissionManager>();
+        uiManager = ToolBox.GetInstance().GetManager<UIManager>();
 
-//          ReadAniFromJSON("walk.json");
+        System.Globalization.NumberFormatInfo nfi = new System.Globalization.NumberFormatInfo();
+        nfi.NumberDecimalSeparator = ".";
+        System.Globalization.CultureInfo ci = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+        ci.NumberFormat = nfi;
 
-        ExtensionFilter[] extensions = new[]
-        {
-            new ExtensionFilter(MainParameters.Instance.languages.Used.movementLoadDataFileTxtFile, "json"),
-//            new ExtensionFilter(MainParameters.Instance.languages.Used.movementLoadDataFileTxtFile, "*"),
-            new ExtensionFilter(MainParameters.Instance.languages.Used.movementLoadDataFileAllFiles, "*" ),
-        };
+		GetPathForDataFiles();
 
-        string dirSimulationFiles = Environment.ExpandEnvironmentVariables(@"\SimulationJson");
+        // Make a copy of the config folder so the user can safely modify them
+        CopyJsonToTarget("Animations");
+        CopyJsonToTarget("PresetConditions");
+        CopyJsonToTarget("Missions");
 
-        string fileName = FileBrowser.OpenSingleFile(MainParameters.Instance.languages.Used.movementLoadDataFileTitle, dirSimulationFiles, extensions);
-        if (fileName.Length <= 0)
-            return;
+		LoadConditions($"{TargetConfigFolder}/PresetConditions/PresetConditions.json");
+        LoadMissions($"{SourceConfigFolder}/Missions/Missions.json");
+	}
 
-        string e = fileName.Substring(fileName.Length - 3);
+    public int AnimationLoad(int _avatarIndex)
+    {
+        ExtensionFilter[] extensions = new[] 
+        { 
+            new ExtensionFilter(MainParameters.Instance.languages.Used.movementLoadDataFileTxtFile, "json"), 
+        }; 
 
-        if(e == "txt") ReadDataFiles_s(fileName);
-        else ReadAniFromJSON(fileName);
+		string dirAnimationFiles = $"{TargetConfigFolder}/Animations/";
+        string[] fileNames = StandaloneFileBrowser.OpenFilePanel(
+            MainParameters.Instance.languages.Used.movementLoadDataFileTitle, 
+            dirAnimationFiles, 
+            extensions, 
+            false
+        );
+        if (fileNames.Length == 0) return -1;
 
-        //         ReadDataFiles_s(fileName);
-//        ReadAniFromJSON(fileName);
+        if (!ReadAniFromJson(_avatarIndex, fileNames[0]))
+            return -3;
+
+        return 1;
     }
 
-    private void ReadDataFromJSON(string fileName)
+    public void ReadDataFromJSON(string fileName)
     {
         string dataAsJson = File.ReadAllText(fileName);
         mission = JsonUtility.FromJson<MissionInfo>(dataAsJson);
     }
 
-    public void InitAnimationInfo(float num)
+    public void InitAnimationInfo()
     {
-        MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
-        jointsTemp.fileName = null;
-        jointsTemp.nodes = null;
-//        jointsTemp.duration = 0;
-        jointsTemp.duration = 2;
-        jointsTemp.condition = 0;
-        jointsTemp.takeOffParam.verticalSpeed = 0;
-//        jointsTemp.takeOffParam.anteroposteriorSpeed = 0;
-        jointsTemp.takeOffParam.anteroposteriorSpeed = num;
-        jointsTemp.takeOffParam.somersaultSpeed = 0;
-        jointsTemp.takeOffParam.twistSpeed = 0;
-        jointsTemp.takeOffParam.tilt = 0;
-        jointsTemp.takeOffParam.rotation = 0;
-
-        jointsTemp.nodes = new MainParameters.StrucNodes[6];
-
-        for (int i = 0; i < 6; i++)
-        {
-            jointsTemp.nodes[i].ddl = i + 1;
-            jointsTemp.nodes[i].name = null;
-            jointsTemp.nodes[i].interpolation = MainParameters.Instance.interpolationDefault;
-            jointsTemp.nodes[i].T = new float[] { 0, 0.0001f};
-//            jointsTemp.nodes[i].T = new float[] { 0, 1.000000f };
-            jointsTemp.nodes[i].Q = new float[] { 0, 0.0f};
-            jointsTemp.nodes[i].ddlOppositeSide = -1;
-        }
-
-        MainParameters.Instance.joints = jointsTemp;
-
-        LagrangianModelSimple lagrangianModelSimple = new LagrangianModelSimple();
-        MainParameters.Instance.joints.lagrangianModel = lagrangianModelSimple.GetParameters;
+        avatarManager.LoadedModels[0].ResetJoints();
     }
 
-    private void ReadAniFromJSON(string fileName)
+    protected bool ReadAniFromJson(int _avatarIndex, string fileName)
     {
+
         string dataAsJson = File.ReadAllText(fileName);
+
+        if (dataAsJson[0] != '{') return false;
+
         AnimationInfo info = JsonUtility.FromJson<AnimationInfo>(dataAsJson);
 
-        MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
-        jointsTemp.fileName = fileName;
-        jointsTemp.nodes = null;
-        jointsTemp.duration = info.Duration;
-        jointsTemp.condition = info.Condition;
-        jointsTemp.takeOffParam.verticalSpeed = info.VerticalSpeed;
-        jointsTemp.takeOffParam.anteroposteriorSpeed = info.AnteroposteriorSpeed;
-        jointsTemp.takeOffParam.somersaultSpeed = info.SomersaultSpeed;
-        jointsTemp.takeOffParam.twistSpeed = info.TwistSpeed;
-        jointsTemp.takeOffParam.tilt = info.Tilt;
-        jointsTemp.takeOffParam.rotation = info.Rotation;
+        var _jointsTemp = avatarManager.LoadedModels[_avatarIndex].Joints;
 
-        jointsTemp.nodes = new MainParameters.StrucNodes[info.nodes.Count];
+        _jointsTemp.fileName = fileName;
 
-        for (int i = 0; i < info.nodes.Count; i++)
+        if (_avatarIndex == 0)
         {
-            jointsTemp.nodes[i].ddl = i + 1;
-            jointsTemp.nodes[i].name = info.nodes[i].Name;
-            jointsTemp.nodes[i].interpolation = MainParameters.Instance.interpolationDefault;
-            jointsTemp.nodes[i].T = info.nodes[i].T;
-            jointsTemp.nodes[i].Q = info.nodes[i].Q;
-            jointsTemp.nodes[i].ddlOppositeSide = -1;
+            UserUIInputsValues _inputs = new UserUIInputsValues();
+            _inputs.Duration = info.Duration;
+            _inputs.UseGravity = info.UseGravity;
+            _inputs.StopOnGround = info.StopOnGround;
+            _inputs.Somersault = info.Somersault;
+            _inputs.Tilt = info.Tilt;
+            _inputs.Twist = info.Twist;
+            _inputs.HorizontalPosition = info.HorizontalPosition;
+            _inputs.VerticalPosition = info.VerticalPosition;
+            _inputs.SomersaultSpeed = info.SomersaultSpeed;
+            _inputs.TiltSpeed = info.TiltSpeed;
+            _inputs.TwistSpeed = info.TwistSpeed;
+            _inputs.HorizontalSpeed = info.HorizontalSpeed;
+            _inputs.VerticalSpeed = info.VerticalSpeed;
+            uiManager.userInputs.SetAll(_inputs);
+
+        }
+        else
+        {
+            drawManager.SetDuration(_avatarIndex, info.Duration);
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.UseGravity = info.UseGravity;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.StopOnGround = info.StopOnGround;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Somersault = info.Somersault;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Tilt = info.Tilt;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Twist = info.Twist;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.HorizontalPosition = info.HorizontalPosition;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.VerticalPosition = info.VerticalPosition;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.SomersaultSpeed = info.SomersaultSpeed;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.TiltSpeed = info.TiltSpeed;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.TwistSpeed = info.TwistSpeed;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.HorizontalSpeed = info.HorizontalSpeed;
+            drawManager.avatarProperties[_avatarIndex].TakeOffParameters.VerticalSpeed = info.VerticalSpeed;
         }
 
-        MainParameters.Instance.joints = jointsTemp;
 
-        LagrangianModelSimple lagrangianModelSimple = new LagrangianModelSimple();
-        MainParameters.Instance.joints.lagrangianModel = lagrangianModelSimple.GetParameters;
+        _jointsTemp.nodes = new MainParameters.StrucNodes[info.nodes.Count];
+        for (int i = 0; i < info.nodes.Count; i++)
+        {
+            _jointsTemp.nodes[i].ddl = i + 1;
+            _jointsTemp.nodes[i].interpolation = MainParameters.Instance.interpolationDefault;
+            _jointsTemp.nodes[i].T = info.nodes[i].T;
+            _jointsTemp.nodes[i].Q = info.nodes[i].Q;
+            _jointsTemp.nodes[i].ddlOppositeSide = -1;
+        }
+
+        _jointsTemp.lagrangianModel = new LagrangianModelSimple().GetParameters;
+
+        avatarManager.LoadedModels[_avatarIndex].SetJoints(_jointsTemp);
+        
+        InterpolationDDL(_avatarIndex);
+        for (int ddl=0; ddl==_jointsTemp.nodes.Length; ++ddl)
+            DisplayDDL(ddl, true);  // In the event it was loaded while we were in the graph panel
+
+        drawManager.PlayOneFrame(1);  // Force the avatar 1 to conform to its first frame
+
+        return true;
+    }
+
+    public void UpdateDropDownNames()
+    {
+        if (uiManager.userInputs == null) return;
+
+        uiManager.userInputs.PresetConditions.options.Clear();
+        for (int i = 0; i < PresetConditions.count; i++)
+        {
+            uiManager.userInputs.PresetConditions.options.Add(new Dropdown.OptionData()
+            {
+                text = PresetConditions.conditions[i].name
+            });
+        }
+
+        uiManager.UpdateAllPropertiesFromDropdown();
+    }
+
+    public void SaveCondition(string name)
+    {
+        ConditionInfo n = new ConditionInfo();
+        n.name = name;
+        n.userInputsValues.SetAll(uiManager.userInputs);
+
+        PresetConditions.conditions.Add(n);
+        PresetConditions.count++;
+
+        string jsonData = JsonUtility.ToJson(PresetConditions, true);
+        File.WriteAllText($"{TargetConfigFolder}/PresetConditions/PresetConditions.json", jsonData);
+        UpdateDropDownNames();
+    }
+
+    public void RemoveCondition(int index)
+    {
+        PresetConditions.conditions.RemoveAt(index);
+        PresetConditions.count--;
+
+        string jsonData = JsonUtility.ToJson(PresetConditions, true);
+        File.WriteAllText($"{TargetConfigFolder}/PresetConditions/PresetConditions.json", jsonData);
+        UpdateDropDownNames();
+    }
+
+    public bool LoadConditions(string fileName)
+    {
+		string dataAsJson = File.ReadAllText(fileName);
+
+        if (dataAsJson[0] != '{') return false;
+        
+        PresetConditions = JsonUtility.FromJson<ConditionList>(dataAsJson);
+        UpdateDropDownNames();
+        return true;
+    }
+
+    public bool LoadMissions(string fileName)
+    {
+        string dataAsJson = File.ReadAllText(fileName);
+
+        if (dataAsJson[0] != '{') return false;
+
+        missionManager.SetMissions(dataAsJson);
+
+        return true;
     }
 
     private void WriteDataToJSON(string fileName)
     {
         AnimationInfo info = new AnimationInfo();
+        var _takeOffParameters = drawManager.avatarProperties[0].TakeOffParameters;
 
-        info.Objective = "defalut";
-        info.Duration = MainParameters.Instance.joints.duration;
-        info.Condition = MainParameters.Instance.joints.condition;
-        info.VerticalSpeed = MainParameters.Instance.joints.takeOffParam.verticalSpeed;
-        info.AnteroposteriorSpeed = MainParameters.Instance.joints.takeOffParam.anteroposteriorSpeed;
-        info.SomersaultSpeed = MainParameters.Instance.joints.takeOffParam.somersaultSpeed;
-        info.TwistSpeed = MainParameters.Instance.joints.takeOffParam.twistSpeed;
-        info.Tilt = MainParameters.Instance.joints.takeOffParam.tilt;
-        info.Rotation = MainParameters.Instance.joints.takeOffParam.rotation;
+        info.Objective = "default";
+        info.Duration = _takeOffParameters.Duration;
+        info.UseGravity = _takeOffParameters.UseGravity;
+        info.StopOnGround = _takeOffParameters.StopOnGround;
+        info.Somersault = _takeOffParameters.Somersault;
+        info.Tilt = _takeOffParameters.Tilt;
+        info.Twist = _takeOffParameters.Twist;
+        info.HorizontalPosition = _takeOffParameters.HorizontalPosition;
+        info.VerticalPosition = _takeOffParameters.VerticalPosition;
+        info.SomersaultSpeed = _takeOffParameters.SomersaultSpeed;
+        info.TiltSpeed = _takeOffParameters.TiltSpeed;
+        info.TwistSpeed = _takeOffParameters.TwistSpeed;
+        info.HorizontalSpeed = _takeOffParameters.HorizontalSpeed;
+        info.VerticalSpeed = _takeOffParameters.VerticalSpeed;
 
-        for (int i = 0; i < MainParameters.Instance.joints.nodes.Length; i++)
+        MainParameters.StrucJoints _joints = avatarManager.LoadedModels[0].Joints;
+        for (int i = 0; i < _joints.nodes.Length; i++)
         {
             Nodes n = new Nodes();
-            n.Name = MainParameters.Instance.joints.nodes[i].name;
-            n.T = MainParameters.Instance.joints.nodes[i].T;
-            n.Q = MainParameters.Instance.joints.nodes[i].Q;
+            n.T = _joints.nodes[i].T;
+            n.Q = _joints.nodes[i].Q;
 
             info.nodes.Add(n);
         }
@@ -190,159 +367,63 @@ public class GameManager : MonoBehaviour
 
     public void WriteDataFiles_s(string fileName)
     {
+        var _takeOffParameters = drawManager.avatarProperties[0].TakeOffParameters;
+
         string fileLines = string.Format(
             "Duration: {0}{1}Condition: {2}{3}VerticalSpeed: {4:0.000}{5}AnteroposteriorSpeed: {6:0.000}{7}SomersaultSpeed: {8:0.000}{9}TwistSpeed: {10:0.000}{11}Tilt: {12:0.000}{13}Rotation: {14:0.000}{15}{16}",
-            MainParameters.Instance.joints.duration, System.Environment.NewLine,
-            MainParameters.Instance.joints.condition, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.verticalSpeed, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.anteroposteriorSpeed, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.somersaultSpeed, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.twistSpeed, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.tilt, System.Environment.NewLine,
-            MainParameters.Instance.joints.takeOffParam.rotation, System.Environment.NewLine, System.Environment.NewLine);
+            _takeOffParameters.Duration, System.Environment.NewLine,
+            _takeOffParameters.Somersault, System.Environment.NewLine,
+            _takeOffParameters.Tilt, System.Environment.NewLine,
+            _takeOffParameters.Twist, System.Environment.NewLine,
+            _takeOffParameters.HorizontalPosition, System.Environment.NewLine,
+            _takeOffParameters.VerticalPosition, System.Environment.NewLine,
+            _takeOffParameters.SomersaultSpeed, System.Environment.NewLine,
+            _takeOffParameters.TiltSpeed, System.Environment.NewLine,
+            _takeOffParameters.TwistSpeed, System.Environment.NewLine,
+            _takeOffParameters.HorizontalSpeed, System.Environment.NewLine,
+            _takeOffParameters.VerticalSpeed, System.Environment.NewLine
+        );
 
         fileLines = string.Format("{0}Nodes{1}DDL, name, interpolation (type, numIntervals, slopes), T, Q{2}", fileLines, System.Environment.NewLine, System.Environment.NewLine);
 
-        for (int i = 0; i < MainParameters.Instance.joints.nodes.Length; i++)
+        var _nodes = avatarManager.LoadedModels[0].Joints.nodes;
+        for (int i = 0; i < _nodes.Length; i++)
         {
-            fileLines = string.Format("{0}{1}:{2}:{3},{4},{5:0.000000},{6:0.000000}:", fileLines, i + 1, MainParameters.Instance.joints.nodes[i].name, MainParameters.Instance.joints.nodes[i].interpolation.type,
-                MainParameters.Instance.joints.nodes[i].interpolation.numIntervals, MainParameters.Instance.joints.nodes[i].interpolation.slope[0], MainParameters.Instance.joints.nodes[i].interpolation.slope[1]);
-            for (int j = 0; j < MainParameters.Instance.joints.nodes[i].T.Length; j++)
+            fileLines = string.Format("{0}{1}:{2}:{3},{4},{5:0.000000},{6:0.000000}:", fileLines, i + 1, _nodes[i].name, _nodes[i].interpolation.type,
+                _nodes[i].interpolation.numIntervals, _nodes[i].interpolation.slope[0], _nodes[i].interpolation.slope[1]);
+            for (int j = 0; j < _nodes[i].T.Length; j++)
             {
-                if (j < MainParameters.Instance.joints.nodes[i].T.Length - 1)
-                    fileLines = string.Format("{0}{1:0.000000},", fileLines, MainParameters.Instance.joints.nodes[i].T[j]);
+                if (j < _nodes[i].T.Length - 1)
+                    fileLines = string.Format("{0}{1:0.000000},", fileLines, _nodes[i].T[j]);
                 else
-                    fileLines = string.Format("{0}{1:0.000000}:", fileLines, MainParameters.Instance.joints.nodes[i].T[j]);
+                    fileLines = string.Format("{0}{1:0.000000}:", fileLines, _nodes[i].T[j]);
             }
-            for (int j = 0; j < MainParameters.Instance.joints.nodes[i].Q.Length; j++)
+            for (int j = 0; j < _nodes[i].Q.Length; j++)
             {
-                if (j < MainParameters.Instance.joints.nodes[i].Q.Length - 1)
-                    fileLines = string.Format("{0}{1:0.000000},", fileLines, MainParameters.Instance.joints.nodes[i].Q[j]);
+                if (j < _nodes[i].Q.Length - 1)
+                    fileLines = string.Format("{0}{1:0.000000},", fileLines, _nodes[i].Q[j]);
                 else
-                    fileLines = string.Format("{0}{1:0.000000}:{2}", fileLines, MainParameters.Instance.joints.nodes[i].Q[j], System.Environment.NewLine);
+                    fileLines = string.Format("{0}{1:0.000000}:{2}", fileLines, _nodes[i].Q[j], System.Environment.NewLine);
             }
         }
 
         System.IO.File.WriteAllText(fileName, fileLines);
     }
 
-    private void ReadDataFiles_s(string fileName)
-    {
-        string[] fileLines = System.IO.File.ReadAllLines(fileName);
-
-        MainParameters.StrucJoints jointsTemp = new MainParameters.StrucJoints();
-        jointsTemp.fileName = fileName;
-        jointsTemp.nodes = null;
-        jointsTemp.duration = 0;
-        jointsTemp.condition = 0;
-        jointsTemp.takeOffParam.verticalSpeed = 0;
-        jointsTemp.takeOffParam.anteroposteriorSpeed = 0;
-        jointsTemp.takeOffParam.somersaultSpeed = 0;
-        jointsTemp.takeOffParam.twistSpeed = 0;
-        jointsTemp.takeOffParam.tilt = 0;
-        jointsTemp.takeOffParam.rotation = 0;
-
-        string[] values;
-        int ddlNum = -1;
-
-        for (int i = 0; i < fileLines.Length; i++)
-        {
-            values = Regex.Split(fileLines[i], ":");
-            if (values[0].Contains("Duration"))
-            {
-                jointsTemp.duration = float.Parse(values[1]);
-                if (jointsTemp.duration == -999)
-                    jointsTemp.duration = MainParameters.Instance.durationDefault;
-            }
-            else if (values[0].Contains("Condition"))
-            {
-                jointsTemp.condition = int.Parse(values[1]);
-                if (jointsTemp.condition == -999)
-                    jointsTemp.condition = MainParameters.Instance.conditionDefault;
-            }
-            else if (values[0].Contains("VerticalSpeed"))
-            {
-                jointsTemp.takeOffParam.verticalSpeed = float.Parse(values[1]);
-                if (jointsTemp.takeOffParam.verticalSpeed == -999)
-                    jointsTemp.takeOffParam.verticalSpeed = MainParameters.Instance.takeOffParamDefault.verticalSpeed;
-            }
-            else if (values[0].Contains("AnteroposteriorSpeed"))
-            {
-                jointsTemp.takeOffParam.anteroposteriorSpeed = float.Parse(values[1]);
-                if (jointsTemp.takeOffParam.anteroposteriorSpeed == -999)
-                    jointsTemp.takeOffParam.anteroposteriorSpeed = MainParameters.Instance.takeOffParamDefault.anteroposteriorSpeed;
-            }
-            else if (values[0].Contains("SomersaultSpeed"))
-            {
-                jointsTemp.takeOffParam.somersaultSpeed = float.Parse(values[1]);
-                if (jointsTemp.takeOffParam.somersaultSpeed == -999)
-                    jointsTemp.takeOffParam.somersaultSpeed = MainParameters.Instance.takeOffParamDefault.somersaultSpeed;
-            }
-            else if (values[0].Contains("TwistSpeed"))
-            {
-                jointsTemp.takeOffParam.twistSpeed = float.Parse(values[1]);
-                if (jointsTemp.takeOffParam.twistSpeed == -999)
-                    jointsTemp.takeOffParam.twistSpeed = MainParameters.Instance.takeOffParamDefault.twistSpeed;
-            }
-            else if (values[0].Contains("Tilt"))
-            {
-                jointsTemp.takeOffParam.tilt = float.Parse(values[1]);
-                if (jointsTemp.takeOffParam.tilt == -999)
-                    jointsTemp.takeOffParam.tilt = MainParameters.Instance.takeOffParamDefault.tilt;
-            }
-            else if (values[0].Contains("Rotation"))
-            {
-                jointsTemp.takeOffParam.rotation = float.Parse(values[1]);
-                if (jointsTemp.takeOffParam.rotation == -999)
-                    jointsTemp.takeOffParam.rotation = MainParameters.Instance.takeOffParamDefault.rotation;
-            }
-            else if (values[0].Contains("DDL"))
-            {
-                jointsTemp.nodes = new MainParameters.StrucNodes[fileLines.Length - i - 1];
-                ddlNum = 0;
-            }
-            else if (ddlNum >= 0)
-            {
-                jointsTemp.nodes[ddlNum].ddl = int.Parse(values[0]);
-                jointsTemp.nodes[ddlNum].name = values[1];
-                jointsTemp.nodes[ddlNum].interpolation = MainParameters.Instance.interpolationDefault;
-                int indexTQ = 2;
-                if (values.Length > 5)
-                {
-                    string[] subValues;
-                    subValues = Regex.Split(values[2], ",");
-                    if (subValues[0].Contains(MainParameters.InterpolationType.CubicSpline.ToString()))
-                        jointsTemp.nodes[ddlNum].interpolation.type = MainParameters.InterpolationType.CubicSpline;
-                    else
-                        jointsTemp.nodes[ddlNum].interpolation.type = MainParameters.InterpolationType.Quintic;
-                    jointsTemp.nodes[ddlNum].interpolation.numIntervals = int.Parse(subValues[1]);
-                    jointsTemp.nodes[ddlNum].interpolation.slope[0] = float.Parse(subValues[2]);
-                    jointsTemp.nodes[ddlNum].interpolation.slope[1] = float.Parse(subValues[3]);
-                    indexTQ++;
-                }
-                jointsTemp.nodes[ddlNum].T = ExtractDataTQ(values[indexTQ]);
-                jointsTemp.nodes[ddlNum].Q = ExtractDataTQ(values[indexTQ + 1]);
-                jointsTemp.nodes[ddlNum].ddlOppositeSide = -1;
-                ddlNum++;
-            }
-        }
-
-        MainParameters.Instance.joints = jointsTemp;
-
-        LagrangianModelSimple lagrangianModelSimple = new LagrangianModelSimple();
-        MainParameters.Instance.joints.lagrangianModel = lagrangianModelSimple.GetParameters;
-    }
-
     public void SaveFile()
     {
-        string dirSimulationFiles = Environment.ExpandEnvironmentVariables(@"\SimulationJson");
+        string dirSimulationFiles = $"{TargetConfigFolder}/Animations";
+        string fileName = StandaloneFileBrowser.SaveFilePanel(
+            MainParameters.Instance.languages.Used.movementSaveDataFileTitle, 
+            dirSimulationFiles, 
+            "CustomSimulation",
+            "json"
+        );
 
-        string fileName = FileBrowser.SaveFile(MainParameters.Instance.languages.Used.movementSaveDataFileTitle, dirSimulationFiles, "DefaultFile", "json");
         if (fileName.Length <= 0)
             return;
 
         WriteDataToJSON(fileName);
-        //        WriteDataFiles_s(fileName);
     }
 
     private float[] ExtractDataTQ(string values)
@@ -350,31 +431,88 @@ public class GameManager : MonoBehaviour
         string[] subValues = Regex.Split(values, ",");
         float[] data = new float[subValues.Length];
         for (int i = 0; i < subValues.Length; i++)
-            data[i] = float.Parse(subValues[i]);
+            data[i] = Utils.ToFloat(subValues[i]);
         return data;
     }
 
-    public void InterpolationDDL()
+    public void InterpolationDDL(int _avatarIndex)
     {
-        int n = (int)(MainParameters.Instance.joints.duration / MainParameters.Instance.joints.lagrangianModel.dt) + 1;
-        float[] t0 = new float[n];
-        float[,] q0 = new float[MainParameters.Instance.joints.lagrangianModel.nDDL, n];
+        float[] t0;
+        float[,] q0;
+        GenerateQ0_s(avatarManager.LoadedModels[_avatarIndex].Joints, drawManager.avatarProperties[_avatarIndex].TakeOffParameters.Duration, 0, out t0, out q0);
 
-        GenerateQ0 generateQ0 = new GenerateQ0(MainParameters.Instance.joints.lagrangianModel, MainParameters.Instance.joints.duration, 0, out t0, out q0);
-        generateQ0.ToString();
+        avatarManager.LoadedModels[0].SetJointsTandQ(t0, q0);
+    }
 
-        MainParameters.Instance.joints.t0 = MathFunc.MatrixCopy(t0);
-        MainParameters.Instance.joints.q0 = MathFunc.MatrixCopy(q0);
+    private void GenerateQ0_s(MainParameters.StrucJoints _joints, float tf, int qi, out float[] t0, out float[,] q0)
+    {
+        int[] ni;
+        if (qi > 0)
+            ni = new int[1] { qi };
+        else
+            ni = _joints.lagrangianModel.q2;
+
+        float[] qd;
+        int n = (int)(tf / _joints.lagrangianModel.dt)+1;
+        t0 = new float[n];
+        q0 = new float[_joints.lagrangianModel.nDDL, n];
+
+        int i = 0;
+        for (float interval = 0; interval < tf; interval += _joints.lagrangianModel.dt)
+        {
+            t0[i] = interval;
+            Trajectory_ss(_joints, interval, ni, out qd);
+            for (int ddl = 0; ddl < qd.Length; ddl++)
+                q0[ddl, i] = qd[ddl];
+            i++;
+
+            if (i >= n) break;
+        }
+    }
+
+    private void Trajectory_ss(MainParameters.StrucJoints _joints, float t, int[] qi, out float[] qd)
+    {
+        float[] qdotd;
+        float[] qddotd;
+        drawManager.Trajectory(_joints, t, qi, out qd, out qdotd, out qddotd);
     }
 
     public void DisplayDDL(int ddl, bool axisRange)
     {
         if (ddl >= 0)
         {
-            transform.parent.GetComponentInChildren<AniGraphManager>().DisplayCurveAndNodes(0, ddl, true);
-            if (MainParameters.Instance.joints.nodes[ddl].ddlOppositeSide >= 0)
+            transform.parent.GetComponentInChildren<AniGraphManager>().DisplayCurveAndNodes(0, ddl, axisRange);
+            if (avatarManager.LoadedModels[0].Joints.nodes[ddl].ddlOppositeSide >= 0)
             {
-                transform.parent.GetComponentInChildren<AniGraphManager>().DisplayCurveAndNodes(1, MainParameters.Instance.joints.nodes[ddl].ddlOppositeSide, true);
+                transform.parent.GetComponentInChildren<AniGraphManager>().DisplayCurveAndNodes(1, avatarManager.LoadedModels[0].Joints.nodes[ddl].ddlOppositeSide, true);
+            }
+        }
+    }
+
+	// =================================================================================================================================================================
+	/// <summary> Configuration des répertoires utilisés pour accéder aux différents fichiers de données, selon que la plateforme d'Unity utilisée (OSX, Windows, Editor). </summary>
+
+	void GetPathForDataFiles()
+	{
+		SourceConfigFolder = Application.streamingAssetsPath;
+		TargetConfigFolder = Application.persistentDataPath;
+	}
+
+    protected void CopyJsonToTarget(string _subfolder)
+    {
+        var _sourcePath = $"{SourceConfigFolder}/{_subfolder}/";
+        var _targetPath = $"{TargetConfigFolder}/{_subfolder}/";
+
+        // Create all of the directories
+        Directory.CreateDirectory(_targetPath);
+
+        // Copy all the files if they don't already exist
+        foreach (string newPath in Directory.GetFiles(_sourcePath, "*.json"))
+        {
+            try {
+                File.Copy(newPath, newPath.Replace(_sourcePath, _targetPath), false);
+            } catch (IOException){
+                // If the file already exists, do nothing
             }
         }
     }

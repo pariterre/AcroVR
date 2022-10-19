@@ -1,0 +1,92 @@
+{
+  "Objective": "2.6.Trampo_Tendu",
+  "Duration": 1.0,
+  "UseGravity": true,
+  "StopOnGround": true,
+  "Somersault": 0,
+  "Tilt": 0,
+  "Twist": 0,
+  "HorizontalPosition": 0.0,
+  "VerticalPosition": 0.0,
+  "SomersaultSpeed": -1,
+  "TiltSpeed": 0,
+  "TwistSpeed": 0,
+  "HorizontalSpeed": 0.0,
+  "VerticalSpeed": 3.8,
+  "nodes": [
+    {
+      "Name": "HipFlexion",
+      "T": [
+        0.009096,
+        0.167033,
+        0.500720,
+        0.623032
+      ],
+      "Q": [
+        -0.013304,
+        -0.013304,
+        -0.013304,
+        -0.013304
+      ]
+    },
+    {
+      "Name": "KneeFlexion",
+      "T": [
+        0.020971,
+        0.142096,
+        0.543470,
+        0.642032
+      ],
+      "Q": [
+        -0.001506,
+        -0.001506,
+        -0.001506,
+        -0.001506
+      ]
+    },
+    {
+      "Name": "RightArmFlexion",
+      "T": [
+        0.195533,
+        0.393845
+      ],
+      "Q": [
+        3.119217,
+        -0.036899
+      ]
+    },
+    {
+      "Name": "RightArmAbduction",
+      "T": [
+        0.025721,
+        0.443720
+      ],
+      "Q": [
+        -0.004570,
+        -0.004570
+      ]
+    },
+    {
+      "Name": "LeftArmFlexion",
+      "T": [
+        0.195533,
+        0.393845
+      ],
+      "Q": [
+        3.108501,
+        -0.016711
+      ]
+    },
+    {
+      "Name": "LeftArmAbduction",
+      "T": [
+        0.024534,
+        0.297658
+      ],
+      "Q": [
+        -0.004632,
+        -0.004632
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+Known bugs:
+    - PresetConditions adding and removing creates overflow if not reloaded
+
+
+TODO: 
+	- Add music so it is less boring
+	- Add Success music when mission is acheived
