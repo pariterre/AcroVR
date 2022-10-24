@@ -212,7 +212,9 @@ public class DrawManager : MonoBehaviour
         {
             var _q = avatarManager.LoadedModels[_avatarIndex].Q;
             _hipTranslations += new Vector3((float)_q[6] * _scaling.x, (float)_q[8] * _scaling.y, (float)_q[7] * _scaling.z);
-            _hipRotations += new Vector3((float)_q[9] * Mathf.Rad2Deg, (float)_q[10] * Mathf.Rad2Deg, (float)_q[11] * Mathf.Rad2Deg);
+
+            var _rootYXZ = (AcroVrMatrixRotation.ChangeSequence(_q[9], _q[11], _q[10], AcroVrMatrixRotation.FromEulerXZY, AcroVrMatrixRotation.ToEulerYXZ) * Mathf.Rad2Deg).ToFloat();
+            _hipRotations += new Vector3(_rootYXZ[0], _rootYXZ[1], _rootYXZ[2]);
         }
         _model.Hip.transform.localPosition = _hipTranslations;
         _model.Hip.transform.localEulerAngles = _hipRotations;
@@ -376,43 +378,24 @@ public class DrawManager : MonoBehaviour
         int[] translationS = MathFunc.Sign(translation);
         for (int i = 0; i < translation.Length; i++) translation[i] = Math.Abs(translation[i]);
 
-        float rotRadians = _properties.TakeOffParameters.Somersault * (float)Math.PI / 180;
-
-        float tilt = _properties.TakeOffParameters.Tilt;
-        if (tilt == 90)
-            tilt = 90.001f;
-        else if (tilt == -90)
-            tilt = -90.01f;
-
-        // q0[12]
-        // q0[9] = somersault
-        // q0[10] = tilt
-        q0[Math.Abs(_joints.lagrangianModel.root_tilt) - 1] = tilt * (float)Math.PI / 180; 
-        q0[Math.Abs(_joints.lagrangianModel.root_somersault) - 1] = rotRadians; 
-
-        //q0dot[12]
-        //q0dot[7] = AnteroposteriorSpeed
-        //q0dot[8] = verticalSpeed
-        //q0dot[9] = somersaultSpeed
-        //q0dot[11] = twistSpeed
-        q0dot[Math.Abs(_joints.lagrangianModel.root_foreward) - 1] = _properties.TakeOffParameters.HorizontalSpeed;                       // m/s
-        q0dot[Math.Abs(_joints.lagrangianModel.root_upward) - 1] = _properties.TakeOffParameters.VerticalSpeed;                                // m/s
-        q0dot[Math.Abs(_joints.lagrangianModel.root_somersault) - 1] = _properties.TakeOffParameters.SomersaultSpeed * 2 * (float)Math.PI;     // radians/s
-        q0dot[Math.Abs(_joints.lagrangianModel.root_twist) - 1] = _properties.TakeOffParameters.TwistSpeed * 2 * (float)Math.PI;               // radians/s
-
-
-        // q0[11] = twist
-        // q0dot[10] = tiltSpeed
+        q0[Math.Abs(_joints.lagrangianModel.root_somersault) - 1] = _properties.TakeOffParameters.Somersault * (float)Math.PI / 180;
+        q0[Math.Abs(_joints.lagrangianModel.root_tilt) - 1] = _properties.TakeOffParameters.Tilt * (float)Math.PI / 180;
         q0[Math.Abs(_joints.lagrangianModel.root_twist) - 1] = _properties.TakeOffParameters.Twist * (float)Math.PI / 180;
-        q0dot[Math.Abs(_joints.lagrangianModel.root_tilt) - 1] = _properties.TakeOffParameters.TiltSpeed * 2 * (float)Math.PI;
+        q0[Math.Abs(_joints.lagrangianModel.root_foreward) - 1] += _properties.TakeOffParameters.HorizontalPosition;
+        q0[Math.Abs(_joints.lagrangianModel.root_upward) - 1] += _properties.TakeOffParameters.VerticalPosition;
 
+        q0dot[Math.Abs(_joints.lagrangianModel.root_somersault) - 1] = _properties.TakeOffParameters.SomersaultSpeed * 2 * (float)Math.PI;
+        q0dot[Math.Abs(_joints.lagrangianModel.root_tilt) - 1] = _properties.TakeOffParameters.TiltSpeed * 2 * (float)Math.PI;
+        q0dot[Math.Abs(_joints.lagrangianModel.root_twist) - 1] = _properties.TakeOffParameters.TwistSpeed * 2 * (float)Math.PI;
+        q0dot[Math.Abs(_joints.lagrangianModel.root_foreward) - 1] = _properties.TakeOffParameters.HorizontalSpeed;
+        q0dot[Math.Abs(_joints.lagrangianModel.root_upward) - 1] = _properties.TakeOffParameters.VerticalSpeed;
 
         double[] Q = new double[_joints.lagrangianModel.nDDL];
         for (int i = 0; i < _joints.lagrangianModel.nDDL; i++)
             Q[i] = q0[i];
         avatarManager.LoadedModels[_avatarIndex].EvaluateTags(Q, out float[] tagX, out float[] tagY, out float[] tagZ);
 
-        // Q[12]
+        //Q[12]
         // tagX[26], tagY[26], tagZ[26]
 
         //the last one = Center of Mass
@@ -436,8 +419,6 @@ public class DrawManager : MonoBehaviour
             q0dot[translation[i] - 1] = q0dot[translation[i] - 1] * translationS[i];
         }
 
-        q0[Math.Abs(_joints.lagrangianModel.root_foreward) - 1] += _properties.TakeOffParameters.HorizontalPosition;
-        q0[Math.Abs(_joints.lagrangianModel.root_upward) - 1] += _properties.TakeOffParameters.VerticalPosition;
 
         double[] x0 = new double[_joints.lagrangianModel.nDDL * 2];
         for (int i = 0; i < _joints.lagrangianModel.nDDL; i++)
@@ -445,8 +426,6 @@ public class DrawManager : MonoBehaviour
             x0[i] = q0[i];
             x0[_joints.lagrangianModel.nDDL + i] = q0dot[i];
         }
-
-        // x0[24]
 
         Options options = new Options();
         options.InitialStep = _joints.lagrangianModel.dt;
